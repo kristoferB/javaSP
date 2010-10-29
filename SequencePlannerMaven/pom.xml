@@ -20,36 +20,5 @@
        <version>3.8.1</version>
         <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>supremica</groupId>
-      <artifactId>supremica</artifactId>
-      <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>supremica</groupId>
-      <artifactId>supremicaLib</artifactId>
-      <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>supremica</groupId>
-      <artifactId>supremica_SVN</artifactId>
-      <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>jgraphx</groupId>
-      <artifactId>jgraphx</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>JGraphXlocal</groupId>
-      <artifactId>JGraphXlocal</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-      <type>jar</type>
-    </dependency>
   </dependencies>
 </project>
