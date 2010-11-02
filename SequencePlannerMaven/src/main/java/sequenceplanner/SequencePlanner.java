@@ -40,6 +40,7 @@ public class SequencePlanner {
    }
 
    public static ImageIcon getNewIcon(String dir, boolean resize) {
+       System.out.println(dir);
       if (dir != null && !dir.equals("")) {
          try {
             ImageIcon ico = new ImageIcon(SequencePlanner.class.getResource(dir));
