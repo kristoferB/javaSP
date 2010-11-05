@@ -6,7 +6,7 @@ import sequenceplanner.view.AbstractSyncModel;
 
 /**
  *
- * @author erik
+ * @author Erik Ohlson
  */
 public class ResourceModel extends AbstractSyncModel {
 

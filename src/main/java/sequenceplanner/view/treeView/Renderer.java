@@ -1,14 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sequenceplanner.view.treeView;
 
 import java.awt.Component;
+
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -16,7 +15,7 @@ import sequenceplanner.model.data.Data;
 
 /**
  *
- * @author erik
+ * @author Erik Ohlson
  */
 public class Renderer extends DefaultTreeCellRenderer {
 
@@ -33,13 +32,13 @@ public class Renderer extends DefaultTreeCellRenderer {
    public Renderer() {
 
       //Register all icons used with the icons.
-      folderIcon = SequencePlanner.getNewIcon( "resources/icons/folder.png");
-      folderOpenIcon = SequencePlanner.getNewIcon( "resources/icons/folder-open.png");
-      operationIcon = SequencePlanner.getNewIcon( "resources/icons/sop.png");
-      resourceIcon = SequencePlanner.getNewIcon( "resources/icons/robot.png");
-      variableIcon = SequencePlanner.getNewIcon("resources/icons/variable.png");
-      liasonIcon = SequencePlanner.getNewIcon( "resources/icons/icon.png");
-      viewIcon = SequencePlanner.getNewIcon( "resources/icons/face-monkey.png");
+      folderIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/folder.png");
+      folderOpenIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/folder-open.png");
+      operationIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/sop.png");
+      resourceIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+      variableIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/variable.png");
+      liasonIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/icon.png");
+      viewIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/face-monkey.png");
    }
 
    @Override

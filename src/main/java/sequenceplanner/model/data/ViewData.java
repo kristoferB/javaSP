@@ -1,11 +1,11 @@
 package sequenceplanner.model.data;
 
-
-import com.mxgraph.model.mxGeometry;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import org.apache.log4j.Logger;
+
+import com.mxgraph.model.mxGeometry;
 
 
 /**

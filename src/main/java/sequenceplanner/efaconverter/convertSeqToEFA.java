@@ -1,27 +1,30 @@
 
 package sequenceplanner.efaconverter;
 
-import sequenceplanner.efaconverter.efamodel.SpLocation;
-import sequenceplanner.efaconverter.efamodel.SpTransition;
-import sequenceplanner.efaconverter.efamodel.SpEFA;
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+
 import javax.swing.JFileChooser;
+
 import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
 import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
 import net.sourceforge.waters.subject.module.ModuleSubject;
 import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
-import org.supremica.external.avocades.common.Module;
+
 import org.supremica.external.avocades.common.EFA;
+import org.supremica.external.avocades.common.Module;
+
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionStatment;
+import sequenceplanner.efaconverter.efamodel.SpEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
+import sequenceplanner.efaconverter.efamodel.SpLocation;
+import sequenceplanner.efaconverter.efamodel.SpTransition;
 import sequenceplanner.efaconverter.efamodel.SpVariable;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.OperationData;

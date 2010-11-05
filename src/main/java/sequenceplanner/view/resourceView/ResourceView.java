@@ -4,11 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.Action;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreePath;
+
 import sequenceplanner.SPContainer;
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.TreeNode;
@@ -18,7 +20,6 @@ import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.resourceView.Editors.ResourceEditor;
 import sequenceplanner.view.resourceView.Editors.VariableEditor;
 import sequenceplanner.view.resourceView.Renderers.ResourcePanel;
-import sequenceplanner.view.resourceView.Renderers.VariablePanel;
 import sequenceplanner.view.resourceView.Renderers.VariablePanel;
 import sequenceplanner.view.treeView.ClickMenu;
 
@@ -58,8 +59,8 @@ public class ResourceView extends AbstractView {
       tree.setBackground(getBackground());
       tree.setCellRenderer(rr);
 
-      ((BasicTreeUI) tree.getUI()).setExpandedIcon(SequencePlanner.getNewIcon("resources/icons/min.png"));
-      ((BasicTreeUI) tree.getUI()).setCollapsedIcon(SequencePlanner.getNewIcon("resources/icons/max.png"));
+      ((BasicTreeUI) tree.getUI()).setExpandedIcon(SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/min.png"));
+      ((BasicTreeUI) tree.getUI()).setCollapsedIcon(SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/max.png"));
 
       tree.addMouseListener(new MouseAdapter() {
 

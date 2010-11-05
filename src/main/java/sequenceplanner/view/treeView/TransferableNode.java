@@ -1,12 +1,10 @@
 package sequenceplanner.view.treeView;
 
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.swing.util.mxGraphTransferable;
-import com.mxgraph.util.mxRectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.LinkedList;
+
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.LiasonData;
@@ -14,6 +12,10 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
+
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.swing.util.mxGraphTransferable;
+import com.mxgraph.util.mxRectangle;
 
 /**
  *

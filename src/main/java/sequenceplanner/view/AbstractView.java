@@ -1,9 +1,9 @@
 package sequenceplanner.view;
 
-
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+
 import sequenceplanner.SPContainer;
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;

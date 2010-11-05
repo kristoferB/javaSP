@@ -1,22 +1,21 @@
 package sequenceplanner.model;
 
 import java.util.ArrayList;
-
 import java.util.Iterator;
-import java.util.TreeMap;
-import sequenceplanner.model.IModel.AsyncModelListener;
-import sequenceplanner.model.IModel.SyncModelListener;
-import sequenceplanner.model.data.Data;
-import sequenceplanner.model.data.FolderData;
-import sequenceplanner.model.data.OperationData.SeqCond;
-import sequenceplanner.model.data.ResourceData;
-import sequenceplanner.model.data.ViewData;
 import java.util.LinkedList;
 import java.util.Stack;
+import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
+
+import sequenceplanner.model.data.Data;
+import sequenceplanner.model.data.FolderData;
 import sequenceplanner.model.data.LiasonData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.OperationData.SeqCond;
+import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.Constansts;
 
 /**

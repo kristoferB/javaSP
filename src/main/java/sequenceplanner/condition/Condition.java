@@ -1,4 +1,3 @@
-
 package sequenceplanner.condition;
 
 import java.util.HashMap;

@@ -5,8 +5,8 @@ package sequenceplanner.efaconverter;
  * @author Carl Thorstensson, carl.thorstensson@gmail.com
  */
 import java.util.ArrayList;
-
 import java.util.LinkedList;
+
 import net.sourceforge.waters.model.expr.EvalException;
 import net.sourceforge.waters.model.marshaller.DocumentManager;
 import net.sourceforge.waters.subject.module.ModuleSubject;
@@ -85,7 +85,7 @@ public class SPtoAutomatonConverter {
    /**
     * Logger for handling errors
     */
-   static Logger logger = Logger.getLogger(SPtoAutomatonConverter.class);
+   static Logger log = Logger.getLogger(SPtoAutomatonConverter.class);
 
 
 
@@ -134,6 +134,7 @@ public class SPtoAutomatonConverter {
     */
    public SPtoAutomatonConverter(Model m, int option) throws Exception {
 
+	   
       model = m;
       projectName = "Project";
       module = new Module(projectName, false);
@@ -369,18 +370,6 @@ public class SPtoAutomatonConverter {
       LabeledEvent start;
       LabeledEvent stop;
 
-//		if(operationData.getStartEvent().length() > 0){
-//			start = new LabeledEvent(operationData.getStartEvent());
-//		} else{
-//			start = new LabeledEvent(EFAVariables.EFA_START_EVENT_PREFIX + operation.getId());
-//		}
-//
-//		if(operationData.getStopEvent().lenght() > 0){
-//			stop = new LabeledEvent(operationData.getStartEvent());
-//		} else{
-//			stop = new LabeledEvent(EFAVariables.EFA_STOP_EVENT_PREFIX + operation.getId());
-//		}
-
       start = new LabeledEvent(EFAVariables.EFA_START_EVENT_PREFIX + operationName);
       stop = new LabeledEvent(EFAVariables.EFA_STOP_EVENT_PREFIX + operationName);
 
@@ -458,7 +447,6 @@ public class SPtoAutomatonConverter {
       Object guardAndAction[] = new Object[2];
 
       // Loops the precondition.
-      //      System.out.println(precondition);
       for (int i = 0; i < precondition.length(); i++) {
 
          // if (. This can only start an expression.
@@ -520,7 +508,7 @@ public class SPtoAutomatonConverter {
 
                         } else {
                            // The resource doesn't exist.
-                           logger.error("The resource with id: " + resourceName + " does not exist and can not be booked in: " + operation.getId() + ".");
+                           log.error("The resource with id: " + resourceName + " does not exist and can not be booked in: " + operation.getId() + ".");
 
                         }
 
@@ -552,7 +540,7 @@ public class SPtoAutomatonConverter {
 
                         } else {
                            // The resource doesn't exist.
-                           logger.error("The resource with id: " + resourceName + " does not exist and can not be unbooked in: " + operation.getId() + ".");
+                           log.error("The resource with id: " + resourceName + " does not exist and can not be unbooked in: " + operation.getId() + ".");
                         }
 
 
@@ -568,7 +556,7 @@ public class SPtoAutomatonConverter {
                            guard = guard + this.createVarName(operationId.intValue()) + "==" + EFAVariables.VARIABLE_INITIAL_STATE;
                         } else {
                            // The operation doesn't exist.
-                           logger.error("The operation with id: " + operationName + " (initial state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
+                           log.error("The operation with id: " + operationName + " (initial state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
                         }
 
 
@@ -584,7 +572,7 @@ public class SPtoAutomatonConverter {
                            guard = guard + this.createVarName(operationId.intValue()) + "==" + EFAVariables.VARIABLE_EXECUTION_STATE;
                         } else {
                            // The operation doesn't exist.
-                           logger.error("The operation with id: " + operationName + " (execution state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
+                           log.error("The operation with id: " + operationName + " (execution state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
                         }
 
 
@@ -601,7 +589,7 @@ public class SPtoAutomatonConverter {
                            guard = guard + this.createVarName(operationId.intValue()) + "==" + EFAVariables.VARIABLE_FINAL_STATE;
                         } else {
                            // The operation doesn't exist.
-                           logger.error("The operation with id: " + operationName + " (final state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
+                           log.error("The operation with id: " + operationName + " (final state)" + " does not exist and can not be refered to in: " + operation.getId() + ".");
                         }
 
 
@@ -708,7 +696,7 @@ public class SPtoAutomatonConverter {
 
             } else {
                // An incorrect precondition. Give feedback to user.
-               logger.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking outside parenthesis in preconditions is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
+               log.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking outside parenthesis in preconditions is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
                return null;
             }
 
@@ -720,12 +708,12 @@ public class SPtoAutomatonConverter {
 
          } else if ((andOutsideParenthesis == false) && (orOutsideParenthesis == true)) {
             // An incorrect precondition. Give feedback to user.
-            logger.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking with only AND outside parethesis is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
+            log.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking with only AND outside parethesis is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
             return null;
 
          } else if ((andOutsideParenthesis == true) && (orOutsideParenthesis == true)) {
             // An incorrect precondition. Give feedback to user.
-            logger.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking with only AND outside parethesis is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
+            log.error("An incorrect resource booking/unbooking in operation: " + operation.getId() + ".\nOnly resource booking/unbooking with only AND outside parethesis is allowed.\nPlease correct the preconditions in " + operation.getId() + " and try again.");
             return null;
 
          } else {
@@ -847,10 +835,10 @@ public class SPtoAutomatonConverter {
 
       String precon = operationData.getRawPrecondition();
 
-      System.out.println("Operation: " + operation.getId() + " precon: " + precon);
+      log.info("Operation: " + operation.getId() + " precon: " + precon);
 
       if (precon.length() > 0) {
-         System.out.println("Lengt: " + precon.length() + " Precon: "+ precon);
+    	  log.info("Lengt: " + precon.length() + " Precon: "+ precon);
          Object guardAndAction[] = createGuardAndAction(
                precon, operation);
          String guard = (String) guardAndAction[0];

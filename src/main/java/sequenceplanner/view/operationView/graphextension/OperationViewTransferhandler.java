@@ -1,18 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sequenceplanner.view.operationView.graphextension;
 
-import com.mxgraph.swing.handler.mxGraphTransferHandler;
-import com.mxgraph.swing.mxGraphComponent;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+
 import javax.swing.JComponent;
+
 import sequenceplanner.model.data.LiasonData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.view.treeView.TransferableNode;
+
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxGraphTransferHandler;
 
 /**
  *

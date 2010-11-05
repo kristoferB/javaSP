@@ -2,19 +2,20 @@ package sequenceplanner.view.operationView.graphextension;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGraphModel;
-import com.mxgraph.model.mxICell;
-import java.util.Iterator;
 import java.util.Stack;
+
 import sequenceplanner.model.Model;
 import sequenceplanner.model.NameCacheMap;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constansts;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.model.mxICell;
 
 public class SPGraphModel extends mxGraphModel {
 

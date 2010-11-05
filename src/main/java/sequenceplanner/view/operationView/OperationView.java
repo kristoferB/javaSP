@@ -1,12 +1,5 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.model.mxICell;
-import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.util.mxRectangle;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -16,10 +9,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
+
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -27,17 +20,17 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
-
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.SPContainer;
 import sequenceplanner.model.IModel.AsyncModelListener;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
-
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ViewData;
@@ -52,6 +45,14 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphComponent;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
+
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxICell;
+import com.mxgraph.swing.mxGraphOutline;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxRectangle;
 
 //TODO Change name to SOPView
 public class OperationView extends AbstractView implements IView, AsyncModelListener {

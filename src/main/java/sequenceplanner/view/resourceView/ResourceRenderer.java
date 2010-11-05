@@ -3,13 +3,13 @@ package sequenceplanner.view.resourceView;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.HashMap;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
-
-
 import javax.swing.tree.TreeCellRenderer;
+
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -18,7 +18,7 @@ import sequenceplanner.view.resourceView.Renderers.TreeRenderer;
 
 /**
  *
- * @author erik
+ * @author Erik Ohlson
  */
 public class ResourceRenderer extends JPanel
       implements TreeCellRenderer {
@@ -29,8 +29,8 @@ public class ResourceRenderer extends JPanel
    private JPanel p;
 
    //Icons
-   private final ImageIcon robot = SequencePlanner.getNewIcon("resources/icons/robot.png");
-   private final ImageIcon variable = SequencePlanner.getNewIcon("resources/icons/variable.png");
+   private final ImageIcon robot = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+   private final ImageIcon variable = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/variable.png");
 
    public ResourceRenderer() {
       editors = new HashMap<String, TreeRenderer>();

@@ -1,9 +1,8 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
@@ -14,6 +13,9 @@ import sequenceplanner.model.data.ViewData.CellData;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 
 /**
  *

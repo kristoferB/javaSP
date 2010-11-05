@@ -1,25 +1,5 @@
 package sequenceplanner.view.operationView.graphextension;
 
-import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.canvas.mxImageCanvas;
-import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.model.mxICell;
-import com.mxgraph.model.mxIGraphModel;
-import com.mxgraph.swing.handler.mxElbowEdgeHandler;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxRectangle;
-import com.mxgraph.view.mxCellState;
-import com.mxgraph.view.mxEdgeStyle;
-import com.mxgraph.view.mxEdgeStyle.mxEdgeStyleFunction;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxGraphSelectionModel;
-import com.mxgraph.view.mxGraphView;
-import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -35,13 +15,34 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.view.operationView.autoSOP.SequenceCreator;
 import sequenceplanner.view.operationView.autoSOP.SopNode;
+
+import com.mxgraph.canvas.mxICanvas;
+import com.mxgraph.canvas.mxImageCanvas;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxICell;
+import com.mxgraph.model.mxIGraphModel;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxPoint;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxCellState;
+import com.mxgraph.view.mxEdgeStyle;
+import com.mxgraph.view.mxEdgeStyle.mxEdgeStyleFunction;
+import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphSelectionModel;
+import com.mxgraph.view.mxGraphView;
+import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
 
 /**
  *

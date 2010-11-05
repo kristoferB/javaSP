@@ -1,16 +1,13 @@
 package sequenceplanner.model;
 
-import com.mxgraph.model.mxGeometry;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
+
 import sequenceplanner.model.data.OperationData.Action;
 import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceVariableData;
-
 import sequenceplanner.model.data.ViewData;
-
 import sequenceplanner.xml.Actions;
 import sequenceplanner.xml.Bookings;
 import sequenceplanner.xml.CellData;
@@ -24,6 +21,8 @@ import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
+
+import com.mxgraph.model.mxGeometry;
 
 /**
  *

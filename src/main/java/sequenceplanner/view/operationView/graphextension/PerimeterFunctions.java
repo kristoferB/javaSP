@@ -1,5 +1,7 @@
 package sequenceplanner.view.operationView.graphextension;
 
+import java.util.List;
+
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxPoint;
@@ -7,7 +9,6 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle.mxEdgeStyleFunction;
 import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
-import java.util.List;
 
 public class PerimeterFunctions {
 

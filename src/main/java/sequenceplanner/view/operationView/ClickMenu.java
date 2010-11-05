@@ -1,23 +1,24 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxCell;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.view.operationView.OperationActions.AddOperation;
 import sequenceplanner.view.operationView.OperationActions.AlternateSOP;
-import sequenceplanner.view.operationView.OperationActions.AutoarrangeGroup;
 import sequenceplanner.view.operationView.OperationActions.AutoSeqGroup;
+import sequenceplanner.view.operationView.OperationActions.AutoarrangeGroup;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
+
+import com.mxgraph.model.mxCell;
 
 /**
  *

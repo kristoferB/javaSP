@@ -1,16 +1,14 @@
 package sequenceplanner.model;
 
-import com.mxgraph.model.mxGeometry;
-import com.mxgraph.util.mxRectangle;
 import java.util.LinkedList;
 import java.util.List;
+
 import sequenceplanner.model.data.LiasonData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-
 import sequenceplanner.xml.Actions;
 import sequenceplanner.xml.Bookings;
 import sequenceplanner.xml.Bookings.ResourceBooking;
@@ -23,6 +21,9 @@ import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
+
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.util.mxRectangle;
 
 /**
  *

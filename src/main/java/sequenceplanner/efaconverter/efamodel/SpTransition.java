@@ -2,7 +2,6 @@
 package sequenceplanner.efaconverter.efamodel;
 
 import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 
 /**

@@ -6,11 +6,14 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
 import javax.swing.JTree;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreeCellEditor;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.resourceView.Editors.TreeEditor;
 

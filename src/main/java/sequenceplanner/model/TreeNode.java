@@ -1,10 +1,12 @@
 package sequenceplanner.model;
 
-import org.apache.log4j.Logger;
-import sequenceplanner.model.data.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.apache.log4j.Logger;
+
+import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 

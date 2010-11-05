@@ -5,7 +5,6 @@
 
 package sequenceplanner.efaconverter;
 
-import sequenceplanner.view.operationView.Constansts;
 
 /**
  *

@@ -1,9 +1,8 @@
-
-
 package sequenceplanner.efaconverter.efamodel.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import sequenceplanner.condition.ConditionStatment;
 import sequenceplanner.efaconverter.efamodel.SpLocation;
 import sequenceplanner.efaconverter.efamodel.SpTransition;

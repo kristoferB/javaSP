@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * This class creates a set of sequences and identifies if operations
@@ -30,6 +32,8 @@ public class OperationSequencer {
 
     private final ModelParser modelparser;
 
+    private final Logger log = Logger.getLogger(OperationSequencer.class);
+    
     /*
      * The constructor.
      */
@@ -65,7 +69,7 @@ public class OperationSequencer {
         Set<OpNode> lastInSeq = findLastOperations(modelparser.getOperations());
         if (lastInSeq.isEmpty()){
             // Add test for circularity in the future!
-            System.out.println("The model is empty or circular relations");
+        	log.warn("The model is empty or circular relations");
             return new HashSet<OpNode>();
         }
 
@@ -327,8 +331,8 @@ public class OperationSequencer {
                 if (map.equals(map2)) break;
                 for (OpNode n : map){
                     if (map2.contains(n)){
-                        System.out.println("An operation in multiple sequence!");
-                        System.out.println("Duplicated operation: " + n.getName());
+                        log.info("An operation in multiple sequence!");
+                        log.info("Duplicated operation: " + n.getName());
                         assert(true);
                     }
                 }
@@ -342,8 +346,8 @@ public class OperationSequencer {
 
         // A small test, should be placed in a unitTest! Remove later
         if (map.contains(node)){
-            System.out.println("A sequnece contains the same operation! Should not be possible");
-            System.out.println("Duplicated operation: " + node.getName());
+        	log.info("A sequnece contains the same operation! Should not be possible");
+        	log.info("Duplicated operation: " + node.getName());
             assert(true);
         }
 

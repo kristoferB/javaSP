@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -23,14 +24,12 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -45,8 +44,8 @@ import sequenceplanner.view.operationView.graphextension.Cell;
  */
 public class Editors {
 
-   public static final ImageIcon resIcon = SequencePlanner.getNewIcon("resources/icons/robot.png");
-   public static final ImageIcon productLiason = SequencePlanner.getNewIcon("resources/icons/op.png");
+   public static final ImageIcon resIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+   public static final ImageIcon productLiason = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/op.png");
 
    static abstract class OperationEditor extends JPanel {
 

@@ -5,11 +5,12 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
-import javax.swing.ImageIcon;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ import org.apache.log4j.Logger;
 // TODO Handle comparing variables with values in sequenceconditions
 // TODO Handle actions
 // TODO Remove preconditions when cell is removed.
-// 
 
 public class SequencePlanner {
 
@@ -40,7 +40,6 @@ public class SequencePlanner {
    }
 
    public static ImageIcon getNewIcon(String dir, boolean resize) {
-       System.out.println(dir);
       if (dir != null && !dir.equals("")) {
          try {
             ImageIcon ico = new ImageIcon(SequencePlanner.class.getResource(dir));
@@ -106,7 +105,7 @@ public class SequencePlanner {
       showSplash(bounds);
 
       JFrame sc = new JFrame("Sequence Planner");
-      sc.setIconImage(getNewIcon("resources/icons/icon.png").getImage());
+      sc.setIconImage(getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
       sc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 

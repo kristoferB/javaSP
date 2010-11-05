@@ -1,7 +1,5 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -9,16 +7,22 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.view.operationView.Editors.OperationEditor;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
+
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 
 /**
  *
@@ -27,7 +31,7 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 public class AttributeEditor extends JPanel
       implements mxEventSource.mxIEventListener {
 
-   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("resources/icons/save.png");
+   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/save.png");
 
    static Logger logger = Logger.getLogger(AttributeEditor.class);
    protected HashMap<String, LinkedList<OperationEditor>> editors;

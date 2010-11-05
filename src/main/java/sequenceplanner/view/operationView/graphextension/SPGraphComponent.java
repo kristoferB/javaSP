@@ -1,18 +1,5 @@
 package sequenceplanner.view.operationView.graphextension;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.swing.handler.mxGraphHandler;
-import com.mxgraph.swing.handler.mxGraphTransferHandler;
-import com.mxgraph.swing.handler.mxPanningHandler;
-import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.view.mxInteractiveCanvas;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.util.mxUndoManager;
-import com.mxgraph.util.mxUndoableEdit;
-import com.mxgraph.view.mxGraph;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -22,8 +9,23 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
+
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxGraphHandler;
+import com.mxgraph.swing.handler.mxGraphTransferHandler;
+import com.mxgraph.swing.handler.mxPanningHandler;
+import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.swing.view.mxInteractiveCanvas;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.util.mxUndoManager;
+import com.mxgraph.util.mxUndoableEdit;
+import com.mxgraph.view.mxGraph;
 
 /**
  *

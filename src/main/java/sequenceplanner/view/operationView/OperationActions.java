@@ -1,18 +1,21 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxCell;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.view.mxCellState;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxPoint;
+import com.mxgraph.view.mxCellState;
 
 /**
  *

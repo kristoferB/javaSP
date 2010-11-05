@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
@@ -16,6 +15,8 @@ import javax.swing.JWindow;
 
 public class SplashScreen extends JWindow {
     
+	private static final long serialVersionUID = 575516828339282334L;
+	
 	//Define size of the splash screen.
 	private Dimension size = new Dimension(350,250);
 	
@@ -46,9 +47,9 @@ public class SplashScreen extends JWindow {
         
         content.setOpaque(false);
         content.setLayout(new BorderLayout());
-        JLabel logo = new JLabel( SequencePlanner.getNewIcon("resources/icons/SequencePlanner.png", false) );
+        JLabel logo = new JLabel( SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/SequencePlanner.png", false) );
         // &#11; = VT (Vertical Tab)
-        JLabel label = new JLabel("<HTML>&#11;Created by <BR>&#11; &#11; Carl Thorstensson and Erik Ohlson <BR> &#11; &#11; in collaboration with Bengt Lennartson and Kristofer Bengtsson</HTML>");
+        JLabel label = new JLabel("<HTML>Created by <BR> Carl Thorstensson and Erik Ohlson <BR>in collaboration with Bengt Lennartson and Kristofer Bengtsson</HTML>");
         
         add(logo, BorderLayout.NORTH);
         add(label, BorderLayout.SOUTH);

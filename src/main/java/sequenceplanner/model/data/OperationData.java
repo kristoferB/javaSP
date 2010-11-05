@@ -4,9 +4,6 @@
    // no difference! They should include both guards and actions.
    // We should also use interfaces for all datastructures to be able to
    // use injection!
-
-
-
 package sequenceplanner.model.data;
 
 import java.util.ArrayList;
@@ -17,9 +14,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+
 import sequenceplanner.efaconverter.EFAVariables;
 import sequenceplanner.model.Model;
-import sequenceplanner.view.operationView.Constansts;
 
 /**
  *

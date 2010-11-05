@@ -1,18 +1,18 @@
 package sequenceplanner.view.operationView.graphextension;
 
-import com.mxgraph.swing.handler.mxGraphHandler;
-import com.mxgraph.swing.handler.mxGraphTransferHandler;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.view.mxGraph;
 import java.awt.AWTEvent;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+
 import javax.swing.TransferHandler;
+
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxGraphHandler;
+import com.mxgraph.swing.handler.mxGraphTransferHandler;
+import com.mxgraph.view.mxGraph;
 
 /**
  *

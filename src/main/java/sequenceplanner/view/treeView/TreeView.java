@@ -1,6 +1,5 @@
 package sequenceplanner.view.treeView;
 
-import grafchart.sfc.JGrafchartSupremicaEditor;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -19,6 +18,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JScrollPane;
@@ -31,6 +31,7 @@ import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
+
 import sequenceplanner.SPContainer;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;

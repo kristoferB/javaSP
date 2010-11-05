@@ -8,16 +8,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
-import javax.management.RuntimeErrorException;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.filechooser.FileFilter;
 import java.io.IOException;
 import java.util.Calendar;
+
 import javax.swing.AbstractAction;
-import javax.swing.JDialog;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -26,8 +21,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
+
 import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
 import net.sourceforge.waters.model.marshaller.DocumentManager;
 import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
@@ -36,9 +34,9 @@ import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
 
 import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
+import org.supremica.automata.Project;
 import org.supremica.automata.IO.AutomataToXML;
 import org.supremica.automata.IO.ProjectBuildFromWaters;
-import org.supremica.automata.Project;
 import org.supremica.automata.algorithms.AutomataVerifier;
 import org.supremica.automata.algorithms.SynchronizationOptions;
 import org.supremica.automata.algorithms.SynchronizationType;
@@ -46,7 +44,7 @@ import org.supremica.automata.algorithms.VerificationAlgorithm;
 import org.supremica.automata.algorithms.VerificationOptions;
 import org.supremica.automata.algorithms.VerificationType;
 import org.supremica.automata.algorithms.minimization.MinimizationOptions;
-import org.supremica.gui.AutomataVerificationWorker;
+
 import sequenceplanner.efaconverter.IdentifyOpRelations;
 import sequenceplanner.efaconverter.SPtoAutomatonConverter;
 import sequenceplanner.model.ConvertFromXML;

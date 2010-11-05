@@ -3,9 +3,8 @@ package sequenceplanner.efaconverter;
 
 
 import java.util.Set;
+
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
-import sequenceplanner.efaconverter.efamodel.algorithm.SpEFASync;
-import sequenceplanner.efaconverter.efamodel.SpEFA;
 import sequenceplanner.model.Model;
 
 /**

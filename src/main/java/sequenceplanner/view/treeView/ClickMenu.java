@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -16,11 +17,11 @@ import sequenceplanner.model.data.Data;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.Actions.InsertVariable;
 import sequenceplanner.view.Actions.OpenOperationsRealizedBy;
-import sequenceplanner.view.Actions.RemoveNode;
 import sequenceplanner.view.Actions.OpenResourceView;
+import sequenceplanner.view.Actions.RemoveNode;
 /**
  *
- * @author Erik
+ * @author Erik Ohlson
  */
 public class ClickMenu extends JPopupMenu {
 

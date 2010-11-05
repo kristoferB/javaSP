@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -17,9 +18,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.tree.TreeCellEditor;
+
 import org.apache.log4j.Logger;
+
 import sequenceplanner.SequencePlanner;
-import sequenceplanner.efaconverter.SPtoAutomatonConverter;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ResourceData;
@@ -32,7 +34,7 @@ import sequenceplanner.view.Actions.InsertVariable;
  */
 public class Editors {
 
-   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("resources/icons/save.png");
+   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/save.png");
 
 
 

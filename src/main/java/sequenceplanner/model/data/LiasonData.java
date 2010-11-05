@@ -1,7 +1,5 @@
 package sequenceplanner.model.data;
 
-import sequenceplanner.model.Model;
-import sequenceplanner.model.data.Data;
 
 /**
  *

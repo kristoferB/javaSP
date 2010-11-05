@@ -1,17 +1,19 @@
 package sequenceplanner.view;
 
 import java.util.ArrayList;
+
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+
 import sequenceplanner.model.IModel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 
 /**
  *
- * @author erik
+ * @author Erik Ohlson
  */
 public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelListener {
 

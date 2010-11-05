@@ -1,6 +1,5 @@
 package sequenceplanner.view.operationView.graphextension;
 
-import com.mxgraph.swing.handler.mxGraphTransferHandler;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,10 +9,12 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
+import javax.swing.TransferHandler;
+
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxCellMarker;
+import com.mxgraph.swing.handler.mxGraphTransferHandler;
 import com.mxgraph.view.mxCellState;
-import javax.swing.TransferHandler;
 
 public class IntoCellMarker extends mxCellMarker {
 

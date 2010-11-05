@@ -19,6 +19,31 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
+	<!-- Build runnable jars, mainly for testing -->
+	    <plugin>
+	      <artifactId>maven-assembly-plugin</artifactId>
+	      <configuration>
+		<descriptorRefs>
+		  <descriptorRef>jar-with-dependencies</descriptorRef>
+		</descriptorRefs>
+		<archive>
+		  <manifest>
+		    <mainClass>sequenceplanner.SequencePlanner</mainClass>
+		  </manifest>
+		</archive>
+	      </configuration>
+	      <executions>
+		<execution>
+		  <phase>package</phase>
+		  <goals>
+		    <goal>single</goal>
+		  </goals>
+		</execution>
+	      </executions>
+	    </plugin>
+	<!-- Should do some work with assembly-plugin and jar-plugin to make a real install file -->
+
         </plugins>
     </build>
 
