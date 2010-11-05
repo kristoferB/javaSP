@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
-    <artifactId>SequencePlannerMaven</artifactId>
+    <groupId>net.sequenceplanner</groupId>
+    <artifactId>sequence-planner</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>SequencePlannerMaven</name>
-    <url>http://maven.apache.org</url>
+    <name>SequencePlanner</name>
 
     <build>
         <plugins>
@@ -27,39 +26,37 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>supremica</groupId>
-            <artifactId>supremica</artifactId>
-            <version>1</version>
-        </dependency>
-        <dependency>
-            <groupId>supremica</groupId>
-            <artifactId>supremicaLib</artifactId>
-            <version>1</version>
-        </dependency>
-        <dependency>
-            <groupId>supremica</groupId>
-            <artifactId>supremica_SVN</artifactId>
-            <version>1</version>
-        </dependency>
-        <dependency>
-            <groupId>jgraphx</groupId>
-            <artifactId>jgraphx</artifactId>
+            <groupId>org.supremica</groupId>
+            <artifactId>supremica-lib</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>JGraphXlocal</groupId>
-            <artifactId>JGraphXlocal</artifactId>
+            <groupId>org.supremica</groupId>
+            <artifactId>supremica-svn</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.supremica</groupId>
+            <artifactId>xlocal</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
-            <type>jar</type>
+            <version>1.2.14</version>
         </dependency>
     </dependencies>
+
+  <repositories>
+    <repository>
+      <id>my-remote-local-site</id>
+      <url>https://github.com/z4zz/my-maven-repo/raw/master/releases</url>
+    </repository>
+  </repositories>
+
+
 </project>
