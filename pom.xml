@@ -86,7 +86,7 @@
   <repositories>
     <repository>
       <id>my-remote-local-site</id>
-      <url>https://github.com/z4zz/my-maven-repo/raw/master/releases</url>
+      <url>http://www.ohlson.be/maven/releases/</url>
     </repository>
   </repositories>
 
