@@ -47,6 +47,7 @@ import org.supremica.automata.algorithms.minimization.MinimizationOptions;
 
 import sequenceplanner.efaconverter.IdentifyOpRelations;
 import sequenceplanner.efaconverter.SPtoAutomatonConverter;
+import sequenceplanner.efaconverter.TransportPlanningConverter;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
@@ -565,6 +566,49 @@ public class SPContainer extends JPanel {
 
 				} catch (Exception q) {
 					q.printStackTrace();
+				}
+
+			}
+		}));
+                compile.add(newOperationView = new JMenuItem(new AbstractAction(
+				"EFA for transport planning") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// The user clicked on Create EFA
+
+				// Create a module of EFAs with Sequence Planner SOP as input
+				try {
+                                        TransportPlanningConverter converter = new TransportPlanningConverter(model);
+					//SPtoAutomatonConverter converter = new SPtoAutomatonConverter(model, 1);
+
+					ModuleSubject moduleSubject = converter.getModule().getModule();
+
+					String filepath = "";
+					JFileChooser fc = new JFileChooser(
+							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+					int fileResult = fc.showSaveDialog(null);
+					if (fileResult == JFileChooser.APPROVE_OPTION) {
+						filepath = fc.getSelectedFile().getAbsolutePath();
+
+						File file = new File(filepath);
+
+						file.createNewFile();
+                                                moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
+
+						ModuleSubjectFactory factory = new ModuleSubjectFactory();
+
+						// Save module to file
+
+						JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
+								factory, CompilerOperatorTable.getInstance());
+
+						marshaller.marshal(moduleSubject, file);
+
+					}
+
+				} catch (Exception t) {
+					t.printStackTrace();
 				}
 
 			}
