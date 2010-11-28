@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 // TODO Handle actions
 // TODO Remove preconditions when cell is removed.
 
+//FIXME EOH: Refact, move icon functions to new class.
 public class SequencePlanner {
 
    static int id = 0;
@@ -97,7 +98,7 @@ public class SequencePlanner {
       }
 
 
-      //TODO improve with new Java 6 splash screen feature.
+      //TODO improve with new Java 6 splash screen feature. Probably easiest with maven-jar-plugin
 	   /*
        * The new feature make it possible to show a simple splash screen even before JVM started.
        * This can then be replaced with the present splash screen.
