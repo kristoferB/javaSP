@@ -294,7 +294,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
          setChanged(false);
          updateName();
 
-         container.saveBackup();
+ //        saveBackup();
       } else {
          logger.debug("Save was called but with a empty name");
       }

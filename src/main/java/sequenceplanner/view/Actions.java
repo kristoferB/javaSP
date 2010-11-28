@@ -69,7 +69,7 @@ public class Actions {
       }
 
       public void actionPerformed(ActionEvent e) {
-         getAbstractView(e).getSPContainer().createResourceView(root);
+        // getAbstractView(e).getSPContainer().createResourceView(root);
       }
    }
 
@@ -83,9 +83,9 @@ public class Actions {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-         OperationView v = getAbstractView(e).getSPContainer().createOperationView(node.getNodeData().getName());
+        /* OperationView v = getAbstractView(e).getSPContainer().createOperationView(node.getNodeData().getName());
          Model model = getAbstractView(e).getModel();
-         v.open(model.getOperationRealizedBy(node.getId()));
+         v.open(model.getOperationRealizedBy(node.getId()));*/
 
       }
    }
