@@ -47,12 +47,12 @@ import org.supremica.automata.algorithms.minimization.MinimizationOptions;
 
 import sequenceplanner.efaconverter.IdentifyOpRelations;
 import sequenceplanner.efaconverter.SPtoAutomatonConverter;
-import sequenceplanner.efaconverter.TransportPlanningConverter;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.multiProduct.Calculation;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.view.operationView.OperationView;
@@ -69,707 +69,716 @@ import sequenceplanner.xml.SequencePlannerProjectFile;
  *
  * /
 
- /**
+/**
  *
  * @author Erik Ohlson
  */
 public class SPContainer extends JPanel {
 
-	private static int viewCounter = 0;
+    private static int viewCounter = 0;
+    // Container for most of the views
+    protected JTabbedPane viewPane;
+    // Container for project / Library views
+    protected JSplitPane projectPane;
+    // File, if this project is saved so far
+    File projectFile;
+    // Referense to the main data model
+    Model model;
+    // Filefilter for the project
+    private static final FileFilter filter = new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            return f.getName().toLowerCase().endsWith(".sopx") || f.isDirectory();
+        }
+
+        @Override
+        public String getDescription() {
+            return "Sequence Planner Project File";
+        }
+    };
+
+    public SPContainer() {
+        this.model = new Model();
+
+        initializePanes();
+
+        createOperationView("Free view " + Integer.toString(++viewCounter));
+
+    }
+
+    private void initializePanes() {
+        viewPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
+
+            @Override
+            public void add(Component component, Object constraints) {
+                super.add(component, new CustomTabComponent(SPContainer.this,
+                        component));
+                setTabComponentAt(indexOfComponent(component),
+                        new CustomTabComponent(SPContainer.this, component));
+                setSelectedComponent(component);
+            }
+        };
+
+        viewPane.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Component c = viewPane.getSelectedComponent();
+
+                Component prev = projectPane.getBottomComponent();
+                if (prev != null) {
+                    prev.setPreferredSize(new Dimension(prev.getWidth(), prev.getHeight()));
+                }
+
+                if (c != null) {
+                    JComponent input = ((AbstractView) c).getOutline();
+                    projectPane.setBottomComponent(input);
+                } else {
+                    projectPane.setBottomComponent(null);
+                }
+                projectPane.resetToPreferredSizes();
+
+            }
+        });
+
+        projectPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
+                new TreeView(this), new JPanel());
+        projectPane.setDividerSize(3);
+        projectPane.setResizeWeight(1.0);
 
-	// Container for most of the views
-	protected JTabbedPane viewPane;
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false,
+                projectPane, viewPane);
+
+        this.setLayout(new BorderLayout());
+        this.add(split, BorderLayout.CENTER);
 
-	// Container for project / Library views
-	protected JSplitPane projectPane;
+        this.add(initMenuPanel(), BorderLayout.NORTH);
+    }
 
-	// File, if this project is saved so far
-	File projectFile;
+    public void createResourceView(TreeNode root) {
+        String name = root.getNodeData().getName();
+        viewPane.add(new ResourceView(this, root, name), name);
 
-	// Referense to the main data model
-	Model model;
+    }
 
-	// Filefilter for the project
-	private static final FileFilter filter = new FileFilter() {
+    public OperationView createOperationView(String name) {
+        OperationView ov = new OperationView(this, name);
+        viewPane.add(ov, name);
+        return ov;
+    }
 
-		@Override
-		public boolean accept(File f) {
-			return f.getName().toLowerCase().endsWith(".sopx")
-					|| f.isDirectory();
-		}
+    public boolean createOperationView(ViewData d) {
+        OperationView ov = new OperationView(this, d);
+        for (int i = 0; i < viewPane.getTabCount(); i++) {
+            Component c = viewPane.getComponentAt(i);
+
+            if (c instanceof OperationView && ((OperationView) c).getName().equals(d.getName())) {
 
-		@Override
-		public String getDescription() {
-			return "Sequence Planner Project File";
-		}
-	};
+                viewPane.setSelectedIndex(i);
+                return true;
+            }
+        }
 
-	public SPContainer() {
-		this.model = new Model();
+        viewPane.add(ov, d.getName());
+        return true;
+    }
 
-		initializePanes();
+    public Model getModel() {
+        return model;
+    }
 
-		createOperationView("Free view " + Integer.toString(++viewCounter));
+    public void close(Component c) {
+        if (c instanceof AbstractView) {
+            if (((AbstractView) c).closeView()) {
+                viewPane.remove(c);
+            }
 
-	}
+        }
+    }
 
-	private void initializePanes() {
-		viewPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
+    private JMenuBar initMenuPanel() {
+        JMenuBar mb = new JMenuBar();
 
-			@Override
-			public void add(Component component, Object constraints) {
-				super.add(component, new CustomTabComponent(SPContainer.this,
-						component));
-				setTabComponentAt(indexOfComponent(component),
-						new CustomTabComponent(SPContainer.this, component));
-				setSelectedComponent(component);
-			}
-		};
+        JMenu file = new JMenu("File");
+        mb.add(file);
 
-		viewPane.addChangeListener(new ChangeListener() {
+        JMenuItem newOperationView = new JMenuItem(new AbstractAction(
+                "Create new OperationView") {
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component c = viewPane.getSelectedComponent();
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-				Component prev = projectPane.getBottomComponent();
-				if (prev != null) {
-					prev.setPreferredSize(new Dimension(prev.getWidth(), prev
-							.getHeight()));
-				}
+                createOperationView("Free view " + Integer.toString(++viewCounter));
+            }
+        });
 
-				if (c != null) {
-					JComponent input = ((AbstractView) c).getOutline();
-					projectPane.setBottomComponent(input);
-				} else {
-					projectPane.setBottomComponent(null);
-				}
-				projectPane.resetToPreferredSizes();
+        file.add(newOperationView);
 
-			}
-		});
+        newOperationView = new JMenuItem(new AbstractAction(
+                "Create new ResourceView") {
 
-		projectPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-				new TreeView(this), new JPanel());
-		projectPane.setDividerSize(3);
-		projectPane.setResizeWeight(1.0);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createResourceView(model.getResourceRoot());
+            }
+        });
 
-		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false,
-				projectPane, viewPane);
+        file.add(newOperationView);
 
-		this.setLayout(new BorderLayout());
-		this.add(split, BorderLayout.CENTER);
+        newOperationView = new JMenuItem(new AbstractAction("Exit") {
 
-		this.add(initMenuPanel(), BorderLayout.NORTH);
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
-	public void createResourceView(TreeNode root) {
-		String name = root.getNodeData().getName();
-		viewPane.add(new ResourceView(this, root, name), name);
+        file.add(newOperationView);
 
-	}
+        // ///////////////////////////////////////
+        // Start of EDIT menu //
+        // ///////////////////////////////////////
 
-	public OperationView createOperationView(String name) {
-		OperationView ov = new OperationView(this, name);
-		viewPane.add(ov, name);
-		return ov;
-	}
+        JMenu edit = new JMenu("Edit");
+        mb.add(edit);
 
-	public boolean createOperationView(ViewData d) {
-		OperationView ov = new OperationView(this, d);
-		for (int i = 0; i < viewPane.getTabCount(); i++) {
-			Component c = viewPane.getComponentAt(i);
+        JMenuItem pref = new JMenuItem(new AbstractAction("Preferences") {
 
-			if (c instanceof OperationView
-					&& ((OperationView) c).getName().equals(d.getName())) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PreferencePane pref = new PreferencePane();
+                Point p = getParent().getLocation();
 
-				viewPane.setSelectedIndex(i);
-				return true;
-			}
-		}
+                pref.setLocation(p.x + 300, p.y + 250);
 
-		viewPane.add(ov, d.getName());
-		return true;
-	}
+                pref.setVisible(true);
 
-	public Model getModel() {
-		return model;
-	}
+            }
+        });
+        edit.add(pref);
 
-	public void close(Component c) {
-		if (c instanceof AbstractView) {
-			if (((AbstractView) c).closeView()) {
-				viewPane.remove(c);
-			}
+        JMenuItem addAll = new JMenuItem(new AbstractAction(
+                "AddAllCellsToNewView") {
 
-		}
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OperationView v = createOperationView("ViewAll");
+                v.open(model.getChildren(model.getOperationRoot()));
+            }
+        });
+        edit.add(addAll);
 
-	private JMenuBar initMenuPanel() {
-		JMenuBar mb = new JMenuBar();
+        // ///////////////////////////////////////
+        // End of EDIT menu //
+        // ///////////////////////////////////////
 
-		JMenu file = new JMenu("File");
-		mb.add(file);
+        // ////////////////////////////////////
+        // Start of ProjectMenu //
+        // ////////////////////////////////////
 
-		JMenuItem newOperationView = new JMenuItem(new AbstractAction(
-				"Create new OperationView") {
+        JMenu project = new JMenu("Project");
+        JMenuItem open = new JMenuItem(new AbstractAction("Open") {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openModel();
+            }
+        });
 
-				createOperationView("Free view "
-						+ Integer.toString(++viewCounter));
-			}
-		});
+        project.add(open);
 
-		file.add(newOperationView);
+        JMenuItem save = new JMenuItem(new AbstractAction("Save") {
 
-		newOperationView = new JMenuItem(new AbstractAction(
-				"Create new ResourceView") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveModel(false);
+            }
+        });
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				createResourceView(model.getResourceRoot());
-			}
-		});
+        project.add(save);
 
-		file.add(newOperationView);
+        JMenuItem saveAs = new JMenuItem(new AbstractAction("Save as") {
 
-		newOperationView = new JMenuItem(new AbstractAction("Exit") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveModel(true);
+            }
+        });
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+        project.add(saveAs);
 
-		file.add(newOperationView);
+        JMenuItem close = new JMenuItem(new AbstractAction("Close") {
 
-		// ///////////////////////////////////////
-		// Start of EDIT menu //
-		// ///////////////////////////////////////
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
-		JMenu edit = new JMenu("Edit");
-		mb.add(edit);
+        project.add(close);
 
-		JMenuItem pref = new JMenuItem(new AbstractAction("Preferences") {
+        mb.add(project);
+        // ////////////////////////////////////
+        // End of ProjectMenu //
+        // ////////////////////////////////////
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				PreferencePane pref = new PreferencePane();
-				Point p = getParent().getLocation();
+        JMenu compile = new JMenu("Convert");
 
-				pref.setLocation(p.x + 300, p.y + 250);
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Verify nonblocking") {
 
-				pref.setVisible(true);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
 
-			}
-		});
-		edit.add(pref);
+                // Create a module of EFAs with Sequence Planner SOP as input
 
-		JMenuItem addAll = new JMenuItem(new AbstractAction(
-				"AddAllCellsToNewView") {
+                Runnable t = new Runnable() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				OperationView v = createOperationView("ViewAll");
-				v.open(model.getChildren(model.getOperationRoot()));
-			}
-		});
-		edit.add(addAll);
+                    @Override
+                    public void run() {
+                        try {
 
-		// ///////////////////////////////////////
-		// End of EDIT menu //
-		// ///////////////////////////////////////
+                            ProjectBuildFromWaters projectBuilder = new ProjectBuildFromWaters(
+                                    new DocumentManager());
+                            SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
+                                    model, 1);
+                            ModuleSubject moduleSubject = converter.getModule().getModule();
+                            Project efaProject = projectBuilder.build(moduleSubject);
 
-		// ////////////////////////////////////
-		// Start of ProjectMenu //
-		// ////////////////////////////////////
+                            VerificationOptions vo = new VerificationOptions();
+                            vo.setVerificationType(VerificationType.NONBLOCKING);
+                            vo.setAlgorithmType(VerificationAlgorithm.MONOLITHIC);
 
-		JMenu project = new JMenu("Project");
-		JMenuItem open = new JMenuItem(new AbstractAction("Open") {
+                            SynchronizationOptions so = new SynchronizationOptions();
+                            so.setSynchronizationType(SynchronizationType.FULL);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				openModel();
-			}
-		});
+                            MinimizationOptions mo = new MinimizationOptions();
 
-		project.add(open);
+                            AutomataVerifier av = new AutomataVerifier(
+                                    efaProject, vo, so, mo);
+                            Boolean success = av.verify();
 
-		JMenuItem save = new JMenuItem(new AbstractAction("Save") {
+                            JOptionPane.showInternalMessageDialog(
+                                    SPContainer.this,
+                                    (success ? "System is Non-blocking"
+                                    : "System is blocking"));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				saveModel(false);
-			}
-		});
+                        } catch (Exception t) {
+                            t.printStackTrace();
+                        }
+                    }
+                };
 
-		project.add(save);
+                SwingUtilities.invokeLater(t);
 
-		JMenuItem saveAs = new JMenuItem(new AbstractAction("Save as") {
+            }
+        }));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				saveModel(true);
-			}
-		});
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Save EFA as file (optimization)") {
 
-		project.add(saveAs);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
 
-		JMenuItem close = new JMenuItem(new AbstractAction("Close") {
+                // Create a module of EFAs with Sequence Planner SOP as input
+                try {
+                    SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
+                            model, 1);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+                    ModuleSubject moduleSubject = converter.getModule().getModule();
+                    moduleSubject.setName("Sequence Planner to EFA output");
 
-		project.add(close);
+                    String filepath = "";
+                    JFileChooser fc = new JFileChooser(
+                            "C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                    int fileResult = fc.showSaveDialog(null);
+                    if (fileResult == JFileChooser.APPROVE_OPTION) {
+                        filepath = fc.getSelectedFile().getAbsolutePath();
 
-		mb.add(project);
-		// ////////////////////////////////////
-		// End of ProjectMenu //
-		// ////////////////////////////////////
+                        File file = new File(filepath);
 
-		JMenu compile = new JMenu("Convert");
+                        file.createNewFile();
 
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Verify nonblocking") {
+                        ModuleSubjectFactory factory = new ModuleSubjectFactory();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+                        // Save module to file
 
-				// Create a module of EFAs with Sequence Planner SOP as input
+                        JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
+                                factory, CompilerOperatorTable.getInstance());
 
-				Runnable t = new Runnable() {
+                        marshaller.marshal(moduleSubject, file);
 
-					@Override
-					public void run() {
-						try {
+                    }
 
-							ProjectBuildFromWaters projectBuilder = new ProjectBuildFromWaters(
-									new DocumentManager());
-							SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
-									model, 1);
-							ModuleSubject moduleSubject = converter.getModule()
-									.getModule();
-							Project efaProject = projectBuilder
-									.build(moduleSubject);
+                } catch (Exception t) {
+                    t.printStackTrace();
+                }
 
-							VerificationOptions vo = new VerificationOptions();
-							vo.setVerificationType(VerificationType.NONBLOCKING);
-							vo.setAlgorithmType(VerificationAlgorithm.MONOLITHIC);
+            }
+        }));
 
-							SynchronizationOptions so = new SynchronizationOptions();
-							so.setSynchronizationType(SynchronizationType.FULL);
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Save EFA as file (reset)") {
 
-							MinimizationOptions mo = new MinimizationOptions();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
 
-							AutomataVerifier av = new AutomataVerifier(
-									efaProject, vo, so, mo);
-							Boolean success = av.verify();
+                // // Create a module of EFAs with Sequence Planner SOP as input
+                try {
+                    SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
+                            model, 2);
 
-							JOptionPane.showInternalMessageDialog(
-									SPContainer.this,
-									(success ? "System is Non-blocking"
-											: "System is blocking"));
+                    ModuleSubject moduleSubject = converter.getModule().getModule();
+                    moduleSubject.setName("Sequence Planner to EFA output");
 
-						} catch (Exception t) {
-							t.printStackTrace();
-						}
-					}
-				};
+                    String filepath = "";
+                    JFileChooser fc = new JFileChooser(
+                            "C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                    int fileResult = fc.showSaveDialog(null);
+                    if (fileResult == JFileChooser.APPROVE_OPTION) {
+                        filepath = fc.getSelectedFile().getAbsolutePath();
 
-				SwingUtilities.invokeLater(t);
+                        File file = new File(filepath);
 
-			}
-		}));
+                        file.createNewFile();
 
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Save EFA as file (optimization)") {
+                        ModuleSubjectFactory factory = new ModuleSubjectFactory();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+                        // Save module to file
 
-				// Create a module of EFAs with Sequence Planner SOP as input
-				try {
-					SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
-							model, 1);
+                        JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
+                                factory, CompilerOperatorTable.getInstance());
 
-					ModuleSubject moduleSubject = converter.getModule()
-							.getModule();
-					moduleSubject.setName("Sequence Planner to EFA output");
+                        marshaller.marshal(moduleSubject, file);
 
-					String filepath = "";
-					JFileChooser fc = new JFileChooser(
-							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-					int fileResult = fc.showSaveDialog(null);
-					if (fileResult == JFileChooser.APPROVE_OPTION) {
-						filepath = fc.getSelectedFile().getAbsolutePath();
+                    }
 
-						File file = new File(filepath);
+                } catch (Exception t) {
+                    t.printStackTrace();
+                }
 
-						file.createNewFile();
+            }
+        }));
 
-						ModuleSubjectFactory factory = new ModuleSubjectFactory();
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Save cost automata as file") {
 
-						// Save module to file
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
+                try {
+                    SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
+                            model, 1);
 
-						JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
-								factory, CompilerOperatorTable.getInstance());
+                    Automata costAutomata = converter.getCostAutomata();
 
-						marshaller.marshal(moduleSubject, file);
+                    String filepath = "";
+                    JFileChooser fc = new JFileChooser(
+                            "C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                    int fileResult = fc.showSaveDialog(null);
+                    if (fileResult == JFileChooser.APPROVE_OPTION) {
+                        filepath = fc.getSelectedFile().getAbsolutePath();
 
-					}
+                        File fil = new File(filepath);
 
-				} catch (Exception t) {
-					t.printStackTrace();
-				}
+                        fil.createNewFile();
 
-			}
-		}));
+                        AutomataToXML a = new AutomataToXML(costAutomata);
 
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Save EFA as file (reset)") {
+                        a.serialize(filepath);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+                    } else {
+                        System.out.println("User clicked cancel...");
+                    }
+                } catch (Exception w) {
+                    w.printStackTrace();
+                }
 
-				// // Create a module of EFAs with Sequence Planner SOP as input
-				try {
-					SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
-							model, 2);
+            }
+        }));
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Save optimal automaton as file") {
 
-					ModuleSubject moduleSubject = converter.getModule()
-							.getModule();
-					moduleSubject.setName("Sequence Planner to EFA output");
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
 
-					String filepath = "";
-					JFileChooser fc = new JFileChooser(
-							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-					int fileResult = fc.showSaveDialog(null);
-					if (fileResult == JFileChooser.APPROVE_OPTION) {
-						filepath = fc.getSelectedFile().getAbsolutePath();
+                try {
+                    SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
+                            model, 5);
 
-						File file = new File(filepath);
+                    Automata totalAutomata = converter.getTotalAutomata();
 
-						file.createNewFile();
+                    Automaton optimizedAutomaton = converter.optimizeAutomata(totalAutomata);
 
-						ModuleSubjectFactory factory = new ModuleSubjectFactory();
+                    String filepath = "";
+                    JFileChooser fc = new JFileChooser(
+                            "C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                    int fileResult = fc.showSaveDialog(null);
+                    if (fileResult == JFileChooser.APPROVE_OPTION) {
+                        filepath = fc.getSelectedFile().getAbsolutePath();
 
-						// Save module to file
+                        File fil = new File(filepath);
 
-						JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
-								factory, CompilerOperatorTable.getInstance());
+                        fil.createNewFile();
 
-						marshaller.marshal(moduleSubject, file);
+                        AutomataToXML a = new AutomataToXML(optimizedAutomaton);
 
-					}
+                        a.serialize(filepath);
 
-				} catch (Exception t) {
-					t.printStackTrace();
-				}
+                    }
 
-			}
-		}));
+                } catch (Exception q) {
+                    q.printStackTrace();
+                }
 
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Save cost automata as file") {
+            }
+        }));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
-				try {
-					SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
-							model, 1);
+        compile.add(newOperationView = new JMenuItem(new AbstractAction(
+                "Identify Relations") {
 
-					Automata costAutomata = converter.getCostAutomata();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // The user clicked on Create EFA
 
-					String filepath = "";
-					JFileChooser fc = new JFileChooser(
-							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-					int fileResult = fc.showSaveDialog(null);
-					if (fileResult == JFileChooser.APPROVE_OPTION) {
-						filepath = fc.getSelectedFile().getAbsolutePath();
+                try {
+                    IdentifyOpRelations idOp = new IdentifyOpRelations();
+                    idOp.identifyRelations(model);
 
-						File fil = new File(filepath);
+                } catch (Exception q) {
+                    q.printStackTrace();
+                }
 
-						fil.createNewFile();
+            }
+        }));
 
-						AutomataToXML a = new AutomataToXML(costAutomata);
+        mb.add(compile);
 
-						a.serialize(filepath);
 
-					} else {
-						System.out.println("User clicked cancel...");
-					}
-				} catch (Exception w) {
-					w.printStackTrace();
-				}
+        JMenu multiProduct = new JMenu("MP");
+        mb.add(multiProduct);
+        JMenuItem calculation = new JMenuItem(new AbstractAction("Print Product types and op in model") {
 
-			}
-		}));
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Save optimal automaton as file") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Calculation calc = new Calculation(model);
+                calc.printProductTypes();
+            }
+        });
+        multiProduct.add(calculation);
+        multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning") {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Create a module of EFAs with Sequence Planner SOP as input
+                Calculation calc = new Calculation(model);
+                String answer = calc.transportPlanningDialog();
+                if (answer != null) {
+                    try {
+                        ModuleSubject moduleSubject = calc.transportPlanningProductType(answer).getModule();
+                        String filepath = "";
+                        JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                        int fileResult = fc.showSaveDialog(null);
+                        if (fileResult == JFileChooser.APPROVE_OPTION) {
+                            filepath = fc.getSelectedFile().getAbsolutePath();
+                            File file = new File(filepath);
+                            file.createNewFile();
+                            moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
+                            ModuleSubjectFactory factory = new ModuleSubjectFactory();
+                            // Save module to file
+                            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+                            marshaller.marshal(moduleSubject, file);
+                        }
+                    } catch (Exception t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        }));
+        multiProduct.add(new JMenuItem(new AbstractAction("Update model after transport planning") {
 
-				try {
-					SPtoAutomatonConverter converter = new SPtoAutomatonConverter(
-							model, 5);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Calculation(model).updateModelAfterTransportPlanning();
 
-					Automata totalAutomata = converter.getTotalAutomata();
+            }
+        }));
+        multiProduct.add(new JMenuItem(new AbstractAction("EFA for MP supervisor") {
 
-					Automaton optimizedAutomaton = converter
-							.optimizeAutomata(totalAutomata);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Create a module of EFAs with Sequence Planner SOP as input
+                Calculation calc = new Calculation(model);
+                String answer = calc.transportPlanningDialog();
+                if (answer != null) {
+                    try {
+                        ModuleSubject moduleSubject = calc. EFAForMultiProductSupervisor().getModule();
+                        String filepath = "";
+                        JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+                        int fileResult = fc.showSaveDialog(null);
+                        if (fileResult == JFileChooser.APPROVE_OPTION) {
+                            filepath = fc.getSelectedFile().getAbsolutePath();
+                            File file = new File(filepath);
+                            file.createNewFile();
+                            moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
+                            ModuleSubjectFactory factory = new ModuleSubjectFactory();
+                            // Save module to file
+                            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+                            marshaller.marshal(moduleSubject, file);
+                        }
+                    } catch (Exception t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        }));
+        return mb;
+    }
 
-					String filepath = "";
-					JFileChooser fc = new JFileChooser(
-							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-					int fileResult = fc.showSaveDialog(null);
-					if (fileResult == JFileChooser.APPROVE_OPTION) {
-						filepath = fc.getSelectedFile().getAbsolutePath();
+    public boolean openModel() {
+        JFileChooser fc = new JFileChooser("user.dir");
 
-						File fil = new File(filepath);
+        fc.setFileFilter(filter);
+        int answer = fc.showOpenDialog(null);
 
-						fil.createNewFile();
+        if (answer == JFileChooser.APPROVE_OPTION) {
+            closeAllOpenWindows();
+            openModel(fc.getSelectedFile());
+            model.reloadNamesCache();
+            try {
+                ViewData toOpen = (ViewData) model.getViewRoot().getChildAt(0).getNodeData();
+                createOperationView(toOpen);
 
-						AutomataToXML a = new AutomataToXML(optimizedAutomaton);
+            } catch (ClassCastException e) {
+                System.out.println("Could not cast first child of viewroot to viewData");
+            }
+            return true;
+        }
+        return false;
+    }
 
-						a.serialize(filepath);
+    public void closeAllOpenWindows() {
+        for (int i = 0; i < viewPane.getTabCount(); i++) {
+            close(viewPane.getComponentAt(i));
 
-					}
+        }
 
-				} catch (Exception q) {
-					q.printStackTrace();
-				}
+    }
 
-			}
-		}));
+    public boolean openModel(File inputFile) {
 
-		compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"Identify Relations") {
+        SequencePlannerProjectFile project = null;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+        try {
+            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(SequencePlannerProjectFile.class.getPackage().getName());
+            javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
+            project = (SequencePlannerProjectFile) unmarshaller.unmarshal(inputFile);
 
-				try {
-					IdentifyOpRelations idOp = new IdentifyOpRelations();
-					idOp.identifyRelations(model);
+        } catch (javax.xml.bind.JAXBException ex) {
+            java.util.logging.Logger.getLogger("global").log(
+                    java.util.logging.Level.SEVERE, null, ex); // NOI18N
+            return false;
+        } catch (ClassCastException ex) {
+            System.out.println("Class Cast Error in openModel");
+            return false;
+        }
 
-				} catch (Exception q) {
-					q.printStackTrace();
-				}
+        ConvertFromXML con = new ConvertFromXML(model);
+        model = con.convert(project);
 
-			}
-		}));
-                compile.add(newOperationView = new JMenuItem(new AbstractAction(
-				"EFA for transport planning") {
+        model.rootUpdated();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The user clicked on Create EFA
+        return false;
+    }
 
-				// Create a module of EFAs with Sequence Planner SOP as input
-				try {
-                                        TransportPlanningConverter converter = new TransportPlanningConverter(model);
-					//SPtoAutomatonConverter converter = new SPtoAutomatonConverter(model, 1);
+    // sopx
+    public boolean saveModel(boolean saveAs) {
 
-					ModuleSubject moduleSubject = converter.getModule().getModule();
+        if (projectFile == null && !saveAs) {
+            saveAs = true;
+        }
 
-					String filepath = "";
-					JFileChooser fc = new JFileChooser(
-							"C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-					int fileResult = fc.showSaveDialog(null);
-					if (fileResult == JFileChooser.APPROVE_OPTION) {
-						filepath = fc.getSelectedFile().getAbsolutePath();
+        if (saveAs) {
+            String filepath = "";
 
-						File file = new File(filepath);
+            JFileChooser fc = new JFileChooser("user.dir");
+            fc.setFileFilter(filter);
 
-						file.createNewFile();
-                                                moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
+            int fileResult = fc.showSaveDialog(null);
 
-						ModuleSubjectFactory factory = new ModuleSubjectFactory();
+            if (fileResult == JFileChooser.APPROVE_OPTION) {
+                filepath = fc.getSelectedFile().getAbsolutePath();
 
-						// Save module to file
+                filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
+                        : filepath + Constansts.FILEFORMAT;
 
-						JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(
-								factory, CompilerOperatorTable.getInstance());
+                if (filepath.endsWith(Constansts.FILEFORMAT)) {
 
-						marshaller.marshal(moduleSubject, file);
+                    projectFile = saveModelToFile(filepath);
+                    return true;
+                }
+            }
+        } else {
+            return saveModelToFile(projectFile);
+        }
 
-					}
+        return false;
+    }
 
-				} catch (Exception t) {
-					t.printStackTrace();
-				}
+    public void saveBackup() {
+        if (projectFile != null) {
+            String path = projectFile.getParent();
+            path = path + File.separatorChar + "backup";
 
-			}
-		}));
+            File f = new File(path);
+            f.mkdir();
 
-		mb.add(compile);
+            Calendar c = Calendar.getInstance();
+            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
 
-		return mb;
-	}
+            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constansts.FILEFORMAT;
+            saveModelToFile(path);
+        }
+    }
 
-	public boolean openModel() {
-		JFileChooser fc = new JFileChooser("user.dir");
+    public File saveModelToFile(String filepath) {
+        File file = new File(filepath);
 
-		fc.setFileFilter(filter);
-		int answer = fc.showOpenDialog(null);
+        try {
+            file.createNewFile();
+            saveModelToFile(file);
+            return file;
 
-		if (answer == JFileChooser.APPROVE_OPTION) {
-			closeAllOpenWindows();
-			openModel(fc.getSelectedFile());
-			model.reloadNamesCache();
-			try {
-				ViewData toOpen = (ViewData) model.getViewRoot().getChildAt(0)
-						.getNodeData();
-				createOperationView(toOpen);
+        } catch (IOException ex) {
+            System.out.println("File save error\n " + ex.getMessage());
+            return null;
+        }
+    }
 
-			} catch (ClassCastException e) {
-				System.out
-						.println("Could not cast first child of viewroot to viewData");
-			}
-			return true;
-		}
-		return false;
-	}
+    public boolean saveModelToFile(File file) {
+        ConvertToXML converter = new ConvertToXML(model);
+        SequencePlannerProjectFile project = converter.convert();
 
-	public void closeAllOpenWindows() {
-		for (int i = 0; i < viewPane.getTabCount(); i++) {
-			close(viewPane.getComponentAt(i));
+        try {
+            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(project.getClass().getPackage().getName());
+            javax.xml.bind.Marshaller marshaller = jaxbCtx.createMarshaller();
+            marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING,
+                    "UTF-8"); // NOI18N
+            marshaller.setProperty(
+                    javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT,
+                    Boolean.TRUE);
+            marshaller.marshal(project, new FileOutputStream(file));
+            return true;
 
-		}
-
-	}
-
-	public boolean openModel(File inputFile) {
-
-		SequencePlannerProjectFile project = null;
-
-		try {
-			javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext
-					.newInstance(SequencePlannerProjectFile.class.getPackage()
-							.getName());
-			javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx
-					.createUnmarshaller();
-			project = (SequencePlannerProjectFile) unmarshaller
-					.unmarshal(inputFile);
-
-		} catch (javax.xml.bind.JAXBException ex) {
-			java.util.logging.Logger.getLogger("global").log(
-					java.util.logging.Level.SEVERE, null, ex); // NOI18N
-			return false;
-		} catch (ClassCastException ex) {
-			System.out.println("Class Cast Error in openModel");
-			return false;
-		}
-
-		ConvertFromXML con = new ConvertFromXML(model);
-		model = con.convert(project);
-
-		model.rootUpdated();
-
-		return false;
-	}
-
-	// sopx
-	public boolean saveModel(boolean saveAs) {
-
-		if (projectFile == null && !saveAs) {
-			saveAs = true;
-		}
-
-		if (saveAs) {
-			String filepath = "";
-
-			JFileChooser fc = new JFileChooser("user.dir");
-			fc.setFileFilter(filter);
-
-			int fileResult = fc.showSaveDialog(null);
-
-			if (fileResult == JFileChooser.APPROVE_OPTION) {
-				filepath = fc.getSelectedFile().getAbsolutePath();
-
-				filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
-						: filepath + Constansts.FILEFORMAT;
-
-				if (filepath.endsWith(Constansts.FILEFORMAT)) {
-
-					projectFile = saveModelToFile(filepath);
-					return true;
-				}
-			}
-		} else {
-			return saveModelToFile(projectFile);
-		}
-
-		return false;
-	}
-
-	public void saveBackup() {
-		if (projectFile != null) {
-			String path = projectFile.getParent();
-			path = path + File.separatorChar + "backup";
-
-			File f = new File(path);
-			f.mkdir();
-
-			Calendar c = Calendar.getInstance();
-			String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH)
-					+ c.get(Calendar.DAY_OF_MONTH) + "-"
-					+ c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE)
-					+ "" + c.get(Calendar.SECOND) + "."
-					+ c.get(Calendar.MILLISECOND);
-
-			path = path + File.separatorChar + projectFile.getName() + "_"
-					+ date + Constansts.FILEFORMAT;
-			saveModelToFile(path);
-		}
-	}
-
-	public File saveModelToFile(String filepath) {
-		File file = new File(filepath);
-
-		try {
-			file.createNewFile();
-			saveModelToFile(file);
-			return file;
-
-		} catch (IOException ex) {
-			System.out.println("File save error\n " + ex.getMessage());
-			return null;
-		}
-	}
-
-	public boolean saveModelToFile(File file) {
-		ConvertToXML converter = new ConvertToXML(model);
-		SequencePlannerProjectFile project = converter.convert();
-
-		try {
-			javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext
-					.newInstance(project.getClass().getPackage().getName());
-			javax.xml.bind.Marshaller marshaller = jaxbCtx.createMarshaller();
-			marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING,
-					"UTF-8"); // NOI18N
-			marshaller.setProperty(
-					javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
-			marshaller.marshal(project, new FileOutputStream(file));
-			return true;
-
-		} catch (javax.xml.bind.JAXBException ex) {
-			throw new RuntimeException("File save error\n " + ex.getMessage(), ex);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (javax.xml.bind.JAXBException ex) {
+            throw new RuntimeException("File save error\n " + ex.getMessage(), ex);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
