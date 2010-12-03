@@ -105,8 +105,8 @@ public class Calculation {
         module.addAutomaton(efa);
         efa.addState(TypeVar.LOCATION, true, true);
         //Transport transitions
-        sourcePos.remove(TypeVar.POS_EPS);
-        destPos.remove(TypeVar.POS_EPS);
+        sourcePos.remove(TypeVar.POS_OUT);
+        destPos.remove(TypeVar.POS_OUT);
         its = destPos.iterator();
         while (its.hasNext()) {
             String dest = its.next();
@@ -243,8 +243,7 @@ public class Calculation {
     }
 
     public Module EFAForMultiProductSupervisor() {
-        Module module = new Module("MP", false);
-        
-        return module;
+        String[] products = {"P1","P5"};
+        return new EFAforSupervisor(products,model).getModule();
     }
 }

@@ -103,7 +103,7 @@ public class SequencePlanner {
        * The new feature make it possible to show a simple splash screen even before JVM started.
        * This can then be replaced with the present splash screen.
        */
-      showSplash(bounds);
+      //showSplash(bounds);
 
       JFrame sc = new JFrame("Sequence Planner");
       sc.setIconImage(getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
@@ -157,7 +157,7 @@ public class SequencePlanner {
       if (screen < 0) {
          System.out.println("Only allowed input is screen=[What screen to start the application on]");
          System.out.println("-----------------\nUsing default values (Screen=0)s\n----------------");
-         screen = 0;
+         screen = 1;
       }
       final int screen1 = screen;
       SwingUtilities.invokeLater(new Runnable() {

@@ -31,14 +31,22 @@ public class TypeVar {
     //MultiProduct
     public final static String SEPARATION = "_";
     final static String POS = "p";
-    final static String POS_EPS = POS + "Eps";
+    final static String POS_OUT = "out";
+    final static String POS_MERGE = "mrg";
     final static String POS_PROCESS = SEPARATION + "p";
     final static String POS_MOVE = SEPARATION + "m";
     final static String PROCESSING_LEVEL = SEPARATION + "pl";
+    final static Integer PROCESSING_LEVEL_COUNT_LIMIT = 3; //just a large number. 0->7 gives 3 bits.
+    final static String LIMIT = SEPARATION + "limit";
     final static String YES = "1";
     final static String NO = "0";
     public final static String TRANSPORT = "t";
     final static String LOCATION = "PM";
+    public final static String SP_RESOURCE_POSITIONS = "Positions";
+    public final static String SP_RESOURCE_PRODUCTS = "Products";
+    public final static String SP_RESOURCE_CAPACITY = "Capacity";
+    public final static String SP_RESOURCE_LIMIT = "Limit";
+
     //Description
     final static String DESC_KEYSEPARATION = "#";
     final static String DESC_VALUESEPARATION = ":";
@@ -52,6 +60,9 @@ public class TypeVar {
     final static String ED_PROCESSING_LEVEL_COUNTER = "plCount";
     public final static String ED_PROCESSING_LEVEL_COUNTER_NO = "no";
     final static String ED_MERGE = "merge";
-    final static String ED_GUARD = "gurad";
+    final static String ED_GUARD = "guard";
+    final static String ED_ORDER = "order";
+    public final static String ED_ORDER_FIRST = "first";
+    public final static String ED_ORDER_LAST = "last";
 
 }

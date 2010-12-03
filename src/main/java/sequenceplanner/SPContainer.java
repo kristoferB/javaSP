@@ -614,10 +614,10 @@ public class SPContainer extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Create a module of EFAs with Sequence Planner SOP as input
                 Calculation calc = new Calculation(model);
-                String answer = calc.transportPlanningDialog();
-                if (answer != null) {
+//                String answer = calc.transportPlanningDialog(); //Change to similar by with checkboxs
+//                if (answer != null) {
                     try {
-                        ModuleSubject moduleSubject = calc. EFAForMultiProductSupervisor().getModule();
+                        ModuleSubject moduleSubject = calc.EFAForMultiProductSupervisor().getModule();
                         String filepath = "";
                         JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
                         int fileResult = fc.showSaveDialog(null);
@@ -634,7 +634,7 @@ public class SPContainer extends JPanel {
                     } catch (Exception t) {
                         t.printStackTrace();
                     }
-                }
+//                }
             }
         }));
         return mb;
