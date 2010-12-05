@@ -122,14 +122,17 @@ public class SequencePlanner {
 
 
       RootWindow rootWindow = DockingUtil.createRootWindow(SPC.getViewMap(), true);
+ 
+      rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0), new TabWindow(SPC.getOpView(0))));
 
-      rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0),new TabWindow(SPC.getOpView(0))));
+
       sc.getContentPane().add(rootWindow);
       SPC.setRoot(rootWindow);
       
       menuBar.setEnabled(true);
       sc.setVisible(true);
       sc.toFront();
+
    }
 
    /**

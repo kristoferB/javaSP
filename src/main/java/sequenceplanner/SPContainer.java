@@ -2,8 +2,9 @@ package sequenceplanner;
 
 
 import net.infonode.docking.RootWindow;
+import net.infonode.docking.SplitWindow;
+import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
-import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
 
@@ -30,15 +31,18 @@ import sequenceplanner.view.treeView.TreeView;
 public class SPContainer{
         //Variable for holding all views
         private View[] operationViews = new View[50];
+        private View[] resourceViews = new View[50];
         private View[] nonOperationViews = new View[15];
         private RootWindow rootWindow;
+        private TabWindow tabWindow;
 
         //Map of all the views
         private ViewMap viewMap = new ViewMap();
 
+	protected static int viewCounter = 0;
+        private int opViewCounter = 0;
+        private int reViewCounter = 0;
 
-
-	protected static int viewCounter = 1;
         //Not used
         /*
 	// Container for most of the views
@@ -70,14 +74,21 @@ public class SPContainer{
             return nonOperationViews[i];
         }
 
+        public TabWindow getTabWindow(){
+            return tabWindow;
+        }
+
+        public void setTabWindow(TabWindow tw){
+            tabWindow.addTab(tw);
+        }
+
+
+
 	public SPContainer() {
 		this.model = new Model();
-
 		initializePanes();
 
 		//createOperationView("Free view " + Integer.toString(1));
-
-
 
 	}
 
@@ -86,9 +97,13 @@ public class SPContainer{
             nonOperationViews[0] = new View("TreeView ", null, new TreeView(this));
             viewMap.addView(0, nonOperationViews[0]);
 
-            operationViews[0] = new View("OpView"+ 1, null, new OperationView(this, "OpView"));
+            operationViews[0] = new View("OperationView"+ 1, null, new OperationView(this, "OperationView"));
             viewMap.addView(1, operationViews[0]);
 
+            tabWindow = new TabWindow();
+           
+
+  
             /*
 
 		//viewPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
@@ -146,20 +161,41 @@ public class SPContainer{
 
 
 	public void createResourceView(TreeNode root) {
-		String name = root.getNodeData().getName();
-		operationViews[viewCounter++] = new View(name,null,new ResourceView(this, root, name));
+            
+            viewCounter++;
+
+            resourceViews[++reViewCounter] = new View("ResourceView" + (reViewCounter+1),null, new ResourceView(this, root, "Name"));
+
+                viewMap.addView(viewCounter, resourceViews[reViewCounter]);
+
+                if(reViewCounter == 1)
+                    tabWindow.addTab(resourceViews[0]);
+
+                tabWindow.addTab(resourceViews[reViewCounter]);
+
+                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
 
 	}
 
 	public void createOperationView(String name) {
-            System.out.print("\n!" + viewCounter);
 
-                operationViews[++viewCounter] = new View("OpView" + viewCounter,null, new OperationView(this, "Name"));
-                System.out.print("\n¤"+viewCounter);
-                viewMap.addView(viewCounter, operationViews[viewCounter]);
-                System.out.print("\n%" + viewCounter);
-                operationViews[1].getParent().addTab(operationViews[viewCounter]);
-                operationViews[viewCounter].getTopLevelAncestor().setVisible(true);
+            viewCounter++;
+
+            operationViews[++opViewCounter] = new View("OperationView" + (opViewCounter+1),null, new OperationView(this, "Name"));
+
+                viewMap.addView(viewCounter, operationViews[opViewCounter]);
+
+                if(opViewCounter == 1)
+                    tabWindow.addTab(operationViews[0]);
+                
+                tabWindow.addTab(operationViews[opViewCounter]);
+           
+                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
+
+             //   TabWindow op = new TabWindow(operationViews[viewCounter]);
+           
+       //       operationViews[1].getParent().addTab(operationViews[viewCounter]);
+   //             operationViews[viewCounter].getTopLevelAncestor().setVisible(true);
              //   DockingUtil.addWindow(operationViews[viewCounter], getRootWindow());
 		//OperationView ov = new OperationView(this, name);
 		//viewPane.add(ov, name);

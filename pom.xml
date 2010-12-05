@@ -43,10 +43,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org</groupId>
-            <artifactId>idw-gpl.jar</artifactId>
-            <version>1</version>
-            <type>jar</type>
+            <groupId>net</groupId>
+            <artifactId>idw</artifactId>
+            <version>gpl</version>
         </dependency>
     </dependencies>
 

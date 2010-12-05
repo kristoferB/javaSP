@@ -171,7 +171,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 		h -= 3;
 
 		// Shadow
-		g.setColor(Color.gray);
+                g.setColor(Color.gray);
 		g.fillRoundRect(x + 3, y + 3, w, h, 5, 5);
 
 		g.setColor(new Color(206, 229, 164));
