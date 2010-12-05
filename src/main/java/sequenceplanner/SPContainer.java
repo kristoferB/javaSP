@@ -157,9 +157,10 @@ public class SPContainer {
      */
     public void updateTabWindow() {
 
-        tabWindow.addTab(operationViews[viewCounter - 1]);
-        tabWindow.addTab(resourceViews[1]);
-
+        tabWindow.addTab(operationViews[opViewCounter]);
+        if(reViewCounter > 0){
+            tabWindow.addTab(resourceViews[reViewCounter]);
+        }
         rootWindow.setWindow(new SplitWindow(true, 0.1f, nonOperationViews[0], tabWindow));
     }
 
@@ -168,14 +169,14 @@ public class SPContainer {
      * @param root TreeNode object containing all of the current resources.
      */
     public void createResourceView(TreeNode root) {
-        if (reViewCounter == 0) {
+ //       if (reViewCounter == 0) {
             viewCounter++;
-            resourceViews[++reViewCounter] = new View("ResourceView", null, new ResourceView(this, root, "Name"));
+            resourceViews[++reViewCounter] = new View("ResourceView" + (reViewCounter), null, new ResourceView(this, root, "Name"));
             System.out.print(reViewCounter);
             viewMap.addView(viewCounter, resourceViews[reViewCounter]);
 
             updateTabWindow();
-        }
+   //     }
     }
 
     /**

@@ -1,6 +1,7 @@
 package sequenceplanner;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -70,12 +71,12 @@ public class SequencePlanner {
     * @param screen the screen
     */
    public SequencePlanner(int screen) {
-      this();
+   /* this();
       try {
          UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
       } catch (Exception e) {
       }
-
+   */
       createStartWindow(screen);
    }
 
@@ -118,11 +119,10 @@ public class SequencePlanner {
       sc.setLocation(bounds.x, bounds.y);
       sc.setSize(bounds.width, bounds.height);
       sc.setLayout(new BorderLayout());
-     // sc.setContentPane(new SPContainer());
-
+  //  sc.setContentPane(new SPContainer());
 
       RootWindow rootWindow = DockingUtil.createRootWindow(SPC.getViewMap(), true);
- 
+          
       rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0), new TabWindow(SPC.getOpView(0))));
 
 
