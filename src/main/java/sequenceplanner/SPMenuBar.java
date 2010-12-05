@@ -88,7 +88,7 @@ public class SPMenuBar extends JMenuBar{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+                            System.out.print("#");
 				spc.createOperationView("Operations view "+ SPContainer.viewCounter);
 			}
 		});

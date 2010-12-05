@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
+import net.infonode.docking.TabWindow;
 import net.infonode.docking.util.DockingUtil;
 
 import org.apache.log4j.BasicConfigurator;
@@ -122,11 +123,10 @@ public class SequencePlanner {
 
       RootWindow rootWindow = DockingUtil.createRootWindow(SPC.getViewMap(), true);
 
-      rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0),SPC.getOpView(0)));
+      rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0),new TabWindow(SPC.getOpView(0))));
       sc.getContentPane().add(rootWindow);
-
-
-      //rootWindow.add(menuBar, NORTH)
+      SPC.setRoot(rootWindow);
+      
       menuBar.setEnabled(true);
       sc.setVisible(true);
       sc.toFront();
