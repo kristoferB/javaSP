@@ -54,7 +54,7 @@ public class SPContainer{
 
 
 	// Referense to the main data model
-	Model model;
+	private Model model;
 
         public RootWindow getRootWindow(){
             return this.rootWindow;
@@ -158,25 +158,36 @@ public class SPContainer{
         //End of InitializePanes
 
 
+        /**
+         * Updates all of the current views.
+         */
+        public void updateTabWindow(){
+
+                tabWindow.addTab(operationViews[viewCounter-1]);
+                tabWindow.addTab(resourceViews[1]);
+                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
+            }
 
 
+        /**
+         * Create a resource view and adds it to the tabWindow
+         * @param root TreeNode object containing all of the current resources.
+         */
 	public void createResourceView(TreeNode root) {
-            
             viewCounter++;
 
-            resourceViews[++reViewCounter] = new View("ResourceView" + (reViewCounter+1),null, new ResourceView(this, root, "Name"));
+            resourceViews[++reViewCounter] = new View("ResourceView",null, new ResourceView(this, root, "Name"));
+            System.out.print(reViewCounter);
+            viewMap.addView(viewCounter, resourceViews[reViewCounter]);
 
-                viewMap.addView(viewCounter, resourceViews[reViewCounter]);
-
-                if(reViewCounter == 1)
-                    tabWindow.addTab(resourceViews[0]);
-
-                tabWindow.addTab(resourceViews[reViewCounter]);
-
-                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
+                updateTabWindow();
 
 	}
 
+        /**
+         * Creates new OperationView and adds it to the tabbed window
+         * @param name
+         */
 	public void createOperationView(String name) {
 
             viewCounter++;
@@ -188,18 +199,8 @@ public class SPContainer{
                 if(opViewCounter == 1)
                     tabWindow.addTab(operationViews[0]);
                 
-                tabWindow.addTab(operationViews[opViewCounter]);
-           
-                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
+                updateTabWindow();
 
-             //   TabWindow op = new TabWindow(operationViews[viewCounter]);
-           
-       //       operationViews[1].getParent().addTab(operationViews[viewCounter]);
-   //             operationViews[viewCounter].getTopLevelAncestor().setVisible(true);
-             //   DockingUtil.addWindow(operationViews[viewCounter], getRootWindow());
-		//OperationView ov = new OperationView(this, name);
-		//viewPane.add(ov, name);
-		//return ov;
 	}
 
 /*	public boolean createOperationView(ViewData d) {
