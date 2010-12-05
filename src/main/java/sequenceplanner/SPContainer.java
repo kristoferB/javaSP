@@ -1,6 +1,5 @@
 package sequenceplanner;
 
-
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
@@ -24,205 +23,198 @@ import sequenceplanner.view.treeView.TreeView;
  *
  * /
 
- /**
+/**
  *
  * @author Erik Ohlson
  */
-public class SPContainer{
-        //Variable for holding all views
-        private View[] operationViews = new View[50];
-        private View[] resourceViews = new View[50];
-        private View[] nonOperationViews = new View[15];
-        private RootWindow rootWindow;
-        private TabWindow tabWindow;
+public class SPContainer {
+    //Variable for holding all views
 
-        //Map of all the views
-        private ViewMap viewMap = new ViewMap();
-
-	protected static int viewCounter = 0;
-        private int opViewCounter = 0;
-        private int reViewCounter = 0;
-
-        //Not used
+    private View[] operationViews = new View[50];
+    private View[] resourceViews = new View[50];
+    private View[] nonOperationViews = new View[15];
+    private RootWindow rootWindow;
+    private TabWindow tabWindow;
+    //Map of all the views
+    private ViewMap viewMap = new ViewMap();
+    protected static int viewCounter = 0;
+    private int opViewCounter = 0;
+    private int reViewCounter = 0;
+    //Not used
         /*
-	// Container for most of the views
-	protected JTabbedPane viewPane;
+    // Container for most of the views
+    protected JTabbedPane viewPane;
 
-	// Container for project / Library views
-	protected JSplitPane projectPane;
-        */
+    // Container for project / Library views
+    protected JSplitPane projectPane;
+     */
+    // Referense to the main data model
+    private Model model;
+
+    public RootWindow getRootWindow() {
+        return this.rootWindow;
+    }
+
+    public void setRoot(RootWindow r) {
+        this.rootWindow = r;
+    }
+
+    public ViewMap getViewMap() {
+        return viewMap;
+    }
+
+    public View getOpView(int i) {
+        return operationViews[i];
+    }
+
+    public View getNonOpView(int i) {
+        return nonOperationViews[i];
+    }
+
+    public TabWindow getTabWindow() {
+        return tabWindow;
+    }
+
+    public void setTabWindow(TabWindow tw) {
+        tabWindow.addTab(tw);
+    }
+
+    public SPContainer() {
+        this.model = new Model();
+        initializePanes();
+
+        //createOperationView("Free view " + Integer.toString(1));
+
+    }
+
+    private void initializePanes() {
+
+        nonOperationViews[0] = new View("TreeView ", null, new TreeView(this));
+        viewMap.addView(0, nonOperationViews[0]);
+
+        operationViews[0] = new View("OperationView" + 1, null, new OperationView(this, "OperationView"));
+        viewMap.addView(1, operationViews[0]);
+
+        tabWindow = new TabWindow();
 
 
-	// Referense to the main data model
-	private Model model;
 
-        public RootWindow getRootWindow(){
-            return this.rootWindow;
+        /*
+
+        //viewPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
+
+
+        @Override
+        public void add(Component component, Object constraints) {
+        super.add(component, new CustomTabComponent(SPContainer.this,
+        component));
+        setTabComponentAt(indexOfComponent(component),
+        new CustomTabComponent(SPContainer.this, component));
+        setSelectedComponent(component);
         }
-        public void setRoot(RootWindow r){
-            this.rootWindow = r;
+        //};
+
+        viewPane.addChangeListener(new ChangeListener() {
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+        Component c = viewPane.getSelectedComponent();
+
+        Component prev = projectPane.getBottomComponent();
+        if (prev != null) {
+        prev.setPreferredSize(new Dimension(prev.getWidth(), prev
+        .getHeight()));
         }
 
-        public ViewMap getViewMap(){
-            return viewMap;
+        if (c != null) {
+        JComponent input = ((AbstractView) c).getOutline();
+        projectPane.setBottomComponent(input);
+        } else {
+        projectPane.setBottomComponent(null);
         }
-        public View getOpView(int i){
-            return operationViews[i];
+        projectPane.resetToPreferredSizes();
+
         }
+        });
 
-        public View getNonOpView(int i){
-            return nonOperationViews[i];
-        }
+        projectPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
+        new TreeView(this), new JPanel());
+        projectPane.setDividerSize(3);
+        projectPane.setResizeWeight(1.0);
 
-        public TabWindow getTabWindow(){
-            return tabWindow;
-        }
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false,
+        projectPane, viewPane);
 
-        public void setTabWindow(TabWindow tw){
-            tabWindow.addTab(tw);
-        }
+        this.setLayout(new BorderLayout());
+        this.add(split, BorderLayout.CENTER);
 
-
-
-	public SPContainer() {
-		this.model = new Model();
-		initializePanes();
-
-		//createOperationView("Free view " + Integer.toString(1));
-
-	}
-
-	private void initializePanes() {
-
-            nonOperationViews[0] = new View("TreeView ", null, new TreeView(this));
-            viewMap.addView(0, nonOperationViews[0]);
-
-            operationViews[0] = new View("OperationView"+ 1, null, new OperationView(this, "OperationView"));
-            viewMap.addView(1, operationViews[0]);
-
-            tabWindow = new TabWindow();
-           
-
-  
-            /*
-
-		//viewPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
-
-
-			@Override
-			public void add(Component component, Object constraints) {
-				super.add(component, new CustomTabComponent(SPContainer.this,
-						component));
-				setTabComponentAt(indexOfComponent(component),
-						new CustomTabComponent(SPContainer.this, component));
-				setSelectedComponent(component);
-			}
-		//};
-
-		viewPane.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component c = viewPane.getSelectedComponent();
-
-				Component prev = projectPane.getBottomComponent();
-				if (prev != null) {
-					prev.setPreferredSize(new Dimension(prev.getWidth(), prev
-							.getHeight()));
-				}
-
-				if (c != null) {
-					JComponent input = ((AbstractView) c).getOutline();
-					projectPane.setBottomComponent(input);
-				} else {
-					projectPane.setBottomComponent(null);
-				}
-				projectPane.resetToPreferredSizes();
-
-			}
-		});
-
-		projectPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-				new TreeView(this), new JPanel());
-		projectPane.setDividerSize(3);
-		projectPane.setResizeWeight(1.0);
-
-		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false,
-				projectPane, viewPane);
-
-		this.setLayout(new BorderLayout());
-		this.add(split, BorderLayout.CENTER);
-
-		*/
-	}
-        //End of InitializePanes
-
-
-        /**
-         * Updates all of the current views.
          */
-        public void updateTabWindow(){
+    }
+    //End of InitializePanes
 
-                tabWindow.addTab(operationViews[viewCounter-1]);
-                tabWindow.addTab(resourceViews[1]);
-                rootWindow.setWindow(new SplitWindow(true,0.1f,nonOperationViews[0],tabWindow));
-            }
+    /**
+     * Updates all of the current views.
+     */
+    public void updateTabWindow() {
 
+        tabWindow.addTab(operationViews[viewCounter - 1]);
+        tabWindow.addTab(resourceViews[1]);
 
-        /**
-         * Create a resource view and adds it to the tabWindow
-         * @param root TreeNode object containing all of the current resources.
-         */
-	public void createResourceView(TreeNode root) {
+        rootWindow.setWindow(new SplitWindow(true, 0.1f, nonOperationViews[0], tabWindow));
+    }
+
+    /**
+     * Create a resource view and adds it to the tabWindow
+     * @param root TreeNode object containing all of the current resources.
+     */
+    public void createResourceView(TreeNode root) {
+        if (reViewCounter == 0) {
             viewCounter++;
-
-            resourceViews[++reViewCounter] = new View("ResourceView",null, new ResourceView(this, root, "Name"));
+            resourceViews[++reViewCounter] = new View("ResourceView", null, new ResourceView(this, root, "Name"));
             System.out.print(reViewCounter);
             viewMap.addView(viewCounter, resourceViews[reViewCounter]);
 
-                updateTabWindow();
+            updateTabWindow();
+        }
+    }
 
-	}
+    /**
+     * Creates new OperationView and adds it to the tabbed window
+     * @param name
+     */
+    public void createOperationView(String name) {
 
-        /**
-         * Creates new OperationView and adds it to the tabbed window
-         * @param name
-         */
-	public void createOperationView(String name) {
+        viewCounter++;
 
-            viewCounter++;
+        operationViews[++opViewCounter] = new View("OperationView" + (opViewCounter + 1), null, new OperationView(this, "Name"));
 
-            operationViews[++opViewCounter] = new View("OperationView" + (opViewCounter+1),null, new OperationView(this, "Name"));
+        viewMap.addView(viewCounter, operationViews[opViewCounter]);
 
-                viewMap.addView(viewCounter, operationViews[opViewCounter]);
+        if (opViewCounter == 1) {
+            tabWindow.addTab(operationViews[0]);
+        }
 
-                if(opViewCounter == 1)
-                    tabWindow.addTab(operationViews[0]);
-                
-                updateTabWindow();
+        updateTabWindow();
 
-	}
+    }
 
-/*	public boolean createOperationView(ViewData d) {
-		OperationView ov = new OperationView(this, d);
-		for (int i = 0; i < viewPane.getTabCount(); i++) {
-			Component c = viewPane.getComponentAt(i);
+    /*	public boolean createOperationView(ViewData d) {
+    OperationView ov = new OperationView(this, d);
+    for (int i = 0; i < viewPane.getTabCount(); i++) {
+    Component c = viewPane.getComponentAt(i);
 
-			if (c instanceof OperationView
-					&& ((OperationView) c).getName().equals(d.getName())) {
+    if (c instanceof OperationView
+    && ((OperationView) c).getName().equals(d.getName())) {
 
-				viewPane.setSelectedIndex(i);
-				return true;
-			}
-		}
+    viewPane.setSelectedIndex(i);
+    return true;
+    }
+    }
 
-		viewPane.add(ov, d.getName());
-		return true;
-	}*/
-
-	public Model getModel() {
-		return model;
-	}
-
-
+    viewPane.add(ov, d.getName());
+    return true;
+    }*/
+    public Model getModel() {
+        return model;
+    }
 }
