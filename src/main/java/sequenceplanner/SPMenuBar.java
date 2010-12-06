@@ -444,15 +444,15 @@ public class SPMenuBar extends JMenuBar{
 
 		add(compile);
 	}
-    	public void close(Component c) {
-		if (c instanceof AbstractView) {
-			if (((AbstractView) c).closeView()) {
-				//TODO q implement properly
-			}
-
-		}
-	}
-
+//    	public void close() {
+//		if (c instanceof AbstractView) {
+//			if (((AbstractView) ).closeView()) {
+//                            spc.viewMap.removeView();
+//                        }
+//
+//		}
+//	}
+//
 
 
 	public boolean openModel() {
@@ -481,10 +481,10 @@ public class SPMenuBar extends JMenuBar{
 	}
 
 	public void closeAllOpenWindows() {
-	/*	for (int i = 0; i < viewPane.getTabCount(); i++) {
-			close(viewPane.getComponentAt(i));
+		for (int i = 0; i < spc.viewCounter; i++) {
+			spc.getTabWindow().close();
 
-		}*/
+		}
 
 	}
 

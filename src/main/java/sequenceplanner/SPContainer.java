@@ -191,7 +191,7 @@ public class SPContainer {
 
         viewCounter++;
 
-        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, new OperationView(this, "Name"));
+        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, new OperationView(this, name));
 
         viewMap.addView(viewCounter, operationViews[opViewCounter]);
 
@@ -202,23 +202,47 @@ public class SPContainer {
         updateTabWindow();
 
     }
-
-    public boolean createOperationView(ViewData d) {
-        OperationView ov = new OperationView(this, d);
-//        for (int i = 0; i < opViewCounter; i++) {
-//            Component c = tabWindow.getChildWindow(i).getComponent(i);
+//        public boolean createOperationView(ViewData d) {
+//        OperationView ov = new OperationView(this, d);
+//        for (int i = 0; i < viewPane.getTabCount(); i++) {
+//            Component c = viewPane.getComponentAt(i);
 //
-//            if (c instanceof OperationView
-//                    && ((OperationView) c).getName().equals(d.getName())) {
+//            if (c instanceof OperationView && ((OperationView) c).getName().equals(d.getName())) {
 //
-//
-//                //viewPane.setSelectedIndex(i);
-//                tabWindow.setSelectedTab(i);
+//                viewPane.setSelectedIndex(i);
 //                return true;
 //            }
 //        }
+//
+//        viewPane.add(ov, d.getName());
+//        return true;
+//    }
+//
+
+    public boolean createOperationView(ViewData d) {
+        OperationView ov = new OperationView(this, d);
+        for (int i = 0; i < opViewCounter; i++) {
+            Component c = tabWindow.getChildWindow(i).getComponent(i);
+
+            if (c instanceof OperationView
+                    && ((OperationView) c).getName().equals(d.getName())) {
+
+
+                //viewPane.setSelectedIndex(i);
+                tabWindow.setSelectedTab(i);
+                return true;
+            } 
+
+        }
         viewCounter++;
+
+
         operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, ov);
+        viewMap.addView(viewCounter, operationViews[opViewCounter]);
+        if (opViewCounter == 1) {
+            tabWindow.addTab(operationViews[0]);
+        }
+        updateTabWindow();
         //viewPane.add(ov, d.getName());
         return true;
     }
