@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
@@ -88,7 +89,6 @@ public class SPMenuBar extends JMenuBar{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                            System.out.print("#");
 				spc.createOperationView("Operations view "+ SPContainer.viewCounter);
 			}
 		});
@@ -447,7 +447,7 @@ public class SPMenuBar extends JMenuBar{
     	public void close(Component c) {
 		if (c instanceof AbstractView) {
 			if (((AbstractView) c).closeView()) {
-			//	viewPane.remove(c);
+				//TODO q implement properly
 			}
 
 		}
@@ -468,7 +468,8 @@ public class SPMenuBar extends JMenuBar{
 			try {
 				ViewData toOpen = (ViewData) model.getViewRoot().getChildAt(0)
 						.getNodeData();
-//				createOperationView(toOpen);
+                                //TODO q fix!!!!
+				spc.createOperationView(toOpen);
 
 			} catch (ClassCastException e) {
 				System.out
