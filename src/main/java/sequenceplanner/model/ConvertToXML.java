@@ -188,6 +188,7 @@ public class ConvertToXML {
          a.setVariable(action.id);
          a.setValue(action.value);
          a.setType(action.state);
+         dataX.getAction().add(a);
       }
       return dataX;
    }
