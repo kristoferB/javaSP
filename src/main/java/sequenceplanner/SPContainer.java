@@ -92,7 +92,7 @@ public class SPContainer {
         nonOperationViews[0] = new View("TreeView ", null, new TreeView(this));
         viewMap.addView(0, nonOperationViews[0]);
 
-        operationViews[0] = new View("OperationView" + 1, null, new OperationView(this, "OperationView"));
+        operationViews[0] = new View("Free View " + 1, null, new OperationView(this, "OperationView"));
         viewMap.addView(1, operationViews[0]);
 
         tabWindow = new TabWindow();
@@ -161,7 +161,7 @@ public class SPContainer {
         if(reViewCounter > 0){
             tabWindow.addTab(resourceViews[reViewCounter]);
         }
-        rootWindow.setWindow(new SplitWindow(true, 0.1f, nonOperationViews[0], tabWindow));
+        rootWindow.setWindow(new SplitWindow(true, 0.15f, nonOperationViews[0], tabWindow));
     }
 
     /**
@@ -171,7 +171,7 @@ public class SPContainer {
     public void createResourceView(TreeNode root) {
  //       if (reViewCounter == 0) {
             viewCounter++;
-            resourceViews[++reViewCounter] = new View("ResourceView" + (reViewCounter), null, new ResourceView(this, root, "Name"));
+            resourceViews[++reViewCounter] = new View("Resources", null, new ResourceView(this, root, "Name"));
             System.out.print(reViewCounter);
             viewMap.addView(viewCounter, resourceViews[reViewCounter]);
 
@@ -187,7 +187,7 @@ public class SPContainer {
 
         viewCounter++;
 
-        operationViews[++opViewCounter] = new View("OperationView" + (opViewCounter + 1), null, new OperationView(this, "Name"));
+        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, new OperationView(this, "Name"));
 
         viewMap.addView(viewCounter, operationViews[opViewCounter]);
 

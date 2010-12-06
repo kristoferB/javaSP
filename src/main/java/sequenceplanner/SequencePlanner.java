@@ -123,7 +123,7 @@ public class SequencePlanner {
 
       RootWindow rootWindow = DockingUtil.createRootWindow(SPC.getViewMap(), true);
           
-      rootWindow.setWindow(new SplitWindow(true,0.1f,SPC.getNonOpView(0), new TabWindow(SPC.getOpView(0))));
+      rootWindow.setWindow(new SplitWindow(true,0.15f,SPC.getNonOpView(0), new TabWindow(SPC.getOpView(0))));
 
 
       sc.getContentPane().add(rootWindow);
