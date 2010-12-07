@@ -1,15 +1,18 @@
 package sequenceplanner;
 
+import java.awt.Component;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
+import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
 
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.resourceView.ResourceView;
 import sequenceplanner.view.treeView.TreeView;
@@ -158,9 +161,10 @@ public class SPContainer {
     public void updateTabWindow() {
 
         tabWindow.addTab(operationViews[opViewCounter]);
-        if(reViewCounter > 0){
+        if (reViewCounter > 0) {
             tabWindow.addTab(resourceViews[reViewCounter]);
         }
+
         rootWindow.setWindow(new SplitWindow(true, 0.15f, nonOperationViews[0], tabWindow));
     }
 
@@ -169,14 +173,14 @@ public class SPContainer {
      * @param root TreeNode object containing all of the current resources.
      */
     public void createResourceView(TreeNode root) {
- //       if (reViewCounter == 0) {
-            viewCounter++;
-            resourceViews[++reViewCounter] = new View("Resources", null, new ResourceView(this, root, "Name"));
-            System.out.print(reViewCounter);
-            viewMap.addView(viewCounter, resourceViews[reViewCounter]);
+        //       if (reViewCounter == 0) {
+        viewCounter++;
+        resourceViews[++reViewCounter] = new View("Resources", null, new ResourceView(this, root, "Name"));
+        System.out.print(reViewCounter);
+        viewMap.addView(viewCounter, resourceViews[reViewCounter]);
 
-            updateTabWindow();
-   //     }
+        updateTabWindow();
+        //     }
     }
 
     /**
@@ -187,7 +191,7 @@ public class SPContainer {
 
         viewCounter++;
 
-        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, new OperationView(this, "Name"));
+        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, new OperationView(this, name));
 
         viewMap.addView(viewCounter, operationViews[opViewCounter]);
 
@@ -198,23 +202,51 @@ public class SPContainer {
         updateTabWindow();
 
     }
+//        public boolean createOperationView(ViewData d) {
+//        OperationView ov = new OperationView(this, d);
+//        for (int i = 0; i < viewPane.getTabCount(); i++) {
+//            Component c = viewPane.getComponentAt(i);
+//
+//            if (c instanceof OperationView && ((OperationView) c).getName().equals(d.getName())) {
+//
+//                viewPane.setSelectedIndex(i);
+//                return true;
+//            }
+//        }
+//
+//        viewPane.add(ov, d.getName());
+//        return true;
+//    }
+//
 
-    /*	public boolean createOperationView(ViewData d) {
-    OperationView ov = new OperationView(this, d);
-    for (int i = 0; i < viewPane.getTabCount(); i++) {
-    Component c = viewPane.getComponentAt(i);
+    public boolean createOperationView(ViewData d) {
+        OperationView ov = new OperationView(this, d);
+        for (int i = 0; i < opViewCounter; i++) {
+            Component c = tabWindow.getChildWindow(i).getComponent(i);
 
-    if (c instanceof OperationView
-    && ((OperationView) c).getName().equals(d.getName())) {
+            if (c instanceof OperationView
+                    && ((OperationView) c).getName().equals(d.getName())) {
 
-    viewPane.setSelectedIndex(i);
-    return true;
+
+                //viewPane.setSelectedIndex(i);
+                tabWindow.setSelectedTab(i);
+                return true;
+            } 
+
+        }
+        viewCounter++;
+
+
+        operationViews[++opViewCounter] = new View("Free View " + (opViewCounter + 1), null, ov);
+        viewMap.addView(viewCounter, operationViews[opViewCounter]);
+        if (opViewCounter == 1) {
+            tabWindow.addTab(operationViews[0]);
+        }
+        updateTabWindow();
+        //viewPane.add(ov, d.getName());
+        return true;
     }
-    }
 
-    viewPane.add(ov, d.getName());
-    return true;
-    }*/
     public Model getModel() {
         return model;
     }

@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
@@ -88,7 +89,6 @@ public class SPMenuBar extends JMenuBar{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                            System.out.print("#");
 				spc.createOperationView("Operations view "+ SPContainer.viewCounter);
 			}
 		});
@@ -444,15 +444,15 @@ public class SPMenuBar extends JMenuBar{
 
 		add(compile);
 	}
-    	public void close(Component c) {
-		if (c instanceof AbstractView) {
-			if (((AbstractView) c).closeView()) {
-			//	viewPane.remove(c);
-			}
-
-		}
-	}
-
+//    	public void close() {
+//		if (c instanceof AbstractView) {
+//			if (((AbstractView) ).closeView()) {
+//                            spc.viewMap.removeView();
+//                        }
+//
+//		}
+//	}
+//
 
 
 	public boolean openModel() {
@@ -468,7 +468,8 @@ public class SPMenuBar extends JMenuBar{
 			try {
 				ViewData toOpen = (ViewData) model.getViewRoot().getChildAt(0)
 						.getNodeData();
-//				createOperationView(toOpen);
+                                //TODO q fix!!!!
+				spc.createOperationView(toOpen);
 
 			} catch (ClassCastException e) {
 				System.out
@@ -480,10 +481,10 @@ public class SPMenuBar extends JMenuBar{
 	}
 
 	public void closeAllOpenWindows() {
-	/*	for (int i = 0; i < viewPane.getTabCount(); i++) {
-			close(viewPane.getComponentAt(i));
+		for (int i = 0; i < spc.viewCounter; i++) {
+			spc.getTabWindow().close();
 
-		}*/
+		}
 
 	}
 
