@@ -3,11 +3,8 @@ package sequenceplanner.multiProduct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
+import net.sourceforge.waters.subject.module.ModuleSubject;
 import org.apache.log4j.Logger;
-import org.supremica.external.avocades.common.EFA;
-import org.supremica.external.avocades.common.EGA;
-import org.supremica.external.avocades.common.Module;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -20,38 +17,108 @@ import sequenceplanner.model.data.ResourceVariableData;
 public class EFAforSupervisor {
 
     static Logger log = Logger.getLogger(EFAforSupervisor.class);
+    /**
+     * To access operation and resource tree
+     */
     private Model model;
-    private Module module;
-    private String[] products;
-    private EFA varEfa;
+    /**
+     * To store automata and variables
+     */
+    private SModule smodule;
+    /**
+     * The product types that are to be included in the synthesis
+     */
+    private ArrayList<String> products;
+    /**
+     * Operations that belongs to selected product types.<br/>
+     * <b>key</b> name of product type<br/>
+     * <b>value</b> operations that belongs to that product type
+     */
     private HashMap<String, ArrayList<OperationData>> operationsMap;
+    /**
+     * Limit on nbr of product type instances in system.<br/>
+     * <b>key</b> product type<br/>
+     * <b>value</b> nbr of instances
+     */
     private HashMap<String, Integer> productLimitMap;
+    /**
+     * To store start pos for product type instances. All instancs are assumed to start in the same position.<br/>
+     * <b>key</b> product type<br/>
+     * <b>value</b> start position
+     */
     private HashMap<String, String> productInitPosMap;
+    /**
+     * To store nbr of product type instances that start in start position.<br/>
+     * <b>key</b> product type<br/>
+     * <b>value</b> nbr on instances
+     */
     private HashMap<String, Integer> productInitNbrMap;
+    /**
+     * To store capacity for position.<br/>
+     * <b>key</b> position<br/>
+     * <b>value</b> nbr on instances
+     */
     private HashMap<String, Integer> positionCapacityMap;
+    /**
+     * To store actions that not are related to simple book/unbook positions. E.g. processing level<br/>
+     * Use @see sequenceplanner.multiproduct.EFAforSupervisor.addToActionsForOpMap to add new entries.<br/>
+     * <b>key</b> operation<br/>
+     * <b>value</b> action as strings
+     */
     private HashMap<OperationData, ArrayList<String>> actionsForOpMap;
+    /**
+     * To store guards that not are related to simple book/unbook positions. E.g. processing level<br/>
+     * <b>key</b> operation<br/>
+     * <b>value</b> guard as strings
+     */
     private HashMap<OperationData, ArrayList<String>> guardsForOpMap;
+    /**
+     * To handle booking/unbooking of positions for merge operations.<br/>
+     * <b>key</b> merge transition <br/>
+     * <b>value</b> source positions when that are booked when operation start
+     */
     private HashMap<String, ArrayList<String>> mergeSourcePositionsMap;
+    /**
+     * Create guard that sum all variables that affect the same position<br/>
+     * E.g. (v_1+v_2+..) less than 2<br/>
+     * <b>key</b> position <br/>
+     * <b>value</b> guard
+     */
     private HashMap<String, String> positionGuardMap;
-    private HashMap<String, ArrayList<String>> productForPosMap;
+    /**
+     * Positions used by product
+     * <b>key</b> product <br/>
+     * <b>value</b> positions
+     */
     private HashMap<String, ArrayList<String>> posForProductMap;
+    /**
+     * Positions that should be splited in two variables (with sufix _m and _p) in  .wmod file<br/>
+     * <b>key</b> product <br/>
+     * <b>value</b> positions
+     */
     private HashMap<String, ArrayList<String>> detailedPosForProductMap;
+    /**
+     * Process operation that should be transitions in .wmod file<br/>
+     * <b>key</b> product <br/>
+     * <b>value</b> process operations
+     */
     private HashMap<String, ArrayList<OperationData>> detailedPopsForProductMap;
-    private ArrayList<String> errorMsgs;
 
-    public EFAforSupervisor(String[] products, Model model) {
+    private Error e = null;
+
+    public EFAforSupervisor(ArrayList<String> products, Model model) {
         this.products = products;
         this.model = model;
         init();
         collectInfo();
         new ArrangeInfo();
         new BuildModule();
-        printErrorList();
+        e.printErrorList();
+        smodule.DialogAutomataTransitions();
     }
 
     private void declaration() {
-        module = new Module("MP", false);
-        varEfa = new EFA("variables", module);
+        smodule = new SModule("temp");
         operationsMap = new HashMap<String, ArrayList<OperationData>>();
         productLimitMap = new HashMap<String, Integer>();
         productInitPosMap = new HashMap<String, String>();
@@ -61,12 +128,11 @@ public class EFAforSupervisor {
         guardsForOpMap = new HashMap<OperationData, ArrayList<String>>();
         mergeSourcePositionsMap = new HashMap<String, ArrayList<String>>();
         positionGuardMap = new HashMap<String, String>();
-        productForPosMap = new HashMap<String, ArrayList<String>>();
         posForProductMap = new HashMap<String, ArrayList<String>>();
         detailedPosForProductMap = new HashMap<String, ArrayList<String>>();
         detailedPopsForProductMap = new HashMap<String, ArrayList<OperationData>>();
 
-        errorMsgs = new ArrayList<String>();
+        e = new Error();
     }
 
     private void init() {
@@ -76,11 +142,12 @@ public class EFAforSupervisor {
     }
 
     private void collectInfo() {
-        for (int i = 0; i < products.length; ++i) {
-            CollectInfo ci = new CollectInfo(products[i]);
-            posForProductMap.put(products[i], ci.getPosForProductMap());
-            detailedPopsForProductMap.put(products[i], ci.getDetailedPopsForProductMap());
-            detailedPosForProductMap.put(products[i], ci.getDetailedPosForProductMap());
+
+        for (int i = 0; i < products.size(); ++i) {
+            CollectInfo ci = new CollectInfo(products.get(i));
+            posForProductMap.put(products.get(i), ci.getPosForProductMap());
+            detailedPopsForProductMap.put(products.get(i), ci.getDetailedPopsForProductMap());
+            detailedPosForProductMap.put(products.get(i), ci.getDetailedPosForProductMap());
         }
     }
 
@@ -93,7 +160,7 @@ public class EFAforSupervisor {
      * |+iterate top and their guards/get top with gurads!=1 to find plCount needed<br/>
      * |+iterate pop to get merge/get pop with merge operation ->fill arraylist positions for product<br/>
      * |+if product type has limit. add start and finish op for product to arraylist if op are pop ->fill arraylist positions for product<br/>
-    +----------------------------------------------------------<br/>
+     * +----------------------------------------------------------<br/>
      */
     private class CollectInfo {
 
@@ -126,7 +193,7 @@ public class EFAforSupervisor {
                         top(opData, opDesc);
                     }
                 } else {//opType is not set
-                    error(opData.getName(), TypeVar.ED_OP_TYPE);
+                    e.error(opData.getName(), TypeVar.ED_OP_TYPE);
                 }
             }
             //-------------------------------------------------------------------
@@ -155,7 +222,7 @@ public class EFAforSupervisor {
                     addToArrayList(posForProductMap, ExtendedData.getSourcePos(opDesc));
                 }
             } else {
-                error(opData.getName(), TypeVar.ED_SOURCE_POS);
+                e.error(opData.getName(), TypeVar.ED_SOURCE_POS);
             }//------------------------------------------------------------------
 
             //add dest pos-------------------------------------------------------
@@ -164,7 +231,7 @@ public class EFAforSupervisor {
                     addToArrayList(posForProductMap, ExtendedData.getDestPos(opDesc));
                 }
             } else {
-                error(opData.getName(), TypeVar.ED_DEST_POS);
+               e.error(opData.getName(), TypeVar.ED_DEST_POS);
             }//------------------------------------------------------------------
 
             //check merge pop----------------------------------------------------
@@ -191,7 +258,7 @@ public class EFAforSupervisor {
                             int minus = TypeVar.PROCESSING_LEVEL.length() + TypeVar.SEPARATION.length() + 3; //Assume that pos = "pYZ"
                             guard = guard.substring(0, index + plus).replaceAll(TypeVar.EFA_EQUAL, TypeVar.SEPARATION);
                             String varName = guard.substring(index - minus, index + TypeVar.SEPARATION.length() + 1); //Assume 0<X<9
-                            varEfa.addIntegerVariable(product + varName, 0, TypeVar.PROCESSING_LEVEL_COUNT_LIMIT, 0, null);
+                            smodule.addIntVariable(product + varName, 0, TypeVar.PROCESSING_LEVEL_COUNT_LIMIT, 0, 0);
                             guard = guard + TypeVar.EFA_STRICTLY_LARGER_THAN_ZERO;
                             if (index + plus <= oldGuard.length()) {
                                 guard = guard + oldGuard.substring(index + plus);
@@ -204,13 +271,13 @@ public class EFAforSupervisor {
                             new AddCountAction(pos, count);
                         }
                     } else {
-                        error(opData.getName() + " has strange " + TypeVar.ED_GUARD);
+                        e.error(opData.getName() + " has strange " + TypeVar.ED_GUARD);
                     }
                     addToGuardsForOpMap(opData, guard);
                     //The guard in the operation should also be changed
                 }//--------------------------------------------------------------
             } else {
-                error(opData.getName(), TypeVar.ED_GUARD);
+                e.error(opData.getName(), TypeVar.ED_GUARD);
             }
         }
 
@@ -222,7 +289,7 @@ public class EFAforSupervisor {
             if (productLimitMap.containsKey(product)) {
 
                 //create variable
-                varEfa.addIntegerVariable(product + TypeVar.LIMIT, 0, productLimitMap.get(product), 0, null);
+                smodule.addIntVariable(product + TypeVar.LIMIT, 0, productLimitMap.get(product), 0, 0);
 
                 //add limit restriction to first op------------------------------
                 ops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_FIRST);
@@ -230,12 +297,13 @@ public class EFAforSupervisor {
                     itOp = ops.iterator();
                     while (itOp.hasNext()) {
                         OperationData opData = itOp.next();
+                        addDetails(opData);
                         String action = product + TypeVar.LIMIT;
                         addToGuardsForOpMap(opData, action + TypeVar.EFA_STRICTLY_LESS_THAN + productLimitMap.get(product));
                         addToActionsForOpMap(opData, action + TypeVar.EFA_PLUS_ONE);
                     }
                 } else {
-                    error(product + " has limit demand but lacks " + TypeVar.ED_ORDER_FIRST + " operation");
+                    e.error(product + " has limit demand but lacks " + TypeVar.ED_ORDER_FIRST + " operation");
                 }
                 //---------------------------------------------------------------
 
@@ -245,16 +313,21 @@ public class EFAforSupervisor {
                     itOp = ops.iterator();
                     while (itOp.hasNext()) {
                         OperationData opData = itOp.next();
+                        addDetails(opData);
                         String action = product + TypeVar.LIMIT;
                         addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
                     }
                 } else {
-                    error(product + " has limit demand but lacks " + TypeVar.ED_ORDER_LAST + " operation");
+                    e.error(product + " has limit demand but lacks " + TypeVar.ED_ORDER_LAST + " operation");
                 }
                 //---------------------------------------------------------------
             }
         }
 
+        /**
+         * Checks if operations and it's source and dest pos should be transitions and variables in .wmod file
+         * @param opData operation to check
+         */
         private void addDetails(OperationData opData) {
             String opDesc = opData.getDescription();
             if (ExtendedData.getOPType(opDesc) != null) {
@@ -265,7 +338,7 @@ public class EFAforSupervisor {
                     }
                 }
             } else {
-                error(opData.getName(), TypeVar.ED_OP_TYPE);
+                e.error(opData.getName(), TypeVar.ED_OP_TYPE);
             }
         }
 
@@ -298,7 +371,7 @@ public class EFAforSupervisor {
                             ops.add(opData);
                         }
                     } else {
-                        error(opData.getName(), TypeVar.ED_OP_TYPE + " or " + TypeVar.ED_SOURCE_POS);
+                        e.error(opData.getName(), TypeVar.ED_OP_TYPE + " or " + TypeVar.ED_SOURCE_POS);
                     }
                 }
             }
@@ -314,7 +387,7 @@ public class EFAforSupervisor {
                     }
                 } else if (ops.size() == 1) {
                 } else {
-                    error("Can't create actions for plCounters. Relations to complex for implementation");
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
                 }
             }
 
@@ -332,7 +405,7 @@ public class EFAforSupervisor {
                             addDetails(opData);
                         }
                     } else {
-                        error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_FIRST);
+                        e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_FIRST);
                     }//----------------------------------------------------------
 
                     //-=1--------------------------------------------------------
@@ -358,21 +431,27 @@ public class EFAforSupervisor {
                                 addDetails(opData);
                             }
                         } else {
-                            error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST);
+                            e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST);
                         }
                     } else if (ops.size() == 2) {
                         addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
                         addDetails(ops.get(0));
                     } else {
-                        error("Can't create actions for plCounters. Relations to complex for implementation");
+                        e.error("Can't create actions for plCounters. Relations to complex for implementation");
                     }//----------------------------------------------------------
 
                 } else {
-                    error("Can't create actions for plCounters. Relations to complex for implementation");
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
                 }
             }
         }
 
+        /**
+         * Get arraylist based on attribute and value for attirbute
+         * @param attribute
+         * @param value
+         * @return ArrayList OperationData
+         */
         private ArrayList<OperationData> getOps(String attribute, String value) {
             ArrayList<OperationData> result = new ArrayList<OperationData>();
             Iterator<OperationData> it = operationsMap.get(product).iterator();
@@ -388,10 +467,6 @@ public class EFAforSupervisor {
             return result;
         }
     }
-    //ARRANGE INFORMATION
-    //Create haspmap that takes all product positions for a positions into account and position capacity
-    //this should later on be used for topar
-    //position capacities are found in resource tree
 
     /**
      * <b>ARRANGE INFORMATION</b><br/>
@@ -401,8 +476,13 @@ public class EFAforSupervisor {
     private class ArrangeInfo {
 
         Logger log = Logger.getLogger(ArrangeInfo.class);
+        /**
+         * Collects products (value) that uses a position (key)
+         */
+        private HashMap<String, ArrayList<String>> productForPosMap;
 
         public ArrangeInfo() {
+            productForPosMap = new HashMap<String, ArrayList<String>>();
             createProductForPosMap();
             createPositionGuardMap();
         }
@@ -426,7 +506,8 @@ public class EFAforSupervisor {
         }
 
         /**
-         * create positionGuardMap
+         * Creates positionGuardMap</br>
+         * I.e. sum of all variables that affect the same position
          */
         private void createPositionGuardMap() {
             Iterator<String> itPos = productForPosMap.keySet().iterator();
@@ -450,11 +531,10 @@ public class EFAforSupervisor {
                 if (positionCapacityMap.containsKey(pos)) {
                     guard = "(" + guard + ")" + TypeVar.EFA_STRICTLY_LESS_THAN + positionCapacityMap.get(pos);
                 } else {
-                    error(pos, "capacity");
+                    e.error(pos, "capacity");
                 }
                 positionGuardMap.put(pos, guard);
             }
-
         }
     }
 
@@ -465,7 +545,7 @@ public class EFAforSupervisor {
      */
     private class BuildModule {
 
-        EGA ega;
+        SEGA ega;
         OperationData cOpData;
 
         public BuildModule() {
@@ -484,39 +564,44 @@ public class EFAforSupervisor {
                     if (positionCapacityMap.containsKey(pos)) {
                         if (detailedPosForProductMap.containsKey(product)) {
                             if (detailedPosForProductMap.get(product).contains(pos)) {
-                                varEfa.addIntegerVariable(start + TypeVar.POS_PROCESS, 0, positionCapacityMap.get(pos), 0, null);
-                                varEfa.addIntegerVariable(start + TypeVar.POS_MOVE, 0, positionCapacityMap.get(pos), 0, null);
+                                smodule.addIntVariable(start + TypeVar.POS_PROCESS, 0, positionCapacityMap.get(pos), 0, 0);
+                                smodule.addIntVariable(start + TypeVar.POS_MOVE, 0, positionCapacityMap.get(pos), 0, 0);
+                                if (productInitPosMap.containsKey(product)) {
+                                    if (productInitPosMap.get(product).equals(pos)) {
+                                        e.error("The initial pos is partitioned! Add initial and marked value for variable manually!");
+                                    }
+                                }
                             } else {
                                 if (productInitPosMap.containsKey(product)) {
                                     if (productInitPosMap.get(product).equals(pos)) {
-                                        varEfa.addIntegerVariable(start, 0, positionCapacityMap.get(pos), productInitNbrMap.get(product), null);
+                                        smodule.addIntVariable(start, 0, positionCapacityMap.get(pos),
+                                                productInitNbrMap.get(product), productInitNbrMap.get(product));
                                     } else {
-                                        varEfa.addIntegerVariable(start, 0, positionCapacityMap.get(pos), 0, null);
+                                        smodule.addIntVariable(start, 0, positionCapacityMap.get(pos), 0, 0);
                                     }
                                 } else {
-                                    varEfa.addIntegerVariable(start, 0, positionCapacityMap.get(pos), 0, null);
+                                    smodule.addIntVariable(start, 0, positionCapacityMap.get(pos), 0, 0);
                                 }
                             }
                         } else {
-                            varEfa.addIntegerVariable(start, 0, positionCapacityMap.get(pos), 0, null);
+                            smodule.addIntVariable(start, 0, positionCapacityMap.get(pos), 0, 0);
                         }
                     } else {
-                        error(pos, "capacity");
+                        e.error(pos, "capacity");
                     }
                 }
             }
         }
 
         private void addAutomata() {
-            for (int i = 0; i < products.length; ++i) {
-                addAutomaton(products[i]);
+            for (int i = 0; i < products.size(); ++i) {
+                addAutomaton(products.get(i));
             }
         }
 
         private void addAutomaton(String product) {
             //create automaton---------------------------------------------------
-            EFA efa = new EFA(product, module);
-            module.addAutomaton(efa);
+            SEFA efa = new SEFA(product, smodule);
             efa.addState(TypeVar.LOCATION, true, true);
             //-------------------------------------------------------------------
 
@@ -527,7 +612,7 @@ public class EFAforSupervisor {
                 if (detailedPopsForProductMap.containsKey(product)) {
                     if (detailedPopsForProductMap.get(product).contains(cOpData) ||
                             ExtendedData.getOPType(cOpData.getDescription()).equals(TypeVar.ED_OP_TYPE_TRANSPORT)) {
-                        ega = new EGA();
+                        ega = new SEGA();
                         addEvent();
                         addGuard();
                         addAction();
@@ -623,7 +708,7 @@ public class EFAforSupervisor {
         /**
          * Checks if dest pos already is taken during merge transitions
          * -> there should be no guard related to dest pos.
-         * @param desc
+         * @param desc description for operation
          * @return
          */
         private boolean skipGuardDoToMerge(String desc) {
@@ -682,10 +767,14 @@ public class EFAforSupervisor {
         }
     }
 
-    public Module getModule() {
-        return module;
+    public ModuleSubject getSubjectModule() {
+        return smodule.getModuleSubject();
     }
 
+    /**
+     * Store operations that belongs to selected product types in hashmap <b>operationsMap</b>
+     * @param treeNode operation tree root
+     */
     private void exploreOperationTree(TreeNode treeNode) {
         for (int i = 0; i < treeNode.getChildCount(); ++i) {
             OperationData opData = (OperationData) treeNode.getChildAt(i).getNodeData();
@@ -699,7 +788,7 @@ public class EFAforSupervisor {
 
                 exploreMergeSourcePositions(opData);
             } else {
-                error(opData.getName(), TypeVar.ED_PRODUCT_TYPE);
+                e.error(opData.getName(), TypeVar.ED_PRODUCT_TYPE);
             }
         }
     }
@@ -749,7 +838,7 @@ public class EFAforSupervisor {
                     if (!positionCapacityMap.containsKey(pos)) {
                         positionCapacityMap.put(pos, data.getMax());
                     } else {
-                        error("Position " + pos + " has redundent capacity informaion");
+                        e.error("Position " + pos + " has redundent capacity informaion");
                     }
                 } //-----------------------------------------
                 //products---------------------------------
@@ -758,50 +847,24 @@ public class EFAforSupervisor {
                     if (!productLimitMap.containsKey(product)) {
                         productLimitMap.put(product, data.getMax());
                     } else {
-                        error("Product " + product + " has redundent limitation informaion");
+                        e.error("Product " + product + " has redundent limitation informaion");
                     }
                     if (!productInitPosMap.containsKey(product)) {
                         productInitPosMap.put(product, node.getParent().getParent().getNodeData().getName());
                         if (!productInitNbrMap.containsKey(product)) {
                             productInitNbrMap.put(product, data.getMax());
                         } else {
-                            error("Product " + product + " has redundent start number informaion");
+                            e.error("Product " + product + " has redundent start number informaion");
                         }
                     } else {
-                        error("Product " + product + " has redundent start position informaion");
+                        e.error("Product " + product + " has redundent start position informaion");
                     }
                 }
                 //----------------------------------------
             } else {
-                error("Problem to iterate resource tree");
+                e.error("Problem to iterate resource tree");
             }
         }
-    }
-
-    private void error(String error) {
-        log.error(error);
-        errorMsgs.add(error);
-    }
-
-    private void error(String x, String y) {
-        error(x + " lacks " + y);
-    }
-
-    private void printErrorList() {
-        if (!errorMsgs.isEmpty()) {
-            String error = "Look through the following errors: \n";
-            Iterator<String> its = errorMsgs.iterator();
-            while (its.hasNext()) {
-                error = error + "\n" + its.next();
-            }
-
-            JOptionPane.showMessageDialog(null, error, "ErrorList", 1);
-        }
-
-    }
-
-    private void resetErrorList() {
-        errorMsgs.clear();
     }
 
     private boolean addToArrayList(ArrayList al, Object ob) {
@@ -809,26 +872,28 @@ public class EFAforSupervisor {
             if (!al.contains(ob)) {
                 al.add(ob);
             }
-
             return true;
         } else {
             return false;
         }
-
     }
 
     private void addToActionsForOpMap(OperationData key, String value) {
         if (!actionsForOpMap.containsKey(key)) {
             actionsForOpMap.put(key, new ArrayList<String>());
         }
-        actionsForOpMap.get(key).add(value);
+        if (!actionsForOpMap.get(key).contains(value)) {
+            actionsForOpMap.get(key).add(value);
+        }
     }
 
     private void addToGuardsForOpMap(OperationData key, String value) {
         if (!guardsForOpMap.containsKey(key)) {
             guardsForOpMap.put(key, new ArrayList<String>());
         }
-        guardsForOpMap.get(key).add(value);
+        if (!guardsForOpMap.get(key).contains(value)) {
+            guardsForOpMap.get(key).add(value);
+        }
     }
 
     public void printStringArrayList(ArrayList<String> al) {

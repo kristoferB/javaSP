@@ -559,18 +559,18 @@ public class SPContainer extends JPanel {
 
         mb.add(compile);
 
-
         JMenu multiProduct = new JMenu("MP");
         mb.add(multiProduct);
-        JMenuItem calculation = new JMenuItem(new AbstractAction("Print Product types and op in model") {
+
+        multiProduct.add(new JMenuItem(new AbstractAction("Print Product types and op in model") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 Calculation calc = new Calculation(model);
                 calc.printProductTypes();
             }
-        });
-        multiProduct.add(calculation);
+        }));
+
         multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning") {
 
             @Override
@@ -579,62 +579,32 @@ public class SPContainer extends JPanel {
                 Calculation calc = new Calculation(model);
                 String answer = calc.transportPlanningDialog();
                 if (answer != null) {
-                    try {
-                        ModuleSubject moduleSubject = calc.transportPlanningProductType(answer).getModule();
-                        String filepath = "";
-                        JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-                        int fileResult = fc.showSaveDialog(null);
-                        if (fileResult == JFileChooser.APPROVE_OPTION) {
-                            filepath = fc.getSelectedFile().getAbsolutePath();
-                            File file = new File(filepath);
-                            file.createNewFile();
-                            moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
-                            ModuleSubjectFactory factory = new ModuleSubjectFactory();
-                            // Save module to file
-                            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
-                            marshaller.marshal(moduleSubject, file);
-                        }
-                    } catch (Exception t) {
-                        t.printStackTrace();
-                    }
+                    calc.saveWMODFile(calc.transportPlanningProductType(answer));
                 }
             }
         }));
+
         multiProduct.add(new JMenuItem(new AbstractAction("Update model after transport planning") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Calculation(model).updateModelAfterTransportPlanning();
-
             }
         }));
+
+//        multiProduct.add(new JMenuItem(new AbstractAction("Remove tops") {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new Calculation(model).new RemoveTransportOperations();
+//            }
+//        }));
+
         multiProduct.add(new JMenuItem(new AbstractAction("EFA for MP supervisor") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Create a module of EFAs with Sequence Planner SOP as input
-                Calculation calc = new Calculation(model);
-//                String answer = calc.transportPlanningDialog(); //Change to similar by with checkboxs
-//                if (answer != null) {
-                    try {
-                        ModuleSubject moduleSubject = calc.EFAForMultiProductSupervisor().getModule();
-                        String filepath = "";
-                        JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
-                        int fileResult = fc.showSaveDialog(null);
-                        if (fileResult == JFileChooser.APPROVE_OPTION) {
-                            filepath = fc.getSelectedFile().getAbsolutePath();
-                            File file = new File(filepath);
-                            file.createNewFile();
-                            moduleSubject.setName(file.getName().replaceAll(".wmod", ""));
-                            ModuleSubjectFactory factory = new ModuleSubjectFactory();
-                            // Save module to file
-                            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
-                            marshaller.marshal(moduleSubject, file);
-                        }
-                    } catch (Exception t) {
-                        t.printStackTrace();
-                    }
-//                }
+                new Calculation(model).new GenerateModuleBasedOnSelectedProductTypes();
             }
         }));
         return mb;
