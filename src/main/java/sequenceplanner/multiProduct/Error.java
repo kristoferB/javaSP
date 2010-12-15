@@ -1,6 +1,5 @@
 package sequenceplanner.multiProduct;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -8,8 +7,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  * Store errors
@@ -17,9 +14,13 @@ import javax.swing.JPanel;
  */
 public class Error {
     private ArrayList<String> errorMsgs;
-
+    private String title ="Title is not set";
     public Error() {
         errorMsgs = new ArrayList<String>();
+    }
+    public Error(String title) {
+        this();
+        this.title = title;
     }
 
     public void error(String error) {
@@ -70,7 +71,7 @@ public class Error {
             closeButton = new JButton("Close");
             closeButton.addActionListener(this);
 
-            mainFrame = new JFrame("To look up:");
+            mainFrame = new JFrame(title + " | To look up:");
             mainFrame.getContentPane().setLayout(new BoxLayout(mainFrame.getContentPane(), BoxLayout.Y_AXIS));
             mainFrame.setLocationRelativeTo(null);
             mainFrame.setAlwaysOnTop(true);

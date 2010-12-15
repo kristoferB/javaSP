@@ -73,21 +73,25 @@ public class Calculation {
     }
 
     public ModuleSubject transportPlanningProductType(String key) {
+        Error e = new Error();
         SModule smodule = new SModule("temp");
         smodule.setComment("Module for transport planning\n*****\nSet start position manually\nSet finish position manually\n" +
                 "*****\nSynthesize supervisor through guard extraction\nChoose gurads from allowed state set\n");
 
-        Iterator<OperationData> itData = productTypes.get(key).iterator();
         ArrayList<String> sourcePos = new ArrayList<String>();
         ArrayList<String> destPos = new ArrayList<String>();
         ArrayList<String> processingLevel = new ArrayList<String>();
         //fill lists that are needed
-        while (itData.hasNext()) {
-            OperationData opData = itData.next();
+        for (OperationData opData : productTypes.get(key)) {
             String data = opData.getDescription();
-            destPos.add(ExtendedData.getDestPos(data));
-            sourcePos.add(ExtendedData.getSourcePos(data));
-            if (!TypeVar.ED_PROCESSING_LEVEL_COUNTER_NO.equals(ExtendedData.getProcessingLevel(data))) {
+            if (!destPos.contains(ExtendedData.getDestPos(data))) {
+                destPos.add(ExtendedData.getDestPos(data));
+            }
+            if (!sourcePos.contains(ExtendedData.getSourcePos(data))) {
+                sourcePos.add(ExtendedData.getSourcePos(data));
+            }
+            if (!TypeVar.ED_PROCESSING_LEVEL_COUNTER_NO.equals(ExtendedData.getProcessingLevel(data)) &&
+                    !processingLevel.contains(ExtendedData.getSourcePos(data))) {
                 processingLevel.add(ExtendedData.getSourcePos(data));
             }
         }
@@ -163,9 +167,7 @@ public class Calculation {
         }
 
         //go through operations, add guards and actions
-        itData = productTypes.get(key).iterator();
-        while (itData.hasNext()) {
-            OperationData opData = itData.next();
+        for (OperationData opData : productTypes.get(key)) {
             String desc = opData.getDescription();
             SEGA ega = new SEGA();
 
@@ -204,11 +206,14 @@ public class Calculation {
                     log.info(opData.getName() + " has pl counter " + pos + TypeVar.EFA_EQUAL + posCountMap.get(pos));
                 }
             } else {
-                log.error("Implentation does not support disjunction! Operation preconditions may not be correct!");
+                e.error("Implentation does not support disjunction! Operation preconditions may not be correct!");
             }
 
             efa.addTransition(TypeVar.LOCATION, TypeVar.LOCATION, opData.getName(), ega.getGuard(), ega.getAction());
         }//----------------------------------------------------------------------
+
+        smodule.DialogAutomataTransitions();
+        e.printErrorList();
 
         return smodule.getModuleSubject();
     }

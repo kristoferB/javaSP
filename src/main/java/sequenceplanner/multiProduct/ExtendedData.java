@@ -6,7 +6,6 @@ package sequenceplanner.multiProduct;
 
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import sequenceplanner.model.data.OperationData;
 
 /**
  *
@@ -15,8 +14,8 @@ import sequenceplanner.model.data.OperationData;
 public class ExtendedData {
 
     static Logger log = Logger.getLogger(ExtendedData.class);
+    private static Error e = new Error(ExtendedData.class.toString());
     private static HashMap<String, String> dataMap;
-
     public ExtendedData(String description) {
         divideDescription(description);
     }
@@ -30,10 +29,12 @@ public class ExtendedData {
             if (data.length == 2) {
                 if (dataMap.containsKey(data[0])) {
                     log.error("Metadata " + data[0] + " appears more than one time! Stored data is overwritten!");
+                    e.error("Metadata " + data[0] + " appears more than one time! Stored data is overwritten!");
                 }
                 dataMap.put(data[0], data[1]);
             } else {
                 log.error("Metadata is not in order! KEY" + TypeVar.DESC_VALUESEPARATION + "value " + TypeVar.DESC_KEYSEPARATION + " KEY" + TypeVar.DESC_VALUESEPARATION + "value " + TypeVar.DESC_KEYSEPARATION + " ...");
+                e.error("Metadata is not in order! KEY" + TypeVar.DESC_VALUESEPARATION + "value " + TypeVar.DESC_KEYSEPARATION + " KEY" + TypeVar.DESC_VALUESEPARATION + "value " + TypeVar.DESC_KEYSEPARATION + " ...");
             }
         }
     }
