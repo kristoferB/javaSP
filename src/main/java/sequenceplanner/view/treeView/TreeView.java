@@ -180,10 +180,10 @@ public class TreeView extends AbstractView {
                      if (path != null) {
                         TreeNode t = (TreeNode) path.getLastPathComponent();
                         if (model.isView(t.getNodeData())) {
-                           container.createOperationView((ViewData) t.getNodeData());
+                        //   container.createOperationView((ViewData) t.getNodeData());
                         } else if (model.isOperation(t.getNodeData())) {
                            OperationData data = (OperationData) t.getNodeData();
-                           container.createOperationView(model.getOperationView(data.getId()));
+                         //  container.createOperationView(model.getOperationView(data.getId()));
                         }
 
                      }

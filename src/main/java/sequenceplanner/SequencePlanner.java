@@ -9,7 +9,10 @@ import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import net.infonode.docking.RootWindow;
+import net.infonode.docking.SplitWindow;
+import net.infonode.docking.TabWindow;
+import net.infonode.docking.util.DockingUtil;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -66,12 +69,12 @@ public class SequencePlanner {
     * @param screen the screen
     */
    public SequencePlanner(int screen) {
-      this();
+   /* this();
       try {
          UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
       } catch (Exception e) {
       }
-
+   */
       createStartWindow(screen);
    }
 
@@ -105,17 +108,29 @@ public class SequencePlanner {
        */
       showSplash(bounds);
 
+      SPContainer SPC = new SPContainer();
       JFrame sc = new JFrame("Sequence Planner");
       sc.setIconImage(getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
       sc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
+      SPMenuBar menuBar = new SPMenuBar(SPC);
+      sc.setJMenuBar(menuBar);
       sc.setLocation(bounds.x, bounds.y);
       sc.setSize(bounds.width, bounds.height);
       sc.setLayout(new BorderLayout());
-      sc.setContentPane(new SPContainer());
+  //  sc.setContentPane(new SPContainer());
+
+      RootWindow rootWindow = DockingUtil.createRootWindow(SPC.getViewMap(), true);
+          
+      rootWindow.setWindow(new SplitWindow(true,0.15f,SPC.getNonOpView(0), new TabWindow(SPC.getOpView(0))));
+
+
+      sc.getContentPane().add(rootWindow);
+      SPC.setRoot(rootWindow);
+      
+      menuBar.setEnabled(true);
       sc.setVisible(true);
       sc.toFront();
+
    }
 
    /**

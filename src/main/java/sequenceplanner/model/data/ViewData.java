@@ -118,7 +118,7 @@ public class ViewData extends Data {
          output += "\n" + cellData.toString();
       }
 
-       output += "\n====================================================================";
+       output += "\n====================================================================D";
 
       return output;
    }

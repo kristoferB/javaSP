@@ -51,7 +51,7 @@ public class CustomTabComponent extends JPanel {
 
          @Override
          public void actionPerformed(ActionEvent e) {
-            cont.close(view);
+            //cont.close(view);
          }
       });
 
