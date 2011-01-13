@@ -72,7 +72,7 @@ public class Calculation {
         }
     }
 
-    public ModuleSubject transportPlanningProductType(String key) {
+    public void transportPlanningProductType(String key) {
         Error e = new Error();
         SModule smodule = new SModule("temp");
         smodule.setComment("Module for transport planning\n*****\nSet start position manually\nSet finish position manually\n" +
@@ -109,7 +109,7 @@ public class Calculation {
         }
         its = processingLevel.iterator();
         while (its.hasNext()) {
-            smodule.addIntVariable(key + TypeVar.SEPARATION + its.next() + TypeVar.PROCESSING_LEVEL, 0, 3, 0, null);
+            smodule.addIntVariable(key + TypeVar.SEPARATION + its.next() + TypeVar.PROCESSING_LEVEL, 0, TypeVar.PROCESSING_LEVEL_COUNT_LIMIT, 0, null);
         }//----------------------------------------------------------------------
 
         //Single Location automaton----------------------------------------------
@@ -173,8 +173,9 @@ public class Calculation {
 
             //basic guards and actions regardless of pre-conditions
             String sp = key + TypeVar.SEPARATION + ExtendedData.getSourcePos(desc);
-            ega.andGuard(sp + TypeVar.POS_PROCESS + TypeVar.EFA_STRICTLY_LARGER_THAN_ZERO);
+            ega.andGuard(sp + TypeVar.POS_PROCESS + TypeVar.EFA_STRICTLY_LARGER_THAN_ZERO); //product in pos
             if (!TypeVar.ED_PROCESSING_LEVEL_COUNTER_NO.equals(ExtendedData.getProcessingLevel(desc))) {
+                ega.andGuard(sp + TypeVar.PROCESSING_LEVEL + TypeVar.EFA_EQUAL + 0); //The pos should in most cases not have been used before
                 ega.addAction(sp + TypeVar.PROCESSING_LEVEL + TypeVar.EFA_PLUS_ONE);
             }
             ega.addAction(sp + TypeVar.POS_PROCESS + TypeVar.EFA_MINUS_ONE);
@@ -214,11 +215,10 @@ public class Calculation {
 
         smodule.DialogAutomataTransitions();
         e.printErrorList();
-
-        return smodule.getModuleSubject();
     }
 
     public void printProductTypes() {
+        //in log
         log.info("--------------------------------");
         log.info("PRODUCT TYPES");
         Iterator<String> itKey = productTypes.keySet().iterator();
@@ -232,6 +232,23 @@ public class Calculation {
             }
         }
         log.info("--------------------------------");
+
+        //as messageDialog
+        String text = "PRODUCT TYPES\n";
+        for ( String key : productTypes.keySet()) {
+            text = text + "PRODUCT TYPE: " + key + "\n";
+            int Count = 0;
+            for  (OperationData opData : productTypes.get(key)) {
+                text = text + opData.getName() + ", id:" + opData.getId();
+                if(++Count==3) {
+                    text = text + "\n";
+                    Count = 0;
+                } else {
+                    text = text + " | ";
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(null, text);
     }
 
     private void saveOpertions() {
@@ -245,15 +262,21 @@ public class Calculation {
     }
 
     /**
-     * <b>Update SP model with transport operations</b><br/>
-     * User selects supervisor implemented as text-file.
+     * <b>User selects supervisor implemented as text-file.</b><br/>
+     * The SP model is either updated with transport operations or
+     * a new EFA module is created
      */
     public void updateModelAfterTransportPlanning() {
+        Error e = new Error("Problems during update");
         JFileChooser fc = new JFileChooser("user.dir");
         //fc.setFileFilter(filter);
         int answer = fc.showOpenDialog(null);
 
         if (answer == JFileChooser.APPROVE_OPTION) {
+            HashMap<String, String> nameGuardMap = new HashMap<String, String>();
+            Boolean nameEguals4 = true;
+            Boolean guardEquals1 = true;
+            String productType = null;
             try {
                 BufferedReader bis = new BufferedReader(new FileReader(fc.getSelectedFile()));
                 while (bis.ready()) {
@@ -262,21 +285,23 @@ public class Calculation {
                     if (row.split(TypeVar.DESC_KEYSEPARATION).length == 2) {
                         String name = row.split(TypeVar.DESC_KEYSEPARATION)[0];
                         String guard = row.split(TypeVar.DESC_KEYSEPARATION)[1].replaceAll(" ", "");
-                        //name := productType _ sourcePos _ t _ destPos
-                        //guard equal to 0 == transition may never occur
-                        if (name.split(TypeVar.SEPARATION).length == 4 && !guard.equals("0")) {
-                            String productType = TypeVar.ED_PRODUCT_TYPE + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[0];
-                            String opType = TypeVar.ED_OP_TYPE + TypeVar.DESC_VALUESEPARATION + TypeVar.ED_OP_TYPE_TRANSPORT;
-                            String sourcePos = TypeVar.ED_SOURCE_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[1];
-                            String destPos = TypeVar.ED_DEST_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[3];
-                            guard = TypeVar.ED_GUARD + TypeVar.DESC_VALUESEPARATION + guard;
-                            model.setCounter(model.getCounter() + 1);
-                            OperationData opData = new OperationData(name, model.getCounter());
-                            opData.setDescription(productType + " " + TypeVar.DESC_KEYSEPARATION + " " + opType + " " + TypeVar.DESC_KEYSEPARATION + " " + sourcePos + " " + TypeVar.DESC_KEYSEPARATION + " " + destPos + " " + TypeVar.DESC_KEYSEPARATION + " " + guard);
-                            model.getOperationRoot().insert(new TreeNode(opData));
-                            saveOpertions();
-                            log.info("Added operation: " + name);
+                        //name := productType _ sourcePos _ t/opID _ destPos (length==4)
+                        //or
+                        //name := productType _ sourcePos _ t _ destPos _ someGuard (length>4)
+                        //guard equal to 0 <-> transition may never occur
+                        if (name.split(TypeVar.SEPARATION).length >= 4 && !guard.equals("0")) {
+                            nameGuardMap.put(name, guard);
+                            productType = name.split(TypeVar.SEPARATION)[0];
+                            if (name.split(TypeVar.SEPARATION).length > 4) {
+                                nameEguals4 = false;
+                            }
+                            if (!guard.equals("1")) {
+                                guardEquals1 = false;
+                            }
                         }
+                    } else {
+                        e.error("Given textfile does not support the format: name # guard. No update is performed!");
+                        break;
                     }
                 }
                 bis.close();
@@ -284,14 +309,58 @@ public class Calculation {
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
+            if (e.noErrors()) {
+                log.info("How to update: nameEguals4: "+ nameEguals4 + " guardEquals1: " + guardEquals1);
+                if (nameEguals4) {
+                    if (guardEquals1) { //create ops simple transition names
+                        updateModelAfterTransportPlanningCreateOperations(nameGuardMap);
+                    } else { //create new EFA module
+                        log.info("new EFA module");
+                        updateModelAfterTransportPlanningNewEFAModule(nameGuardMap,productType);
+                    }
+                } else {
+                    if (guardEquals1) { //create ops complex transition names
+                        //Change this
+                        //updateModelAfterTransportPlanningCreateOperations(nameGuardMap);
+                    } else { //new guards created during second run. Something is strange
+                        e.error("New guards created during second run. Something is strange!");
+                    }
+                }
+            }
+            e.printErrorList();
         }
+    }
+
+    /**
+     * <b>Update SP model with transport operations</b><br/>
+     * @param nameGuardMap name of transport operation and it's guard
+     */
+    private void updateModelAfterTransportPlanningCreateOperations(HashMap<String, String> nameGuardMap) {
+        for (String name : nameGuardMap.keySet()) {
+            String guard = nameGuardMap.get(name);
+            String productType = TypeVar.ED_PRODUCT_TYPE + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[0];
+            String opType = TypeVar.ED_OP_TYPE + TypeVar.DESC_VALUESEPARATION + TypeVar.ED_OP_TYPE_TRANSPORT;
+            String sourcePos = TypeVar.ED_SOURCE_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[1];
+            String destPos = TypeVar.ED_DEST_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[3];
+            guard = TypeVar.ED_GUARD + TypeVar.DESC_VALUESEPARATION + guard;
+            model.setCounter(model.getCounter() + 1);
+            OperationData opData = new OperationData(name, model.getCounter());
+            opData.setDescription(productType + " " + TypeVar.DESC_KEYSEPARATION + " " + opType + " " + TypeVar.DESC_KEYSEPARATION + " " + sourcePos + " " + TypeVar.DESC_KEYSEPARATION + " " + destPos + " " + TypeVar.DESC_KEYSEPARATION + " " + guard);
+            model.getOperationRoot().insert(new TreeNode(opData));
+            saveOpertions();
+            log.info("Added operation: " + name);
+        }
+    }
+
+    private void updateModelAfterTransportPlanningNewEFAModule(HashMap<String, String> nameGuardMap, String productType) {
+        new EFAforTransport(model).transportPlanning(productType, nameGuardMap);
     }
 
     /**
      * Open dialog to save wmod files
      * @param moduleSubject the module to be saved
      */
-    public void saveWMODFile(ModuleSubject moduleSubject) {
+    public static void saveWMODFile(ModuleSubject moduleSubject) {
         try {
             String filepath = "";
             JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
@@ -347,15 +416,14 @@ public class Calculation {
             checkButton = new JButton("Check!");
             checkButton.addActionListener(this);
             buttonJp.add(checkButton);
-            contButton = new JButton("Create .wmod file");
+            contButton = new JButton("Get transitions!");
             contButton.addActionListener(this);
             contButton.setEnabled(false);
             buttonJp.add(contButton);
 
             mainFrame = new JFrame("Product type selection");
-
+            mainFrame.setAlwaysOnTop(true);
             mainFrame.setLocationRelativeTo(null);
-            mainFrame.getContentPane().setLayout(new FlowLayout());
             mainFrame.getContentPane().add(new JLabel("Select products to include in supervisor synthesis:"), BorderLayout.NORTH);
             mainFrame.getContentPane().add(jp, BorderLayout.CENTER);
             mainFrame.getContentPane().add(buttonJp, BorderLayout.SOUTH);
@@ -379,7 +447,7 @@ public class Calculation {
                 }
             } else if (contButton == e.getSource()) {
                 mainFrame.dispose();
-                saveWMODFile(new EFAforSupervisor(products, model).getSubjectModule());
+                new EFAforSupervisor(products, model);
             } else {
                 contButton.setEnabled(false);
             }

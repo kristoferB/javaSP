@@ -88,7 +88,7 @@ public class ClickMenu extends JPopupMenu {
          add(rem,0);
          draw = true;
       }
-      else if (model.isOperation(d) && d.getName().contains(TypeVar.SEPARATION+TypeVar.TRANSPORT+TypeVar.SEPARATION)) { //Added PM 101130
+      else if (model.isOperation(d)) { //Added PM 110111
           add(rem,0);
           draw = true;
       }

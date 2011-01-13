@@ -13,14 +13,17 @@ import javax.swing.JLabel;
  * @author patrik
  */
 public class Error {
+
     private ArrayList<String> errorMsgs;
-    private String title ="Title is not set";
+    private String title;
+
     public Error() {
-        errorMsgs = new ArrayList<String>();
+        this("Title is not set");
     }
+
     public Error(String title) {
-        this();
         this.title = title;
+        errorMsgs = new ArrayList<String>();
     }
 
     public void error(String error) {
@@ -35,7 +38,7 @@ public class Error {
     public void printErrorList() {
         if (!errorMsgs.isEmpty()) {
             String error = "Look through the following errors: \n";
-            for (String s:errorMsgs) {
+            for (String s : errorMsgs) {
                 error = error + "\n" + s;
             }
             new ErrorDialog();
@@ -48,13 +51,13 @@ public class Error {
     }
 
     public boolean noErrors() {
-        if(errorMsgs.isEmpty()){
+        if (errorMsgs.isEmpty()) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
+
     /**
      * Dialog to show errors
      */
@@ -75,7 +78,7 @@ public class Error {
             mainFrame.getContentPane().setLayout(new BoxLayout(mainFrame.getContentPane(), BoxLayout.Y_AXIS));
             mainFrame.setLocationRelativeTo(null);
             mainFrame.setAlwaysOnTop(true);
-            for(String s: errorMsgs) {
+            for (String s : errorMsgs) {
                 mainFrame.getContentPane().add(new JLabel(s));
             }
             mainFrame.getContentPane().add(closeButton);

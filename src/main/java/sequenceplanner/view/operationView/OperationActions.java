@@ -110,6 +110,7 @@ public class OperationActions {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+          System.out.println(AddOperation.class.toString());
          SPGraph graph = getGraph(e);
 
          mxCell insertedCell = null;

@@ -53,6 +53,8 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.multiProduct.Calculation;
+import sequenceplanner.multiProduct.EFAforTransport;
+import sequenceplanner.multiProduct.RelationView;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.view.operationView.OperationView;
@@ -579,7 +581,19 @@ public class SPContainer extends JPanel {
                 Calculation calc = new Calculation(model);
                 String answer = calc.transportPlanningDialog();
                 if (answer != null) {
-                    calc.saveWMODFile(calc.transportPlanningProductType(answer));
+                    calc.transportPlanningProductType(answer);
+                }
+            }
+        }));
+
+        multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning 2") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EFAforTransport t = new EFAforTransport(model);
+                String answer = t.transportPlanningDialog();
+                if (answer != null) {
+                    t.transportPlanning(answer);
                 }
             }
         }));
@@ -605,6 +619,16 @@ public class SPContainer extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Calculation(model).new GenerateModuleBasedOnSelectedProductTypes();
+            }
+        }));
+        multiProduct.add(new JMenuItem(new AbstractAction("Generate relation view") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int count = model.getCounter();
+                OperationView ov = createOperationView("view" + count);
+                model.setCounter(++count);
+                new RelationView(model, ov);
             }
         }));
         return mb;

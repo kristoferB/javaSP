@@ -136,6 +136,9 @@ public class EFAforSupervisor {
 
     private void init() {
         declaration();
+        smodule.setComment("Module for multiproduct booking/unbooking of positions for synthesis\n*****\n" +
+                "Check that each product type ends with process op.\n Oterwise remove booking of last pos from corresponding top." +
+                "\n*****\nSynthesize supervisor through guard extraction\n");
         exploreOperationTree(model.getOperationRoot());
         exploreResourceTree(model.getResourceRoot());
     }
@@ -373,79 +376,170 @@ public class EFAforSupervisor {
                 }
             }
 
-            private void addActions() {
-                String action = product + TypeVar.SEPARATION + pos + TypeVar.PROCESSING_LEVEL + TypeVar.SEPARATION + count;
-                if (count.equals("0")) {
+            private void countIsZero(String action) {
+                //+=1--------------------------------------------------------
+                ArrayList<OperationData> firstops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_FIRST);
+                if (!firstops.isEmpty()) {
+                    for (OperationData opData : firstops) {
+                        addToActionsForOpMap(opData, action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(opData);
+                    }
+                } else {
+                    e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_FIRST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
+                }//----------------------------------------------------------
 
-                    //+=1--------------------------------------------------------
-                    ArrayList<OperationData> firstops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_FIRST);
-                    if (!firstops.isEmpty()) {
-                        for (OperationData opData : firstops) {
-                            addToActionsForOpMap(opData, action + TypeVar.EFA_PLUS_ONE);
-                            addDetails(opData);
-                        }
-                    } else {
-                        e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_FIRST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
-                    }//----------------------------------------------------------
-
-                    //-=1--------------------------------------------------------
-                    if (ops.size() == 2) {
-                        if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) is before ops.get(1)
-                            addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(0));
-                        } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(1) is before ops.get(0)
-                            addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(1));
-                        } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
-                                !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) and ops.get(1) are parallel
-                            addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(0));
-                            addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(1));
-                        } else {
-                            e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                        }
-                    } else if (ops.size() == 1) {
+                //-=1--------------------------------------------------------
+                if (ops.size() == 2) {
+                    if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) is before ops.get(1)
                         addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
                         addDetails(ops.get(0));
+                    } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(1) is before ops.get(0)
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
+                        addDetails(ops.get(1));
+                    } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
+                            !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) and ops.get(1) are parallel
+                        addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
+                        addDetails(ops.get(0));
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
+                        addDetails(ops.get(1));
                     } else {
                         e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                    }//----------------------------------------------------------
+                    }
+                } else if (ops.size() == 1) {
+                    addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
+                    addDetails(ops.get(0));
+                } else {
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                }//----------------------------------------------------------
+            }
 
-                } else if (count.equals("1")) {
-
-                    //+=1--------------------------------------------------------
-                    if (ops.size() == 2) {
-                        if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) is before ops.get(1)
-                            addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
-                            addDetails(ops.get(0));
-                        } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(1) is before ops.get(0)
-                            addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_PLUS_ONE);
-                            addDetails(ops.get(1));
-                        } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
-                                !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) and ops.get(1) are parallel
-                            addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
-                            addDetails(ops.get(0));
-                            addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_PLUS_ONE);
-                            addDetails(ops.get(1));
-                        } else {
-                            e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                        }
-                    } else if (ops.size() == 1) {
+            private void countIsOne(String action) {
+                //+=1--------------------------------------------------------
+                if (ops.size() == 2) {
+                    if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) is before ops.get(1)
                         addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
                         addDetails(ops.get(0));
+                    } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(1) is before ops.get(0)
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(ops.get(1));
+                    } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
+                            !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) and ops.get(1) are parallel
+                        addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(ops.get(0));
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(ops.get(1));
                     } else {
                         e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                    }//----------------------------------------------------------
+                    }
+                } else if (ops.size() == 1) {
+                    addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
+                    addDetails(ops.get(0));
+                } else {
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                }//----------------------------------------------------------
 
-                    //-=1--------------------------------------------------------
-                    if (ops.size() == 1) {
+                //-=1--------------------------------------------------------
+                if (ops.size() == 1) {
+                    ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
+                    if (!lastops.isEmpty()) {
+                        for (OperationData opData : lastops) {
+                            //To handle multipe last operations/alternaitve sequence endings
+                            if (opData.getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                                addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
+                                addDetails(opData);
+                            }
+                        }
+                    } else {
+                        e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
+                    }
+                } else if (ops.size() == 2) {
+                    if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) is before ops.get(1)
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
+                        addDetails(ops.get(1));
+                    } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(1) is before ops.get(0)
+                        addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
+                        addDetails(ops.get(0));
+                    } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
+                            !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) and ops.get(1) are parallel
+                        ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
+                        if (!lastops.isEmpty()) {
+                            for (OperationData opData : lastops) {
+                                //To handle multipe last operations/alternaitve sequence endings
+                                if (opData.getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) ||
+                                        opData.getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                                    addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
+                                    addDetails(opData);
+                                }
+                            }
+                        } else {
+                            e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
+                        }
+                    } else {
+                        e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                    }
+                } else {
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                }//----------------------------------------------------------
+            }
+
+            private void countIsTwo(String action) {
+                //+=1--------------------------------------------------------
+                if (ops.size() == 2) {
+                    if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) is before ops.get(1)
+                        addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(ops.get(0));
+                    } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(1) is before ops.get(0)
+                        addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_PLUS_ONE);
+                        addDetails(ops.get(1));
+                    } else {
+                        e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                    }
+                } else {
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                }//----------------------------------------------------------
+
+                //-=1--------------------------------------------------------
+                if (ops.size() == 1) {
+                    ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
+                    if (!lastops.isEmpty()) {
+                        for (OperationData opData : lastops) {
+                            //To handle multipe last operations/alternaitve sequence endings
+                            if (opData.getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                                addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
+                                addDetails(opData);
+                            }
+                        }
+                    } else {
+                        e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
+                    }
+                } else if (ops.size() == 2) {//This implementation does not handle all operation relation combinations when ops.size()==2!!!!!!!!!!!
+                    if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(0) is before ops.get(1)
+                        ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
+                        if (!lastops.isEmpty()) {
+                            for (OperationData opData : lastops) {
+                                //To handle multipe last operations/alternaitve sequence endings
+                                if (opData.getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                                    addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
+                                    addDetails(opData);
+                                }
+                            }
+                        } else {
+                            e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
+                        }
+                    } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
+                        //->ops.get(1) is before ops.get(0)
                         ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
                         if (!lastops.isEmpty()) {
                             for (OperationData opData : lastops) {
@@ -458,38 +552,22 @@ public class EFAforSupervisor {
                         } else {
                             e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
                         }
-                    } else if (ops.size() == 2) {
-                        if (ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) is before ops.get(1)
-                            addToActionsForOpMap(ops.get(1), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(1));
-                        } else if (ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(1) is before ops.get(0)
-                            addToActionsForOpMap(ops.get(0), action + TypeVar.EFA_MINUS_ONE);
-                            addDetails(ops.get(0));
-                        } else if (!ops.get(1).getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) &&
-                                !ops.get(0).getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                            //->ops.get(0) and ops.get(1) are parallel
-                            ArrayList<OperationData> lastops = getOps(TypeVar.ED_ORDER, TypeVar.ED_ORDER_LAST);
-                            if (!lastops.isEmpty()) {
-                                for (OperationData opData : lastops) {
-                                    //To handle multipe last operations/alternaitve sequence endings
-                                    if (opData.getRawPrecondition().contains(ops.get(0).getId() + TypeVar.SEPARATION) ||
-                                            opData.getRawPrecondition().contains(ops.get(1).getId() + TypeVar.SEPARATION)) {
-                                        addToActionsForOpMap(opData, action + TypeVar.EFA_MINUS_ONE);
-                                        addDetails(opData);
-                                    }
-                                }
-                            } else {
-                                e.error(product, TypeVar.ED_ORDER + " with " + TypeVar.ED_ORDER_LAST + " | to be used for " + TypeVar.ED_PROCESSING_LEVEL_COUNTER);
-                            }
-                        } else {
-                            e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                        }
                     } else {
                         e.error("Can't create actions for plCounters. Relations to complex for implementation");
-                    }//----------------------------------------------------------
+                    }
+                } else {
+                    e.error("Can't create actions for plCounters. Relations to complex for implementation");
+                }//----------------------------------------------------------
+            }
 
+            private void addActions() {
+                String action = product + TypeVar.SEPARATION + pos + TypeVar.PROCESSING_LEVEL + TypeVar.SEPARATION + count;
+                if (count.equals("0")) {
+                    countIsZero(action);
+                } else if (count.equals("1")) {
+                    countIsOne(action);
+                } else if (count.equals("2")) {
+                    countIsTwo(action);
                 } else {
                     e.error("Can't create actions for plCounters. Count to high for implementation");
                 }
@@ -788,17 +866,31 @@ public class EFAforSupervisor {
 
             //Book---------------------------------------------------------------
             if (positionIsOk(ExtendedData.getDestPos(desc))) {
-                action = ExtendedData.getProductType(desc) + TypeVar.SEPARATION + ExtendedData.getDestPos(desc);
-                if (detailedPosForProductMap.containsKey(ExtendedData.getProductType(desc))) {
-                    if (detailedPosForProductMap.get(ExtendedData.getProductType(desc)).contains(ExtendedData.getDestPos(desc))) {
-                        if (ExtendedData.getOPType(desc).equals(TypeVar.ED_OP_TYPE_PROCESS)) {
-                            action = action + TypeVar.POS_MOVE;
-                        } else { //transport
-                            action = action + TypeVar.POS_PROCESS;
+                //Only book dest pos if there exist process op that eventually unbook pos.
+                Boolean cont = true;
+//                if (ExtendedData.getOPType(desc).equals(TypeVar.ED_OP_TYPE_TRANSPORT) &&
+//                        detailedPopsForProductMap.containsKey(ExtendedData.getProductType(desc))) {
+//                    cont = false;
+//                    for (OperationData opD : detailedPopsForProductMap.get(ExtendedData.getProductType(desc))) {
+//                        if (ExtendedData.getDestPos(desc).equals(ExtendedData.getSourcePos(opD.getDescription()))) {
+//                            cont = true;
+//                            break;
+//                        }
+//                    }
+//                }
+                if (cont) {
+                    action = ExtendedData.getProductType(desc) + TypeVar.SEPARATION + ExtendedData.getDestPos(desc);
+                    if (detailedPosForProductMap.containsKey(ExtendedData.getProductType(desc))) {
+                        if (detailedPosForProductMap.get(ExtendedData.getProductType(desc)).contains(ExtendedData.getDestPos(desc))) {
+                            if (ExtendedData.getOPType(desc).equals(TypeVar.ED_OP_TYPE_PROCESS)) {
+                                action = action + TypeVar.POS_MOVE;
+                            } else { //transport
+                                action = action + TypeVar.POS_PROCESS;
+                            }
                         }
                     }
+                    ega.addAction(action + TypeVar.EFA_PLUS_ONE);
                 }
-                ega.addAction(action + TypeVar.EFA_PLUS_ONE);
             }//------------------------------------------------------------------
 
             //Unbook-------------------------------------------------------------
