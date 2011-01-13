@@ -6,7 +6,14 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
+import javax.swing.ImageIcon;    //Not used
+        /*
+    // Container for most of the views
+    protected JTabbedPane viewPane;
+
+    // Container for project / Library views
+    protected JSplitPane projectPane;
+     */
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 

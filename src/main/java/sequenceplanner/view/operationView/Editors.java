@@ -30,7 +30,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import sequenceplanner.SequencePlanner;
+import sequenceplanner.SPIcon.IconHandler;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -44,8 +44,8 @@ import sequenceplanner.view.operationView.graphextension.Cell;
  */
 public class Editors {
 
-   public static final ImageIcon resIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
-   public static final ImageIcon productLiason = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/op.png");
+   public static final ImageIcon resIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+   public static final ImageIcon productLiason = IconHandler.getNewIcon("/sequenceplanner/resources/icons/op.png");
 
    static abstract class OperationEditor extends JPanel {
 

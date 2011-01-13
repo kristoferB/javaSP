@@ -21,7 +21,7 @@ import javax.swing.tree.TreeCellEditor;
 
 import org.apache.log4j.Logger;
 
-import sequenceplanner.SequencePlanner;
+import sequenceplanner.SPIcon.IconHandler;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ResourceData;
@@ -34,7 +34,7 @@ import sequenceplanner.view.Actions.InsertVariable;
  */
 public class Editors {
 
-   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/save.png");
+   static final ImageIcon saveIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/save.png");
 
 
 

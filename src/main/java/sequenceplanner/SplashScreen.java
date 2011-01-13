@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import sequenceplanner.SPIcon.IconHandler;
 
 
 public class SplashScreen extends JWindow {
@@ -47,7 +48,7 @@ public class SplashScreen extends JWindow {
         
         content.setOpaque(false);
         content.setLayout(new BorderLayout());
-        JLabel logo = new JLabel( SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/SequencePlanner.png", false) );
+        JLabel logo = new JLabel( IconHandler.getNewIcon("/sequenceplanner/resources/icons/SequencePlanner.png", false) );
         // &#11; = VT (Vertical Tab)
         JLabel label = new JLabel("<HTML>Created by <BR> Carl Thorstensson and Erik Ohlson <BR>in collaboration with Bengt Lennartson and Kristofer Bengtsson</HTML>");
         

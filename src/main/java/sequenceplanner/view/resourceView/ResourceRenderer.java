@@ -9,8 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
+import sequenceplanner.SPIcon.IconHandler;
 
-import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
@@ -29,8 +29,8 @@ public class ResourceRenderer extends JPanel
    private JPanel p;
 
    //Icons
-   private final ImageIcon robot = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
-   private final ImageIcon variable = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/variable.png");
+   private final ImageIcon robot = IconHandler.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+   private final ImageIcon variable = IconHandler.getNewIcon("/sequenceplanner/resources/icons/variable.png");
 
    public ResourceRenderer() {
       editors = new HashMap<String, TreeRenderer>();

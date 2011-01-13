@@ -7,8 +7,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.apache.log4j.Logger;
+import sequenceplanner.SPIcon.IconHandler;
 
-import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
@@ -32,13 +32,13 @@ public class Renderer extends DefaultTreeCellRenderer {
    public Renderer() {
 
       //Register all icons used with the icons.
-      folderIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/folder.png");
-      folderOpenIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/folder-open.png");
-      operationIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/sop.png");
-      resourceIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/robot.png");
-      variableIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/variable.png");
-      liasonIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/icon.png");
-      viewIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/face-monkey.png");
+      folderIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/folder.png");
+      folderOpenIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/folder-open.png");
+      operationIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/sop.png");
+      resourceIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/robot.png");
+      variableIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/variable.png");
+      liasonIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/icon.png");
+      viewIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/face-monkey.png");
    }
 
    @Override

@@ -12,7 +12,7 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreePath;
 
 import sequenceplanner.SPContainer;
-import sequenceplanner.SequencePlanner;
+import sequenceplanner.SPIcon.IconHandler;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
@@ -59,8 +59,8 @@ public class ResourceView extends AbstractView {
       tree.setBackground(getBackground());
       tree.setCellRenderer(rr);
 
-      ((BasicTreeUI) tree.getUI()).setExpandedIcon(SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/min.png"));
-      ((BasicTreeUI) tree.getUI()).setCollapsedIcon(SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/max.png"));
+      ((BasicTreeUI) tree.getUI()).setExpandedIcon(IconHandler.getNewIcon("/sequenceplanner/resources/icons/min.png"));
+      ((BasicTreeUI) tree.getUI()).setCollapsedIcon(IconHandler.getNewIcon("/sequenceplanner/resources/icons/max.png"));
 
       tree.addMouseListener(new MouseAdapter() {
 

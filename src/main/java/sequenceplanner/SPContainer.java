@@ -38,7 +38,7 @@ public class SPContainer {
     private View[] nonOperationViews = new View[15];
     private RootWindow rootWindow;
     private TabWindow tabWindow;
-    //Map of all the views
+    //Map of all the InfoNode views
     private ViewMap viewMap = new ViewMap();
     protected static int viewCounter = 0;
     private int opViewCounter = 0;

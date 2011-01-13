@@ -16,13 +16,13 @@ import javax.swing.JTabbedPane;
 
 import org.apache.log4j.Logger;
 
-import sequenceplanner.SequencePlanner;
 import sequenceplanner.view.operationView.Editors.OperationEditor;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
+import sequenceplanner.SPIcon.IconHandler;
 
 /**
  *
@@ -31,7 +31,7 @@ import com.mxgraph.util.mxEventSource;
 public class AttributeEditor extends JPanel
       implements mxEventSource.mxIEventListener {
 
-   static final ImageIcon saveIcon = SequencePlanner.getNewIcon("/sequenceplanner/resources/icons/save.png");
+   static final ImageIcon saveIcon = IconHandler.getNewIcon("/sequenceplanner/resources/icons/save.png");
 
    static Logger logger = Logger.getLogger(AttributeEditor.class);
    protected HashMap<String, LinkedList<OperationEditor>> editors;
