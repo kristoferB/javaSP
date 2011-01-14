@@ -561,6 +561,7 @@ public class SPContainer extends JPanel {
 
         mb.add(compile);
 
+        //Multiproduct Start---------------------------------------------------------------------------------------------------------------
         JMenu multiProduct = new JMenu("MP");
         mb.add(multiProduct);
 
@@ -631,6 +632,7 @@ public class SPContainer extends JPanel {
                 new RelationView(model, ov);
             }
         }));
+        //Multiproduct End---------------------------------------------------------------------------------------------------------------
         return mb;
     }
 

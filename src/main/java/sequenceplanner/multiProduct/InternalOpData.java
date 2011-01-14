@@ -16,6 +16,7 @@ public class InternalOpData {
     private OperationData opData;
     String preconditionForView = "";
     String postconditionForView = "";
+    Integer parentId = null;
 
     public InternalOpData(OperationData opData) {
         this.opData = opData;

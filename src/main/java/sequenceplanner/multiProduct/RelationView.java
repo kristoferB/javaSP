@@ -46,12 +46,34 @@ public class RelationView {
     public RelationView(Model model, OperationView ov) {
         this.model = model;
         this.ov = ov;
+
+        printOperations();
+
         init();
 
         if (testIDs()) {
             new SelectOperationsDialog();
         } else {
             JOptionPane.showMessageDialog(null, "I can't handle IDs that are prefix or suffix of each other, e.g. 18 and 118");
+        }
+    }
+
+    private void printOperations() {
+        InternalOpDatas set = new InternalOpDatas();
+        getOperations(model.getOperationRoot(), set);
+        System.out.println("-----------------");
+        for (InternalOpData iData : set) {
+            System.out.println("ID: " + iData.getId() + " | parent: " + iData.parentId);
+        }
+        System.out.println("-----------------");
+    }
+
+    private void getOperations(TreeNode tree, InternalOpDatas set) {
+        for (int i = 0; i < tree.getChildCount(); ++i) {
+            InternalOpData iOpData = new InternalOpData((OperationData) tree.getChildAt(i).getNodeData());
+            iOpData.parentId = tree.getId();
+            set.add(iOpData);
+            getOperations(tree.getChildAt(i), set);
         }
     }
 
@@ -321,8 +343,8 @@ public class RelationView {
             //Generate the module
             module.DialogAutomataTransitions();
 
-            //Receive the supervisor
-            new SelectSupervisorDialog();
+//            //Receive the supervisor
+//            new SelectSupervisorDialog();
         }
 
         private void basicTransGuardAction(SEGA ega, String name, int from) {
@@ -663,7 +685,8 @@ public class RelationView {
 
     private class SelectOperationsDialog extends JFrame implements ActionListener {
 
-        JButton contButton = new JButton("View!");
+        JButton viewButton = new JButton("View!");
+        JButton wmodButton = new JButton("Generate .wmod file");
         JButton sButton = new JButton("Select all");
         JButton dsButton = new JButton("Deselect all");
         JPanel buttonJp = new JPanel();
@@ -696,9 +719,13 @@ public class RelationView {
             dsButton.setEnabled(true);
             buttonJp.add(dsButton);
 
-            contButton.addActionListener(this);
-            contButton.setEnabled(true);
-            buttonJp.add(contButton);
+            viewButton.addActionListener(this);
+            viewButton.setEnabled(true);
+            buttonJp.add(viewButton);
+
+            wmodButton.addActionListener(this);
+            wmodButton.setEnabled(true);
+            buttonJp.add(wmodButton);
 
             setLocationRelativeTo(null);
             pack();
@@ -707,7 +734,7 @@ public class RelationView {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (contButton == e.getSource()) {
+            if (viewButton == e.getSource() || wmodButton == e.getSource()) {
                 Set<String> operations = new HashSet<String>();
                 for (JCheckBox jcb : bg) {
                     if (jcb.isSelected()) {
@@ -715,30 +742,38 @@ public class RelationView {
                     }
                 }
                 dispose();
-                //new EFAModuleForView(operations);
-                new SimpleDraw(operations);
+                if (viewButton == e.getSource()) {
+                    new SimpleDraw(operations);
+                } else {
+                    new EFAModuleForView(operations);
+                }
+                
             } else if (sButton == e.getSource()) {
                 for (JCheckBox jcb : bg) {
                     jcb.setSelected(true);
                 }
-                contButton.setEnabled(true);
+                viewButton.setEnabled(true);
+                wmodButton.setEnabled(true);
             } else if (dsButton == e.getSource()) {
                 for (JCheckBox jcb : bg) {
                     jcb.setSelected(false);
                 }
-                contButton.setEnabled(false);
+                viewButton.setEnabled(false);
+                wmodButton.setEnabled(false);
             } else {
-                Boolean contButtonOK = false;
+                Boolean buttonOK = false;
                 for (JCheckBox jcb : bg) {
                     if (jcb.isSelected()) {
-                        contButtonOK = true;
+                        buttonOK = true;
                         break;
                     }
                 }
-                if (contButtonOK) {
-                    contButton.setEnabled(true);
+                if (buttonOK) {
+                    viewButton.setEnabled(true);
+                    wmodButton.setEnabled(true);
                 } else {
-                    contButton.setEnabled(false);
+                    viewButton.setEnabled(false);
+                    wmodButton.setEnabled(false);
                 }
             }
         }

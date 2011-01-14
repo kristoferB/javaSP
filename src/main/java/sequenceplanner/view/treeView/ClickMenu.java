@@ -88,10 +88,11 @@ public class ClickMenu extends JPopupMenu {
          add(rem,0);
          draw = true;
       }
+      //PM modification start-----------------------------------------------------------------------------------------------------
       else if (model.isOperation(d)) { //Added PM 110111
           add(rem,0);
           draw = true;
-      }
+      }//PM modification end-----------------------------------------------------------------------------------------------------
       
       
       if (model.isResource(d) || model.isLiason(d)
