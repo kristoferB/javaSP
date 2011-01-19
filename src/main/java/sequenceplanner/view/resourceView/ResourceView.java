@@ -12,7 +12,7 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreePath;
 
 import sequenceplanner.SPContainer;
-import sequenceplanner.SPIcon.IconHandler;
+import sequenceplanner.spIcon.IconHandler;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;

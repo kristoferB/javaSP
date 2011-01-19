@@ -14,8 +14,8 @@ import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.util.DockingUtil;
 import sequenceplanner.SPContainer;
-import sequenceplanner.SPIcon.IconHandler;
-import sequenceplanner.SPMenuBar;
+import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.gui.view.SPMenuBar;
 import sequenceplanner.model.Model;
 
 /**

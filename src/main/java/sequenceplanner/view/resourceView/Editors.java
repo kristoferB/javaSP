@@ -21,7 +21,7 @@ import javax.swing.tree.TreeCellEditor;
 
 import org.apache.log4j.Logger;
 
-import sequenceplanner.SPIcon.IconHandler;
+import sequenceplanner.spIcon.IconHandler;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ResourceData;
