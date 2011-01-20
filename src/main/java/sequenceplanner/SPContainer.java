@@ -53,6 +53,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.multiProduct.Calculation;
+import sequenceplanner.multiProduct.EFAforSupervisor;
 import sequenceplanner.multiProduct.EFAforTransport;
 import sequenceplanner.multiProduct.RelationView;
 import sequenceplanner.view.AbstractView;
@@ -574,20 +575,20 @@ public class SPContainer extends JPanel {
             }
         }));
 
+//        multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning (old)") {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                // Create a module of EFAs with Sequence Planner SOP as input
+//                Calculation calc = new Calculation(model);
+//                String answer = calc.transportPlanningDialog();
+//                if (answer != null) {
+//                    calc.transportPlanningProductType(answer);
+//                }
+//            }
+//        }));
+
         multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Create a module of EFAs with Sequence Planner SOP as input
-                Calculation calc = new Calculation(model);
-                String answer = calc.transportPlanningDialog();
-                if (answer != null) {
-                    calc.transportPlanningProductType(answer);
-                }
-            }
-        }));
-
-        multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning 2") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -607,19 +608,11 @@ public class SPContainer extends JPanel {
             }
         }));
 
-//        multiProduct.add(new JMenuItem(new AbstractAction("Remove tops") {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                new Calculation(model).new RemoveTransportOperations();
-//            }
-//        }));
-
         multiProduct.add(new JMenuItem(new AbstractAction("EFA for MP supervisor") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Calculation(model).new GenerateModuleBasedOnSelectedProductTypes();
+                new EFAforSupervisor(model);
             }
         }));
         multiProduct.add(new JMenuItem(new AbstractAction("Generate relation view") {

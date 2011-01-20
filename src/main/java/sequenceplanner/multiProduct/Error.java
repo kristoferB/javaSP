@@ -1,5 +1,7 @@
 package sequenceplanner.multiProduct;
 
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Store errors
@@ -61,9 +64,8 @@ public class Error {
     /**
      * Dialog to show errors
      */
-    public class ErrorDialog implements ActionListener {
+    public class ErrorDialog extends JFrame implements ActionListener {
 
-        JFrame mainFrame = null;
         JButton closeButton = null;
 
         public ErrorDialog() {
@@ -71,25 +73,32 @@ public class Error {
         }
 
         private void Dialog() {
+            Container c = getContentPane();
+            setTitle(title + " | To look up:");
             closeButton = new JButton("Close");
             closeButton.addActionListener(this);
 
-            mainFrame = new JFrame(title + " | To look up:");
-            mainFrame.getContentPane().setLayout(new BoxLayout(mainFrame.getContentPane(), BoxLayout.Y_AXIS));
-            mainFrame.setLocationRelativeTo(null);
-            mainFrame.setAlwaysOnTop(true);
+            c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
+            setLocationRelativeTo(null);
+            setAlwaysOnTop(true);
+
+            c.add(closeButton);
+  
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            c.add(panel);
             for (String s : errorMsgs) {
-                mainFrame.getContentPane().add(new JLabel(s));
+                panel.add(new JLabel(s));
             }
-            mainFrame.getContentPane().add(closeButton);
-            mainFrame.pack();
-            mainFrame.setVisible(true);
+            
+            pack();
+            setVisible(true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (closeButton == e.getSource()) {
-                mainFrame.dispose();
+                dispose();
             }
         }
     }

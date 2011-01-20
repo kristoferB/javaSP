@@ -22,8 +22,12 @@ public class SEGA extends EGA {
      * @param to object should go here
      */
     public void addBasicPositionBookAndUnbook(String from, String to) {
-        andGuard(from + TypeVar.EFA_STRICTLY_LARGER_THAN_ZERO);
-        addAction(from + TypeVar.EFA_MINUS_ONE);
-        addAction(to + TypeVar.EFA_PLUS_ONE);
+        if (from.length() > "".length()) {
+            andGuard(from + TypeVar.EFA_STRICTLY_LARGER_THAN_ZERO);
+            addAction(from + TypeVar.EFA_MINUS_ONE);
+        }
+        if (to.length() > "".length()) {
+            addAction(to + TypeVar.EFA_PLUS_ONE);
+        }
     }
 }

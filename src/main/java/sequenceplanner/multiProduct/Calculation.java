@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -235,12 +236,12 @@ public class Calculation {
 
         //as messageDialog
         String text = "PRODUCT TYPES\n";
-        for ( String key : productTypes.keySet()) {
+        for (String key : productTypes.keySet()) {
             text = text + "PRODUCT TYPE: " + key + "\n";
             int Count = 0;
-            for  (OperationData opData : productTypes.get(key)) {
+            for (OperationData opData : productTypes.get(key)) {
                 text = text + opData.getName() + ", id:" + opData.getId();
-                if(++Count==3) {
+                if (++Count == 3) {
                     text = text + "\n";
                     Count = 0;
                 } else {
@@ -274,9 +275,9 @@ public class Calculation {
 
         if (answer == JFileChooser.APPROVE_OPTION) {
             HashMap<String, String> nameGuardMap = new HashMap<String, String>();
-            Boolean nameEguals4 = true;
-            Boolean guardEquals1 = true;
+            HashMap<String, String> nameGuardOneMap = new HashMap<String, String>();
             String productType = null;
+            String opType = null;
             try {
                 BufferedReader bis = new BufferedReader(new FileReader(fc.getSelectedFile()));
                 while (bis.ready()) {
@@ -285,18 +286,12 @@ public class Calculation {
                     if (row.split(TypeVar.DESC_KEYSEPARATION).length == 2) {
                         String name = row.split(TypeVar.DESC_KEYSEPARATION)[0];
                         String guard = row.split(TypeVar.DESC_KEYSEPARATION)[1].replaceAll(" ", "");
-                        //name := productType _ sourcePos _ t/opID _ destPos (length==4)
-                        //or
-                        //name := productType _ sourcePos _ t _ destPos _ someGuard (length>4)
-                        //guard equal to 0 <-> transition may never occur
-                        if (name.split(TypeVar.SEPARATION).length >= 4 && !guard.equals("0")) {
+                        opType = name.split(TypeVar.SEPARATION)[2];
+                        productType = name.split(TypeVar.SEPARATION)[0];
+                        if (!guard.equals("0")) {
                             nameGuardMap.put(name, guard);
-                            productType = name.split(TypeVar.SEPARATION)[0];
-                            if (name.split(TypeVar.SEPARATION).length > 4) {
-                                nameEguals4 = false;
-                            }
-                            if (!guard.equals("1")) {
-                                guardEquals1 = false;
+                            if (guard.equals("1")) {
+                                nameGuardOneMap.put(name, guard);
                             }
                         }
                     } else {
@@ -305,26 +300,17 @@ public class Calculation {
                     }
                 }
                 bis.close();
-
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
             if (e.noErrors()) {
-                log.info("How to update: nameEguals4: "+ nameEguals4 + " guardEquals1: " + guardEquals1);
-                if (nameEguals4) {
-                    if (guardEquals1) { //create ops simple transition names
-                        updateModelAfterTransportPlanningCreateOperations(nameGuardMap);
-                    } else { //create new EFA module
-                        log.info("new EFA module");
-                        updateModelAfterTransportPlanningNewEFAModule(nameGuardMap,productType);
-                    }
+                log.info("How to update: ");
+                if (nameGuardMap.size() == nameGuardOneMap.size() || opType.startsWith("s")) {
+                    log.info("Create new operations");
+                    updateModelAfterTransportPlanningCreateOperations(nameGuardOneMap, productType);
                 } else {
-                    if (guardEquals1) { //create ops complex transition names
-                        //Change this
-                        //updateModelAfterTransportPlanningCreateOperations(nameGuardMap);
-                    } else { //new guards created during second run. Something is strange
-                        e.error("New guards created during second run. Something is strange!");
-                    }
+                    log.info("Create a new module");
+                    updateModelAfterTransportPlanningNewEFAModule(nameGuardMap, productType);
                 }
             }
             e.printErrorList();
@@ -335,21 +321,73 @@ public class Calculation {
      * <b>Update SP model with transport operations</b><br/>
      * @param nameGuardMap name of transport operation and it's guard
      */
-    private void updateModelAfterTransportPlanningCreateOperations(HashMap<String, String> nameGuardMap) {
-        for (String name : nameGuardMap.keySet()) {
-            String guard = nameGuardMap.get(name);
-            String productType = TypeVar.ED_PRODUCT_TYPE + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[0];
-            String opType = TypeVar.ED_OP_TYPE + TypeVar.DESC_VALUESEPARATION + TypeVar.ED_OP_TYPE_TRANSPORT;
-            String sourcePos = TypeVar.ED_SOURCE_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[1];
-            String destPos = TypeVar.ED_DEST_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[3];
-            guard = TypeVar.ED_GUARD + TypeVar.DESC_VALUESEPARATION + guard;
+    private void updateModelAfterTransportPlanningCreateOperations(HashMap<String, String> nameGuardMap, String pType) {
+        //Add parent operation
+        model.setCounter(model.getCounter() + 1);
+        OperationData data = new OperationData(pType + "_for_synthesis", model.getCounter());
+        data.setDescription(TypeVar.ED_PRODUCT_TYPE + TypeVar.DESC_VALUESEPARATION + pType);
+        TreeNode parentOp = new TreeNode(data);
+        model.getOperationRoot().insert(parentOp);
+
+        HashSet<String> newNameSet = new HashSet<String>(nameGuardMap.size());
+        simplifyPositionNames(nameGuardMap, newNameSet);
+
+        //Add children
+        for (String name : newNameSet) {
+            String productType = TypeVar.ED_PRODUCT_TYPE + TypeVar.DESC_VALUESEPARATION + pType;
+//            String opType = TypeVar.ED_OP_TYPE + TypeVar.DESC_VALUESEPARATION + TypeVar.ED_OP_TYPE_TRANSPORT;
+            String sourcePos = TypeVar.ED_SOURCE_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[0];
+            String destPos = TypeVar.ED_DEST_POS + TypeVar.DESC_VALUESEPARATION + name.split(TypeVar.SEPARATION)[2];
             model.setCounter(model.getCounter() + 1);
             OperationData opData = new OperationData(name, model.getCounter());
-            opData.setDescription(productType + " " + TypeVar.DESC_KEYSEPARATION + " " + opType + " " + TypeVar.DESC_KEYSEPARATION + " " + sourcePos + " " + TypeVar.DESC_KEYSEPARATION + " " + destPos + " " + TypeVar.DESC_KEYSEPARATION + " " + guard);
-            model.getOperationRoot().insert(new TreeNode(opData));
+            opData.setDescription(productType + " " + TypeVar.DESC_KEYSEPARATION + " " + sourcePos + " " + TypeVar.DESC_KEYSEPARATION + " " + destPos);
+            parentOp.insert(new TreeNode(opData));
             saveOpertions();
+
             log.info("Added operation: " + name);
         }
+
+    }
+
+    private void simplifyPositionNames(HashMap<String, String> nameGuardMap, HashSet<String> newNameSet) {
+        HashMap<String, String> oldNewMap = new HashMap<String, String>();
+        HashMap<String, Integer> positionHistogramMap = new HashMap<String, Integer>();
+
+        for (String name : nameGuardMap.keySet()) {
+            String productType = name.split(TypeVar.SEPARATION)[0];
+            String sourcePos = name.split(TypeVar.SEPARATION)[1].replaceAll(TypeVar.POS_MOVE, "").replaceAll(TypeVar.POS_PROCESS, "");
+
+            String sourcePosBase = sourcePos.split(":")[0];
+            String opType = name.split(TypeVar.SEPARATION)[2];
+            String destPos = name.split(TypeVar.SEPARATION)[3].replaceAll(TypeVar.POS_MOVE, "").replaceAll(TypeVar.POS_PROCESS, "");
+
+            String destPosBase = destPos.split(":")[0];
+
+            String sPos = helpMetodTosimplifyPositionNames(positionHistogramMap, sourcePosBase, oldNewMap, sourcePos, productType);
+
+            if (opType.startsWith("s")) {
+                opType = opType.substring(1);
+            }
+
+            String dPos = sPos;
+            if (!sourcePosBase.equals(destPosBase)) {
+                dPos = helpMetodTosimplifyPositionNames(positionHistogramMap, destPosBase, oldNewMap, destPos, productType);
+            }
+
+            newNameSet.add(sPos + TypeVar.SEPARATION + opType + TypeVar.SEPARATION + dPos);
+        }
+    }
+
+    private String helpMetodTosimplifyPositionNames(HashMap<String, Integer> positionHistogramMap, String posBase, HashMap<String, String> oldNewMap, String pos, String productType) {
+        if (!oldNewMap.containsKey(pos)) {
+            if (!positionHistogramMap.containsKey(posBase)) {
+                positionHistogramMap.put(posBase, 1);
+            }
+            int count = positionHistogramMap.get(posBase);
+            oldNewMap.put(pos, productType + ":" + posBase + ":" + count);
+            positionHistogramMap.put(posBase, ++count);
+        }
+        return oldNewMap.get(pos);
     }
 
     private void updateModelAfterTransportPlanningNewEFAModule(HashMap<String, String> nameGuardMap, String productType) {
@@ -375,164 +413,9 @@ public class Calculation {
                 JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
                 marshaller.marshal(moduleSubject, file);
             }
+
         } catch (Exception t) {
             t.printStackTrace();
         }
     }
-
-    /**
-     * Dialog to select what product types to include in synthesis.<br/>
-     * The selected types are translated into a wmod file.
-     */
-    public class GenerateModuleBasedOnSelectedProductTypes implements ActionListener {
-
-        JFrame mainFrame = null;
-        JButton checkButton = null;
-        JButton contButton = null;
-        JPanel buttonJp = null;
-        JPanel jp = null;
-        ArrayList<JCheckBox> bg = null;
-        ArrayList<String> products = null;
-
-        public GenerateModuleBasedOnSelectedProductTypes() {
-            Dialog();
-        }
-
-        private void Dialog() {
-            jp = new JPanel();
-            jp.setLayout(new FlowLayout());
-            bg = new ArrayList<JCheckBox>();
-            Iterator<String> its = productTypes.keySet().iterator();
-            while (its.hasNext()) {
-                String text = its.next();
-                JCheckBox rb = new JCheckBox(text);
-                rb.addActionListener(this);
-                rb.setSelected(true);
-                jp.add(rb);
-                bg.add(rb);
-            }
-
-            buttonJp = new JPanel();
-            checkButton = new JButton("Check!");
-            checkButton.addActionListener(this);
-            buttonJp.add(checkButton);
-            contButton = new JButton("Get transitions!");
-            contButton.addActionListener(this);
-            contButton.setEnabled(false);
-            buttonJp.add(contButton);
-
-            mainFrame = new JFrame("Product type selection");
-            mainFrame.setAlwaysOnTop(true);
-            mainFrame.setLocationRelativeTo(null);
-            mainFrame.getContentPane().add(new JLabel("Select products to include in supervisor synthesis:"), BorderLayout.NORTH);
-            mainFrame.getContentPane().add(jp, BorderLayout.CENTER);
-            mainFrame.getContentPane().add(buttonJp, BorderLayout.SOUTH);
-            mainFrame.pack();
-            mainFrame.setVisible(true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (checkButton == e.getSource()) {
-                products = new ArrayList<String>();
-                Iterator<JCheckBox> itb = bg.iterator();
-                while (itb.hasNext()) {
-                    JCheckBox jcb = itb.next();
-                    if (jcb.isSelected()) {
-                        products.add(jcb.getText());
-                    }
-                }
-                if (!products.isEmpty()) {
-                    contButton.setEnabled(true);
-                }
-            } else if (contButton == e.getSource()) {
-                mainFrame.dispose();
-                new EFAforSupervisor(products, model);
-            } else {
-                contButton.setEnabled(false);
-            }
-        }
-    }
-//    /**
-//     * User may select what product types the tops to be removed belong to.
-//     */
-//    public class RemoveTransportOperations implements ActionListener {
-//
-//        JFrame mainFrame = null;
-//        JButton removeButton = null;
-//        JPanel buttonJp = null;
-//        JPanel jp = null;
-//        ArrayList<JCheckBox> bg = null;
-//        ArrayList<String> products = null;
-//
-//        public RemoveTransportOperations() {
-//            Dialog();
-//        }
-//
-//        private void Dialog() {
-//            jp = new JPanel();
-//            jp.setLayout(new FlowLayout());
-//            bg = new ArrayList<JCheckBox>();
-//            Iterator<String> its = productTypes.keySet().iterator();
-//            while (its.hasNext()) {
-//                String text = its.next();
-//                JCheckBox rb = new JCheckBox(text);
-//                rb.setSelected(true);
-//                jp.add(rb);
-//                bg.add(rb);
-//            }
-//
-//            buttonJp = new JPanel();
-//            removeButton = new JButton("Remove!");
-//            removeButton.addActionListener(this);
-//            buttonJp.add(removeButton);
-//
-//            mainFrame = new JFrame("Remove transport operations from operation tree");
-//
-//            mainFrame.setLocationRelativeTo(null);
-//            mainFrame.getContentPane().setLayout(new FlowLayout());
-//            mainFrame.getContentPane().add(new JLabel("Select product types where top belong:"), BorderLayout.NORTH);
-//            mainFrame.getContentPane().add(jp, BorderLayout.CENTER);
-//            mainFrame.getContentPane().add(removeButton, BorderLayout.SOUTH);
-//            mainFrame.pack();
-//            mainFrame.setVisible(true);
-//        }
-//
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            if (removeButton == e.getSource()) {
-//                products = new ArrayList<String>();
-//                Iterator<JCheckBox> itb = bg.iterator();
-//                while (itb.hasNext()) {
-//                    JCheckBox jcb = itb.next();
-//                    if (jcb.isSelected()) {
-//                        mainFrame.dispose();
-//                        removeTopsToProductType(jcb.getText());
-//                    }
-//                }
-//            }
-//        }
-//
-//        /**
-//         * To remove all transport op generated for product from op tree
-//         * @param product
-//         */
-//        private void removeTopsToProductType(String product) {
-//            TreeNode treeNode = model.getOperationRoot();
-//            ArrayList<TreeNode> nodesToBeRemoved = new ArrayList<TreeNode>(treeNode.getChildCount());
-//            for (int i = 0; i < treeNode.getChildCount(); ++i) {
-//                OperationData opData = (OperationData) treeNode.getChildAt(i).getNodeData();
-//                if (ExtendedData.getProductType(opData.getDescription()) != null &&
-//                        ExtendedData.getOPType(opData.getDescription()) != null) {
-//                    if (ExtendedData.getProductType(opData.getDescription()).equals(product) &&
-//                            ExtendedData.getOPType(opData.getDescription()).equals(TypeVar.ED_OP_TYPE_TRANSPORT)) {
-//                        nodesToBeRemoved.add(treeNode.getChildAt(i));
-//                    }
-//                }
-//            }
-//            for (TreeNode tn : nodesToBeRemoved) {
-//                treeNode.remove(tn);
-//            }
-//        }
-//    }
 }

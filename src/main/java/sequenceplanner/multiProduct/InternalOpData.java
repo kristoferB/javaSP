@@ -17,9 +17,13 @@ public class InternalOpData {
     String preconditionForView = "";
     String postconditionForView = "";
     Integer parentId = null;
+    InternalOpData parent = null;
+    InternalOpDatas children = new InternalOpDatas();
+    HashMap<String, String> attributes = new HashMap<String, String>();
 
     public InternalOpData(OperationData opData) {
         this.opData = opData;
+        setAttributes();
     }
 
     private static void divideDescription(String description) {
@@ -60,7 +64,7 @@ public class InternalOpData {
     }
 
     public Boolean sourcePosIsReal() {
-        return posIsReal(getSourcePos());
+        return posIsReal(getPos("sourcePos"));
     }
 
     public Boolean sourcePosIsMergePos() {
@@ -78,7 +82,7 @@ public class InternalOpData {
     public Boolean destPosIsReal() {
         return posIsReal(getDestPos());
     }
-    
+
     public Boolean destPosIsMergePos() {
         return posIsMergePos(getDestPos());
     }
@@ -105,15 +109,33 @@ public class InternalOpData {
 
     public static Boolean posIsReal(String pos) {
         if (pos.contains(TypeVar.POS_MERGE) || pos.contains(TypeVar.POS_OUT)) {
-        //if (pos.contains(TypeVar.POS_OUT)) {
             return false;
         } else {
             return true;
         }
     }
 
+    public String getPos(String posType) {
+        String pos = null;
+
+        if (parent != null) {
+            if (parent.attributes.get(posType) != null) {
+                pos = parent.attributes.get(posType);
+            }
+        }
+
+        if (pos == null) {
+            pos = this.attributes.get(posType);
+        }
+
+        return pos;
+    }
+
     public boolean hasSinglePos() {
-        if (getSourcePos().equals(getDestPos())) {
+        String sourcePos = getPos("sourcePos");
+        String destPos = getPos("destPos");
+
+        if (sourcePos.equals(destPos)) {
             return true;
         } else {
             return false;
@@ -168,4 +190,32 @@ public class InternalOpData {
         return opData.getRawPostcondition();
     }
 
+    private void setAttributes() {
+        attributes.put("sourcePos", getSourcePos());
+        attributes.put("destPos", getDestPos());
+        attributes.put(TypeVar.ED_MOVER, get(TypeVar.ED_MOVER));
+    }
+
+    public boolean isParent() {
+        if (children.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public String getCondition() {
+        String condition = "";
+        if (parent != null) {
+            condition = condition + parent.getRawPrecondition();
+        }
+        if (!getRawPrecondition().isEmpty()) {
+            if (condition.equals("")) {
+                condition = condition + getRawPrecondition();
+            } else {
+                condition = condition + TypeVar.SP_AND + getRawPrecondition();
+            }
+        }
+        return condition;
+    }
 }

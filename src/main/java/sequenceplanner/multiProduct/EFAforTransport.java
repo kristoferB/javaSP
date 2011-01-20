@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -18,21 +19,33 @@ public class EFAforTransport {
 
     static Logger log = Logger.getLogger(EFAforTransport.class);
     private Model model = null;
-    private HashMap<String, ArrayList<InternalOpData>> productTypes;
+    private HashMap<String, InternalOpDatas> productTypes;
 
     public EFAforTransport(Model model) {
         this.model = model;
-        productTypes = new HashMap<String, ArrayList<InternalOpData>>();
+        productTypes = new HashMap<String, InternalOpDatas>();
         init();
     }
 
     private void init() {
-        for (int i = 0; i < model.getOperationRoot().getChildCount(); ++i) {
-            InternalOpData iOpData = new InternalOpData((OperationData) model.getOperationRoot().getChildAt(i).getNodeData());
+        getOperations(model.getOperationRoot());
+    }
+
+    private void getOperations(TreeNode tree) {
+        for (int i = 0; i < tree.getChildCount(); ++i) {
+            InternalOpData iOpData = new InternalOpData((OperationData) tree.getChildAt(i).getNodeData());
+
+            //handle global operation data
             if (!productTypes.containsKey(iOpData.getProductType())) {
-                productTypes.put(iOpData.getProductType(), new ArrayList<InternalOpData>());
+                productTypes.put(iOpData.getProductType(), new InternalOpDatas());
             }
             productTypes.get(iOpData.getProductType()).add(iOpData);
+
+            //handle local operation data
+            if (tree.getId() != model.getOperationRoot().getId()) { //The root is not a operation parent
+                iOpData.parentId = tree.getId();
+            }
+            getOperations(tree.getChildAt(i));
         }
     }
 
@@ -59,6 +72,7 @@ public class EFAforTransport {
 
         private Error e = new Error(TransportPlanningProductType.class.toString());
         private String productType;
+        private InternalOpDatas operations;
         private Integer generation;
         private SModule smodule = new SModule("temp");
         private SEFA efa;
@@ -66,7 +80,7 @@ public class EFAforTransport {
         private HashMap<Integer, String> opIdEFAdestPosMap = new HashMap<Integer, String>();
         private HashMap<String, String> nameGuardMap = null;
         private HashMap<String, HashSet<String>> posRefinementMap = new HashMap<String, HashSet<String>>();
-        private HashMap<String, ArrayList<Integer>> posHistogramMap = new HashMap<String, ArrayList<Integer>>();
+        private HashMap<String, HashSet<Integer>> posHistogramMap = new HashMap<String, HashSet<Integer>>();
         private String ps = null;
 
         public TransportPlanningProductType(String key) {
@@ -90,6 +104,9 @@ public class EFAforTransport {
             smodule.setComment("Module for transport planning\n*****\nSet start position manually\nSet finish position manually\n" +
                     "*****\nSynthesize supervisor through guard extraction\n");
             testIDs();
+
+            operations = productTypes.get(productType);
+            operations.setParentChildrenRelations();
 
             //Single Location automaton------------------------------------------
             efa = new SEFA(productType, smodule);
@@ -136,19 +153,58 @@ public class EFAforTransport {
             return true;
         }
 
-        private void initG0() {
-            for (InternalOpData iData : productTypes.get(productType)) {
-                if (!posHistogramMap.containsKey(iData.getSourcePos())) {
-                    posHistogramMap.put(iData.getSourcePos(), new ArrayList<Integer>());
+        private HashMap<String, Integer> getPositionAndIdWithRespectToParents(InternalOpData iData, String posType) {
+            HashMap<String, Integer> positionIdMap = new HashMap<String, Integer>(1);
+
+            InternalOpData parent = iData.parent;
+
+            if (parent != null) {
+                if (parent.attributes.get(posType) != null) {
+                    positionIdMap.put(parent.attributes.get(posType), parent.getId());
+                } else {
+                    positionIdMap.put(iData.attributes.get(posType), iData.getId());
                 }
-                posHistogramMap.get(iData.getSourcePos()).add(iData.getId());
+            } else {
+                positionIdMap.put(iData.attributes.get(posType), iData.getId());
+            }
+
+            return positionIdMap;
+        }
+
+        private void addToPosHistogramMap(HashMap<String, Integer> posIdMap) {
+            for (String position : posIdMap.keySet()) {
+                if (!posHistogramMap.containsKey(position)) {
+                    posHistogramMap.put(position, new HashSet<Integer>());
+                }
+                posHistogramMap.get(position).add(posIdMap.get(position));
+            }
+        }
+
+        private void initG0() {
+            for (InternalOpData iData : operations) {
+
+                HashMap<String, Integer> posIdMap = null;
+
+                //Get position and id
+                posIdMap = getPositionAndIdWithRespectToParents(iData, "sourcePos");
+
+                //Add position to histogram
+                addToPosHistogramMap(posIdMap);
+
                 if (!iData.hasSinglePos()) {
-                    if (!posHistogramMap.containsKey(iData.getDestPos())) {
-                        posHistogramMap.put(iData.getDestPos(), new ArrayList<Integer>());
-                    }
-                    posHistogramMap.get(iData.getDestPos()).add(iData.getId());
+                    //Get position and id
+                    posIdMap = getPositionAndIdWithRespectToParents(iData, "destPos");
+                    //Add position to histogram
+                    addToPosHistogramMap(posIdMap);
                 }
             }
+        }
+
+        private void addToRefinementMap(String pos, String guard) {
+            if (!posRefinementMap.containsKey(pos)) {
+                posRefinementMap.put(pos, new HashSet<String>());
+            }
+            posRefinementMap.get(pos).add(guard);
         }
 
         private void initG1() {
@@ -158,99 +214,96 @@ public class EFAforTransport {
                 String source = name.split(TypeVar.SEPARATION)[1];
                 String dest = name.split(TypeVar.SEPARATION)[3];
 
-                if (!posRefinementMap.containsKey(source)) {
-                    posRefinementMap.put(source, new HashSet<String>());
-                }
-                posRefinementMap.get(source).add(guard); //Refine source position with guard
+                //Refine source position with guard
+                addToRefinementMap(source, guard);
 
-                if (!posRefinementMap.containsKey(dest)) {
-                    posRefinementMap.put(dest, new HashSet<String>());
-                }
-                posRefinementMap.get(dest).add("1"); //Add dest position but should not be refined
+                //Refine process of source position with guard (if this process pos exists)
+                addToRefinementMap(source.replaceAll(TypeVar.POS_MOVE, TypeVar.POS_PROCESS), guard);
+
+                //Add dest position but should not be refined
+                addToRefinementMap(dest, "1");
             }//------------------------------------------------------------------
 
             //Remove basic guard from refined positions--------------------------
             for (String pos : posRefinementMap.keySet()) {
-                if (posRefinementMap.get(pos).size()>1) {
+                if (posRefinementMap.get(pos).size() > 1) {
                     posRefinementMap.get(pos).remove("1");
                 }
             }//------------------------------------------------------------------
         }
 
+        private String addPosToVariable(InternalOpData iData, String posType, String residualPosType, Set<String> variables) {
+            String posName = iData.getPos(posType);
+
+            if (InternalOpData.posIsReal(iData.getPos(posType))) {
+                if (posHistogramMap.get(posName).size() > 1 && !InternalOpData.posIsMergePos(iData.getPos(residualPosType))) { //Not add ID if dest(source) pos is merge pos for a source(dest) pos
+                    posName = posName + ":" + iData.getId();
+                }
+            }
+
+            if ((!iData.hasOperationCountNo() && iData.hasSinglePos()) || posName.equals(TypeVar.POS_OUT)) {
+                if (posType.equals("sourcePos")) {
+                    posName = posName + TypeVar.POS_PROCESS;
+                } else {
+                    posName = posName + TypeVar.POS_MOVE;
+                }
+            }
+            variables.add(posName);
+
+            return posName;
+        }
+
         private void addVariablesG0() {
             Set<String> variables = new HashSet<String>(); //Uses Set just to add each variable once
 
-            for (InternalOpData iData : productTypes.get(productType)) {
-                String sourceName = iData.getSourcePos();
-                String destName = iData.getDestPos();
+            //Check all preconditions for operation ids. Dest position for found operation ids are stored.
+            //These dest positions needs to be refined first time the supremica module is built.
+            HashMap<String, HashSet<Integer>> posIdMap = new HashMap<String, HashSet<Integer>>();
+            for (InternalOpData externalData : operations.getChildOperations()) {
+                String guard = externalData.getCondition();
+                for (InternalOpData iData : operations.getChildOperations()) {
+                    if (!posIdMap.containsKey(iData.getPos("destPos"))) {
+                        posIdMap.put(iData.getPos("destPos"), new HashSet<Integer>());
+                    }
+                    if (guard.contains(iData.getId().toString())) {
+                        posIdMap.get(iData.getPos("destPos")).add(iData.getId());
+                        System.out.println("ex: " + externalData.getName() + " in: " + iData.getName() + " pos: " + iData.getPos("destPos"));
+                    }
+                }
+            }
+
+            for (InternalOpData iData : operations.getChildOperations()) {
+                String destName = iData.getPos("destPos");
+
+                String name = null;
 
                 //Operation Count
                 addOperationCountToVariable(iData);
 
-                //Source pos
-                if (iData.sourcePosIsReal()) {
-                    if (posHistogramMap.get(iData.getSourcePos()).size() > 1 && !iData.destPosIsMergePos()) { //Not add ID if dest pos is merge pos
-                        sourceName = sourceName + ":" + iData.getId();
-                    }
-                    if (!iData.hasOperationCountNo() && iData.hasSinglePos()) {
-                        sourceName = sourceName + TypeVar.POS_PROCESS;
-                    }
-                    variables.add(sourceName);
+                if (posIdMap.get(iData.getPos("destPos")).size() > 1) { //Not add ID if source pos is merge pos
+                    destName = destName + ":" + iData.getId();
                 }
-                opIdEFAsourcePosMap.put(iData.getId(), sourceName);
+                if ((!iData.hasOperationCountNo() && iData.hasSinglePos()) || iData.getPos("destPos").equals(TypeVar.POS_OUT)) {
+                    destName = destName + TypeVar.POS_MOVE;
+                }
+                variables.add(destName);
 
-                //Dest pos
-                if (iData.destPosIsReal()) {
-                    if (posHistogramMap.get(iData.getDestPos()).size() > 1 && !iData.sourcePosIsMergePos()) { //Not add ID if source pos is merge pos
-                        destName = destName + ":" + iData.getId();
-                    }
-                    if (!iData.hasOperationCountNo() && iData.hasSinglePos()) {
-                        destName = destName + TypeVar.POS_MOVE;
-                    }
-                    variables.add(destName);
-                }
                 opIdEFAdestPosMap.put(iData.getId(), destName);
+
+                name = addPosToVariable(iData, "sourcePos", "destPos", variables);
+
+                opIdEFAsourcePosMap.put(iData.getId(), name);
             }
 
             //Add variables
             for (String name : variables) {
                 smodule.addIntVariable(ps + name, 0, 1, 0, 0);
             }
-
-            //Add out_p pos if needed
-            String sourcePosOut = "";
-            if (opIdEFAsourcePosMap.containsValue(TypeVar.POS_OUT)) {
-                sourcePosOut = TypeVar.POS_OUT + TypeVar.POS_PROCESS;
-                smodule.addIntVariable(ps + sourcePosOut, 0, 1, 0, 0);
-            }
-            //Add out_m pos if needed
-            String destPosOut = "";
-            if (opIdEFAdestPosMap.containsValue(TypeVar.POS_OUT)) {
-                destPosOut = TypeVar.POS_OUT + TypeVar.POS_MOVE;
-                smodule.addIntVariable(ps + destPosOut, 0, 1, 0, 0);
-            }
-            //Update hashmaps if needed
-            if (!sourcePosOut.isEmpty() || !destPosOut.isEmpty()) {
-                for (InternalOpData iData : productTypes.get(productType)) {
-                    if (iData.getSourcePos().equals(TypeVar.POS_OUT) && !sourcePosOut.isEmpty()) {
-                        opIdEFAsourcePosMap.put(iData.getId(), sourcePosOut);
-                    }
-                    if (iData.getDestPos().equals(TypeVar.POS_OUT) && !destPosOut.isEmpty()) {
-                        opIdEFAdestPosMap.put(iData.getId(), destPosOut);
-                    }
-                }
-            }
-
-            //Add mrg pos if needed
-            if (posHistogramMap.containsKey(TypeVar.POS_MERGE)) {
-                smodule.addIntVariable(ps + TypeVar.POS_MERGE, 0, 1, 0, 0);
-            }
-
         }
 
         private void addVariablesG1() {
             //Operation Count
-            for (InternalOpData iData : productTypes.get(productType)) {
+            for (InternalOpData iData : operations.getChildOperations()) {
                 addOperationCountToVariable(iData);
             }
 
@@ -266,6 +319,24 @@ public class EFAforTransport {
             }
         }
 
+        private void loopTransport(Set<String> externalSet, Set<String> internalSet, String eventName) {
+            for (String intDest : externalSet) {
+                String dest = ps + intDest;
+                for (String intSource : internalSet) {
+                    String source = ps + intSource;
+                    if (InternalOpData.posIsReal(intDest) && InternalOpData.posIsReal(intSource) && !intDest.equals(intSource)) {
+                        SEGA ega = new SEGA();
+
+                        ega.addBasicPositionBookAndUnbook(dest, source);
+
+                        //Create the transition
+                        ega.setEvent(transitionName(intDest, eventName, intSource));
+                        efa.addStandardSelfLoopTransition(ega);
+                    }
+                }
+            }
+        }
+
         private void addTransportTransitionsG0() {
             //Only get one pos once----------------------------------------------
             Set<String> destPosSet = new HashSet<String>();
@@ -277,20 +348,17 @@ public class EFAforTransport {
                 sourcePosSet.add(pos);
             }//------------------------------------------------------------------
 
-            //opIdEFAdestPosMap.values()
-            for (String intDest : destPosSet) {
-                String dest = ps + intDest;
-                for (String intSource : sourcePosSet) {
-                    String source = ps + intSource;
-                    if (InternalOpData.posIsReal(intDest) && InternalOpData.posIsReal(intSource) && !intDest.equals(intSource)) {
-                        SEGA ega = new SEGA();
+            if (operations.getMovers().isEmpty()) {
+                loopTransport(destPosSet, sourcePosSet, "t");
+            } else {
+                for (InternalOpData iData : operations.getMovers()) {
+                    Set<String> set = new HashSet<String>();
 
-                        ega.addBasicPositionBookAndUnbook(dest, source);
+                    set.add(opIdEFAsourcePosMap.get(iData.getId()));
+                    loopTransport(destPosSet, set, "t");
 
-                        //Create the transition
-                        ega.setEvent(transitionName(intDest, TypeVar.TRANSPORT, intSource));
-                        efa.addStandardSelfLoopTransition(ega);
-                    }
+                    set.add(opIdEFAdestPosMap.get(iData.getId()));
+                    loopTransport(set, sourcePosSet, "t");
                 }
             }
         }
@@ -321,7 +389,7 @@ public class EFAforTransport {
                         ega.addBasicPositionBookAndUnbook(ps + sourcePosName, ps + destPosName);
 
                         //Create the transition
-                        ega.setEvent(transitionName(sourcePosName, opType, destPosName));
+                        ega.setEvent(transitionName(sourcePosName, "s" + opType, destPosName));
                         efa.addStandardSelfLoopTransition(ega);
                     }
                 }
@@ -330,7 +398,7 @@ public class EFAforTransport {
 
         private void addProcessTransitionsG0() {
             //go through operations, add guards and actions
-            for (InternalOpData iData : productTypes.get(productType)) {
+            for (InternalOpData iData : operations.getChildOperations()) {
 
                 if (!(iData.hasSinglePos() && iData.hasOperationCountNo())) {
                     SEGA ega = new SEGA();
@@ -346,25 +414,55 @@ public class EFAforTransport {
                     addGuardBasedOnSPpreCondition(iData, ega);
 
                     //Create the transition
-                    ega.setEvent(transitionName(sPos, iData.getId().toString(), dPos));
+                    String partOfName = iData.getId().toString();
+                    if (iData.getMerge() != null) {
+                        partOfName += TypeVar.ED_MERGE + iData.getMerge();
+                    }
+                    ega.setEvent(transitionName(sPos, partOfName, dPos));
                     efa.addStandardSelfLoopTransition(ega);
                 }
             }
         }
 
+        private void createProcessTransitions(InternalOpData iData, String sPos, String sourceRefinement, String dPos, String destRefinement, String opType) {
+            String sourcePosName = sPos;
+            String destPosName = dPos;
+            SEGA ega = new SEGA();
+
+            if (!sourceRefinement.equals("1")) {
+                sourcePosName = sourcePosName + ":" + guardToSupremicaNameTranslation(sourceRefinement);
+                ega.andGuard(removeOwnOpCountInGaurd(sourceRefinement, iData.getId()));
+            }
+            if (!destRefinement.equals("1")) {
+                destPosName = destPosName + ":" + guardToSupremicaNameTranslation(destRefinement);
+                ega.andGuard(removeOwnOpCountInGaurd(destRefinement, iData.getId()));
+            }
+
+            //basic guards and actions regardless of pre-conditions
+            ega.addBasicPositionBookAndUnbook(ps + sourcePosName, ps + destPosName);
+            addOpCountToGuardAndAction(iData, ega);
+
+            //guards based on pre-conditions
+            addGuardBasedOnSPpreCondition(iData, ega);
+
+            //Create the transition
+            ega.setEvent(transitionName(sourcePosName, "s" + opType, destPosName));
+            efa.addStandardSelfLoopTransition(ega);
+        }
+
         private void addProcessTransitionsG1() {
             //go through operations, add guards and actions
-            for (InternalOpData iData : productTypes.get(productType)) {
+            for (InternalOpData iData : operations.getChildOperations()) {
 
-                if (!(iData.hasSinglePos() && iData.hasOperationCountNo())) {
+                if (!iData.hasOperationCountNo()) {
 
                     String opType = null;
                     String sPos = null;
                     String dPos = null;
 
                     for (String name : popsGuardMap().keySet()) {
-                        opType = name.split(TypeVar.SEPARATION)[2];
-                        if (opType.equals(iData.getId().toString())) {
+                        opType = name.split(TypeVar.SEPARATION)[2].replaceAll("s", "");
+                        if (opType.startsWith(iData.getId().toString())) {
                             sPos = name.split(TypeVar.SEPARATION)[1];
                             dPos = name.split(TypeVar.SEPARATION)[3];
                             break;
@@ -372,31 +470,12 @@ public class EFAforTransport {
                     }
 
                     for (String sourceRefinement : posRefinementMap.get(sPos)) {
-                        for (String destRefinement : posRefinementMap.get(dPos)) {
-
-                            String sourcePosName = sPos;
-                            String destPosName = dPos;
-                            SEGA ega = new SEGA();
-
-                            if (!sourceRefinement.equals("1")) {
-                                sourcePosName = sourcePosName + ":" + guardToSupremicaNameTranslation(sourceRefinement);
-                                ega.andGuard(removeOwnOpCountInGaurd(sourceRefinement, iData.getId()));
+                        if (iData.hasSinglePos()) {
+                            createProcessTransitions(iData, sPos, sourceRefinement, sPos.replaceAll(TypeVar.POS_PROCESS, TypeVar.POS_MOVE), sourceRefinement, opType);
+                        } else {
+                            for (String destRefinement : posRefinementMap.get(dPos)) {
+                                createProcessTransitions(iData, sPos, sourceRefinement, dPos, destRefinement, opType);
                             }
-                            if (!destRefinement.equals("1")) {
-                                destPosName = destPosName + ":" + guardToSupremicaNameTranslation(destRefinement);
-                                ega.andGuard(removeOwnOpCountInGaurd(destRefinement, iData.getId()));
-                            }
-
-                            //basic guards and actions regardless of pre-conditions
-                            ega.addBasicPositionBookAndUnbook(ps + sourcePosName, ps + destPosName);
-                            addOpCountToGuardAndAction(iData, ega);
-
-                            //guards based on pre-conditions
-                            addGuardBasedOnSPpreCondition(iData, ega);
-
-                            //Create the transition
-                            ega.setEvent(transitionName(sourcePosName, opType, destPosName));
-                            efa.addStandardSelfLoopTransition(ega);
                         }
                     }
                 }
@@ -404,9 +483,14 @@ public class EFAforTransport {
         }
 
         private void addGuardBasedOnSPpreCondition(InternalOpData iData, SEGA ega) {
-            if (!iData.getRawPrecondition().isEmpty()) {
-                log.info(iData.getName() + " has precondition " + iData.getRawPrecondition());
-                String guardPreCon = iData.getRawPrecondition(); //Example of raw precondition 18_f A (143_iV19_f)
+
+            //Create condition
+            String condition = iData.getCondition();
+
+            //add precondition to guard
+            if (!condition.equals("")) {
+                log.info(iData.getName() + " has precondition " + condition);
+                String guardPreCon = condition; //Example of raw precondition 18_f A (143_iV19_f)
 
                 //Change all ID to ProductType_ID
                 for (InternalOpData i : productTypes.get(productType)) {
@@ -418,7 +502,6 @@ public class EFAforTransport {
                 ega.andGuard(guardPreCon);
                 log.info("and guard: " + guardPreCon);
             }
-
         }
 
         private void addOpCountToGuardAndAction(InternalOpData iData, SEGA ega) {

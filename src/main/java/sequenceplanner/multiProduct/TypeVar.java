@@ -67,6 +67,8 @@ public class TypeVar {
     public final static String ED_PROCESSING_LEVEL_COUNTER_NO = "no";
     public final static String ED_OPERATION_COUNTER = "opCount";
     public final static String ED_OPERATION_COUNTER_NO = "no";
+    public final static String ED_MOVER = "mover";
+    public final static String ED_MOVER_YES = "yes";
     public final static String ED_MERGE = "merge";
     public final static String ED_GUARD = "guard";
     public final static String ED_ORDER = "order";
