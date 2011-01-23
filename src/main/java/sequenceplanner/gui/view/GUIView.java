@@ -85,10 +85,16 @@ public class GUIView extends JFrame {
         this.getContentPane().add(rootWindow);
     }
 
+    //Listener methods
     public void addCreateOpViewListener(ActionListener al) {
         
         //TODO add listener to everything that creates new operationviews.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
+    public void addCreateRViewListener(ActionListener al) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
 
 }
