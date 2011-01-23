@@ -6,6 +6,8 @@ import java.awt.Rectangle;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import sequenceplanner.gui.controller.GUIController;
+import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 
 /**
@@ -50,11 +52,10 @@ public class SequencePlanner {
      * @param args the args
      */
     public static void main(String[] args) {
-      
-        GUIView view = new GUIView();
-        //  Model model = new Model();
-     //   SPView spview = new SPView(model);
-     //   SPController spcontroller = new SPController(model, spview);
+
+        GUIModel model = new GUIModel();
+        GUIView view = new GUIView(model);
+        GUIController controller = new GUIController(model, view);
 
     }
 

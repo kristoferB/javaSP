@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
@@ -14,12 +15,13 @@ import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 
 /**
- *Main view class for the gui package.
+ *Main view class for the gui package. Updated by the GUIController and
+ * shows the info in GUIModel.
  * @author qw4z1
  */
 public class GUIView extends JFrame {
     //model of the gui
-
+    private SPMenuBar menuBar;
     private GUIModel guiModel;
     private ViewMap mainViewMap = new ViewMap();
     private RootWindow rootWindow;
@@ -29,7 +31,8 @@ public class GUIView extends JFrame {
 
 
     private TabWindow tab1 = new TabWindow();
-    public GUIView() {
+    public GUIView(GUIModel m) {
+        guiModel = m;
         initJFrame();
     }
 
@@ -37,7 +40,7 @@ public class GUIView extends JFrame {
         setTitle("Sequence Planner");
         setIconImage(IconHandler.getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        SPMenuBar menuBar = new SPMenuBar();
+        menuBar = new SPMenuBar();
         setJMenuBar(menuBar);
 
         setLocation(getEnvBounds().x, getEnvBounds().y);
@@ -64,9 +67,13 @@ public class GUIView extends JFrame {
     }
 
     /**
+     *Creates the main RootWindow and sets innerRootWindows, TabWindows and SplitWindows.
      *
      */
     private void createRootWindow() {
+        //Work in progress...
+        //TODO Peterkle: Stäng av så att man inte kan undocka första TabWindow.
+        //dvs där vår treeview ska hamna.
         rootWindow = DockingUtil.createRootWindow(mainViewMap, true);
         rootWindow.getRootWindowProperties().getDockingWindowProperties().setCloseEnabled(false);
         opRootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
@@ -76,6 +83,12 @@ public class GUIView extends JFrame {
                 new SplitWindow(true,0.7f,opRootWindow,
                 new SplitWindow(false,0.5f,new TabWindow(),new TabWindow()))));
         this.getContentPane().add(rootWindow);
+    }
+
+    public void addCreateOpViewListener(ActionListener al) {
+        
+        //TODO add listener to everything that creates new operationviews.
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
 }
