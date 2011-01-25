@@ -10,7 +10,11 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -36,9 +40,10 @@ public class GlobPropV extends JPanel{
         add(addProperty);
  *
  */
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Global properties");
-
-        tree = new JTree(top);
+        tree = new JTree(m.getGlobalProperties());
+        tree.setEditable(true);
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        tree.setShowsRootHandles(true);
 
         add(tree);
     }
@@ -59,8 +64,8 @@ public class GlobPropV extends JPanel{
         addProperty.addActionListener(add);
     }
 
-
-    //Skapa dummy interface f�r att l�gga till nya properties (Editor)
-    //Skapa dummy interface f�r att s�tta property f�r en operation (Attribute)
+    void addEditorTreeModelListener(TreeModelListener t){
+        tree.getModel().addTreeModelListener(t);
+    }
 
 }

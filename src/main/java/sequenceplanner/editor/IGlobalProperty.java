@@ -11,4 +11,13 @@ package sequenceplanner.editor;
  */
 interface IGlobalProperty {
 
+    public String getName();
+
+    public void setName(String n);
+
+    public String getValue(int i);
+
+    public int getNumberOfValues();
+
+    public int indexOfValue(Object o);
 }

@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import javax.swing.JFrame;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 
 /**
  *
@@ -23,13 +25,43 @@ public class GlobPropC{
         model = m;
         view = v;
 
-        view.addAddPropertyListener(new addPropertyListener());
+//        view.addAddPropertyListener(new addPropertyListener());
+        view.addEditorTreeModelListener(new EditorTreeModelListener());
     }
 
-    //Koppla skapande av property (Editor) i view till model
-    //Koppla s�ttande av property f�r en operation (Attribute) i view till dummy operation, ev skriv test case
 
-    class addPropertyListener implements ActionListener {
+    class EditorTreeModelListener implements TreeModelListener
+    {
+
+        @Override
+        public void treeNodesChanged(TreeModelEvent e) {
+            if(e.getTreePath().getLastPathComponent() instanceof IGlobalProperty){
+                IGlobalProperty gp = (IGlobalProperty) e.getTreePath().getLastPathComponent();
+                System.out.println("Node changed");
+            }
+
+        }
+
+        @Override
+        public void treeNodesInserted(TreeModelEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void treeNodesRemoved(TreeModelEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void treeStructureChanged(TreeModelEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+
+
+    }
+/*    class addPropertyListener implements ActionListener {
+
         public void actionPerformed(ActionEvent e) {
             String prop = "";
             String[] values = new String[1];
@@ -49,7 +81,7 @@ public class GlobPropC{
                 }
             }
         }
-    }
+    }*/
 
 public static void main(String[] args){
     

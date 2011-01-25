@@ -25,6 +25,11 @@ public class GlobalProperty implements IGlobalProperty{
     }
     
     @Override
+    public void setName(String n){
+        name = n;
+    }
+
+    @Override
     public String getValue(int i){
         return values[i];
     }

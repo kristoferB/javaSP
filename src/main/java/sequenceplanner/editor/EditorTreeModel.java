@@ -5,12 +5,12 @@
 
 package sequenceplanner.editor;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import sequenceplanner.editor.GlobalProperty;
 
 /**
  *
@@ -20,9 +20,14 @@ public class EditorTreeModel implements TreeModel{
 
     private DefaultMutableTreeNode root;
     private LinkedList<GlobalProperty> globalProperties = new LinkedList();
+    private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
     EditorTreeModel(){
         root = new DefaultMutableTreeNode("Global properties");
+
+        String[] values = {"red", "green","blue"};
+        GlobalProperty gp = new GlobalProperty("Colour", values);
+        globalProperties.add(gp);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class EditorTreeModel implements TreeModel{
     @Override
     public Object getChild(Object parent, int index) {
         if(parent.equals(root)){
-            return((Object) globalProperties.get(index));
+            return((Object) globalProperties.get(index).getName());
         }
         if(parent instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) parent;
@@ -72,7 +77,19 @@ public class EditorTreeModel implements TreeModel{
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Path changed");
+        Object o = path.getLastPathComponent();
+
+        if(o instanceof DefaultMutableTreeNode){
+            DefaultMutableTreeNode r = (DefaultMutableTreeNode) o;
+            r.setUserObject(newValue);
+        }
+
+//This does not work
+        else if(o instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) o;
+            gp.setName((String) newValue);
+        }
     }
 
     @Override
@@ -95,12 +112,12 @@ public class EditorTreeModel implements TreeModel{
 
     @Override
     public void addTreeModelListener(TreeModelListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        listeners.add(l);
     }
 
     @Override
     public void removeTreeModelListener(TreeModelListener l) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        listeners.add(l);
     }
 
 

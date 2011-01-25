@@ -13,16 +13,22 @@ import java.util.LinkedList;
  */
 public class GlobPropM {
 
-    private TreeModel globalProperties;
-    private LinkedList<GlobalProperty> globalProperties = new LinkedList();
+    private EditorTreeModel globalProperties;
 
+    /*
     public void addProperty(String prop, String[] name){
 
         GlobalProperty gp = new GlobalProperty(prop, name);
         globalProperties.add(gp);
 
     }
-    public LinkedList<GlobalProperty> getGlobalProperties(){
+     *
+     * */
+    public GlobPropM(){
+        globalProperties = new EditorTreeModel();
+    }
+
+    public EditorTreeModel getGlobalProperties(){
 
         return globalProperties;
 
