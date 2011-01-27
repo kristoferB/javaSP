@@ -51,7 +51,7 @@ public class EFAforSupervisor {
 
     public EFAforSupervisor(Model model) {
 
-        //Build up internal model of operations for this class
+        //Build up internal model of operations in SP for this class
         getOperations(model.getOperationRoot());
         if (productTypesMap.isEmpty()) {
             e.error("No products exist!");
@@ -60,7 +60,7 @@ public class EFAforSupervisor {
             e.error("Some products lack operations!");
         }
 
-        //Build up internal model of resources for this class
+        //Build up internal model of resources in SP for this class
         getPositions(model.getResourceRoot());
         if (allPosPropertiesMap.isEmpty()) {
             e.error("No positions are given!");
@@ -91,11 +91,11 @@ public class EFAforSupervisor {
                 }
             } else if (productTypesMap.containsKey(treeName)) {
                 //Get operation data
-                HashMap<String, String> op = new HashMap<String, String>(7);
+                HashMap<String, String> op = new HashMap<String, String>(6);
                 op.put(PRODUCT, treeName);
                 setOperationData(op, opData.getName());
 
-                //Add a operation to product and store operation properties
+                //Add a operation to product and store operation data
                 productTypesMap.get(treeName).add(opData.getName());
                 operationPropertiesMap.put(opData.getName(), op);
             }
@@ -117,6 +117,11 @@ public class EFAforSupervisor {
         }
     }
 
+    /**
+     * Only store positions that are real
+     * @param position To test
+     * @return <i>position</i> if position is real else <i>""</i>
+     */
     private String adaptPosition(String position) {
         if (position.equals(TypeVar.POS_OUT)) {
             position = "";
@@ -157,6 +162,7 @@ public class EFAforSupervisor {
                     allPosPropertiesMap.get(parentName).get(CAPACITY).add(Integer.toString(data.getMax()));
                 } else if (data.getName().equals("Mover")) {
                     //Movers
+                    //Capacity is set to capacity for mover
                     moversSet.add(parentName);
                     allPosPropertiesMap.get(parentName).get(CAPACITY).clear();
                     allPosPropertiesMap.get(parentName).get(CAPACITY).add(Integer.toString(data.getMax()));
@@ -170,8 +176,16 @@ public class EFAforSupervisor {
                         productLimitMap.get(parentName).put(TypeVar.SP_RESOURCE_LIMIT, Integer.toString(data.getMax()));
                         productLimitMap.get(parentName).put("variableName", parentName + TypeVar.SEPARATION + TypeVar.SP_RESOURCE_LIMIT);
 
+                        //Initial values for position is modified if product starts in position
+                        int currentStartValue = Integer.parseInt(allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get("atInit").iterator().next());
                         allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get("atInit").clear();
-                        allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get("atInit").add(Integer.toString(data.getMax()));
+                        allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get("atInit").add(Integer.toString(currentStartValue + data.getMax()));
+                        //Check that modification is within capacity given for position
+                        if (Integer.parseInt(allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get("atInit").iterator().next()) >
+                                Integer.parseInt(allPosPropertiesMap.get(tree.getParent().getNodeData().getName()).get(CAPACITY).iterator().next())) {
+                            e.error("Bad relation between nbr of products that start in position " + productLimitMap.get(parentName).get("position") + " and it's capacity!");
+                        }
+
                     }
                 }
             }
@@ -211,8 +225,11 @@ public class EFAforSupervisor {
 
         }
 
+        /**
+         * Collect the common merge operations<br/>
+         * Merge operations are put in hashmap <i>mergeMap</i>
+         */
         private void getMergeOperations() {
-            //Collect the common merge operations
             for (String operation : operationPropertiesMap.keySet()) {
                 HashMap<String, String> op = operationPropertiesMap.get(operation);
                 if (op.get(OP_TYPE).contains(TypeVar.ED_MERGE)) {
@@ -253,6 +270,11 @@ public class EFAforSupervisor {
             }
         }
 
+        /**
+         * Go through each operation's positions to position set.<br/>
+         * This gives a relation between products and positions.<br/>
+         * These relations are later used to construct guards.
+         */
         private void getPositionsFromOperations() {
             for (String operation : operationPropertiesMap.keySet()) {
                 HashMap<String, String> op = operationPropertiesMap.get(operation);
@@ -307,6 +329,10 @@ public class EFAforSupervisor {
             module.DialogAutomataTransitions();
         }
 
+        /**
+         * Single or multiple efas are created.<br/>
+         * The user decides through initial dialog.
+         */
         private void setEFA() {
             if (singleEFA) {
                 SEFA singleEFA = new SEFA("Single", module);
@@ -320,7 +346,7 @@ public class EFAforSupervisor {
                     productEFAMap.put(product, new SEFA(product, module));
                     productEFAMap.get(product).addState(TypeVar.LOCATION, true, true);
                 }
-                productEFAMap.put("extraEFA", new SEFA(TypeVar.ED_MERGE + "And" + TypeVar.SP_RESOURCE_LIMIT, module));
+                productEFAMap.put("extraEFA", new SEFA("Merge" + "And" + TypeVar.SP_RESOURCE_LIMIT, module));
                 productEFAMap.get("extraEFA").addState(TypeVar.LOCATION, true, true);
             }
         }
@@ -336,32 +362,46 @@ public class EFAforSupervisor {
             return guard;
         }
 
-        private void addVariables() {
-            Set<String> variables = new HashSet<String>();
+        private String lumpSetWith(Set<String> set, String item, Set<String> illegalPos) {
+            String guard = "";
+            Set<String> tempSet = new HashSet<String>(set);
 
-            //allPosPropertiesMap
+            tempSet.removeAll(illegalPos);
+
+            for (String pos : tempSet) {
+                if (!guard.equals("")) {
+                    guard += item;
+                }
+                guard += pos;
+            }
+            return guard;
+        }
+
+        private void addVariables() {
+            //allPosPropertiesMap------------------------------------------------
             for (String pos : allPosPropertiesMap.keySet()) {
                 for (String var : allPosPropertiesMap.get(pos).get(IN)) {
                     module.addIntVariable(var, 0, Integer.parseInt(allPosPropertiesMap.get(pos).get(CAPACITY).iterator().next()),
                             Integer.parseInt(allPosPropertiesMap.get(pos).get("atInit").iterator().next()),
                             Integer.parseInt(allPosPropertiesMap.get(pos).get("atInit").iterator().next()));
                 }
-            }
-            //productLimitMap
+            }//------------------------------------------------------------------
+
+            //productLimitMap----------------------------------------------------
             for (String product : productLimitMap.keySet()) {
                 module.addIntVariable(productLimitMap.get(product).get("variableName"), 0,
                         Integer.parseInt(productLimitMap.get(product).get(TypeVar.SP_RESOURCE_LIMIT)), 0, 0);
-            }
+            }//------------------------------------------------------------------
 
-            //mergeMap
+            //mergeMap-----------------------------------------------------------
+            //Between positions used during merge operations
+            Set<String> mergeVariables = new HashSet<String>();
             for (String merge : mergeMap.keySet()) {
-                variables.add(mergeMap.get(merge).get(BETWEEN_POS).iterator().next());
+                mergeVariables.add(mergeMap.get(merge).get(BETWEEN_POS).iterator().next());
             }
-
-            //add variables to module
-            for (String var : variables) {
+            for (String var : mergeVariables) {
                 module.addIntVariable(var, 0, 1, 0, 0);
-            }
+            }//------------------------------------------------------------------
         }
 
         private void addTransitions() {
@@ -372,7 +412,8 @@ public class EFAforSupervisor {
                     //Transport operations
                     addTransportTransitions(operation);
                 } else if (productLimitMap.containsKey(op.get(PRODUCT)) && !mergeMap.containsKey(op.get(OP_TYPE))) {
-                    //Extra operations to set/reset limit
+                    //Extra transitions to set/reset product limit is needed
+                    //(set/reset of limit is not captured neither with a transport transition nor with a merge transition)
                     if (productLimitMap.get(op.get(PRODUCT)).get("position").equals(op.get(SOURCE_POS_BASE))) {
                         //Need to add extra transition since set of limit is not covered with transport operations and merge operations
                         addLimitTransitions(operation, 0);
@@ -388,6 +429,11 @@ public class EFAforSupervisor {
             }
         }
 
+        /**
+         * Create transitions to when not enough with transport and merge transitions to include limit requirement op products.
+         * @param operation Key for hashMap <i>operationPropertiesMap</i>
+         * @param positionType 0-set limit, 1-reset limit
+         */
         private void addLimitTransitions(String operation, int positionType) {
             HashMap<String, String> op = operationPropertiesMap.get(operation);
             String eventName = "";
@@ -396,7 +442,7 @@ public class EFAforSupervisor {
 
             switch (positionType) {
                 case 0:
-                    //Transition source pos -> dest pos-----------------------
+                    //Transition source pos -> dest pos--------------------------
                     eventName = op.get(DEST_POS) + TypeVar.SEPARATION + "L";
                     if (uniqueTransitionNames) {
                         ega = new SEGA(eventName + TypeVar.SEPARATION + "01");
@@ -427,7 +473,7 @@ public class EFAforSupervisor {
                     }
                     break;
                 case 1:
-                    //Transition source pos -> dest pos-------------------------
+                    //Transition source pos -> dest pos--------------------------
                     eventName = op.get(SOURCE_POS) + TypeVar.SEPARATION + "L";
                     if (uniqueTransitionNames) {
                         ega = new SEGA(eventName + TypeVar.SEPARATION + "12");
@@ -448,7 +494,7 @@ public class EFAforSupervisor {
             }
             //Add ega to efa
             efa.addStandardSelfLoopTransition(ega);
-            //-----------------------------------------------------------
+            //-------------------------------------------------------------------
         }
 
         private void addTransportTransitions(String operation) {
@@ -477,18 +523,15 @@ public class EFAforSupervisor {
                         allPosPropertiesMap.get(op.get(DEST_POS_BASE)).get(CAPACITY).iterator().next());
             }
 
-            //Check position for mover if needed
+            //Check position for mover (if mover exists)
             if (op.get(OP_TYPE).equals(TypeVar.TRANSPORT) && !moversSet.isEmpty()) {
                 Set<String> moverGuard = new HashSet<String>(moversSet.size());
                 for (String moverPos : moversSet) {
                     String mover = "(";
-                    mover +=
-                            lumpSetWith(allPosPropertiesMap.get(moverPos).get(IN), "+");
-                    mover +=
-                            ")" + TypeVar.EFA_STRICTLY_LESS_THAN + allPosPropertiesMap.get(moverPos).get(CAPACITY).iterator().next();
+                    mover += lumpSetWith(allPosPropertiesMap.get(moverPos).get(IN), "+");
+                    mover += ")" + TypeVar.EFA_STRICTLY_LESS_THAN + allPosPropertiesMap.get(moverPos).get(CAPACITY).iterator().next();
                     moverGuard.add(mover);
                 }
-
                 ega.andGuard("(" + lumpSetWith(moverGuard, TypeVar.EFA_OR) + ")");
             }
 
@@ -551,9 +594,10 @@ public class EFAforSupervisor {
             for (String pos : op.get(DEST_POS)) {
                 String posBase = pos.split(":")[1];
                 String posInstance = posBase + ":" + pos.split(":")[2];
+                //No need to book a destination position that is already taken by another product in the merge.
                 if (!productAlreadyInThesePositions.contains(posInstance)) {
                     Set<String> guard = new HashSet<String>(2);
-                    guard.add(lumpSetWith(allPosPropertiesMap.get(posBase).get(IN), "+"));
+                    guard.add(lumpSetWith(allPosPropertiesMap.get(posBase).get(IN), "+", op.get(SOURCE_POS)));
                     guard.add(lumpSetWith(allPosPropertiesMap.get(posBase).get(BY), "+"));
 
                     if (lumpSetWith(guard, "+").length() > "".length()) {

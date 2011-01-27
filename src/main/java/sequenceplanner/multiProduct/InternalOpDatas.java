@@ -55,14 +55,4 @@ public class InternalOpDatas extends HashSet<InternalOpData> {
         }
         return set;
     }
-
-    public InternalOpDatas getMovers() {
-        InternalOpDatas set = new InternalOpDatas();
-        for (InternalOpData iData : this) {
-            if (iData.attributes.get(TypeVar.ED_MOVER) != null) {
-                set.add(iData);
-            }
-        }
-        return set;
-    }
 }

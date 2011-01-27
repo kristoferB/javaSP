@@ -51,6 +51,7 @@ import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.multiProduct.Calculation;
 import sequenceplanner.multiProduct.EFAforSupervisor;
@@ -574,19 +575,6 @@ public class SPContainer extends JPanel {
                 calc.printProductTypes();
             }
         }));
-
-//        multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning (old)") {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                // Create a module of EFAs with Sequence Planner SOP as input
-//                Calculation calc = new Calculation(model);
-//                String answer = calc.transportPlanningDialog();
-//                if (answer != null) {
-//                    calc.transportPlanningProductType(answer);
-//                }
-//            }
-//        }));
 
         multiProduct.add(new JMenuItem(new AbstractAction("EFA for transport planning") {
 

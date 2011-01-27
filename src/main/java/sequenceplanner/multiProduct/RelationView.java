@@ -26,6 +26,7 @@ import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
+import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 /**
  * An attempt to get a better visualization of relations between operations. <br/>
@@ -211,7 +212,7 @@ public class RelationView {
             }
 
             //update heads in wrapper class
-            Set<Wrapper> startCells = new HashSet<Wrapper>(); //Operations without precontions
+            Set<Wrapper> startCells = new HashSet<Wrapper>(); //Operations without preconditions
 
             for (Wrapper w : master.children) {
 
@@ -297,6 +298,232 @@ public class RelationView {
                 cell = CellFactory.getInstance().getOperation("operation");
                 //Data d = (Data) opCell.getValue();
                 cell.setValue(iData.getOpData());
+                return cell;
+            }
+        }
+    }
+
+    private class OperationsWithRefinedPositionsDraw {
+
+        SPGraph graph = ov.getGraph();
+        Set<OperationData> selectedOperatons = null;
+        TreeNode productRecipeNode = null;
+
+        public OperationsWithRefinedPositionsDraw(Set<String> namesOfSelectedOperations) {
+            //namesOfSelectedOperations is a set but should only have one object
+            //Get the selected root
+            for (int i = 0; i < model.getOperationRoot().getChildCount(); ++i) {
+                if (namesOfSelectedOperations.contains(model.getOperationRoot().getChildAt(i).getNodeData().getName())) {
+                    productRecipeNode = model.getOperationRoot().getChildAt(i);
+                    break;
+                }
+            }
+            if (productRecipeNode != null) {
+                selectedOperatons = new HashSet<OperationData>();
+                getOperations(productRecipeNode, selectedOperatons);
+
+                CreateInternalSOP();
+            }
+        }
+
+        private void getOperations(TreeNode tree, Set<OperationData> set) {
+            for (int i = 0; i < tree.getChildCount(); ++i) {
+                set.add((OperationData) tree.getChildAt(i).getNodeData());
+                getOperations(tree.getChildAt(i), set);
+            }
+        }
+
+        private void CreateInternalSOP() {
+
+            //root in wrapper class
+            Wrapper master = new Wrapper();
+
+            //create wrapper
+            for (OperationData op : selectedOperatons) {
+                //generate new node
+                Wrapper w = new Wrapper();
+                w.name = op.getName();
+                w.sourcePos = w.name.split("_")[0];
+                w.destPos = w.name.split("_")[2];
+                w.opData = op;
+                //w.head.add(master);
+                w.parent = master;
+
+                //child to master
+                master.children.add(w);
+                if (w.sourcePos.equals(w.destPos)) {
+                    master.singlePosChildren.add(w);
+                } else {
+                    master.doublePosChildren.add(w);
+                }
+            }
+
+            //update heads in wrapper class--------------------------------------
+            Set<Wrapper> startCells = new HashSet<Wrapper>(); //Operations without preconditions
+
+            //Operations with single positions and double positions are treated separte because
+            //a single pos process opearation should occur between transport operations to this pos
+            for (Wrapper wExternal : master.doublePosChildren) {
+
+                Boolean somethingHasBeenAdded = false;
+
+                if (!wExternal.sourcePos.contains(TypeVar.POS_OUT)) { //source pos = out -> start cell
+                    for (Wrapper wInternal : master.singlePosChildren) {
+                        if (wExternal.sourcePos.equals(wInternal.destPos)) {
+                            wExternal.head.add(wInternal);
+                            wInternal.tail.add(wExternal);
+                            somethingHasBeenAdded = true;
+                        }
+                    }
+                    if (!somethingHasBeenAdded) {
+                        for (Wrapper wInternal : master.doublePosChildren) {
+                            if (!wExternal.name.equals(wInternal.name)) {
+                                if (wExternal.sourcePos.equals(wInternal.destPos)) {
+                                    wExternal.head.add(wInternal);
+                                    wInternal.tail.add(wExternal);
+                                    somethingHasBeenAdded = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!somethingHasBeenAdded) {
+                    //Not a single operation has wExternal.sourcePos as destPos || sourcePos=="pos_out" -> this w has to be a startCell!
+                    startCells.add(wExternal);
+                    System.out.println(wExternal.name + " is start cell!");
+                }
+            }
+
+            for (Wrapper wExternal : master.singlePosChildren) {
+
+                Boolean somethingHasBeenAdded = false;
+
+                for (Wrapper wInternal : master.doublePosChildren) {
+                    if (!wExternal.name.equals(wInternal.name)) {
+                        if (wExternal.sourcePos.equals(wInternal.destPos)) {
+                            wExternal.head.add(wInternal);
+                            wInternal.tail.add(wExternal);
+                            somethingHasBeenAdded = true;
+                        }
+                    }
+                }
+
+                if (!somethingHasBeenAdded) {
+                    //Not a single operation has wExternal.sourcePos as destPos || sourcePos=="pos_out" -> this w has to be a startCell!
+                    startCells.add(wExternal);
+                    System.out.println(wExternal.name + " is start cell!");
+                }
+            }//------------------------------------------------------------------
+
+            master.children.removeAll(startCells); //Already knows when these cells occur
+
+            for (Wrapper w : startCells) {
+                graph.addCell(w.setCell());
+                fillInternalSOP(w, master.children);
+            }
+        }
+
+        private void fillInternalSOP(Wrapper iWrap, Set<Wrapper> wrapps) {
+
+            int mode = lastOccurrence(wrapps, iWrap);
+            if (mode > 0) {
+
+                Wrapper splitWrap = new Wrapper();
+
+                if (iWrap.tail.size() > 1) {
+                    //Need to create a split cell
+                    splitWrap.cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
+
+                    //Add split cell
+                    if (mode == 1) {
+                        //after iWrap
+                        graph.insertNewCell(iWrap.cell, splitWrap.cell, false);
+                    } else if (mode == 2) {
+                        //after iWrap.parent
+                        graph.insertNewCell(iWrap.parent.cell, splitWrap.cell, false);
+                    }
+                }
+
+                //Add wrapps to cell
+                for (Wrapper w : iWrap.tail) {
+
+                    if (iWrap.tail.size() == 1) {
+                        //Create a new cell
+                        if (w.head.size() > 1) {
+                            //after iWrap.parent
+                            graph.insertNewCell(iWrap.parent.cell, w.setCell(), false);
+                        } else {
+                            //after iWrap
+                            graph.insertNewCell(iWrap.cell, w.setCell(), false);
+                            //w and iWrap will have the same parent (i.e. be in the same split cell)
+                            w.parent = iWrap.parent;
+                        }
+                    } else {
+                        //Create new cells in split cell
+                        graph.insertGroupNode(splitWrap.cell, null, w.setCell());
+                        //the split cell is parent to w
+                        w.parent = splitWrap;
+                        }
+                    //Remove the wrap that was just treaded
+                    wrapps.remove(w);
+                    //Handle wrapps that are left
+                    fillInternalSOP(w, wrapps);
+                }
+            }
+        }
+
+        /**
+         * Checks if <i>iWrap</i> is the last wrap in the heads for the the wrapps in iWrap.tail, that is left in <i>wrapps</i>
+         * @param wrapps
+         * @param iWrap
+         * @return 0 iWrap.tail.size==0 or iWrap is not the last wrap <br/>
+         * 1 iWrap is the last wrap and the only wrap in the heads <br/>
+         * 2 iWrap is the last wrap but not the only wrap in the heads
+         */
+        private int lastOccurrence(Set<Wrapper> wrapps, Wrapper iWrap) {
+            Wrapper lastInhead = null;
+            for (Wrapper w : iWrap.tail) {
+                lastInhead = w;
+                for (Wrapper ww : w.head) {
+                    if (wrapps.contains(ww)) {
+                        return 0;
+                    }
+                }
+            }
+
+            if (iWrap.tail.size() == 0) {
+                return 0;
+            } else {
+                if (lastInhead.head.size() == 1) {
+                    return 1;
+                } else {
+                    return 2;
+                }
+            }
+        }
+
+        private class Wrapper {
+
+            Set<Wrapper> head = new HashSet<Wrapper>();
+            Set<Wrapper> tail = new HashSet<Wrapper>();
+            Cell cell = null;
+            Set<Wrapper> children = new HashSet<Wrapper>();
+            Set<Wrapper> singlePosChildren = new HashSet<Wrapper>();
+            Set<Wrapper> doublePosChildren = new HashSet<Wrapper>();
+            OperationData opData = null;
+            String sourcePos = null;
+            String destPos = null;
+            String name = null;
+            Wrapper parent = null;
+
+            public Wrapper() {
+            }
+
+            public Cell setCell() {
+                cell = CellFactory.getInstance().getOperation("operation");
+                //Data d = (Data) opCell.getValue();
+                cell.setValue(opData);
                 return cell;
             }
         }
@@ -687,6 +914,7 @@ public class RelationView {
 
         JButton viewButton = new JButton("View!");
         JButton wmodButton = new JButton("Generate .wmod file");
+        JButton refinedOpsButton = new JButton("View, refined prod. rec.");
         JButton sButton = new JButton("Select all");
         JButton dsButton = new JButton("Deselect all");
         JPanel buttonJp = new JPanel();
@@ -702,7 +930,6 @@ public class RelationView {
             jp.setLayout(new FlowLayout());
 
             for (String name : allOperations.opNames()) {
-
                 JCheckBox rb = new JCheckBox(name);
                 rb.addActionListener(this);
                 rb.setSelected(true);
@@ -723,6 +950,10 @@ public class RelationView {
             viewButton.setEnabled(true);
             buttonJp.add(viewButton);
 
+            refinedOpsButton.addActionListener(this);
+            refinedOpsButton.setEnabled(false);
+            buttonJp.add(refinedOpsButton);
+
             wmodButton.addActionListener(this);
             wmodButton.setEnabled(true);
             buttonJp.add(wmodButton);
@@ -734,8 +965,9 @@ public class RelationView {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            Set<String> operations = new HashSet<String>();
             if (viewButton == e.getSource() || wmodButton == e.getSource()) {
-                Set<String> operations = new HashSet<String>();
+
                 for (JCheckBox jcb : bg) {
                     if (jcb.isSelected()) {
                         operations.add(jcb.getText());
@@ -747,33 +979,67 @@ public class RelationView {
                 } else {
                     new EFAModuleForView(operations);
                 }
-                
+
+            } else if (refinedOpsButton == e.getSource()) {
+                for (JCheckBox jcb : bg) {
+                    if (jcb.isSelected() && jcb.getText().contains("_for_synthesis")) {
+                        operations.add(jcb.getText());
+                    }
+                }
+                if (operations.size() == 1) {
+                    new OperationsWithRefinedPositionsDraw(operations);
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Select a refined product recipe!");
+                }
             } else if (sButton == e.getSource()) {
                 for (JCheckBox jcb : bg) {
                     jcb.setSelected(true);
                 }
                 viewButton.setEnabled(true);
                 wmodButton.setEnabled(true);
+                refinedOpsButton.setEnabled(false);
             } else if (dsButton == e.getSource()) {
                 for (JCheckBox jcb : bg) {
                     jcb.setSelected(false);
                 }
                 viewButton.setEnabled(false);
                 wmodButton.setEnabled(false);
+                refinedOpsButton.setEnabled(false);
             } else {
-                Boolean buttonOK = false;
+//                Boolean buttonOK = false;
+//                for (JCheckBox jcb : bg) {
+//                    if (jcb.isSelected()) {
+//                        buttonOK = true;
+//                        break;
+//                    }
+//                }
+//                if (buttonOK) {
+//                    viewButton.setEnabled(true);
+//                    wmodButton.setEnabled(true);
+//                } else {
+//                    viewButton.setEnabled(false);
+//                    wmodButton.setEnabled(false);
+//                }
+
+                int nbrOfbuttonsSelected = 0;
                 for (JCheckBox jcb : bg) {
                     if (jcb.isSelected()) {
-                        buttonOK = true;
-                        break;
+                        ++nbrOfbuttonsSelected;
                     }
                 }
-                if (buttonOK) {
+                if (nbrOfbuttonsSelected == 1) {
+                    refinedOpsButton.setEnabled(true);
+                    viewButton.setEnabled(false);
+                    wmodButton.setEnabled(false);
+                } else if (nbrOfbuttonsSelected > 1) {
                     viewButton.setEnabled(true);
                     wmodButton.setEnabled(true);
+                    refinedOpsButton.setEnabled(false);
                 } else {
                     viewButton.setEnabled(false);
                     wmodButton.setEnabled(false);
+                    refinedOpsButton.setEnabled(false);
                 }
             }
         }

@@ -12,7 +12,12 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * To create Supremica modules for transport planning
+ * User selects one product from available products. <br/>
+ * Transport planning should eventually return the minimal number
+ * of position/resource instances needed and the transport
+ * operations between these positions.<br/>
+ * A single position may need to be represented in a nbr of instances
+ * in order to capture e.g. alternaitve routes.<br/>
  * @author patrik
  */
 public class EFAforTransport {
@@ -24,10 +29,6 @@ public class EFAforTransport {
     public EFAforTransport(Model model) {
         this.model = model;
         productTypes = new HashMap<String, InternalOpDatas>();
-        init();
-    }
-
-    private void init() {
         getOperations(model.getOperationRoot());
     }
 
@@ -49,6 +50,10 @@ public class EFAforTransport {
         }
     }
 
+    /**
+     * User selects one product from available products. <br/>
+     * @return Selected product
+     */
     public String transportPlanningDialog() {
         String answer = (String) JOptionPane.showInputDialog(null,
                 "Pick a product type: ",
@@ -103,6 +108,7 @@ public class EFAforTransport {
 
             smodule.setComment("Module for transport planning\n*****\nSet start position manually\nSet finish position manually\n" +
                     "*****\nSynthesize supervisor through guard extraction\n");
+
             testIDs();
 
             operations = productTypes.get(productType);
@@ -115,6 +121,7 @@ public class EFAforTransport {
 
             switch (generation) {//----------------------------------------------
                 case 0:
+                    //Only exists process operations in SP the first round
                     initG0();
                     addVariablesG0();
                     addTransportTransitionsG0();
@@ -127,7 +134,7 @@ public class EFAforTransport {
                     addProcessTransitionsG1();
                     break;
                 default:
-                    e.error("generation is set out of bounds!");
+                    e.error("Generation is set out of bounds!");
                     break;
             }//------------------------------------------------------------------
 
@@ -153,6 +160,13 @@ public class EFAforTransport {
             return true;
         }
 
+        /**
+         * To get the right position and id for hierarchical operations.<br/>
+         * It should be the position for the top hierarchical op that counts.
+         * @param iData Operation to test
+         * @param posType Source position or destination position
+         * @return Position and id selected
+         */
         private HashMap<String, Integer> getPositionAndIdWithRespectToParents(InternalOpData iData, String posType) {
             HashMap<String, Integer> positionIdMap = new HashMap<String, Integer>(1);
 
@@ -171,6 +185,12 @@ public class EFAforTransport {
             return positionIdMap;
         }
 
+        /**
+         * Fill positions into histogram<br/>
+         * The histogram is later on used to create instances of given position, according to count given in histogram.<br/>
+         * The whole histogram thing is not that nice...
+         * @param posIdMap position to add
+         */
         private void addToPosHistogramMap(HashMap<String, Integer> posIdMap) {
             for (String position : posIdMap.keySet()) {
                 if (!posHistogramMap.containsKey(position)) {
@@ -180,6 +200,9 @@ public class EFAforTransport {
             }
         }
 
+        /**
+         * Create histogram over positions for process operations in product selected.
+         */
         private void initG0() {
             for (InternalOpData iData : operations) {
 
@@ -214,10 +237,10 @@ public class EFAforTransport {
                 String source = name.split(TypeVar.SEPARATION)[1];
                 String dest = name.split(TypeVar.SEPARATION)[3];
 
-                //Refine source position with guard
+                //Refine source position with guard (This is always _m, never _p)
                 addToRefinementMap(source, guard);
 
-                //Refine process of source position with guard (if this process pos exists)
+                //Refine process (_p) of source position with guard (if this process pos exists)
                 addToRefinementMap(source.replaceAll(TypeVar.POS_MOVE, TypeVar.POS_PROCESS), guard);
 
                 //Add dest position but should not be refined
@@ -232,11 +255,20 @@ public class EFAforTransport {
             }//------------------------------------------------------------------
         }
 
+        /**
+         * Method to make positions unique.<br/>
+         * @param iData Operation
+         * @param posType position to test
+         * @param residualPosType should be dest pos if position to test is source pos and opposite.
+         * @param variables Set that stored variables.
+         * @return Name of position
+         */
         private String addPosToVariable(InternalOpData iData, String posType, String residualPosType, Set<String> variables) {
             String posName = iData.getPos(posType);
 
             if (InternalOpData.posIsReal(iData.getPos(posType))) {
-                if (posHistogramMap.get(posName).size() > 1 && !InternalOpData.posIsMergePos(iData.getPos(residualPosType))) { //Not add ID if dest(source) pos is merge pos for a source(dest) pos
+                //Not add ID if dest(source) pos is merge pos for a source(dest) pos
+                if (posHistogramMap.get(posName).size() > 1 && !InternalOpData.posIsMergePos(iData.getPos(residualPosType))) {
                     posName = posName + ":" + iData.getId();
                 }
             }
@@ -254,7 +286,7 @@ public class EFAforTransport {
         }
 
         private void addVariablesG0() {
-            Set<String> variables = new HashSet<String>(); //Uses Set just to add each variable once
+            Set<String> variables = new HashSet<String>(); //Uses Set in orderr to add each variable once
 
             //Check all preconditions for operation ids. Dest position for found operation ids are stored.
             //These dest positions needs to be refined first time the supremica module is built.
@@ -277,22 +309,33 @@ public class EFAforTransport {
 
                 String name = null;
 
-                //Operation Count
+                //Operation Count------------------------------------------------
                 addOperationCountToVariable(iData);
+                //---------------------------------------------------------------
 
-                if (posIdMap.get(iData.getPos("destPos")).size() > 1) { //Not add ID if source pos is merge pos
+                //Dest position--------------------------------------------------
+                //Is there need for an initial refinement of the position?
+                //Yes, if at least 2 later occuring process operations that have this operation (iData) in their gurad expressions.
+                if (posIdMap.get(iData.getPos("destPos")).size() > 1) {
                     destName = destName + ":" + iData.getId();
                 }
+                //Is there need to refine the position into a m(ove) instance?
+                //Yes, if the operation has a counter or the position is OUT (to distinguish the initial from the final out position).
                 if ((!iData.hasOperationCountNo() && iData.hasSinglePos()) || iData.getPos("destPos").equals(TypeVar.POS_OUT)) {
                     destName = destName + TypeVar.POS_MOVE;
                 }
                 variables.add(destName);
 
+                //Connect the position's name to operations. To be used during construction of transtion.
                 opIdEFAdestPosMap.put(iData.getId(), destName);
+                //---------------------------------------------------------------
 
+                //Source position------------------------------------------------
                 name = addPosToVariable(iData, "sourcePos", "destPos", variables);
 
+                //Connect the position's name to operations. To be used during construction of transtion.
                 opIdEFAsourcePosMap.put(iData.getId(), name);
+                //---------------------------------------------------------------
             }
 
             //Add variables
@@ -302,12 +345,12 @@ public class EFAforTransport {
         }
 
         private void addVariablesG1() {
-            //Operation Count
+            //Add Operation Count to Supremica module
             for (InternalOpData iData : operations.getChildOperations()) {
                 addOperationCountToVariable(iData);
             }
 
-            //positions
+            //Add positions to Supremica module
             for (String pos : posRefinementMap.keySet()) {
                 for (String refinement : posRefinementMap.get(pos)) {
                     String varName = ps + pos;
@@ -319,6 +362,14 @@ public class EFAforTransport {
             }
         }
 
+        /**
+         * Help class to create transport transitions.<br/>
+         * Creates one transition from each item in externalSet to each item in internalSet.<br/>
+         * There are some additional requirements on the items in the sets...
+         * @param externalSet from position
+         * @param internalSet to position
+         * @param eventName String between from and to position in transition name
+         */
         private void loopTransport(Set<String> externalSet, Set<String> internalSet, String eventName) {
             for (String intDest : externalSet) {
                 String dest = ps + intDest;
@@ -337,8 +388,11 @@ public class EFAforTransport {
             }
         }
 
+        /**
+         * Creates one transition for each dest/source position combination.
+         */
         private void addTransportTransitionsG0() {
-            //Only get one pos once----------------------------------------------
+            //Only get one position once-----------------------------------------
             Set<String> destPosSet = new HashSet<String>();
             for (String pos : opIdEFAdestPosMap.values()) {
                 destPosSet.add(pos);
@@ -348,54 +402,54 @@ public class EFAforTransport {
                 sourcePosSet.add(pos);
             }//------------------------------------------------------------------
 
-            if (operations.getMovers().isEmpty()) {
-                loopTransport(destPosSet, sourcePosSet, "t");
-            } else {
-                for (InternalOpData iData : operations.getMovers()) {
-                    Set<String> set = new HashSet<String>();
-
-                    set.add(opIdEFAsourcePosMap.get(iData.getId()));
-                    loopTransport(destPosSet, set, "t");
-
-                    set.add(opIdEFAdestPosMap.get(iData.getId()));
-                    loopTransport(set, sourcePosSet, "t");
-                }
-            }
+            //Create transitions to module
+            loopTransport(destPosSet, sourcePosSet, "t");
         }
 
+        /**
+         * Transport transitions for second round is built upon the positions for transport
+         * transitions in <i>nameGuardMap</i>. Additional positions due to
+         * position refinement is possible.
+         */
         private void addTransportTransitionsG1() {
-            for (String name : topsGuardMap().keySet()) {
-                //String guard = nameGuardMap.get(name);
-                String sPos = name.split(TypeVar.SEPARATION)[1];
+            for (String name : nameGuardMap.keySet()) {
                 String opType = name.split(TypeVar.SEPARATION)[2];
-                String dPos = name.split(TypeVar.SEPARATION)[3];
+                if (opType.equals(TypeVar.TRANSPORT)) {
+                    //String guard = nameGuardMap.get(name);
+                    String sPos = name.split(TypeVar.SEPARATION)[1];
+                    String dPos = name.split(TypeVar.SEPARATION)[3];
 
-                for (String sourceRefinement : posRefinementMap.get(sPos)) {
-                    for (String destRefinement : posRefinementMap.get(dPos)) {
+                    //Create transitions between all transport source and dest position, refined positions included
+                    for (String sourceRefinement : posRefinementMap.get(sPos)) {
+                        for (String destRefinement : posRefinementMap.get(dPos)) {
 
-                        String sourcePosName = sPos;
-                        String destPosName = dPos;
-                        SEGA ega = new SEGA();
+                            String sourcePosName = sPos;
+                            String destPosName = dPos;
+                            SEGA ega = new SEGA();
 
-                        if (!sourceRefinement.equals("1")) {
-                            sourcePosName = sourcePosName + ":" + guardToSupremicaNameTranslation(sourceRefinement);
-                            ega.andGuard(sourceRefinement);
+                            if (!sourceRefinement.equals("1")) {
+                                sourcePosName = sourcePosName + ":" + guardToSupremicaNameTranslation(sourceRefinement);
+                                ega.andGuard(sourceRefinement);
+                            }
+                            if (!destRefinement.equals("1")) {
+                                destPosName = destPosName + ":" + guardToSupremicaNameTranslation(destRefinement);
+                                ega.andGuard(destRefinement);
+                            }
+
+                            ega.addBasicPositionBookAndUnbook(ps + sourcePosName, ps + destPosName);
+
+                            //Create the transition
+                            ega.setEvent(transitionName(sourcePosName, "s" + opType, destPosName));
+                            efa.addStandardSelfLoopTransition(ega);
                         }
-                        if (!destRefinement.equals("1")) {
-                            destPosName = destPosName + ":" + guardToSupremicaNameTranslation(destRefinement);
-                            ega.andGuard(destRefinement);
-                        }
-
-                        ega.addBasicPositionBookAndUnbook(ps + sourcePosName, ps + destPosName);
-
-                        //Create the transition
-                        ega.setEvent(transitionName(sourcePosName, "s" + opType, destPosName));
-                        efa.addStandardSelfLoopTransition(ega);
                     }
                 }
             }
         }
 
+        /**
+         * To create transitions for counters i.e. process operations.
+         */
         private void addProcessTransitionsG0() {
             //go through operations, add guards and actions
             for (InternalOpData iData : operations.getChildOperations()) {
@@ -424,7 +478,16 @@ public class EFAforTransport {
             }
         }
 
-        private void createProcessTransitions(InternalOpData iData, String sPos, String sourceRefinement, String dPos, String destRefinement, String opType) {
+        /**
+         * Create process transitions with correct guards and actions.
+         * @param iData Process operation in SP
+         * @param sPos Source position according to process transition
+         * @param sourceRefinement Refined source position
+         * @param dPos Dest position according to process transition
+         * @param destRefinement Refined dest position
+         * @param eventNameMiddle Part of event
+         */
+        private void createProcessTransitions(InternalOpData iData, String sPos, String sourceRefinement, String dPos, String destRefinement, String eventNameMiddle) {
             String sourcePosName = sPos;
             String destPosName = dPos;
             SEGA ega = new SEGA();
@@ -446,12 +509,16 @@ public class EFAforTransport {
             addGuardBasedOnSPpreCondition(iData, ega);
 
             //Create the transition
-            ega.setEvent(transitionName(sourcePosName, "s" + opType, destPosName));
+            ega.setEvent(transitionName(sourcePosName, "s" + eventNameMiddle, destPosName));
             efa.addStandardSelfLoopTransition(ega);
         }
 
         private void addProcessTransitionsG1() {
-            //go through operations, add guards and actions
+            //Get process operation
+            HashMap<String, String> processOperationsWithGuardsMap =  new HashMap<String, String>();
+            popsGuardMap(processOperationsWithGuardsMap);
+
+            //Go through operations in SP for current product,add guards and actions
             for (InternalOpData iData : operations.getChildOperations()) {
 
                 if (!iData.hasOperationCountNo()) {
@@ -460,7 +527,8 @@ public class EFAforTransport {
                     String sPos = null;
                     String dPos = null;
 
-                    for (String name : popsGuardMap().keySet()) {
+                    //Connect SP operation with process transition from previous round
+                    for (String name : processOperationsWithGuardsMap.keySet()) {
                         opType = name.split(TypeVar.SEPARATION)[2].replaceAll("s", "");
                         if (opType.startsWith(iData.getId().toString())) {
                             sPos = name.split(TypeVar.SEPARATION)[1];
@@ -469,8 +537,10 @@ public class EFAforTransport {
                         }
                     }
 
+                    //Create process transitions for the new module in Supremica,
+                    //with respect to refinement positions
                     for (String sourceRefinement : posRefinementMap.get(sPos)) {
-                        if (iData.hasSinglePos()) {
+                        if (posRefinementMap.get(sPos).size()>1 && posRefinementMap.get(dPos).size()>1) {
                             createProcessTransitions(iData, sPos, sourceRefinement, sPos.replaceAll(TypeVar.POS_PROCESS, TypeVar.POS_MOVE), sourceRefinement, opType);
                         } else {
                             for (String destRefinement : posRefinementMap.get(dPos)) {
@@ -482,6 +552,11 @@ public class EFAforTransport {
             }
         }
 
+        /**
+         * Translate precondition in iData from SP syntax to Supremica syntax
+         * @param iData Operation to take guard from
+         * @param ega Transition where guard should be added
+         */
         private void addGuardBasedOnSPpreCondition(InternalOpData iData, SEGA ega) {
 
             //Create condition
@@ -511,12 +586,25 @@ public class EFAforTransport {
             }
         }
 
+        /**
+         * Creates a variable {0,1} indicating that the operation has been performed.<br/>
+         * A process operation has to allow that a count like this is added.<br/>
+         * A buffer and process operations for fixture products are good examples of operations that should not have a counter variable.
+         * @param iData Operation that counter should be added for.
+         */
         private void addOperationCountToVariable(InternalOpData iData) {
             if (!iData.hasOperationCountNo()) {
                 smodule.addIntVariable(ps + iData.getId(), 0, 1, 0, null);
             }
         }
 
+        /**
+         * Help method to write events/transition names:<br/>
+         * @param from
+         * @param type
+         * @param to
+         * @return "Product _ from _ type _ to"
+         */
         private String transitionName(String from, String type, String to) {
             return ps + from + TypeVar.SEPARATION + type + TypeVar.SEPARATION + to;
         }
@@ -570,23 +658,7 @@ public class EFAforTransport {
             return guard;
         }
 
-        private HashMap<String, String> topsGuardMap() {
-            HashMap<String, String> topsMap = new HashMap<String, String>(nameGuardMap.size());
-            for (String name : nameGuardMap.keySet()) {
-                String guard = nameGuardMap.get(name);
-                //String source = name.split(TypeVar.SEPARATION)[1];
-                String type = name.split(TypeVar.SEPARATION)[2];
-                //String dest = name.split(TypeVar.SEPARATION)[3];
-
-                if (type.equals(TypeVar.TRANSPORT)) {
-                    topsMap.put(name, guard);
-                }
-            }
-            return topsMap;
-        }
-
-        private HashMap<String, String> popsGuardMap() {
-            HashMap<String, String> map = new HashMap<String, String>(nameGuardMap.size());
+        private void popsGuardMap(HashMap<String, String> map) {
             for (String name : nameGuardMap.keySet()) {
                 String guard = nameGuardMap.get(name);
                 //String source = name.split(TypeVar.SEPARATION)[1];
@@ -597,7 +669,6 @@ public class EFAforTransport {
                     map.put(name, guard);
                 }
             }
-            return map;
         }
     }
 }
