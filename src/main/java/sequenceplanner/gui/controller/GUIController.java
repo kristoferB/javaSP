@@ -20,38 +20,17 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
-
-        addViewListeners();
-    }
-
-    private void addViewListeners() {
-        guiView.addCreateOpViewListener(new CreateOpViewListener());
-        guiView.addCreateRViewListener(new CreateRViewListener());
+        guiView.addCOPL(new CreateOpListener());
 
     }
 
-    // Inner listener classes
-    class CreateOpViewListener implements ActionListener {
-
+    private class CreateOpListener implements ActionListener{
         @Override
-        public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        public void actionPerformed(ActionEvent e){
+            guiModel.createNewOpView();
+            guiView.updateViews();
         }
     }
 
-    private class CreateRViewListener implements ActionListener {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet");
-        }
-    }
-
-    private class CreateExitListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
 }

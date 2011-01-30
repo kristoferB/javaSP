@@ -1,12 +1,13 @@
 package sequenceplanner.gui.view;
 
 
+import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 /**
- * Main menu bar for sequenceplanner. No listeners are registred here.
+ * Main menu bar for sequenceplanner.
  * Only graphical if used alone.
  * 
  * Menu layout:
@@ -41,8 +42,8 @@ class SPMenuBar extends JMenuBar{
 
     JMenu file, edit, project, convert, mp;
     JMenuItem newOperationView, newResourceView, exit, preferences,addAll,
-            open,save,saveAs,close,saveEFAo,saveEFAr,savecost,saveoptimal,identifyr,
-            printProduct,efaForTrans,updateAfterTrans,EfaForMP;
+            open,save,saveAs,close,saveEFAo,saveEFAr,saveCost,saveOptimal,identifyr,
+            printProduct,efaForTrans,updateAfterTrans,efaForMP;
 
     public SPMenuBar(){
         super();
@@ -50,10 +51,48 @@ class SPMenuBar extends JMenuBar{
     }
 
     private void initMenu() {
-        //TODO q implement menu items.
-        throw new UnsupportedOperationException("Not yet implemented");
+        //File menu
+        file = new JMenu("File");
+        file.add(newOperationView= new JMenuItem("New Operation View"));
+        file.add(newResourceView = new JMenuItem("New Resource View"));
+        file.add(exit = new JMenuItem("Exit"));
+        this.add(file);
+
+        //Edit menu
+        edit = new JMenu("Edit");
+        edit.add(preferences = new JMenuItem("Preferences"));
+        edit.add(addAll = new JMenuItem("Add all cells to new view"));
+        this.add(edit);
+
+        //Project menu
+        project = new JMenu("Project");
+        project.add(open = new JMenuItem("Open"));
+        project.add(save = new JMenuItem("Save"));
+        project.add(saveAs = new JMenuItem("Save As"));
+        project.add(close = new JMenuItem("Close"));
+        this.add(project);
+
+        //Convert menu
+        convert = new JMenu("Convert");
+        convert.add(saveEFAo = new JMenuItem("Save EFA as file (optimized)"));
+        convert.add(saveEFAr = new JMenuItem("Save EFA as file (reset)"));
+        convert.add(saveCost = new JMenuItem("Save cost automata as file"));
+        convert.add(saveOptimal= new JMenuItem("Save optimal automaton as file"));
+        convert.add(identifyr = new JMenuItem("Identify relations"));
+        this.add(convert);
+
+        //Multiproduct menu
+        mp = new JMenu("MultiProduct");
+        mp.add(printProduct = new JMenuItem("Print product types and op in model"));
+        mp.add(efaForTrans = new JMenuItem("EFA for transport planning"));
+        mp.add(updateAfterTrans = new JMenuItem("Update model after transport planning"));
+        mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
+        this.add(mp);
     }
 
+    public void addCreatOpL(ActionListener l){
+        newOperationView.addActionListener(l);
+    }
 }
 
 
