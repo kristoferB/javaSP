@@ -25,26 +25,31 @@ import sequenceplanner.spIcon.IconHandler;
  */
 public class GUIView extends JFrame {
     //model of the gui
-    private SPMenuBar menuBar;
+
+    private JMenuBar menuBar;
     private GUIModel guiModel;
     private ViewMap mainViewMap = new ViewMap();
     private RootWindow rootWindow;
-
     private ViewMap opViewMap = new ViewMap();
     private RootWindow opRootWindow = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
-
     private EventListenerList listeners;
     private TabWindow tab1 = new TabWindow();
+
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
     }
 
+    /**
+     * creates the frame
+     */
     private void initJFrame() {
         setTitle("Sequence Planner");
         setIconImage(IconHandler.getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setJMenuBar(createMenu());
+
+        menuBar = createMenu();
+        setJMenuBar(menuBar);
 
         setLocation(getEnvBounds().x, getEnvBounds().y);
         setSize(getEnvBounds().width, getEnvBounds().height);
@@ -83,69 +88,62 @@ public class GUIView extends JFrame {
         opRootWindow.getRootWindowProperties().getDockingWindowProperties().setUndockEnabled(false);
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, tab1,
-                new SplitWindow(true,0.7f,opRootWindow,
-                new SplitWindow(false,0.5f,new TabWindow(),new TabWindow()))));
+                new SplitWindow(true, 0.7f, opRootWindow,
+                new SplitWindow(false, 0.5f, new TabWindow(), new TabWindow()))));
         this.getContentPane().add(rootWindow);
     }
 
+    public void updateViews() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
-    public void updateViews(){
-//        throw new UnsupportedOperationException("Not yet implemented");
+    public void addCOPL(ActionListener l) {
         
     }
-
-    public void addCOPL(ActionListener l){
-        menuBar.addCreatOpL(l);
-    }
-
     /**
- * Main menu bar for sequenceplanner.
- * Only graphical if used alone.
- *
- * Menu layout:
- *  File
- *      Create new OperationView
- *      Create new ResourceView
- *      Exit
- *  Edit
- *      Preferences
- *      AddAllCellsToNewView
- *  Project
- *      Open
- *      Save
- *      Save As
- *      Close
- *  Convert
- *      Save EFA as file (optimized)
- *      Save EFA as file (reset)
- *      Save cost automata as file
- *      Save optimal automaton as file
- *      Identify relations
- *  MP
- *      Print product types and op in model
- *      EFA for transport planning
- *      Update model after transport planning
- *      EFA for MP supervisor
- *
- * @author qw4z1
- */
-
-
-
-    private JMenu file, edit, project, convert, mp;
-    private JMenuItem newOperationView, newResourceView, exit, preferences,addAll,
-            open,save,saveAs,close,saveEFAo,saveEFAr,saveCost,saveOptimal,identifyr,
-            printProduct,efaForTrans,updateAfterTrans,efaForMP;
-
+     * Main menu bar for sequenceplanner.
+     * Only graphical if used alone.
+     *
+     * Menu layout:
+     *  File
+     *      Create new OperationView
+     *      Create new ResourceView
+     *      Exit
+     *  Edit
+     *      Preferences
+     *      AddAllCellsToNewView
+     *  Project
+     *      Open
+     *      Save
+     *      Save As
+     *      Close
+     *  Convert
+     *      Save EFA as file (optimized)
+     *      Save EFA as file (reset)
+     *      Save cost automata as file
+     *      Save optimal automaton as file
+     *      Identify relations
+     *  MP
+     *      Print product types and op in model
+     *      EFA for transport planning
+     *      Update model after transport planning
+     *      EFA for MP supervisor
+     *
+     * @author qw4z1
+     */
+    private JMenu fileMenu, edit, project, convert, mp;
+    private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
+            open, save, saveAs, close, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
+            printProduct, efaForTrans, updateAfterTrans, efaForMP;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
         //File menu
-        file = new JMenu("File");
-        file.add(newOperationView= new JMenuItem("New Operation View"));
-        file.add(newResourceView = new JMenuItem("New Resource View"));
-        file.add(exit = new JMenuItem("Exit"));
-        this.add(file);
+        fileMenu = new JMenu("File");
+        fileMenu.add(newOperationView = new JMenuItem("New Operation View"));
+        fileMenu.add(newResourceView = new JMenuItem("New Resource View"));
+        fileMenu.add(exit = new JMenuItem("Exit"));
+        this.add(fileMenu);
 
         //Edit menu
         edit = new JMenu("Edit");
@@ -166,7 +164,7 @@ public class GUIView extends JFrame {
         convert.add(saveEFAo = new JMenuItem("Save EFA as file (optimized)"));
         convert.add(saveEFAr = new JMenuItem("Save EFA as file (reset)"));
         convert.add(saveCost = new JMenuItem("Save cost automata as file"));
-        convert.add(saveOptimal= new JMenuItem("Save optimal automaton as file"));
+        convert.add(saveOptimal = new JMenuItem("Save optimal automaton as file"));
         convert.add(identifyr = new JMenuItem("Identify relations"));
         this.add(convert);
 
@@ -179,7 +177,7 @@ public class GUIView extends JFrame {
         this.add(mp);
 
         //Add menues to menubar
-        mb.add(file);
+        mb.add(fileMenu);
         mb.add(edit);
         mb.add(project);
         mb.add(convert);

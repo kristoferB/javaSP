@@ -32,6 +32,7 @@ public class GUIModel {
 
     }
 
+    //Crude exit method?
     public void exit(){
         System.exit(0);
     }

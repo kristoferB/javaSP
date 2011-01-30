@@ -32,5 +32,140 @@ public class GUIController {
         }
     }
 
+    class CreateRVListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e){
+            guiModel.createNewReView();
+            guiView.updateViews();
+        }
+    }
+    class ExitListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e){
+            guiModel.exit();
+        }
+    }
+    class PrefListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+
+    }
+    class AddAllListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class OpenListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+
+    class SaveListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class SaveAllListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class CloseListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class SaveEFAoListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class SaveEFArListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class SaveCostListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class SaveOptimalListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class IdentifyListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class PrintProductListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class EFAForTListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class UpdateModelListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+    class EFAForMPListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+ 
 
 }
