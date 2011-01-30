@@ -1,6 +1,8 @@
 package sequenceplanner.gui.view;
 
-
+/**
+ * Depreciated...
+ */
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
