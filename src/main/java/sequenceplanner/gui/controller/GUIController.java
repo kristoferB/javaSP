@@ -20,8 +20,29 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
-        guiView.addCOPL(new CreateOpListener());
+        addListeners();
 
+
+    }
+    private void addListeners(){
+        guiView.addCreateOPL(new CreateOpListener());
+        guiView.addCreateRVL(new CreateRVListener());
+        guiView.addExitL(new ExitListener());
+        guiView.addPrefL(new PrefListener());
+        guiView.addAddCellsL(new AddAllListener());
+        guiView.addOpenL(new OpenListener());
+        guiView.addSaveL(new SaveListener());
+        guiView.addSaveAsL(new SaveAsListener());
+        guiView.addCloseL(new CloseListener());
+        guiView.addSaveEFAoL(new SaveEFAoListener());
+        guiView.addSaveEFArL(new SaveEFArListener());
+        guiView.addSaveCostL(new SaveCostListener());
+        guiView.addSaveOptAutomataL(new SaveOptimalListener());
+        guiView.addIdentifyRL(new IdentifyListener());
+        guiView.addPrintProdTypesL(new PrintProductListener());
+        guiView.addEFAForTransL(new EFAForTListener());
+        guiView.addUpdateModelL(new UpdateModelListener());
+        guiView.addEFAForMPL(new EFAForMPListener());
     }
 
     private class CreateOpListener implements ActionListener{
@@ -78,7 +99,7 @@ public class GUIController {
         }
 
     }
-    class SaveAllListener implements ActionListener{
+    class SaveAsListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {

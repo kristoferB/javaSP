@@ -96,10 +96,6 @@ public class GUIView extends JFrame {
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-
-    public void addCOPL(ActionListener l) {
-        
-    }
     /**
      * Main menu bar for sequenceplanner.
      * Only graphical if used alone.
@@ -184,5 +180,62 @@ public class GUIView extends JFrame {
         mb.add(mp);
         return mb;
 
+    }//End createMenu
+
+    //Menubar listeners
+    public void addCreateOPL(ActionListener l) {
+        newOperationView.addActionListener(l);
+    }
+    public void addCreateRVL(ActionListener l){
+        newResourceView.addActionListener(l);
+    }
+
+    public void addExitL(ActionListener l) {
+        exit.addActionListener(l);
+    }
+
+    public void addPrefL(ActionListener l) {
+    }
+
+    public void addAddCellsL(ActionListener l) {
+    }
+
+    public void addOpenL(ActionListener l) {
+    }
+
+    public void addSaveL(ActionListener l) {
+    }
+
+    public void addSaveAsL(ActionListener l) {
+    }
+
+    public void addCloseL(ActionListener l) {
+    }
+
+    public void addSaveEFAoL(ActionListener l) {
+    }
+
+    public void addSaveEFArL(ActionListener l) {
+    }
+
+    public void addSaveCostL(ActionListener l) {
+    }
+
+    public void addSaveOptAutomataL(ActionListener l) {
+    }
+
+    public void addIdentifyRL(ActionListener l) {
+    }
+
+    public void addPrintProdTypesL(ActionListener l) {
+    }
+
+    public void addEFAForTransL(ActionListener l){
+    }
+
+    public void addUpdateModelL(ActionListener l) {
+    }
+
+    public void addEFAForMPL(ActionListener l) {
     }
 }
