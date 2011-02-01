@@ -19,14 +19,14 @@ import javax.swing.tree.TreePath;
 public class EditorTreeModel implements TreeModel{
 
     private DefaultMutableTreeNode root;
-    private LinkedList<GlobalProperty> globalProperties = new LinkedList();
+    private LinkedList<IGlobalProperty> globalProperties = new LinkedList();
     private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
     EditorTreeModel(){
         root = new DefaultMutableTreeNode("Global properties");
 
         String[] values = {"red", "green","blue"};
-        GlobalProperty gp = new GlobalProperty("Colour", values);
+        IGlobalProperty gp = new GlobalProperty("Colour", values);
         globalProperties.add(gp);
     }
 
@@ -38,7 +38,7 @@ public class EditorTreeModel implements TreeModel{
     @Override
     public Object getChild(Object parent, int index) {
         if(parent.equals(root)){
-            return((Object) globalProperties.get(index).getName());
+            return((Object) globalProperties.get(index));
         }
         if(parent instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) parent;
@@ -77,18 +77,27 @@ public class EditorTreeModel implements TreeModel{
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        System.out.println("Path changed");
         Object o = path.getLastPathComponent();
 
         if(o instanceof DefaultMutableTreeNode){
             DefaultMutableTreeNode r = (DefaultMutableTreeNode) o;
             r.setUserObject(newValue);
         }
-
-//This does not work
         else if(o instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) o;
-            gp.setName((String) newValue);
+            String nv = (String) newValue;
+            gp.setName(nv);
+        }
+        else if(o instanceof String){
+            Object parent = path.getPathComponent(path.getPathCount()-2);
+            System.out.println(parent.toString());
+            if(parent instanceof IGlobalProperty){
+                IGlobalProperty gp = (GlobalProperty) parent;
+                int index = getIndexOfChild(parent, o);
+                String nv = (String) newValue;
+                gp.setValue(index, nv);
+                System.out.println("new value in editortreemodel: " + globalProperties.get(0).getValue(index));
+            }
         }
     }
 

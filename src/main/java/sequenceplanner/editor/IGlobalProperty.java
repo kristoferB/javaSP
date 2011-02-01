@@ -17,6 +17,8 @@ interface IGlobalProperty {
 
     public String getValue(int i);
 
+    public void setValue(int i, Object value);
+
     public int getNumberOfValues();
 
     public int indexOfValue(Object o);

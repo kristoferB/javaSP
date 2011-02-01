@@ -5,9 +5,7 @@
 
 package sequenceplanner.editor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedList;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -30,13 +28,13 @@ public class GlobPropC{
     }
 
 
-    class EditorTreeModelListener implements TreeModelListener
-    {
+    class EditorTreeModelListener implements TreeModelListener {
 
         @Override
         public void treeNodesChanged(TreeModelEvent e) {
+            System.out.println("TreeModelEvent is generated");
             if(e.getTreePath().getLastPathComponent() instanceof IGlobalProperty){
-                IGlobalProperty gp = (IGlobalProperty) e.getTreePath().getLastPathComponent();
+                IGlobalProperty gp = (GlobalProperty) e.getTreePath().getLastPathComponent();
                 System.out.println("Node changed");
             }
 
@@ -89,9 +87,10 @@ public static void main(String[] args){
     GlobPropV t_view = new GlobPropV(t_model);
     GlobPropC t_contr = new GlobPropC(t_model, t_view);
 
+
     JFrame frame = new JFrame();
     frame.setContentPane(t_view);
-    frame.pack();
+    frame.setSize(200, 200);
 
     frame.setTitle("Global Properties - test");
 

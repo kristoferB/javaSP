@@ -35,6 +35,14 @@ public class GlobalProperty implements IGlobalProperty{
     }
 
     @Override
+    public void setValue(int i, Object value){
+        if(value instanceof String){
+            values[i] = (String) value;
+            System.out.println("New value is: " + values[i]);
+        }
+    }
+
+    @Override
     public int getNumberOfValues() {
         return values.length;
     }
@@ -47,6 +55,11 @@ public class GlobalProperty implements IGlobalProperty{
             }
         }
         return -1;
+    }
+
+    @Override
+    public String toString(){
+        return getName();
     }
 
 }
