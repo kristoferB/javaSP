@@ -195,6 +195,7 @@ public class GUIView extends JFrame {
     }
 
     public void addPrefL(ActionListener l) {
+        preferences.addActionListener(l);
     }
 
     public void addAddCellsL(ActionListener l) {
@@ -237,5 +238,17 @@ public class GUIView extends JFrame {
     }
 
     public void addEFAForMPL(ActionListener l) {
+    }
+//End listeners
+
+
+    public void showPrefPane(){
+        PreferencePane p = createPrefPane();
+        p.setVisible(true);
+    }
+
+    //Will perhaps be bigger whne prefpane is properly implemented
+    private PreferencePane createPrefPane() {
+        return new PreferencePane();
     }
 }

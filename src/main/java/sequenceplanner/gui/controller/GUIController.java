@@ -2,6 +2,7 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 
@@ -52,7 +53,7 @@ public class GUIController {
             guiView.updateViews();
         }
     }
-
+ //Listener classes
     class CreateRVListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
@@ -70,7 +71,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            guiView.showPrefPane();
+            
         }
 
     }
