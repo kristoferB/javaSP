@@ -16,6 +16,7 @@ import net.infonode.docking.TabWindow;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import sequenceplanner.gui.model.GUIModel;
+import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 
 /**
