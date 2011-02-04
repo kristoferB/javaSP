@@ -10,12 +10,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.EventListenerList;
+import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
+import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
-import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 
@@ -29,13 +30,15 @@ public class GUIView extends JFrame {
 
     private JMenuBar menuBar;
     private GUIModel guiModel;
-    private ViewMap mainViewMap = new ViewMap();
+    private ViewMap rootViewMap = new ViewMap();
     private RootWindow rootWindow;
+    private TabWindow mainDocks = new TabWindow(new DockingWindow [] {});
     private ViewMap opViewMap = new ViewMap();
-    private RootWindow opRootWindow = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
+    private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
     private EventListenerList listeners;
     private TabWindow tab1 = new TabWindow();
-
+    private TabWindow tab2 = new TabWindow();
+    private View[] mainViews = new View[100];
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -83,14 +86,22 @@ public class GUIView extends JFrame {
         //Work in progress...
         //TODO Peterkle: Stäng av så att man inte kan undocka första TabWindow.
         //dvs där vår treeview ska hamna.
-        rootWindow = DockingUtil.createRootWindow(mainViewMap, true);
-        rootWindow.getRootWindowProperties().getDockingWindowProperties().setCloseEnabled(false);
-        opRootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
-        opRootWindow.getRootWindowProperties().getDockingWindowProperties().setUndockEnabled(false);
+
+        //First view
+        mainViews[0] = new View("View 1",null,null);
+        mainViews[0].getWindowProperties().setUndockEnabled(false);
+        mainViews[0].getWindowProperties().setCloseEnabled(false);
+        mainViews[0].getWindowProperties().setDragEnabled(false);
+        
+        mainDocks.addTab(mainViews[0]);
+        
+        //RootWindow rootWindow = DockingUtil.createRootWindow(mainMap, true);
+        rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
+        
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, tab1,
-                new SplitWindow(true, 0.7f, opRootWindow,
-                new SplitWindow(false, 0.5f, new TabWindow(), new TabWindow()))));
+                new SplitWindow(true, 0.7f, mainDocks,
+                new SplitWindow(false, 0.5f, tab2, new TabWindow()))));
         this.getContentPane().add(rootWindow);
     }
 
@@ -187,7 +198,8 @@ public class GUIView extends JFrame {
     public void addCreateOPL(ActionListener l) {
         newOperationView.addActionListener(l);
     }
-    public void addCreateRVL(ActionListener l){
+
+    public void addCreateRVL(ActionListener l) {
         newResourceView.addActionListener(l);
     }
 
@@ -232,7 +244,7 @@ public class GUIView extends JFrame {
     public void addPrintProdTypesL(ActionListener l) {
     }
 
-    public void addEFAForTransL(ActionListener l){
+    public void addEFAForTransL(ActionListener l) {
     }
 
     public void addUpdateModelL(ActionListener l) {
@@ -242,8 +254,7 @@ public class GUIView extends JFrame {
     }
 //End listeners
 
-
-    public void showPrefPane(){
+    public void showPrefPane() {
         PreferencePane p = createPrefPane();
         p.setVisible(true);
     }
