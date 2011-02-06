@@ -12,7 +12,9 @@ import sequenceplanner.view.operationView.OperationView;
 public class GUIModel {
 
     private LinkedList operationViews = new LinkedList();
+    //Main model for the project
     private Model model;
+
     public LinkedList getOperationViews() {
         return operationViews;
     }
