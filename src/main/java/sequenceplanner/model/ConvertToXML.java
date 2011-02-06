@@ -199,7 +199,7 @@ public class ConvertToXML {
 
       for (int i = 0; i < node.getChildCount(); i++) {
          TreeNode child = node.getChildAt(i);
-         if (Model.isView(child.getNodeData())) {
+         if (model.isView(child.getNodeData())) {
             result.getView().add(getView((ViewData)child.getNodeData()));
          }
       }

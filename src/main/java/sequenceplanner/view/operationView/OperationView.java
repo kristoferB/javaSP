@@ -68,8 +68,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     JSplitPane pane;
 
     //TODO refactor name to SOPView
-    public OperationView(SPContainer spc, String name) {
-        super(spc, name);
+    public OperationView(Model model, String name) {
+        super(model, name);
         startName = name;
         updateName();
 
@@ -117,8 +117,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         });
     }
 
-    public OperationView(SPContainer spc, ViewData view) {
-        this(spc, view.getName());
+    public OperationView(Model model, ViewData view) {
+        this(model, view.getName());
         open(view);
     }
 

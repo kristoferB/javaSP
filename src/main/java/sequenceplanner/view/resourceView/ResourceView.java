@@ -10,8 +10,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreePath;
+import sequenceplanner.model.Model;
 
-import sequenceplanner.SPContainer;
 import sequenceplanner.spIcon.IconHandler;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ResourceData;
@@ -32,8 +32,8 @@ public class ResourceView extends AbstractView {
    protected final JTree tree;
    protected ResourceModel rModel;
 
-   public ResourceView(SPContainer spc, String name) {
-      super(spc, name);
+   public ResourceView(Model model, String name) {
+      super(model, name);
 
       rModel = new ResourceModel(model);
 
@@ -92,8 +92,8 @@ public class ResourceView extends AbstractView {
       this.add(new JScrollPane(tree), BorderLayout.CENTER);
    }
 
-   public ResourceView(SPContainer spc, TreeNode root, String name) {
-      this(spc, name);
+   public ResourceView(Model model, TreeNode root, String name) {
+      this(model, name);
       setRoot(root);
    }
 

@@ -765,7 +765,7 @@ public class Model implements IModel {
 
    }
 
-   public Object getParent(
+   public static Object getParent(
          Object child) {
 
       if (child instanceof TreeNode) {
@@ -775,7 +775,7 @@ public class Model implements IModel {
       return null;
    }
 
-   public Object getChild(
+   public static Object getChild(
          Object parent, int index) {
       if (parent instanceof TreeNode) {
          return ((TreeNode) parent).getChildAt(index);

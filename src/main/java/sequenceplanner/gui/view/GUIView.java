@@ -86,8 +86,7 @@ public class GUIView extends JFrame {
      */
     private void createRootWindow() {
         //Work in progress...
-        //TODO Peterkle: Stäng av så att man inte kan undocka första TabWindow.
-        //dvs där vår treeview ska hamna.
+
 
         //First view
         mainViews[0] = new View("View 1", null, null);
@@ -96,7 +95,7 @@ public class GUIView extends JFrame {
         mainViews[0].getWindowProperties().setDragEnabled(false);
 
         mainDocks.addTab(mainViews[0]);
-        //comment
+        
         //RootWindow rootWindow = DockingUtil.createRootWindow(mainMap, true);
         rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
         mainDocks.getWindowProperties().setUndockEnabled(false);

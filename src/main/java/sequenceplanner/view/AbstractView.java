@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import sequenceplanner.SPContainer;
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.Model;
 
@@ -30,16 +29,10 @@ import sequenceplanner.model.Model;
 public abstract class AbstractView extends JPanel {
 
    protected final Model model;
-   protected final SPContainer container;
-
-
    static Logger logger = Logger.getLogger(AbstractView.class);
 
-
-
-   public AbstractView(SPContainer spc, String name ) {
-      this.model = spc.getModel();
-      this.container = spc;
+   public AbstractView(Model model, String name ) {
+      this.model = model;
       setName(name);
    }
 
@@ -52,11 +45,6 @@ public abstract class AbstractView extends JPanel {
    }
 
    abstract public boolean closeView();
-
-   public SPContainer getSPContainer() {
-      return container;
-   }
-
 
    public Action createAction(String name,
 			ActionListener usedAction, String icon) {
@@ -88,6 +76,7 @@ public abstract class AbstractView extends JPanel {
 
 		AbstractAction newAction = new AbstractAction(name) {
 
+                        @Override
 			public void actionPerformed(ActionEvent e) {
 				
 				ActionEvent ret = new ActionEvent(source, e.getID(), e.getActionCommand() );

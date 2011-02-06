@@ -32,7 +32,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
-import sequenceplanner.SPContainer;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -46,170 +45,170 @@ import sequenceplanner.view.operationView.Editors;
  */
 public class TreeView extends AbstractView {
 
-   protected final JTree tree;
-   private TreeDragSource drag;
+    protected final JTree tree;
+    private TreeDragSource drag;
+    public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0, 0), "ResPointer");
+    public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0, 0), "ResPointer");
 
-   public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0,0), "ResPointer");
-   public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0,0), "ResPointer");
-   
-   public TreeView(SPContainer spc) {
-      super(spc, "ProjectView");
-      
-      ProjecTreeModel pModel = new ProjecTreeModel(model) {
+    public TreeView(final Model model) {
+        super(model, "ProjectView");
 
-         @Override
-         public void valueForPathChanged(TreePath path, Object newValue) {
-            Object o = path.getLastPathComponent();
+        ProjecTreeModel pModel = new ProjecTreeModel(model) {
 
-            if (o instanceof TreeNode) {
-               model.setName((TreeNode) o, (String) newValue);
+            @Override
+            public void valueForPathChanged(TreePath path, Object newValue) {
+                Object o = path.getLastPathComponent();
+
+                if (o instanceof TreeNode) {
+                    model.setName((TreeNode) o, (String) newValue);
+                }
             }
-         }
-      };
+        };
 
-      tree = new JTree(pModel) {
+        tree = new JTree(pModel) {
 
-         @Override
-         public boolean isPathEditable(TreePath path) {
-            Object p = model.getParent(path.getLastPathComponent());
+            @Override
+            public boolean isPathEditable(TreePath path) {
+                Object p = Model.getParent(path.getLastPathComponent());
 
-            if (p != model.getRoot()) {
+                if (p != model.getRoot()) {
 
-               return true;
+                    return true;
+                }
+
+                return false;
             }
 
-            return false;
-         }
+            @Override
+            public String getToolTipText(MouseEvent event) {
 
-         @Override
-         public String getToolTipText(MouseEvent event) {
+                TreePath path = tree.getPathForLocation(event.getX(), event.getY());
 
-            TreePath path = tree.getPathForLocation(event.getX(), event.getY());
+                if (path != null) {
+                    Object t = path.getLastPathComponent();
 
-            if (path != null) {
-               Object t = path.getLastPathComponent();
+                    if (t instanceof TreeNode) {
+                        return "Id: " + Integer.toString(((TreeNode) t).getId());
 
-               if (t instanceof TreeNode) {
-                  return "Id: " + Integer.toString(((TreeNode) t).getId());
-
-               }
+                    }
 
 
+                }
+                return "";
             }
-            return "";
-         }
-         ;
-      };
 
-      ToolTipManager.sharedInstance().registerComponent(tree);
+            ;
+        };
 
-      Renderer r = new Renderer();
-      tree.setCellRenderer(r);
-      tree.setRootVisible(
-            false);
-      tree.setToggleClickCount(
-            1);
-      tree.setShowsRootHandles(
-            true);
-      tree.setEditable(
-            true);
+        ToolTipManager.sharedInstance().registerComponent(tree);
 
-
-
-
-
-      DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
-
-      JTextField comboBox = new JTextField();
-      comboBox.setEditable(
-            true);
-      DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
-      comboEditor.setClickCountToStart(
-            99);
-
-      TreeCellEditor editor = new DefaultTreeCellEditor(tree, renderer, comboEditor);
-
-
-      tree.setCellEditor(editor);
-      tree.addKeyListener(
-            new KeyAdapter() {
-
-               @Override
-               public void keyReleased(KeyEvent e) {
-
-
-
-
-                  if (e.getKeyCode() == KeyEvent.VK_F2) {
-                     tree.startEditingAtPath(tree.getSelectionPath());
-                  }
-               }
-            });
+        Renderer r = new Renderer();
+        tree.setCellRenderer(r);
+        tree.setRootVisible(
+                false);
+        tree.setToggleClickCount(
+                1);
+        tree.setShowsRootHandles(
+                true);
+        tree.setEditable(
+                true);
 
 
 
 
 
+        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
 
-      this.setLayout(
-            new BorderLayout());
+        JTextField comboBox = new JTextField();
+        comboBox.setEditable(
+                true);
+        DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
+        comboEditor.setClickCountToStart(
+                99);
+
+        TreeCellEditor editor = new DefaultTreeCellEditor(tree, renderer, comboEditor);
 
 
-      this.add(
-            new JScrollPane(tree), BorderLayout.CENTER);
+        tree.setCellEditor(editor);
+        tree.addKeyListener(
+                new KeyAdapter() {
+
+                    @Override
+                    public void keyReleased(KeyEvent e) {
 
 
-      tree.addMouseListener(
-            new MouseAdapter() {
 
-               @Override
-               public void mouseEntered(MouseEvent e) {
-                  popup(e);
-               }
 
-               @Override
-               public void mouseReleased(MouseEvent e) {
-                  popup(e);
-               }
-
-               @Override
-               public void mouseClicked(MouseEvent e) {
-                  if (e.getClickCount() >= 2) {
-                     TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-
-                     if (path != null) {
-                        TreeNode t = (TreeNode) path.getLastPathComponent();
-                        if (model.isView(t.getNodeData())) {
-                        //   container.createOperationView((ViewData) t.getNodeData());
-                        } else if (model.isOperation(t.getNodeData())) {
-                           OperationData data = (OperationData) t.getNodeData();
-                         //  container.createOperationView(model.getOperationView(data.getId()));
+                        if (e.getKeyCode() == KeyEvent.VK_F2) {
+                            tree.startEditingAtPath(tree.getSelectionPath());
                         }
+                    }
+                });
 
-                     }
 
 
-                  }
-               }
 
-               private void popup(MouseEvent e) {
 
-                  if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
 
-                     TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-                     if (path != null) {
-                        tree.setSelectionPath(path);
-                        ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), TreeView.this.model);
-                        c.show(TreeView.this, e);
-                     }
-                  }
-               }
-            });
-      tree.setDragEnabled(false);
+        this.setLayout(
+                new BorderLayout());
+
+
+        this.add(
+                new JScrollPane(tree), BorderLayout.CENTER);
+
+
+        tree.addMouseListener(
+                new MouseAdapter() {
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        popup(e);
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        popup(e);
+                    }
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() >= 2) {
+                            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+
+                            if (path != null) {
+                                TreeNode t = (TreeNode) path.getLastPathComponent();
+                                if (Model.isView(t.getNodeData())) {
+                                    //   container.createOperationView((ViewData) t.getNodeData());
+                                } else if (Model.isOperation(t.getNodeData())) {
+                                    OperationData data = (OperationData) t.getNodeData();
+                                    //  container.createOperationView(model.getOperationView(data.getId()));
+                                }
+
+                            }
+
+
+                        }
+                    }
+
+                    private void popup(MouseEvent e) {
+
+                        if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
+
+                            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                            if (path != null) {
+                                tree.setSelectionPath(path);
+                                ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), TreeView.this.model);
+                                c.show(TreeView.this, e);
+                            }
+                        }
+                    }
+                });
+        tree.setDragEnabled(false);
 //      expandListener();
-      drag = new TreeDragSource(tree, DnDConstants.ACTION_COPY_OR_MOVE);
+        drag = new TreeDragSource(tree, DnDConstants.ACTION_COPY_OR_MOVE);
 
-   }
+    }
 
 //   private void expandListener() {
 //      tree.addTreeWillExpandListener(new TreeWillExpandListener() {
@@ -223,103 +222,100 @@ public class TreeView extends AbstractView {
 //         }
 //      });
 //   }
-   @Override
-   public Action createAction(String name, ActionListener usedAction, String icon, Object source) {
-      return super.createAction(name, usedAction, icon, this);
-   }
+    @Override
+    public Action createAction(String name, ActionListener usedAction, String icon, Object source) {
+        return super.createAction(name, usedAction, icon, this);
+    }
 
-   @Override
-   public boolean closeView() {
-      return true;
-   }
+    @Override
+    public boolean closeView() {
+        return true;
+    }
 
-   class TreeDragSource implements DragSourceListener, DragGestureListener {
+    class TreeDragSource implements DragSourceListener, DragGestureListener {
 
-      DragSource source;
-      DragGestureRecognizer recognizer;
-      TransferableNode transferable;
-      TreeNode node;
-      JTree tree;
+        DragSource source;
+        DragGestureRecognizer recognizer;
+        TransferableNode transferable;
+        TreeNode node;
+        JTree tree;
 
+        public TreeDragSource(JTree tree, int actions) {
+            this.tree = tree;
+            source = new DragSource();
+            recognizer = source.createDefaultDragGestureRecognizer(this.tree,
+                    actions, this);
 
-      
+        }
 
-      public TreeDragSource(JTree tree, int actions) {
-         this.tree = tree;
-         source = new DragSource();
-         recognizer = source.createDefaultDragGestureRecognizer(this.tree,
-               actions, this);
-
-      }
-
-      /*
-       * Drag Gesture Handler
-       */
-      public void dragGestureRecognized(DragGestureEvent dge) {
-         TreePath path = tree.getSelectionPath();
+        /*
+         * Drag Gesture Handler
+         */
+        public void dragGestureRecognized(DragGestureEvent dge) {
+            TreePath path = tree.getSelectionPath();
 
 
-         if ((path == null) || (path.getPathCount() <= 1)) {
-            return;
-         }
-
-
-         node = (TreeNode) path.getLastPathComponent();
-         node.getNodeData().setCopy(false);
-         transferable = new TransferableNode(node);
-
-         if (Model.isResource(node.getNodeData()) || Model.isLiason(node.getNodeData())) {
-            source.startDrag(dge, DragSource.DefaultLinkDrop, transferable, this);
-         } else {
-            source.startDrag(dge, DragSource.DefaultMoveDrop, transferable, this);
-         }
-      }
-
-      Cursor defaultCursor = null;
-      /*
-       * Drag Event Handlers
-       */
-      @Override
-      public void dragEnter(DragSourceDragEvent ddd) {
-         ddd.getDragSourceContext().getCursor();
-
-         if (Model.isResource(node.getNodeData() ) ) {
-            ddd.getDragSourceContext().setCursor(resPointer);
-         } else if (Model.isLiason(node.getNodeData() ) ) {
-            ddd.getDragSourceContext().setCursor(productPointer);
-         }
-      }
-
-      public void dragExit(DragSourceEvent d) {
-         d.getDragSourceContext().setCursor(defaultCursor);
-      }
-
-      public void dragOver(DragSourceDragEvent dd) {
-      }
-
-      public void dropActionChanged(DragSourceDragEvent dd) {
-         //Can maby change the cursor?
-
-         if (Model.isOperation(node.getNodeData() ) ) {
-
-            if (dd.getUserAction() == TransferHandler.COPY) {
-               node.getNodeData().setCopy(true);
-               dd.getDragSourceContext().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-            } else if (dd.getUserAction() == TransferHandler.MOVE) {
-               node.getNodeData().setCopy(false);
-               dd.getDragSourceContext().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            if ((path == null) || (path.getPathCount() <= 1)) {
+                return;
             }
-         }
-      }
 
-      public void dragDropEnd(DragSourceDropEvent dsd) {
-         System.out.println("End; TargetAction: " + dsd.getDropAction());
 
-         if (dsd.getDropAction() == TransferHandler.MOVE) {
+            node = (TreeNode) path.getLastPathComponent();
             node.getNodeData().setCopy(false);
-         } else if (dsd.getDropAction() == TransferHandler.COPY) {
-            node.getNodeData().setCopy(true);
-         }
-      }
-   }
+            transferable = new TransferableNode(node);
+
+            if (Model.isResource(node.getNodeData()) || Model.isLiason(node.getNodeData())) {
+                source.startDrag(dge, DragSource.DefaultLinkDrop, transferable, this);
+            } else {
+                source.startDrag(dge, DragSource.DefaultMoveDrop, transferable, this);
+            }
+        }
+        Cursor defaultCursor = null;
+        /*
+         * Drag Event Handlers
+         */
+
+        @Override
+        public void dragEnter(DragSourceDragEvent ddd) {
+            ddd.getDragSourceContext().getCursor();
+
+            if (Model.isResource(node.getNodeData())) {
+                ddd.getDragSourceContext().setCursor(resPointer);
+            } else if (Model.isLiason(node.getNodeData())) {
+                ddd.getDragSourceContext().setCursor(productPointer);
+            }
+        }
+
+        public void dragExit(DragSourceEvent d) {
+            d.getDragSourceContext().setCursor(defaultCursor);
+        }
+
+        public void dragOver(DragSourceDragEvent dd) {
+        }
+
+        public void dropActionChanged(DragSourceDragEvent dd) {
+            //Can maby change the cursor?
+
+            if (Model.isOperation(node.getNodeData())) {
+
+                if (dd.getUserAction() == TransferHandler.COPY) {
+                    node.getNodeData().setCopy(true);
+                    dd.getDragSourceContext().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                } else if (dd.getUserAction() == TransferHandler.MOVE) {
+                    node.getNodeData().setCopy(false);
+                    dd.getDragSourceContext().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                }
+            }
+        }
+
+        public void dragDropEnd(DragSourceDropEvent dsd) {
+            System.out.println("End; TargetAction: " + dsd.getDropAction());
+
+            if (dsd.getDropAction() == TransferHandler.MOVE) {
+                node.getNodeData().setCopy(false);
+            } else if (dsd.getDropAction() == TransferHandler.COPY) {
+                node.getNodeData().setCopy(true);
+            }
+        }
+    }
 }
