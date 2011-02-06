@@ -5,6 +5,8 @@
 
 package sequenceplanner.editor;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author Evelina
@@ -12,9 +14,13 @@ package sequenceplanner.editor;
 public class GlobalProperty implements IGlobalProperty{
     
     private String name;
-    private String[] values;
-    
-    GlobalProperty(String n, String[] val){
+    private LinkedList<String> values = new LinkedList();
+
+    public GlobalProperty(String n){
+        name = n;
+    }
+
+    public GlobalProperty(String n, LinkedList<String> val){
         name = n;
         values = val;
     }
@@ -31,26 +37,37 @@ public class GlobalProperty implements IGlobalProperty{
 
     @Override
     public String getValue(int i){
-        return values[i];
+        return values.get(i);
     }
 
     @Override
     public void setValue(int i, Object value){
         if(value instanceof String){
-            values[i] = (String) value;
-            System.out.println("New value is: " + values[i]);
+            values.set(i, (String) value);
+        }
+    }
+    
+    @Override
+    public void addValue(Object value){
+        if(value instanceof String){
+            values.add((String) value);
         }
     }
 
     @Override
+    public void removeValue(int i){
+        values.remove(i);
+    }
+
+    @Override
     public int getNumberOfValues() {
-        return values.length;
+        return values.size();
     }
 
     @Override
     public int indexOfValue(Object o) {
-        for(int i = 0; i < values.length; i++){
-            if(o.equals((Object) values[i])){
+        for(int i = 0; i < values.size(); i++){
+            if(o.equals((Object) values.get(i))){
                 return i;
             }
         }

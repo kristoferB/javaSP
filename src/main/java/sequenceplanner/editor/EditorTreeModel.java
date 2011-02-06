@@ -25,10 +25,60 @@ public class EditorTreeModel implements TreeModel{
     EditorTreeModel(){
         root = new DefaultMutableTreeNode("Global properties");
 
-        String[] values = {"red", "green","blue"};
+        LinkedList<String> values = new LinkedList();
+        values.addLast("red");
+        values.addLast("green");
+        values.addLast("blue");
+        
         IGlobalProperty gp = new GlobalProperty("Colour", values);
         globalProperties.add(gp);
     }
+
+    public void addProperty(String name){
+        globalProperties.add(new GlobalProperty(name));
+
+    }
+
+    public void removeProperty(Object property){
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            globalProperties.remove(gp);
+        }
+    }
+
+    public void renameProperty(Object property, String name){
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            gp.setName(name);
+        }
+
+    }
+
+    public void addValue(Object property, String newValue){
+
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            gp.addValue(newValue);
+        }
+    }
+
+    public void removeValue(Object property, Object value){
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            int index = gp.indexOfValue(value);
+            gp.removeValue(index);
+        }
+    }
+
+    public void renameValue(Object property, Object value, String name){
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            int index = gp.indexOfValue(value);
+            gp.setValue(index, value);
+        }
+    }
+
+
 
     @Override
     public Object getRoot() {
@@ -79,24 +129,18 @@ public class EditorTreeModel implements TreeModel{
     public void valueForPathChanged(TreePath path, Object newValue) {
         Object o = path.getLastPathComponent();
 
-        if(o instanceof DefaultMutableTreeNode){
-            DefaultMutableTreeNode r = (DefaultMutableTreeNode) o;
-            r.setUserObject(newValue);
-        }
-        else if(o instanceof IGlobalProperty){
+        if(o instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) o;
             String nv = (String) newValue;
             gp.setName(nv);
         }
         else if(o instanceof String){
             Object parent = path.getPathComponent(path.getPathCount()-2);
-            System.out.println(parent.toString());
             if(parent instanceof IGlobalProperty){
                 IGlobalProperty gp = (GlobalProperty) parent;
                 int index = getIndexOfChild(parent, o);
                 String nv = (String) newValue;
                 gp.setValue(index, nv);
-                System.out.println("new value in editortreemodel: " + globalProperties.get(0).getValue(index));
             }
         }
     }
@@ -120,15 +164,26 @@ public class EditorTreeModel implements TreeModel{
     }
 
     @Override
-    public void addTreeModelListener(TreeModelListener l) {
-        listeners.add(l);
+    public void addTreeModelListener(TreeModelListener list) {
+        listeners.add(list);
     }
 
     @Override
-    public void removeTreeModelListener(TreeModelListener l) {
-        listeners.add(l);
+    public void removeTreeModelListener(TreeModelListener list) {
+        listeners.remove(list);
     }
+/*
+    protected void fireTreeModel(TreeModelEvent event) {
+        TreeModelListener[] list = listeners.toArray();
 
+        for (int i = 0; i < list.length; i ++) {
+            if (list[i] instanceof EditorTreeModelListener) {
+                EditorTreeModelListener treeModelListener = (EditorTreeModelListener) list[i];
 
+                (treeModelListener.treeNodesChanged(new TreeModelEvent()));
+          }
+
+}
+*/
 
 }

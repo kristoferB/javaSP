@@ -5,7 +5,6 @@
 
 package sequenceplanner.editor;
 
-import java.util.LinkedList;
 
 /**
  *
@@ -32,6 +31,10 @@ public class GlobPropM {
 
         return globalProperties;
 
+    }
+
+    void addEditorTreeModelListener(EditorTreeModelListener t){
+        globalProperties.addTreeModelListener(t);
     }
 
 }
