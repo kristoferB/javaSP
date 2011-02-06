@@ -11,7 +11,12 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class GUIModel {
 
-    LinkedList operationViews = new LinkedList();
+    private LinkedList operationViews = new LinkedList();
+
+    public LinkedList getOperationViews() {
+        return operationViews;
+    }
+
 
 
     public GUIModel(){
@@ -23,7 +28,7 @@ public class GUIModel {
     }
 
     public void createNewOpView(){
-        operationViews.add(new OperationView(new SPContainer(),"nama"));
+        operationViews.addLast(new OperationView(new SPContainer(),"nama"));
         System.out.println(operationViews.toString());
     }
 
@@ -36,5 +41,7 @@ public class GUIModel {
     public void exit(){
         System.exit(0);
     }
+
+
 
 }

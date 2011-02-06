@@ -1,6 +1,7 @@
 package sequenceplanner.gui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -32,13 +33,14 @@ public class GUIView extends JFrame {
     private GUIModel guiModel;
     private ViewMap rootViewMap = new ViewMap();
     private RootWindow rootWindow;
-    private TabWindow mainDocks = new TabWindow(new DockingWindow [] {});
+    private TabWindow mainDocks = new TabWindow(new DockingWindow[]{});
     private ViewMap opViewMap = new ViewMap();
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
     private EventListenerList listeners;
     private TabWindow tab1 = new TabWindow();
     private TabWindow tab2 = new TabWindow();
     private View[] mainViews = new View[100];
+
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -88,16 +90,17 @@ public class GUIView extends JFrame {
         //dvs där vår treeview ska hamna.
 
         //First view
-        mainViews[0] = new View("View 1",null,null);
+        mainViews[0] = new View("View 1", null, null);
         mainViews[0].getWindowProperties().setUndockEnabled(false);
         mainViews[0].getWindowProperties().setCloseEnabled(false);
         mainViews[0].getWindowProperties().setDragEnabled(false);
-        
+
         mainDocks.addTab(mainViews[0]);
-        
+
         //RootWindow rootWindow = DockingUtil.createRootWindow(mainMap, true);
         rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
-        
+        mainDocks.getWindowProperties().setUndockEnabled(false);
+        mainDocks.getWindowProperties().setCloseEnabled(false);
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, tab1,
                 new SplitWindow(true, 0.7f, mainDocks,
@@ -262,5 +265,9 @@ public class GUIView extends JFrame {
     //Will perhaps be bigger whne prefpane is properly implemented
     private PreferencePane createPrefPane() {
         return new PreferencePane();
+    }
+
+    public void addNewOpTab() {
+        mainDocks.addTab(new View((guiModel.getOperationViews().getLast().toString()), null, (Component) guiModel.getOperationViews().getLast()), WIDTH);
     }
 }

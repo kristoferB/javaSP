@@ -43,6 +43,10 @@ public abstract class AbstractView extends JPanel {
       setName(name);
    }
 
+   @Override
+   public String toString(){
+       return getName();
+   }
    public Model getModel() {
       return model;
    }

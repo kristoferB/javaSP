@@ -45,15 +45,15 @@ public class GUIController {
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
     }
+ //Listener classes
 
     private class CreateOpListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
             guiModel.createNewOpView();
-            guiView.updateViews();
+            guiView.addNewOpTab();
         }
     }
- //Listener classes
     class CreateRVListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
