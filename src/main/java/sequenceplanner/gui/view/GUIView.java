@@ -96,7 +96,7 @@ public class GUIView extends JFrame {
         mainViews[0].getWindowProperties().setDragEnabled(false);
 
         mainDocks.addTab(mainViews[0]);
-
+        //comment
         //RootWindow rootWindow = DockingUtil.createRootWindow(mainMap, true);
         rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
         mainDocks.getWindowProperties().setUndockEnabled(false);
