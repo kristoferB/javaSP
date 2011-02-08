@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package sequenceplanner.editor;
 
 /**
+ * Interface for a global property
  *
  * @author Evelina
  */
@@ -26,4 +22,5 @@ interface IGlobalProperty {
     public int getNumberOfValues();
 
     public int indexOfValue(Object o);
+
 }

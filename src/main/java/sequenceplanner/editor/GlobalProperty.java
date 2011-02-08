@@ -1,19 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package sequenceplanner.editor;
 
 import java.util.LinkedList;
 
 /**
+ * Describes a global property with arbitrary number of text values
  *
  * @author Evelina
  */
 public class GlobalProperty implements IGlobalProperty{
-    
+
+    // The name of the property
     private String name;
+    // The values of the property
     private LinkedList<String> values = new LinkedList();
 
     public GlobalProperty(String n){
@@ -78,5 +76,5 @@ public class GlobalProperty implements IGlobalProperty{
     public String toString(){
         return getName();
     }
-
+    
 }

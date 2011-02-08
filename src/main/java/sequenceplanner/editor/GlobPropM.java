@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package sequenceplanner.editor;
 
 
@@ -31,10 +26,6 @@ public class GlobPropM {
 
         return globalProperties;
 
-    }
-
-    void addEditorTreeModelListener(EditorTreeModelListener t){
-        globalProperties.addTreeModelListener(t);
     }
 
 }

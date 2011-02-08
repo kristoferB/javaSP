@@ -125,7 +125,6 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
    ///////////////////////
    public void insertIntoModel(TreeNode insertedNode, TreeNode[] path, int place) {
 
-
       int[] ch = {place};
 
       TreeModelEvent e = new TreeModelEvent(this, path, ch, new TreeNode[]{insertedNode});
@@ -161,7 +160,6 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
 
 
    public void changeStructure(TreeNode[] path) {
-
       
       TreeModelEvent e = new TreeModelEvent(this, path);
 

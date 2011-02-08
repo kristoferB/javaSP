@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package sequenceplanner.editor;
 
 import java.awt.event.ActionEvent;
@@ -15,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 /**
+ * Listens for MouseEvents and creates EditorClickMenus
  *
  * @author Evelina
  */
@@ -23,6 +19,7 @@ public class EditorMouseAdapter extends MouseAdapter{
     private JTree tree;
     private EditorTreeModel treeModel;
     private Object clickedComponent;
+    private TreePath lastPath;
 
     public EditorMouseAdapter(JTree t, EditorTreeModel m){
         tree = t;
@@ -39,13 +36,18 @@ public class EditorMouseAdapter extends MouseAdapter{
         popup(e);
     }
 
+    /**
+     * Creates a EditorClickMenu for clicked node
+     *
+     * @param e a MouseEvent
+     */
     private void popup(MouseEvent e) {
         if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-            if (path != null) {
-                tree.setSelectionPath(path);
+            lastPath = tree.getPathForLocation(e.getX(), e.getY());
+            if (lastPath != null) {
+                tree.setSelectionPath(lastPath);
 
-                clickedComponent = path.getLastPathComponent();
+                clickedComponent = lastPath.getLastPathComponent();
                 EditorClickMenu menu = new EditorClickMenu(clickedComponent, new MenuListener());
 
                 if(clickedComponent instanceof DefaultMutableTreeNode){
@@ -61,6 +63,9 @@ public class EditorMouseAdapter extends MouseAdapter{
         }
     }
 
+    /**
+     * Listens for actions in EditorClickMenu
+     */
     public class MenuListener implements ActionListener{
 
         @Override
@@ -69,37 +74,25 @@ public class EditorMouseAdapter extends MouseAdapter{
 
             if(command.equals("INSERT_PROPERTY")){
                 treeModel.addProperty("New property");
-                tree.updateUI();
             }
             if(command.equals("INSERT_VALUE")){
                 treeModel.addValue(clickedComponent, "new value");
-                tree.updateUI();
             }
             if(command.equals("REMOVE_PROPERTY")){
                 treeModel.removeProperty(clickedComponent);
-                tree.updateUI();
             }
             if(command.equals("RENAME_PROPERTY")){
-                System.out.println("rename property");
-// How to enable user to write new name?
-//                String name = ?
-//                treeModel.renameProperty(clickedComponent, name);
-                tree.updateUI();
+                tree.scrollPathToVisible(lastPath);
+                tree.startEditingAtPath(lastPath);
             }
             if(command.equals("REMOVE_VALUE")){
                 TreePath pathOfValue = tree.getSelectionPath();
                 Object property = pathOfValue.getPathComponent(pathOfValue.getPathCount()-2);
                 treeModel.removeValue(property, clickedComponent);
-                tree.updateUI();
             }
             if(command.equals("RENAME_VALUE")){
-                System.out.println("rename value");
-                TreePath pathOfValue = tree.getSelectionPath();
-                Object property = pathOfValue.getPathComponent(pathOfValue.getPathCount()-2);
-// How to enable user to write new name?
-//                String name = ?
-//                treeModel.renameValue(property, clickedComponent, name);
-                tree.updateUI();
+                tree.scrollPathToVisible(lastPath);
+                tree.startEditingAtPath(lastPath);
             }
         }
 

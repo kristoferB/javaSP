@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package sequenceplanner.editor;
 
 import javax.swing.JFrame;
@@ -13,14 +8,13 @@ import javax.swing.JFrame;
  */
 public class GlobPropC{
 
-    private GlobPropV view;
+    private EditorView view;
     private GlobPropM model;
 
-    GlobPropC(GlobPropM m, GlobPropV v){
+    GlobPropC(GlobPropM m, EditorView v){
         model = m;
         view = v;
 
- //       model.addEditorTreeModelListener(new EditorTreeModelListener());
         view.addMouseListener(new EditorMouseAdapter(view.getTree(), model.getGlobalProperties()));
               
    }
@@ -28,7 +22,7 @@ public class GlobPropC{
 public static void main(String[] args){
     
     GlobPropM t_model = new GlobPropM();
-    GlobPropV t_view = new GlobPropV(t_model);
+    EditorView t_view = new EditorView(t_model);
     GlobPropC t_contr = new GlobPropC(t_model, t_view);
 
 

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sequenceplanner.editor;
 
 import java.awt.Color;
@@ -17,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 
 /**
+ * Popupmenu for editing global properties
  *
  * @author Evelina
  */
@@ -30,6 +27,11 @@ public class EditorClickMenu extends JPopupMenu {
         menuListener = l;
     }
 
+    /**
+     * Shows a menu for editing the root of the tree
+     *
+     * @param e the MouseEvent
+     */
     public void showRootMenu(MouseEvent e){
         Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), e.getComponent());
 
@@ -48,6 +50,11 @@ public class EditorClickMenu extends JPopupMenu {
 
     }
 
+    /**
+     * Shows a menu for editing a global property
+     *
+     * @param e the MouseEvent
+     */
     public void showPropertyMenu(MouseEvent e){
         Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), e.getComponent());
 
@@ -87,6 +94,11 @@ public class EditorClickMenu extends JPopupMenu {
         show(e.getComponent(), p.x, p.y);
     }
 
+    /**
+     * Shows a menu for editing a value of a global property
+     *
+     * @param e
+     */
     public void showValueMenu(MouseEvent e){
         Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), e.getComponent());
 
