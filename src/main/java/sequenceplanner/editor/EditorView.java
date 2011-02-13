@@ -14,7 +14,7 @@ public class EditorView extends JScrollPane{
     
     private JTree tree;
 
-    EditorView(EditorTreeModel m){
+    public EditorView(EditorTreeModel m){
 
         tree = new JTree(m);
         tree.setEditable(true);

@@ -22,7 +22,7 @@ public class GlobPropC{
 public static void main(String[] args){
     
     GlobPropM t_model = new GlobPropM();
-    EditorView t_view = new EditorView(t_model);
+    EditorView t_view = new EditorView(t_model.getGlobalProperties());
     GlobPropC t_contr = new GlobPropC(t_model, t_view);
 
 

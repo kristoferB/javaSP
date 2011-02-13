@@ -44,6 +44,7 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
+        guiView.addEditorListener();
     }
  //Listener classes
 
