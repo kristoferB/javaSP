@@ -28,20 +28,16 @@ public class GUIModel {
         return model;
     }
 
+    /**
+     *
+     * @return all OperationViews in a list.
+     */
     public LinkedList getOperationViews() {
         return operationViews;
     }
 
-
-
-
-
-    public AbstractViewMap getViewMap() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     public void createNewOpView(){
-        operationViews.addLast(new OperationView(this.model,"Opereration view " + operationViews.size()));
+        operationViews.addLast(new OperationView(this.model,"Opereration view " + (operationViews.size()+1)));
     }
 
     public void createNewReView(){
@@ -58,13 +54,13 @@ public class GUIModel {
         return model.getGlobalProperties();
     }
 
+    /**
+     * Adds all current operations to a new OperationView
+     */
     public void addAllOperations() {
         OperationView ov = new OperationView(this.model,"Operation View");
         ov.open(this.model.getChildren(model.getOperationRoot()));
         operationViews.addLast(ov);
-        
-			//	OperationView v = createOperationView("ViewAll");
-			//	v.open(model.getChildren(model.getOperationRoot()));
     }
 
     public ResourceView getResourceView() {
@@ -77,6 +73,10 @@ public class GUIModel {
 
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public void removeAllOpViews() {
+        operationViews.clear();
     }
 
 

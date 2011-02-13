@@ -3,13 +3,19 @@ package sequenceplanner.gui.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.ConvertFromXML;
+import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 
 /**
@@ -20,10 +26,11 @@ import sequenceplanner.xml.SequencePlannerProjectFile;
  */
 public class GUIController {
 
+    //Project file if project is saved so far.
+    File projectFile;
     //Instances of the model and view.
     private GUIModel guiModel;
     private GUIView guiView;
-    
     // Filefilter for the project
     private static final FileFilter filter = new FileFilter() {
 
@@ -131,7 +138,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            saveModel(false);
         }
     }
 
@@ -139,7 +146,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            saveModel(false);
         }
     }
 
@@ -224,6 +231,7 @@ public class GUIController {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
+
     /**
      * Opens a filechooser and lets the user select a previously created project
      * to open.
@@ -236,11 +244,11 @@ public class GUIController {
         int answer = fc.showOpenDialog(null);
 
         if (answer == JFileChooser.APPROVE_OPTION) {
-            guiView.closeAllViews();
             openModel(fc.getSelectedFile());
             guiModel.getModel().reloadNamesCache();
             try {
                 ViewData toOpen = (ViewData) guiModel.getModel().getViewRoot().getChildAt(0).getNodeData();
+                guiModel.removeAllOpViews();
                 guiModel.createNewOpView(toOpen);
                 guiView.addNewOpTab();
 
@@ -276,5 +284,95 @@ public class GUIController {
         guiModel.getModel().rootUpdated();
 
         return false;
+    }
+
+    private boolean saveModel(boolean saveAs) {
+
+        if (projectFile == null && !saveAs) {
+            saveAs = true;
+        }
+
+        if (saveAs) {
+            String filepath = "";
+
+            JFileChooser fc = new JFileChooser("user.dir");
+            fc.setFileFilter(filter);
+
+            int fileResult = fc.showSaveDialog(null);
+
+            if (fileResult == JFileChooser.APPROVE_OPTION) {
+                filepath = fc.getSelectedFile().getAbsolutePath();
+
+                filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
+                        : filepath + Constansts.FILEFORMAT;
+
+                if (filepath.endsWith(Constansts.FILEFORMAT)) {
+
+                    projectFile = saveModelToFile(filepath);
+                    return true;
+                }
+            }
+        } else {
+            return saveModelToFile(projectFile);
+        }
+
+        return false;
+    }
+
+    public void saveBackup() {
+        if (projectFile != null) {
+            String path = projectFile.getParent();
+            path = path + File.separatorChar + "backup";
+
+            File f = new File(path);
+            f.mkdir();
+
+            Calendar c = Calendar.getInstance();
+            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH)
+                    + c.get(Calendar.DAY_OF_MONTH) + "-"
+                    + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE)
+                    + "" + c.get(Calendar.SECOND) + "."
+                    + c.get(Calendar.MILLISECOND);
+
+            path = path + File.separatorChar + projectFile.getName() + "_"
+                    + date + Constansts.FILEFORMAT;
+            saveModelToFile(path);
+        }
+    }
+
+    public File saveModelToFile(String filepath) {
+        File file = new File(filepath);
+
+        try {
+            file.createNewFile();
+            saveModelToFile(file);
+            return file;
+
+        } catch (IOException ex) {
+            System.out.println("File save error\n " + ex.getMessage());
+            return null;
+        }
+    }
+
+    public boolean saveModelToFile(File file) {
+        ConvertToXML converter = new ConvertToXML(guiModel.getModel());
+        SequencePlannerProjectFile project = converter.convert();
+
+        try {
+            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(project.getClass().getPackage().getName());
+            javax.xml.bind.Marshaller marshaller = jaxbCtx.createMarshaller();
+            marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING,
+                    "UTF-8"); // NOI18N
+            marshaller.setProperty(
+                    javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT,
+                    Boolean.TRUE);
+            marshaller.marshal(project, new FileOutputStream(file));
+            return true;
+
+        } catch (javax.xml.bind.JAXBException ex) {
+            throw new RuntimeException("File save error\n " + ex.getMessage(), ex);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

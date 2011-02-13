@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
@@ -118,7 +119,7 @@ public class GUIView extends JFrame {
     }
 
     public void closeAllViews(){
-        mainDocks.removeAll();
+        mainDocks = new TabWindow();
     }
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
@@ -298,7 +299,7 @@ public class GUIView extends JFrame {
     }
 
     public void addNewOpTab() {
-        mainDocks.addTab(new View((guiModel.getOperationViews().getLast().toString()), null, (Component) guiModel.getOperationViews().getLast()), WIDTH);
+        mainDocks.addTab(new View((guiModel.getOperationViews().getLast().toString()), null, (Component) guiModel.getOperationViews().getLast()));
     }
 
     public void addResourceView() {
