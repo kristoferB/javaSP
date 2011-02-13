@@ -232,7 +232,9 @@ public class ConvertFromXML {
 
       for (Variable varX : resX.getVariable()) {
          ResourceVariableData var = new ResourceVariableData(varX.getName(), varX.getId());
+         var.setData(0, varX.getMinValue(), varX.getMaxValue(), varX.getIntialValue()); //0 for type int /PM 101126
          res.insert(new TreeNode(var));
+
       }
 
       for (Resource childX : resX.getResource()) {

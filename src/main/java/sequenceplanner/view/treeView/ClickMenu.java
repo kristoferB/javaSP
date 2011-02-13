@@ -14,6 +14,9 @@ import javax.swing.SwingUtilities;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
+import sequenceplanner.model.data.OperationData;
+import sequenceplanner.multiProduct.ExtendedData;
+import sequenceplanner.multiProduct.TypeVar;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.Actions.InsertVariable;
 import sequenceplanner.view.Actions.OpenOperationsRealizedBy;
@@ -85,6 +88,10 @@ public class ClickMenu extends JPopupMenu {
          add(rem,0);
          draw = true;
       }
+      else if (model.isOperation(d) && d.getName().contains(TypeVar.SEPARATION+TypeVar.TRANSPORT+TypeVar.SEPARATION)) { //Added PM 101130
+          add(rem,0);
+          draw = true;
+      }
       
       
       if (model.isResource(d) || model.isLiason(d)
@@ -101,6 +108,7 @@ public class ClickMenu extends JPopupMenu {
 
 
       }
+      
 
       if (Model.isView(d)) {
          add(rem);
