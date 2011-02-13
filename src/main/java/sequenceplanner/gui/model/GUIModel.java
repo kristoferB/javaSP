@@ -23,6 +23,7 @@ public class GUIModel {
      */
     public GUIModel(){
         this.model = new Model();
+        createNewOpView();
     }
     public Model getModel() {
         return model;
