@@ -23,6 +23,10 @@ public class EditorView extends JScrollPane{
         setViewportView(tree);
     }
 
+    EditorView(GlobPropM t_model) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     public JTree getTree(){
         return tree;
     }

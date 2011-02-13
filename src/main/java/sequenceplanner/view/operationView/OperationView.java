@@ -26,7 +26,6 @@ import javax.swing.TransferHandler;
 
 import org.apache.log4j.Logger;
 
-import sequenceplanner.SPContainer;
 import sequenceplanner.model.IModel.AsyncModelListener;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;

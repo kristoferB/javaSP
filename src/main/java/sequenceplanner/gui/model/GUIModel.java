@@ -12,7 +12,7 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class GUIModel {
 
-    private LinkedList operationViews = new LinkedList();
+    private LinkedList<OperationView> operationViews = new LinkedList();
     //Main model for the project
     private Model model;
 
@@ -47,6 +47,15 @@ public class GUIModel {
 
     public EditorTreeModel getGlobalProperties(){
         return model.getGlobalProperties();
+    }
+
+    public void addAllOperations() {
+        OperationView ov = new OperationView(this.model,"Operation View");
+        ov.open(this.model.getChildren(model.getOperationRoot()));
+        operationViews.addLast(ov);
+        
+			//	OperationView v = createOperationView("ViewAll");
+			//	v.open(model.getChildren(model.getOperationRoot()));
     }
 
 

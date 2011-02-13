@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
  *      EFA for transport planning
  *      Update model after transport planning
  *      EFA for MP supervisor
- *
+ *  @deprecated
  * @author qw4z1
  */
 

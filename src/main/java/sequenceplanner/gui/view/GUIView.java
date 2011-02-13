@@ -107,7 +107,7 @@ public class GUIView extends JFrame {
                 new SplitWindow(true, 0.7f, mainDocks,
                 new SplitWindow(false, 0.5f, tab2, tab3))));
         this.getContentPane().add(rootWindow);
-        tab3.add("Editor View", new EditorView());
+      //  tab3.add("Editor View", new EditorView());
     }
 
     public void updateViews() {
@@ -217,6 +217,7 @@ public class GUIView extends JFrame {
     }
 
     public void addAddCellsL(ActionListener l) {
+        addAll.addActionListener(l);
     }
 
     public void addOpenL(ActionListener l) {

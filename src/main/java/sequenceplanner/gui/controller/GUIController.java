@@ -80,7 +80,10 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiModel.addAllOperations();
+            guiView.addNewOpTab();
+
+
         }
 
     }
