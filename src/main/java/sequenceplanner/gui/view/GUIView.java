@@ -18,6 +18,7 @@ import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
+import sequenceplanner.editor.EditorView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 
@@ -39,6 +40,7 @@ public class GUIView extends JFrame {
     private EventListenerList listeners;
     private TabWindow tab1 = new TabWindow();
     private TabWindow tab2 = new TabWindow();
+    private TabWindow tab3 = new TabWindow();
     private View[] mainViews = new View[100];
 
     public GUIView(GUIModel m) {
@@ -103,8 +105,9 @@ public class GUIView extends JFrame {
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, tab1,
                 new SplitWindow(true, 0.7f, mainDocks,
-                new SplitWindow(false, 0.5f, tab2, new TabWindow()))));
+                new SplitWindow(false, 0.5f, tab2, tab3))));
         this.getContentPane().add(rootWindow);
+        tab3.add("Editor View", new EditorView());
     }
 
     public void updateViews() {
