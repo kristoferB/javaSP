@@ -5,16 +5,27 @@ import net.infonode.docking.util.AbstractViewMap;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.Model;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.resourceView.ResourceView;
 
 /**
  *Should hold info about all that is to be shown in the GUIView.
  * @author qw4z1
  */
 public class GUIModel {
-
+    private ResourceView resourceView;
     private LinkedList<OperationView> operationViews = new LinkedList();
     //Main model for the project
     private Model model;
+
+    /**
+     * Constructor. Sets the main project model.
+     */
+    public GUIModel(){
+        this.model = new Model();
+    }
+    public Model getModel() {
+        return model;
+    }
 
     public LinkedList getOperationViews() {
         return operationViews;
@@ -22,21 +33,19 @@ public class GUIModel {
 
 
 
-    public GUIModel(){
-        this.model = new Model();
-    }
+
 
     public AbstractViewMap getViewMap() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public void createNewOpView(){
-        operationViews.addLast(new OperationView(this.model,"nama"));
+        operationViews.addLast(new OperationView(this.model,"Opereration view " + operationViews.size()));
         System.out.println(operationViews.toString());
     }
 
     public void createNewReView(){
-        throw new UnsupportedOperationException("Not yet implemented");
+        resourceView = new ResourceView(this.model,this.model.getResourceRoot(), "Resource view");
 
     }
 
@@ -56,6 +65,10 @@ public class GUIModel {
         
 			//	OperationView v = createOperationView("ViewAll");
 			//	v.open(model.getChildren(model.getOperationRoot()));
+    }
+
+    public ResourceView getResourceView() {
+        return resourceView;
     }
 
 

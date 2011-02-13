@@ -22,6 +22,7 @@ import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.view.treeView.TreeView;
 
 /**
  *Main view class for the gui package. Updated by the GUIController and
@@ -111,6 +112,7 @@ public class GUIView extends JFrame {
         this.getContentPane().add(rootWindow);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
+        tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
         tab3.addTab(new View("Editor view", null, editorView));
 
     }
@@ -281,5 +283,9 @@ public class GUIView extends JFrame {
 
     public void addNewOpTab() {
         mainDocks.addTab(new View((guiModel.getOperationViews().getLast().toString()), null, (Component) guiModel.getOperationViews().getLast()), WIDTH);
+    }
+
+    public void addResourceView() {
+        mainDocks.addTab(new View(guiModel.getResourceView().getName(),null,guiModel.getResourceView()));
     }
 }

@@ -59,7 +59,7 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e){
             guiModel.createNewReView();
-            guiView.updateViews();
+            guiView.addResourceView();
         }
     }
     class ExitListener implements ActionListener{
