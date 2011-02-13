@@ -79,6 +79,9 @@ public class Model implements IModel {
       treeRoot.insert(viewRoot);
       // ---------------------
 
+      //Initialize global properties
+      globalProperties = new EditorTreeModel();
+
       aSyncListeners = new LinkedList<AsyncModelListener>();
       syncListeners = new LinkedList<SyncModelListener>();
 

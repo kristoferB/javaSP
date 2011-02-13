@@ -110,7 +110,7 @@ public class GUIView extends JFrame {
                 new SplitWindow(false, 0.5f, tab2, tab3))));
         this.getContentPane().add(rootWindow);
         editorView = new EditorView(guiModel.getGlobalProperties());
-        tab3.add("Editor View", editorView);
+        tab3.addTab(new View("Editor view", null, editorView));
     }
 
     public void updateViews() {
