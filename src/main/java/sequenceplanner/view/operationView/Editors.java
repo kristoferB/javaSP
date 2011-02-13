@@ -600,13 +600,8 @@ public class Editors {
                if (choose.getComponentCount() > 0 && selectedOrId > 0) {
                   String[] s = view.getGraphModel().getNameCache().get(selectedOrId);
 
-                  System.out.println("Testing");
-
-
                   try {
                      if (s != null && getOr().getModel() instanceof DefaultListModel) {
-
-
 
                         OrNode n = null;
 
