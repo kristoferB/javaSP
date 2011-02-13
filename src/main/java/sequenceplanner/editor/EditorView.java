@@ -12,13 +12,11 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class EditorView extends JScrollPane{
     
-    private GlobPropM model;
     private JTree tree;
 
-    EditorView(GlobPropM m){
-        model = m;
+    EditorView(EditorTreeModel m){
 
-        tree = new JTree(m.getGlobalProperties());
+        tree = new JTree(m);
         tree.setEditable(true);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setShowsRootHandles(true);

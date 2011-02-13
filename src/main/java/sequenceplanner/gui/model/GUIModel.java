@@ -2,6 +2,7 @@ package sequenceplanner.gui.model;
 
 import java.util.LinkedList;
 import net.infonode.docking.util.AbstractViewMap;
+import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.Model;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -44,6 +45,9 @@ public class GUIModel {
         System.exit(0);
     }
 
+    public EditorTreeModel getGlobalProperties(){
+        return model.getGlobalProperties();
+    }
 
 
 }

@@ -7,6 +7,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import sequenceplanner.editor.EditorTreeModel;
 
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.FolderData;
@@ -55,6 +56,8 @@ public class Model implements IModel {
    private TreeNode variableRoot;
    // Holds the root to the View folder, to enhance redability of code.
    protected TreeNode viewRoot;
+
+   private EditorTreeModel globalProperties;
 
    public Model() {
       treeRoot = new TreeNode(new Data("root", newId()));
@@ -169,6 +172,10 @@ public class Model implements IModel {
       }
 
       return out;
+   }
+
+   public EditorTreeModel getGlobalProperties(){
+        return globalProperties;
    }
 
    /**
