@@ -18,6 +18,7 @@ import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
+import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
@@ -42,6 +43,7 @@ public class GUIView extends JFrame {
     private TabWindow tab2 = new TabWindow();
     private TabWindow tab3 = new TabWindow();
     private View[] mainViews = new View[100];
+    private EditorView editorView;
 
     public GUIView(GUIModel m) {
         guiModel = m;
@@ -107,7 +109,10 @@ public class GUIView extends JFrame {
                 new SplitWindow(true, 0.7f, mainDocks,
                 new SplitWindow(false, 0.5f, tab2, tab3))));
         this.getContentPane().add(rootWindow);
-      //  tab3.add("Editor View", new EditorView());
+
+        editorView = new EditorView(guiModel.getGlobalProperties());
+        tab3.addTab(new View("Editor view", null, editorView));
+
     }
 
     public void updateViews() {
@@ -257,6 +262,10 @@ public class GUIView extends JFrame {
     }
 
     public void addEFAForMPL(ActionListener l) {
+    }
+
+    public void addEditorListener(){
+        editorView.addMouseListener(new EditorMouseAdapter(editorView.getTree(), guiModel.getGlobalProperties()));
     }
 //End listeners
 

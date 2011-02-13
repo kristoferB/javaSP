@@ -14,7 +14,7 @@ public class EditorView extends JScrollPane{
     
     private JTree tree;
 
-    EditorView(EditorTreeModel m){
+    public EditorView(EditorTreeModel m){
 
         tree = new JTree(m);
         tree.setEditable(true);
@@ -23,16 +23,14 @@ public class EditorView extends JScrollPane{
         setViewportView(tree);
     }
 
-    EditorView(GlobPropM t_model) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 
     public JTree getTree(){
         return tree;
     }
 
-    void addMouseListener(MouseAdapter m){
+    public void addMouseListener(MouseAdapter m){
         tree.addMouseListener(m);
+        System.out.println("EditorView.addMouseListener");
     }
 
 }

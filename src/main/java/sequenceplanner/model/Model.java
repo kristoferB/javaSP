@@ -56,7 +56,7 @@ public class Model implements IModel {
    private TreeNode variableRoot;
    // Holds the root to the View folder, to enhance redability of code.
    protected TreeNode viewRoot;
-
+   //Holds info about global properties
    private EditorTreeModel globalProperties;
 
    public Model() {
@@ -78,6 +78,9 @@ public class Model implements IModel {
       viewRoot = new TreeNode(new FolderData("View", newId()));
       treeRoot.insert(viewRoot);
       // ---------------------
+
+      //Initialize global properties
+      globalProperties = new EditorTreeModel();
 
       aSyncListeners = new LinkedList<AsyncModelListener>();
       syncListeners = new LinkedList<SyncModelListener>();

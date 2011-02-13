@@ -19,7 +19,7 @@ public class EditorTreeModel implements TreeModel{
     private LinkedList<IGlobalProperty> globalProperties = new LinkedList();
     private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
-    EditorTreeModel(){
+    public EditorTreeModel(){
         root = new DefaultMutableTreeNode("Global properties");
     }
 
