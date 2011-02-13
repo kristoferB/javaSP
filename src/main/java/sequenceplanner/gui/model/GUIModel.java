@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import net.infonode.docking.util.AbstractViewMap;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.resourceView.ResourceView;
 
@@ -41,7 +42,6 @@ public class GUIModel {
 
     public void createNewOpView(){
         operationViews.addLast(new OperationView(this.model,"Opereration view " + operationViews.size()));
-        System.out.println(operationViews.toString());
     }
 
     public void createNewReView(){
@@ -69,6 +69,14 @@ public class GUIModel {
 
     public ResourceView getResourceView() {
         return resourceView;
+    }
+
+    public void createNewOpView(ViewData toOpen) {
+        operationViews.addLast(new OperationView(this.model,toOpen));
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 
 

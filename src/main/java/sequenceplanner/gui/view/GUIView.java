@@ -117,6 +117,9 @@ public class GUIView extends JFrame {
 
     }
 
+    public void closeAllViews(){
+        mainDocks.removeAll();
+    }
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
@@ -228,42 +231,55 @@ public class GUIView extends JFrame {
     }
 
     public void addOpenL(ActionListener l) {
+        open.addActionListener(l);
     }
 
     public void addSaveL(ActionListener l) {
+        save.addActionListener(l);
     }
 
-    public void addSaveAsL(ActionListener l) {
+    public void addSaveAsL(ActionListener l){
+        saveAs.addActionListener(l);
     }
 
     public void addCloseL(ActionListener l) {
+        close.addActionListener(l);
     }
 
     public void addSaveEFAoL(ActionListener l) {
+        saveEFAo.addActionListener(l);
     }
 
     public void addSaveEFArL(ActionListener l) {
+        saveEFAr.addActionListener(l);
     }
 
     public void addSaveCostL(ActionListener l) {
+        saveCost.addActionListener(l);
     }
 
     public void addSaveOptAutomataL(ActionListener l) {
+        saveOptimal.addActionListener(l);
     }
 
     public void addIdentifyRL(ActionListener l) {
+        identifyr.addActionListener(l);
     }
 
     public void addPrintProdTypesL(ActionListener l) {
+        printProduct.addActionListener(l);
     }
 
     public void addEFAForTransL(ActionListener l) {
+        efaForTrans.addActionListener(l);
     }
 
     public void addUpdateModelL(ActionListener l) {
+        updateAfterTrans.addActionListener(l);
     }
 
     public void addEFAForMPL(ActionListener l) {
+        efaForMP.addActionListener(l);
     }
 
     public void addEditorListener(){
