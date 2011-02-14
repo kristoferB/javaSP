@@ -30,7 +30,6 @@ public class EditorView extends JScrollPane{
 
     public void addMouseListener(MouseAdapter m){
         tree.addMouseListener(m);
-        System.out.println("EditorView.addMouseListener");
     }
 
 }
