@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SequencePlannerProjectFile>
+    <idCounter>8</idCounter>
+    <Resources/>
+    <Liasons/>
+    <Operations>
+        <operation name="OP7" id="7">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+            </operationData>
+        </operation>
+        <operation name="OP5" id="5">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+            </operationData>
+        </operation>
+    </Operations>
+    <Views>
+        <view root="-1" name="viewA" id="0">
+            <CellData expanded="true" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="5">
+                <geo>
+                    <geometry h="36.3515625" w="46.0" y="60.0" x="57.0"/>
+                </geo>
+            </CellData>
+        </view>
+        <view root="-1" name="viewB" id="0">
+            <CellData expanded="true" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="7">
+                <geo>
+                    <geometry h="36.3515625" w="46.0" y="40.0" x="37.0"/>
+                </geo>
+            </CellData>
+        </view>
+    </Views>
+</SequencePlannerProjectFile>
