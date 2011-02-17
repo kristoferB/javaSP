@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.model.ConvertFromXML;
+import sequenceplanner.SequencePlanner;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import static org.junit.Assert.*;
 
@@ -32,7 +33,8 @@ public class WindowsRelatedTests {
 
     @Before
     public void beforeTest() {
-        openFile("C:\\Users\\patrik\\Documents\\fileForTesting.sopx");
+        openFile(SequencePlanner.class.getResource("resources/filesForTesting/fileForTesting.sopx").getFile());
+//        openFile("C:/cygwin/home/patrik/Sequence-Planner/src/main/resources/sequenceplanner/resources/filesForTesting/fileForTesting.sopx");
         //reinitialize "windows"
     }
 
