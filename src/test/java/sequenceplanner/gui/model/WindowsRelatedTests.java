@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.model.ConvertFromXML;
-import sequenceplanner.SequencePlanner;
+import sequenceplanner.general.SP;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import static org.junit.Assert.*;
 
@@ -19,6 +19,8 @@ public class WindowsRelatedTests {
     WindowInfoWrapper windows = new WindowInfoWrapper();
     //Instances of the model and view.
     GUIModel guiModel = new GUIModel();
+
+    SP sp = new SP();
 
     public WindowsRelatedTests() {
     }
@@ -33,7 +35,8 @@ public class WindowsRelatedTests {
 
     @Before
     public void beforeTest() {
-        openFile(SequencePlanner.class.getResource("resources/filesForTesting/fileForTesting.sopx").getFile());
+        sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
+//        openFile(SequencePlanner.class.getResource("resources/filesForTesting/fileForTesting.sopx").getFile());
 //        openFile("C:/cygwin/home/patrik/Sequence-Planner/src/main/resources/sequenceplanner/resources/filesForTesting/fileForTesting.sopx");
         //reinitialize "windows"
     }

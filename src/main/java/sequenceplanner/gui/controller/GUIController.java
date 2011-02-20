@@ -36,8 +36,7 @@ public class GUIController {
 
         @Override
         public boolean accept(File f) {
-            return f.getName().toLowerCase().endsWith(".sopx")
-                    || f.isDirectory();
+            return f.getName().toLowerCase().endsWith(".sopx") || f.isDirectory();
         }
 
         @Override
@@ -260,7 +259,7 @@ public class GUIController {
         return false;
     }
 
-    private boolean openModel(File inputFile) {
+    public boolean openModel(File inputFile) {
 
         SequencePlannerProjectFile project = null;
 
@@ -283,7 +282,7 @@ public class GUIController {
 
         guiModel.getModel().rootUpdated();
 
-        return false;
+        return true;
     }
 
     private boolean saveModel(boolean saveAs) {
@@ -328,14 +327,9 @@ public class GUIController {
             f.mkdir();
 
             Calendar c = Calendar.getInstance();
-            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH)
-                    + c.get(Calendar.DAY_OF_MONTH) + "-"
-                    + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE)
-                    + "" + c.get(Calendar.SECOND) + "."
-                    + c.get(Calendar.MILLISECOND);
+            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
 
-            path = path + File.separatorChar + projectFile.getName() + "_"
-                    + date + Constansts.FILEFORMAT;
+            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constansts.FILEFORMAT;
             saveModelToFile(path);
         }
     }
