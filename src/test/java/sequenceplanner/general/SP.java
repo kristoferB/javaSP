@@ -65,6 +65,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
+        nameOfFile = SequencePlanner.class.getResource(nameOfFile).getFile();
         assertTrue(guiController.openModel(new File(nameOfFile)));
     }
 

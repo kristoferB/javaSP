@@ -26,7 +26,7 @@ public class PropertryTests {
     @Test
     public void testtest() {
         SP sp = new SP();
-        sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
+        sp.loadFromSOPXFile("resources/filesForTesting/fileForTesting.sopx");
         sp.insertOperation();
         sp.saveToSOPXFile("C:/Users/patrik/Desktop/result.sopx");
     }
