@@ -11,7 +11,9 @@ interface IGlobalProperty {
 
     public void setName(String n);
 
-    public String getValue(int i);
+    public int getId();
+
+    public Value getValue(int i);
 
     public void setValue(int i, Object value);
 

@@ -55,6 +55,9 @@ public class OperationData extends Data {
    //Actions
    LinkedList<Action> actions;
 
+   //Properties
+   LinkedList<PropertySetting> propertySettings;
+
    public OperationData(String name, int id) {
       super(name, id);
       preference = Collections.synchronizedMap(new HashMap<String, String>());
@@ -72,6 +75,9 @@ public class OperationData extends Data {
 
       //Actions
       actions = new LinkedList<Action>();
+
+      //Properties
+      propertySettings = new LinkedList<PropertySetting>();
    }
 
    private void setValue(String key, String value) {
@@ -217,6 +223,53 @@ public class OperationData extends Data {
 
    public void setPSequenceCondition(LinkedList<LinkedList<SeqCond>> pSequenceCondition) {
       this.pSequenceCondition = pSequenceCondition;
+   }
+
+   public int[] getPropertyValues(){
+      int [] valueIds = new int[propertySettings.size()];
+      for(int i = 0; i < propertySettings.size(); i++){
+        valueIds[i] = propertySettings.get(i).getValueId();
+      }
+      return valueIds;
+   }
+
+   public int[] getProperties(){
+      LinkedList<Integer> prop = new LinkedList<Integer>();
+      for(int i = 0; i < propertySettings.size(); i++){
+        if(!prop.contains(new Integer(propertySettings.get(i).getPropertyId()))){
+            prop.add(new Integer(propertySettings.get(i).getPropertyId()));
+        }
+
+      }
+      int[] propertyIds = new int[prop.size()];
+      for(int j = 0; j < prop.size(); j++){
+        propertyIds[j] = prop.get(j).intValue();
+      }
+      return propertyIds;
+
+   }
+
+   public void removePropertyValue(int valueId){
+      for(int i = 0; i < propertySettings.size(); i++){
+        if(propertySettings.get(i).getValueId() == valueId){
+            propertySettings.remove(i);
+            i--;
+        }
+      }
+   }
+
+   public void removeProperty(int propertyId){
+      for(int i = 0; i < propertySettings.size(); i++){
+        if(propertySettings.get(i).getPropertyId() == propertyId){
+            propertySettings.remove(i);
+            i--;
+        }
+      }
+   }
+
+   public void addPropertySetting(int propertyId, int valueId){
+      //Check if the property is already set first
+      propertySettings.add(new PropertySetting(propertyId, valueId));
    }
 
    public boolean isSequence(int id) {
@@ -889,4 +942,24 @@ public class OperationData extends Data {
          return new Action(id, state, value);
       }
    }
+
+   private class PropertySetting {
+      private int propertyId;
+      private int valueId;
+
+      public PropertySetting(int pId, int vId){
+        propertyId = pId;
+        valueId = vId;
+      }
+
+      public int getPropertyId(){
+        return propertyId;
+      }
+
+      public int getValueId(){
+        return valueId;
+      }
+   }
+
 }
+
