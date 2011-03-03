@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
@@ -39,12 +38,16 @@ public class GUIView extends JFrame {
     private RootWindow rootWindow;
     private TabWindow mainDocks = new TabWindow(new DockingWindow[]{});
     private ViewMap opViewMap = new ViewMap();
+
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
+    private RootWindow treeRoot;
+    private RootWindow propRoot;
+    private RootWindow objectRoot;
+
     private EventListenerList listeners;
     private TabWindow tab1 = new TabWindow();
     private TabWindow tab2 = new TabWindow();
     private TabWindow tab3 = new TabWindow();
-    private View[] mainViews = new View[100];
     private EditorView editorView;
 
     public GUIView(GUIModel m) {
@@ -92,18 +95,25 @@ public class GUIView extends JFrame {
      */
     private void createRootWindow() {
         //Work in progress...
-
-
         //First view
         addNewOpTab();
-        rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
-        mainDocks.getWindowProperties().setUndockEnabled(false);
-        mainDocks.getWindowProperties().setCloseEnabled(false);
+
+        rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
+        treeRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        opRootWindow = DockingUtil.createRootWindow(rootViewMap, true);
+        objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        propRoot = DockingUtil.createRootWindow(rootViewMap, true);
+
         rootWindow.setWindow(
-                new SplitWindow(true, 0.15f, tab1,
-                new SplitWindow(true, 0.7f, mainDocks,
-                new SplitWindow(false, 0.5f, tab2, tab3))));
+                new SplitWindow(true, 0.15f, treeRoot,
+                new SplitWindow(true, 0.7f, opRootWindow,
+                new SplitWindow(false, 0.5f, objectRoot, propRoot))));
         this.getContentPane().add(rootWindow);
+
+        treeRoot.add(tab1);
+        opRootWindow.add(mainDocks);
+        objectRoot.add(tab2);
+        propRoot.add(tab3);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
         tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
