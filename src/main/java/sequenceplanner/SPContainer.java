@@ -56,6 +56,7 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.multiProduct.Calculation;
 import sequenceplanner.multiProduct.EFAforSupervisor;
 import sequenceplanner.multiProduct.EFAforTransport;
+import sequenceplanner.multiProduct.GetIsotopes;
 import sequenceplanner.multiProduct.RelationView;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.operationView.Constansts;
@@ -611,6 +612,13 @@ public class SPContainer extends JPanel {
                 OperationView ov = createOperationView("view" + count);
                 model.setCounter(++count);
                 new RelationView(model, ov);
+            }
+        }));
+
+        multiProduct.add(new JMenuItem(new AbstractAction("Isotope") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new GetIsotopes(model, "P1");
             }
         }));
         //Multiproduct End---------------------------------------------------------------------------------------------------------------
