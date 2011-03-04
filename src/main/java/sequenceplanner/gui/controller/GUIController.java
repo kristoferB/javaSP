@@ -1,5 +1,6 @@
 package sequenceplanner.gui.controller;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -48,6 +49,8 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
+        guiModel.createNewOpView();
+        addNewOpTab();
         addListeners();
 
 
@@ -76,13 +79,18 @@ public class GUIController {
     }
     //Listener classes
 
+    //private methods
+    private void addNewOpTab(){
+         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(),(Component) guiModel.getOperationViews().getLast());
+    }
+
     //File menu listenrs
     private class CreateOpListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.createNewOpView();
-            guiView.addNewOpTab();
+            addNewOpTab();
         }
     }
 
@@ -118,7 +126,7 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.addAllOperations();
-            guiView.addNewOpTab();
+            addNewOpTab();
 
 
         }
@@ -249,7 +257,7 @@ public class GUIController {
                 ViewData toOpen = (ViewData) guiModel.getModel().getViewRoot().getChildAt(0).getNodeData();
                 guiModel.removeAllOpViews();
                 guiModel.createNewOpView(toOpen);
-                guiView.addNewOpTab();
+                addNewOpTab();
 
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");
