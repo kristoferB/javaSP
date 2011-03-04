@@ -23,6 +23,6 @@ interface IGlobalProperty {
 
     public int getNumberOfValues();
 
-    public int indexOfValue(Object o);
+    public int indexOfValue(Value value);
 
 }

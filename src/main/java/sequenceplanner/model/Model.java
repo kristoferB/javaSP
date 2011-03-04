@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.TreeMap;
+import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import sequenceplanner.editor.EditorTreeModel;
@@ -108,6 +109,10 @@ public class Model implements IModel {
    @Override
    public void removeSyncModelListener(SyncModelListener l) {
       syncListeners.remove(l);
+   }
+
+   public void addTreeModelListener(TreeModelListener l){
+      globalProperties.addTreeModelListener(l);
    }
 
    public TreeNode getRoot() {

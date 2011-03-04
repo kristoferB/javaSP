@@ -35,13 +35,6 @@ public class PropertyView extends JScrollPane{
         model = m;
 
         updateTree();
-
-        CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-        tree.setCellRenderer(renderer);
-
-        tree.setCellEditor(new CheckBoxNodeEditor(tree));
-        tree.setEditable(true);
-        setViewportView(tree);
     }
 
     //draw a checkbox node tree according to the treemodel
@@ -53,36 +46,29 @@ public class PropertyView extends JScrollPane{
 
         for(int i = 0; i < noProperties; i++){
             p = (IGlobalProperty) model.getChild(root, i);
-            System.out.println("Property: " + p + " has id: " + p.getId());
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
             for(int j = 0; j < model.getChildCount(p); j++){
 //check if value is chosen for current operation
                 values[j] = new CheckBoxNode(p.getValue(j).getName(), false);
-                System.out.println("Value: " + p.getValue(j).getName() + " has id: " + p.getValue(j).getId());
             }
             properties[i] = new NamedVector(p.getName(), values);
         }
 
         Vector rootVector = new NamedVector("Root", properties);
         tree = new JTree(rootVector);
+        for(int i=0;i<tree.getRowCount();i++){
+            tree.expandRow(i);
+        }
+
+
+        CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
+        tree.setCellRenderer(renderer);
+
+        tree.setCellEditor(new CheckBoxNodeEditor(tree));
+        tree.setEditable(true);
+        setViewportView(tree);
     }
 
-    
-    
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Attributes");
-        EditorTreeModel treeModel = new EditorTreeModel();
-        treeModel.addProperty("Colour");
-        Object gp = treeModel.getChild(treeModel.getRoot(), 0);
-        treeModel.addValue(gp, "blue");
-        PropertyView view = new PropertyView(treeModel);
-       
-        frame.getContentPane().add(view, BorderLayout.CENTER);
-        frame.setSize(300, 150);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
 }
 
 

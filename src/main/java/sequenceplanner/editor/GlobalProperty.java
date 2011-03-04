@@ -81,9 +81,9 @@ public class GlobalProperty implements IGlobalProperty{
     }
 
     @Override
-    public int indexOfValue(Object o) {
+    public int indexOfValue(Value value) {
         for(int i = 0; i < values.size(); i++){
-            if(o.equals((Object) values.get(i))){
+            if(value.equals(values.get(i))){
                 return i;
             }
         }

@@ -73,10 +73,12 @@ public class EditorMouseAdapter extends MouseAdapter{
             String command = e.getActionCommand();
 
             if(command.equals("INSERT_PROPERTY")){
-                treeModel.addProperty("New property");
+                TreePath newPath = treeModel.addProperty("");
+                tree.startEditingAtPath(newPath);
             }
             if(command.equals("INSERT_VALUE")){
-                treeModel.addValue(clickedComponent, "new value");
+                TreePath newPath = treeModel.addValue(clickedComponent, "");
+                tree.startEditingAtPath(newPath);
             }
             if(command.equals("REMOVE_PROPERTY")){
                 treeModel.removeProperty(clickedComponent);

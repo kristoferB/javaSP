@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelListener;
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
@@ -20,6 +21,7 @@ import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
+import sequenceplanner.editor.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 import sequenceplanner.view.treeView.TreeView;
@@ -41,7 +43,7 @@ public class GUIView extends JFrame {
 
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
     private RootWindow treeRoot;
-    private RootWindow propRoot;
+    private RootWindow editorRoot;
     private RootWindow objectRoot;
 
     private EventListenerList listeners;
@@ -49,6 +51,7 @@ public class GUIView extends JFrame {
     private TabWindow tab2 = new TabWindow();
     private TabWindow tab3 = new TabWindow();
     private EditorView editorView;
+    private PropertyView propertyView;
 
     public GUIView(GUIModel m) {
         guiModel = m;
@@ -99,24 +102,26 @@ public class GUIView extends JFrame {
         addNewOpTab();
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
-        treeRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        treeRoot = DockingUtil.createRootWindow(rootViewMap, false);
         opRootWindow = DockingUtil.createRootWindow(rootViewMap, true);
         objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
-        propRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
 
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, treeRoot,
                 new SplitWindow(true, 0.7f, opRootWindow,
-                new SplitWindow(false, 0.5f, objectRoot, propRoot))));
+                new SplitWindow(false, 0.5f, objectRoot, editorRoot))));
         this.getContentPane().add(rootWindow);
 
         treeRoot.add(tab1);
         opRootWindow.add(mainDocks);
         objectRoot.add(tab2);
-        propRoot.add(tab3);
+        editorRoot.add(tab3);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
+        propertyView = new PropertyView(guiModel.getGlobalProperties());
         tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
+        tab2.addTab(new View("Object attribute view", null, propertyView));
         tab3.addTab(new View("Editor view", null, editorView));
 
     }
@@ -126,6 +131,9 @@ public class GUIView extends JFrame {
     }
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+    public void updatePropertyView(){
+        propertyView.updateTree();
     }
     /**
      * Main menu bar for sequenceplanner.
@@ -288,6 +296,10 @@ public class GUIView extends JFrame {
 
     public void addEditorListener(){
         editorView.addMouseListener(new EditorMouseAdapter(editorView.getTree(), guiModel.getGlobalProperties()));
+    }
+
+    public void addTreeModelListener(TreeModelListener l){
+        guiModel.addTreeModelListener(l);
     }
 //End listeners
 

@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import javax.swing.JFileChooser;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileFilter;
 
 import sequenceplanner.gui.model.GUIModel;
@@ -73,6 +75,7 @@ public class GUIController {
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
         guiView.addEditorListener();
+        guiView.addTreeModelListener(new EditorTreeModelListener());
     }
     //Listener classes
 
@@ -229,6 +232,31 @@ public class GUIController {
         public void actionPerformed(ActionEvent e) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+    }
+
+    class EditorTreeModelListener implements TreeModelListener{
+
+        @Override
+        public void treeNodesChanged(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
+
+        @Override
+        public void treeNodesInserted(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        //    e.
+        }
+
+        @Override
+        public void treeNodesRemoved(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
+
+        @Override
+        public void treeStructureChanged(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
+
     }
 
     /**

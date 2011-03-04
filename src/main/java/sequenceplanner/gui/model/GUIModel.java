@@ -1,7 +1,7 @@
 package sequenceplanner.gui.model;
 
 import java.util.LinkedList;
-import net.infonode.docking.util.AbstractViewMap;
+import javax.swing.event.TreeModelListener;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.ViewData;
@@ -53,6 +53,9 @@ public class GUIModel {
 
     public EditorTreeModel getGlobalProperties(){
         return model.getGlobalProperties();
+    }
+    public void addTreeModelListener(TreeModelListener l){
+        model.addTreeModelListener(l);
     }
 
     /**
