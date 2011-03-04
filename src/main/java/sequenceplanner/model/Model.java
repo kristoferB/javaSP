@@ -36,6 +36,7 @@ public class Model implements IModel {
 
    static Logger logger = Logger.getLogger(Model.class);
    private static int idConter = 0;
+   private static int propertyIdCounter = 0;
    //Holds a cache for easy access to all operations names and paths
    private NameCacheMap nameCache;
    //Holds operationspecific view
@@ -141,6 +142,10 @@ public class Model implements IModel {
       return idConter++;
    }
 
+   public static int newPropertyId(){
+      return propertyIdCounter++;
+   }
+
    // Handle views
    public boolean isViewPresent(String name) {
       return isNamePresent(getViewRoot(), name, true);
@@ -209,8 +214,7 @@ public class Model implements IModel {
     */
    public void saveOperationData(TreeNode[] data) {
 
-      for (int i = 0; i <
-            data.length; i++) {
+      for (int i = 0; i < data.length; i++) {
          TreeNode node = data[i];
 
          if (node.getNodeData() instanceof OperationData) {
