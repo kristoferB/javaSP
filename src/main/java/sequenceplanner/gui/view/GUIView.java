@@ -99,10 +99,11 @@ public class GUIView extends JFrame {
     private void createRootWindow() {
         //Work in progress...
         //First view
-        addNewOpTab();
+        //addNewOpTab();
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
         treeRoot = DockingUtil.createRootWindow(rootViewMap, false);
+
         opRootWindow = DockingUtil.createRootWindow(rootViewMap, true);
         objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
         editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
@@ -313,8 +314,8 @@ public class GUIView extends JFrame {
         return new PreferencePane();
     }
 
-    public void addNewOpTab() {
-        mainDocks.addTab(new View((guiModel.getOperationViews().getLast().toString()), null, (Component) guiModel.getOperationViews().getLast()));
+    public void addNewOpTab(String name, Component comp) {
+        mainDocks.addTab(new View(name , null, comp));
     }
 
     public void addResourceView() {
