@@ -367,7 +367,7 @@ public class RelationView {
 
                 Boolean somethingHasBeenAdded = false;
 
-                if (!wExternal.sourcePos.contains(TypeVar.POS_OUT)) { //source pos = out -> start cell
+                if (!wExternal.sourcePos.contains(TypeVar.POS_OUT) || !wExternal.sourcePos.contains("inn")) { //source pos = out -> start cell
                     for (Wrapper wInternal : master.singlePosChildren) {
                         if (wExternal.sourcePos.equals(wInternal.destPos)) {
                             wExternal.head.add(wInternal);
