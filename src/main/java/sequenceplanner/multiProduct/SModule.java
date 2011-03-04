@@ -2,13 +2,14 @@ package sequenceplanner.multiProduct;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,7 +18,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
+import net.sourceforge.waters.model.des.TransitionProxy;
+import net.sourceforge.waters.model.expr.EvalException;
+import net.sourceforge.waters.model.marshaller.DocumentManager;
+import net.sourceforge.waters.subject.base.AbstractSubject;
 import net.sourceforge.waters.subject.module.ModuleSubject;
+import net.sourceforge.waters.subject.module.VariableComponentSubject;
+import org.supremica.automata.*;
+import org.supremica.automata.IO.ProjectBuildFromWaters;
 import org.supremica.automata.VariableHelper;
 import org.supremica.external.avocades.common.Module;
 
@@ -85,6 +93,60 @@ public class SModule {
             }
         }
         return module.getModule();
+    }
+
+    /**
+     * Translates {@link SModule} (this object) to {@link Project}.</br>
+     * {@link Project} extends {@link Automata}.
+     * @return a {@link Project} that can be used as a {@link Automata}.
+     */
+    public Project getDFA() {
+
+        Project project = null;
+        if (variableInclusionCheck()) {
+            try {
+                project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
+
+                for (Automaton automaton : project) {
+                    System.out.println("Automaton: " + automaton.getName());
+                    for (TransitionProxy tp : automaton.getTransitions()) {
+                        System.out.println("Event: " + tp.getEvent().getName());
+                    }
+                }
+
+            } catch (EvalException e) {
+                System.out.println(e.toString());
+            }
+        } else {
+            System.out.println("No variables appears in guards or actions for automata. I will not go on!");
+        }
+        return project;
+    }
+
+    private boolean variableInclusionCheck() {
+        Set<String> variables = new HashSet<String>();
+
+        //Collect variables in module
+        for (AbstractSubject as : generateTransitions().getComponentListModifiable()) {
+            if (as instanceof VariableComponentSubject) {
+                variables.add(((VariableComponentSubject) as).getName());
+            }
+        }
+
+        //Check all guards and actions.
+        //It is enough that one variable in variables is included in one guard or one action
+        for (SEFA sefa : automata) {
+            for (HashMap<String, JTextArea> trans : sefa.transitions) {
+                for (String var : variables) {
+                    if (trans.get(SEFA.GUARD).getText().contains(var)) {
+                        return true;
+                    } else if (trans.get(SEFA.ACTION).getText().contains(var)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
