@@ -33,7 +33,7 @@ public class GUIModel {
      *
      * @return all OperationViews in a list.
      */
-    public LinkedList getOperationViews() {
+    public LinkedList<OperationView> getOperationViews() {
         return operationViews;
     }
 

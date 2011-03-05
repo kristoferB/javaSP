@@ -133,6 +133,7 @@ public class AttributeEditor extends JPanel
       ((JSplitPane) getParent()).resetToPreferredSizes();
    }
 
+    @Override
    public void invoke(Object source, mxEventObject evt) {
       SPGraph graph = view.getGraph();
       Object cell = graph.getSelectionCell();

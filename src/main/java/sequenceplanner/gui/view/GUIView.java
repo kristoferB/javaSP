@@ -1,15 +1,22 @@
 package sequenceplanner.gui.view;
 
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 import net.infonode.docking.DockingWindow;
@@ -19,11 +26,15 @@ import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
+import sequenceplanner.SequencePlanner;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
-import sequenceplanner.editor.PropertyView;
+import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.treeView.TreeView;
 
 /**
@@ -31,7 +42,7 @@ import sequenceplanner.view.treeView.TreeView;
  * shows the info in GUIModel.
  * @author qw4z1
  */
-public class GUIView extends JFrame {
+public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     //model of the gui
 
     private JMenuBar menuBar;
@@ -50,8 +61,11 @@ public class GUIView extends JFrame {
     private TabWindow tab1 = new TabWindow();
     private TabWindow tab2 = new TabWindow();
     private TabWindow tab3 = new TabWindow();
+    private View objectMenu;
     private EditorView editorView;
     private PropertyView propertyView;
+
+    private OperationView selectedOperationView;
 
     public GUIView(GUIModel m) {
         guiModel = m;
@@ -116,13 +130,32 @@ public class GUIView extends JFrame {
 
         treeRoot.add(tab1);
         opRootWindow.add(mainDocks);
-        objectRoot.add(tab2);
+   //     objectRoot.add(tab2);
         editorRoot.add(tab3);
 
-        editorView = new EditorView(guiModel.getGlobalProperties());
+
+//Test (adding save button to object attribute window) should be cleaned up!!!!
+        
+        JPanel objectView = new JPanel();
+        JButton saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
+        saveButton.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                propertyView.saveSettings();
+            }
+
+        });
+        objectView.add(saveButton);
+        objectMenu = new View("Object attribute view", null, objectView);
+        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2));
+//--------------------
+        
         propertyView = new PropertyView(guiModel.getGlobalProperties());
+        editorView = new EditorView(guiModel.getGlobalProperties());
+        
         tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
-        tab2.addTab(new View("Object attribute view", null, propertyView));
+        tab2.addTab(new View("Property view", null, propertyView));
         tab3.addTab(new View("Editor view", null, editorView));
 
     }
@@ -314,11 +347,27 @@ public class GUIView extends JFrame {
         return new PreferencePane();
     }
 
-    public void addNewOpTab(String name, Component comp) {
+    public void addNewOpTab(String name, OperationView opView) {
+        opView.addmxIEventListener(this);
+        selectedOperationView = opView;
+//Should not be done here..
+        propertyView.setOpView(opView);
+//-----
+        Component comp = (Component) opView;
         mainDocks.addTab(new View(name , null, comp));
+
     }
 
     public void addResourceView() {
         mainDocks.addTab(new View(guiModel.getResourceView().getName(),null,guiModel.getResourceView()));
     }
+
+      @Override
+   public void invoke(Object source, mxEventObject evt) {
+
+     propertyView.setOperation();
+
+   }
+
+   
 }

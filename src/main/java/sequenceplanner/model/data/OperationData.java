@@ -225,6 +225,7 @@ public class OperationData extends Data {
       this.pSequenceCondition = pSequenceCondition;
    }
 
+   //TO HANDLE PROPERTY SETTINGS
    public int[] getPropertyValues(){
       int [] valueIds = new int[propertySettings.size()];
       for(int i = 0; i < propertySettings.size(); i++){

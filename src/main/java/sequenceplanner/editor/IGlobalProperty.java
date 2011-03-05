@@ -5,7 +5,7 @@ package sequenceplanner.editor;
  *
  * @author Evelina
  */
-interface IGlobalProperty {
+public interface IGlobalProperty {
 
     public String getName();
 

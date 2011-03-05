@@ -84,7 +84,7 @@ public class GUIController {
 
     //private methods
     private void addNewOpTab(){
-         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(),(Component) guiModel.getOperationViews().getLast());
+         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(),guiModel.getOperationViews().getLast());
     }
 
     //File menu listenrs
