@@ -367,12 +367,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mainDocks.addTab(new View(guiModel.getResourceView().getName(),null,guiModel.getResourceView()));
     }
 
-      @Override
-   public void invoke(Object source, mxEventObject evt) {
+    @Override
+    public void invoke(Object source, mxEventObject evt) {
+        propertyView.setOperation();
 
-     propertyView.setOperation();
-
-   }
+    }
 
    
 }

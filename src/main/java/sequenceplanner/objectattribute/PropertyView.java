@@ -61,7 +61,7 @@ public class PropertyView extends JScrollPane {
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
             for(int j = 0; j < model.getChildCount(p); j++){
 //check if value is chosen for current operation (if operation is chosen)
-            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), false);
+            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), true);
             }
             properties[i] = new UniqueVector(p.getName(), p.getId(), values);
         }
@@ -113,7 +113,6 @@ public class PropertyView extends JScrollPane {
 
             for(int i = 0; i < noProperties; i++){               
                 o = (DefaultMutableTreeNode) mod.getChild(root, i);
-                System.out.println("test");
                 if(o.getUserObject() instanceof UniqueVector){
                     UniqueVector property = (UniqueVector) o.getUserObject();
                     System.out.println("Property: " + property);
@@ -261,8 +260,8 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
         }
       }
     };
-    if (editor instanceof JCheckBox) {
-      ((JCheckBox) editor).addItemListener(itemListener);
+    if (editor instanceof UniqueCheckBox) {
+      ((UniqueCheckBox) editor).addItemListener(itemListener);
     }
 
     return editor;
