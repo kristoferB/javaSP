@@ -51,8 +51,6 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
-        guiModel.createNewOpView();
-        addNewOpTab();
         addListeners();
 
 

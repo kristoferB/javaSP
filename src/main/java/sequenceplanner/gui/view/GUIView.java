@@ -2,6 +2,7 @@ package sequenceplanner.gui.view;
 
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
@@ -9,7 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,13 +20,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
-import net.infonode.docking.DockingWindow;
+
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
+
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
@@ -33,8 +35,6 @@ import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.spIcon.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
-import sequenceplanner.view.operationView.graphextension.Cell;
-import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.treeView.TreeView;
 
 /**
@@ -49,7 +49,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private GUIModel guiModel;
     private ViewMap rootViewMap = new ViewMap();
     private RootWindow rootWindow;
-    private TabWindow mainDocks = new TabWindow(new DockingWindow[]{});
+    private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
     private ViewMap opViewMap = new ViewMap();
 
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
@@ -58,9 +58,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private RootWindow objectRoot;
 
     private EventListenerList listeners;
-    private TabWindow tab1 = new TabWindow();
+    private TabWindow tab1;// = new TabWindow();
     private TabWindow tab2 = new TabWindow();
-    private TabWindow tab3 = new TabWindow();
+    private TabWindow tab3;// = new TabWindow();
     private View objectMenu;
     private EditorView editorView;
     private PropertyView propertyView;
@@ -122,16 +122,21 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
         editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
 
+        editorView = new EditorView(guiModel.getGlobalProperties());
+
+        opRootWindow.setWindow(mainDocks = new TabWindow(new View(guiModel.getOperationViews().getFirst().toString(),null, guiModel.getOperationViews().getFirst())));
+        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null , new TreeView(guiModel.getModel()))));
+        editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
+
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, treeRoot,
                 new SplitWindow(true, 0.7f, opRootWindow,
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))));
         this.getContentPane().add(rootWindow);
 
-        treeRoot.add(tab1);
-        opRootWindow.add(mainDocks);
+       // treeRoot.add(tab1);
    //     objectRoot.add(tab2);
-        editorRoot.add(tab3);
+      //  editorRoot.add(tab3);
 
 
 //Test (adding save button to object attribute window) should be cleaned up!!!!
@@ -152,11 +157,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 //--------------------
         
         propertyView = new PropertyView(guiModel.getGlobalProperties());
-        editorView = new EditorView(guiModel.getGlobalProperties());
         
-        tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
+        
+       // tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
         tab2.addTab(new View("Property view", null, propertyView));
-        tab3.addTab(new View("Editor view", null, editorView));
+       // tab3.addTab(new View("Editor view", null, editorView));
 
     }
 
