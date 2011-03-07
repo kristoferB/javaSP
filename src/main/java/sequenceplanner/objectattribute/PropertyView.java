@@ -61,7 +61,7 @@ public class PropertyView extends JScrollPane {
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
             for(int j = 0; j < model.getChildCount(p); j++){
 //check if value is chosen for current operation (if operation is chosen)
-            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), true);
+            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), false);
             }
             properties[i] = new UniqueVector(p.getName(), p.getId(), values);
         }
