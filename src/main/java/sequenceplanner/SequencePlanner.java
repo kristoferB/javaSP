@@ -1,6 +1,7 @@
 package sequenceplanner;
 
 import java.awt.Rectangle;
+import javax.swing.SwingUtilities;
 
 
 import org.apache.log4j.BasicConfigurator;
@@ -52,10 +53,15 @@ public class SequencePlanner {
      * @param args the args
      */
     public static void main(String[] args) {
-
+// Docking windwos should be run in the Swing thread
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
         GUIModel model = new GUIModel();
         GUIView view = new GUIView(model);
-        GUIController controller = new GUIController(model, view);
+        new GUIController(model, view);
+      }
+    });
+        
 
     }
 
