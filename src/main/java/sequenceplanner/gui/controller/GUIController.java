@@ -34,6 +34,7 @@ public class GUIController {
     //Instances of the model and view.
     private GUIModel guiModel;
     private GUIView guiView;
+
     // Filefilter for the project
     private static final FileFilter filter = new FileFilter() {
 
@@ -51,6 +52,8 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
+      //  guiModel.createNewOpView();
+      //  addNewOpTab();
         addListeners();
 
 

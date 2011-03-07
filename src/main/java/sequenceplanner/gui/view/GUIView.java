@@ -4,7 +4,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -51,12 +50,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private RootWindow rootWindow;
     private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
     private ViewMap opViewMap = new ViewMap();
-
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
     private RootWindow treeRoot;
     private RootWindow editorRoot;
     private RootWindow objectRoot;
-
     private EventListenerList listeners;
     private TabWindow tab1;// = new TabWindow();
     private TabWindow tab2 = new TabWindow();
@@ -64,9 +61,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View objectMenu;
     private EditorView editorView;
     private PropertyView propertyView;
-
     private OperationView selectedOperationView;
-
+    private int opViewIndex;
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -118,15 +114,24 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
         treeRoot = DockingUtil.createRootWindow(rootViewMap, false);
 
-        opRootWindow = DockingUtil.createRootWindow(rootViewMap, true);
+        opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
         editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
 
-        opRootWindow.setWindow(mainDocks = new TabWindow(new View(guiModel.getOperationViews().getFirst().toString(),null, guiModel.getOperationViews().getFirst())));
-        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null , new TreeView(guiModel.getModel()))));
+        propertyView = new PropertyView(guiModel.getGlobalProperties());
+
+        opViewIndex++;
+        opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
+        opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
+        guiModel.getOperationViews().getFirst().addmxIEventListener(this);
+        selectedOperationView = guiModel.getOperationViews().getFirst();
+        propertyView.setOpView(guiModel.getOperationViews().getFirst());
+
+        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, new TreeView(guiModel.getModel()))));
         editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
+
 
         rootWindow.setWindow(
                 new SplitWindow(true, 0.15f, treeRoot,
@@ -134,44 +139,44 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))));
         this.getContentPane().add(rootWindow);
 
-       // treeRoot.add(tab1);
-   //     objectRoot.add(tab2);
-      //  editorRoot.add(tab3);
+        // treeRoot.add(tab1);
+        //     objectRoot.add(tab2);
+        //  editorRoot.add(tab3);
 
 
 //Test (adding save button to object attribute window) should be cleaned up!!!!
-        
+
         JPanel objectView = new JPanel();
         JButton saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
-        saveButton.addActionListener(new ActionListener(){
+        saveButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 propertyView.saveSettings();
             }
-
         });
         objectView.add(saveButton);
         objectMenu = new View("Object attribute view", null, objectView);
         objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2));
 //--------------------
-        
-        propertyView = new PropertyView(guiModel.getGlobalProperties());
-        
-        
-       // tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
+
+
+
+        // tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
         tab2.addTab(new View("Property view", null, propertyView));
-       // tab3.addTab(new View("Editor view", null, editorView));
+        // tab3.addTab(new View("Editor view", null, editorView));
 
     }
 
-    public void closeAllViews(){
+    public void closeAllViews() {
         mainDocks = new TabWindow();
     }
+
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-    public void updatePropertyView(){
+
+    public void updatePropertyView() {
         propertyView.updateTree();
     }
     /**
@@ -289,7 +294,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         save.addActionListener(l);
     }
 
-    public void addSaveAsL(ActionListener l){
+    public void addSaveAsL(ActionListener l) {
         saveAs.addActionListener(l);
     }
 
@@ -333,11 +338,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         efaForMP.addActionListener(l);
     }
 
-    public void addEditorListener(){
+    public void addEditorListener() {
         editorView.addMouseListener(new EditorMouseAdapter(editorView.getTree(), guiModel.getGlobalProperties()));
     }
 
-    public void addTreeModelListener(TreeModelListener l){
+    public void addTreeModelListener(TreeModelListener l) {
         guiModel.addTreeModelListener(l);
     }
 //End listeners
@@ -352,27 +357,38 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         return new PreferencePane();
     }
 
+    /**
+     * Adds a new tab to the opViewWindow and opViewMap.
+     * @param name      name of the tab
+     * @param opView    operationview to be shown in the TabWindow
+     */
     public void addNewOpTab(String name, OperationView opView) {
+
+//Should not be done here..
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
-//Should not be done here..
         propertyView.setOpView(opView);
 //-----
-        Component comp = (Component) opView;
-        mainDocks.addTab(new View(name , null, comp));
 
+        opViewIndex++;
+        View newView = new View(name,null,opView);
+        opViewMap.addView(opViewIndex, newView);
+
+        if (mainDocks.getChildWindowCount() == 0) {
+            opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
+        } else {
+            mainDocks.addTab(newView);
+        }
     }
 
     public void addResourceView() {
-        mainDocks.addTab(new View(guiModel.getResourceView().getName(),null,guiModel.getResourceView()));
+        mainDocks.addTab(new View(guiModel.getResourceView().getName(), null, guiModel.getResourceView()));
     }
 
-      @Override
-   public void invoke(Object source, mxEventObject evt) {
+    @Override
+    public void invoke(Object source, mxEventObject evt) {
 
-     propertyView.setOperation();
+        propertyView.setOperation();
 
-   }
-
-   
+    }
 }
