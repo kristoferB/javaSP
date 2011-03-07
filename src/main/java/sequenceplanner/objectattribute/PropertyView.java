@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.editor.IGlobalProperty;
@@ -50,19 +51,19 @@ public class PropertyView extends JScrollPane {
      *
      */
     public void updateTree(){
-        int noProperties = model.getChildCount(model.getRoot());
         Object root = model.getRoot();
-        Vector[] properties = new Vector[noProperties];
+        int noProperties = model.getChildCount(root);
+        UniqueVector[] properties = new UniqueVector[noProperties];
         IGlobalProperty p;
 
         for(int i = 0; i < noProperties; i++){
             p = (IGlobalProperty) model.getChild(root, i);
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
             for(int j = 0; j < model.getChildCount(p); j++){
-//check if value is chosen for current operation
-            values[j] = new CheckBoxNode(p.getValue(j).getName(), false);
+//check if value is chosen for current operation (if operation is chosen)
+            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), false);
             }
-            properties[i] = new NamedVector(p.getName(), values);
+            properties[i] = new UniqueVector(p.getName(), p.getId(), values);
         }
 
         Vector rootVector = new NamedVector("Root", properties);
@@ -104,6 +105,26 @@ public class PropertyView extends JScrollPane {
             SPGraph graph = currentOpView.getGraph();
             OperationData d = (OperationData) graph.getModel().getValue(currentOperation);
             System.out.println("Save settings to: " + d.getName());
+
+            TreeModel mod = tree.getModel();
+            Object root = mod.getRoot();
+            int noProperties = mod.getChildCount(root);
+            DefaultMutableTreeNode o;
+
+            for(int i = 0; i < noProperties; i++){               
+                o = (DefaultMutableTreeNode) mod.getChild(root, i);
+                System.out.println("test");
+                if(o.getUserObject() instanceof UniqueVector){
+                    UniqueVector property = (UniqueVector) o.getUserObject();
+                    System.out.println("Property: " + property);
+                    for(int j = 0; j < property.size(); j++){
+                        //kolla om value är set
+                        //spara till model (pid, vid)
+                        System.out.println("Value: " + property.get(j));
+                    }
+                }
+            }
+
         }
     }
 
@@ -115,14 +136,14 @@ public class PropertyView extends JScrollPane {
 
 
 class CheckBoxNodeRenderer implements TreeCellRenderer {
-  private JCheckBox leafRenderer = new JCheckBox();
+  private UniqueCheckBox leafRenderer = new UniqueCheckBox();
 
   private DefaultTreeCellRenderer nonLeafRenderer = new DefaultTreeCellRenderer();
 
   Color selectionBorderColor, selectionForeground, selectionBackground,
       textForeground, textBackground;
 
-  protected JCheckBox getLeafRenderer() {
+  protected UniqueCheckBox getLeafRenderer() {
     return leafRenderer;
   }
 
@@ -171,6 +192,7 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
         if (userObject instanceof CheckBoxNode) {
           CheckBoxNode node = (CheckBoxNode) userObject;
           leafRenderer.setText(node.getText());
+          leafRenderer.setId(node.getId());
           leafRenderer.setSelected(node.isSelected());
         }
       }
@@ -199,9 +221,8 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
     @Override
   public Object getCellEditorValue() {
-    JCheckBox checkbox = renderer.getLeafRenderer();
-    CheckBoxNode checkBoxNode = new CheckBoxNode(checkbox.getText(),
-        checkbox.isSelected());
+    UniqueCheckBox checkbox = renderer.getLeafRenderer();
+    CheckBoxNode checkBoxNode = new CheckBoxNode(checkbox.getText(), checkbox.getId(), checkbox.isSelected());
     return checkBoxNode;
   }
 
@@ -253,9 +274,9 @@ class CheckBoxNode {
   int id;
   boolean selected;
 
-  public CheckBoxNode(String text, boolean selected) { //int id, boolean selected) {
+  public CheckBoxNode(String text, int id, boolean selected) {
     this.text = text;
-//    this.id = id;
+    this.id = id;
     this.selected = selected;
   }
 
@@ -274,11 +295,11 @@ class CheckBoxNode {
   public void setText(String newValue) {
     text = newValue;
   }
-/*
+
   public int getId(){
     return id;
   }
- */
+ 
 
   @Override
   public String toString() {
@@ -293,7 +314,7 @@ class NamedVector extends Vector {
     this.name = name;
   }
 
-  public NamedVector(String name, Object elements[]) {
+  public NamedVector(String name, Object[] elements) {
     this.name = name;
     for (int i = 0, n = elements.length; i < n; i++) {
       add(elements[i]);
@@ -304,4 +325,35 @@ class NamedVector extends Vector {
   public String toString() {
     return name;
   }
+}
+
+class UniqueVector extends NamedVector{
+    private int id;
+
+    public UniqueVector(String name, int id, Object[] elements) {
+        super(name, elements);
+        this.id = id;
+    }
+}
+
+class UniqueCheckBox extends JCheckBox{
+    private int id;
+
+    public UniqueCheckBox(){
+        super();
+    }
+
+    public UniqueCheckBox(String name, int id, boolean selected){
+        super(name, selected);
+        this.id = id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
+    }
+
 }
