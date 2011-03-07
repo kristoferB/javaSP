@@ -13,6 +13,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTree;
 import javax.swing.UIManager;
+import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -20,6 +21,7 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.editor.IGlobalProperty;
 import sequenceplanner.model.data.OperationData;
@@ -28,21 +30,27 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
- * View for setting properties for operations.
+ * View for setting properties for operations. Is located in the Object attribute view in SP
  *
  * @author Evelina
  */
-public class PropertyView extends JScrollPane {
-    
+public class PropertyView extends JScrollPane implements CellEditorListener {
+
+    //The treeModel for the global properties created in Editor view
     EditorTreeModel model;
+    //The tree for properties in Object attribute view
     JTree tree;
+    //True if a operation is selected in a SOP-view
     Boolean operationIsChosen;
     Cell currentOperation;
     OperationView currentOpView;
+    CheckBoxNodeEditor nodeEditor;
 
     public PropertyView(EditorTreeModel m){
         model = m;
         operationIsChosen = false;
+        nodeEditor = new CheckBoxNodeEditor();
+        nodeEditor.addCellEditorListener(this);
         updateTree();
     }
 
@@ -60,8 +68,15 @@ public class PropertyView extends JScrollPane {
             p = (IGlobalProperty) model.getChild(root, i);
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
             for(int j = 0; j < model.getChildCount(p); j++){
-//check if value is chosen for current operation (if operation is chosen)
-            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), false);
+                boolean selected = false;
+
+                if(operationIsChosen){
+                    SPGraph graph = currentOpView.getGraph();
+                    OperationData d = (OperationData) graph.getModel().getValue(currentOperation);
+  //check if value is chosen for current operation
+                }
+
+            values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), selected);
             }
             properties[i] = new UniqueVector(p.getName(), p.getId(), values);
         }
@@ -75,10 +90,11 @@ public class PropertyView extends JScrollPane {
 
         CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
         tree.setCellRenderer(renderer);
-
-        tree.setCellEditor(new CheckBoxNodeEditor(tree));
+        nodeEditor.setTree(tree);
+        tree.setCellEditor(nodeEditor);
         tree.setEditable(true);
         setViewportView(tree);
+
     }
 
     public void setOperation(){
@@ -104,31 +120,78 @@ public class PropertyView extends JScrollPane {
         if(operationIsChosen){
             SPGraph graph = currentOpView.getGraph();
             OperationData d = (OperationData) graph.getModel().getValue(currentOperation);
-            System.out.println("Save settings to: " + d.getName());
 
             TreeModel mod = tree.getModel();
             Object root = mod.getRoot();
             int noProperties = mod.getChildCount(root);
             DefaultMutableTreeNode o;
 
+            //For each property, check if any value is set (and thereby also the property is set)
             for(int i = 0; i < noProperties; i++){               
                 o = (DefaultMutableTreeNode) mod.getChild(root, i);
                 if(o.getUserObject() instanceof UniqueVector){
                     UniqueVector property = (UniqueVector) o.getUserObject();
-                    System.out.println("Property: " + property);
+
+                    boolean propertySelected = false;
+                    boolean valueSelected = false;
+                    //For each value
                     for(int j = 0; j < property.size(); j++){
-                        //kolla om value är set
-                        //spara till model (pid, vid)
-                        System.out.println("Value: " + property.get(j));
+                        if(property.get(j) instanceof CheckBoxNode){
+                            CheckBoxNode node = (CheckBoxNode) property.get(j);                        
+                            if(node.isSelected()){
+                                valueSelected = true;
+                                if(!propertySelected){
+                                    propertySelected = true;
+                                }
+                            }
+                            //Save to operation
+                            d.savePropertySetting(node.getId(), valueSelected);
+                            System.out.println(node.getId() +", " + valueSelected);
+                        }
                     }
+                    d.savePropertySetting(property.getId(), propertySelected);
+                    System.out.println(property.getId() +", " + propertySelected);
                 }
             }
-
+            graph.setValue(currentOperation, d);
+            System.out.println ("Saved to operation " + d.getName() + ": " + d.getPropertySettings());
         }
     }
 
     public void clear(){
         //not supported yet
+    }
+
+    @Override
+    public void editingStopped(ChangeEvent e) {
+        Object o = tree.getCellEditor().getCellEditorValue();
+        if(o instanceof CheckBoxNode){
+            CheckBoxNode lastUpdatedNode = (CheckBoxNode) o;
+
+            TreeModel mod = tree.getModel();
+            Object root = mod.getRoot();
+            int noProperties = mod.getChildCount(root);
+            DefaultMutableTreeNode propertyNode;
+
+            for(int i = 0; i < noProperties; i++){
+                propertyNode = (DefaultMutableTreeNode) mod.getChild(root, i);
+                if(propertyNode.getUserObject() instanceof UniqueVector){
+                    UniqueVector property = (UniqueVector) propertyNode.getUserObject();
+                    for(int j = 0; j < property.size(); j++){
+                        CheckBoxNode node = (CheckBoxNode) property.get(j);
+                        if(lastUpdatedNode.getId() == node.getId()){
+                            node.setSelected(lastUpdatedNode.isSelected());
+                            System.out.println(node.getText() + " got set to " + lastUpdatedNode.isSelected());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void editingCanceled(ChangeEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
@@ -166,7 +229,7 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
           boolean expanded, boolean leaf, int row, boolean hasFocus) {
-
+     
     Component returnValue;
     if (leaf) {
 
@@ -186,8 +249,7 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
 
 
       if ((value != null) && (value instanceof DefaultMutableTreeNode)) {
-        Object userObject = ((DefaultMutableTreeNode) value)
-            .getUserObject();
+        Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
         if (userObject instanceof CheckBoxNode) {
           CheckBoxNode node = (CheckBoxNode) userObject;
           leafRenderer.setText(node.getText());
@@ -214,7 +276,15 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
   JTree tree;
 
+  public CheckBoxNodeEditor(){
+
+  }
+
   public CheckBoxNodeEditor(JTree tree) {
+    this.tree = tree;
+  }
+
+  public void setTree(JTree tree){
     this.tree = tree;
   }
 
@@ -251,14 +321,13 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
     Component editor = renderer.getTreeCellRendererComponent(tree, value,
         true, expanded, leaf, row, true);
 
-    // editor always selected / focused
     ItemListener itemListener = new ItemListener() {
             @Override
-      public void itemStateChanged(ItemEvent itemEvent) {
-        if (stopCellEditing()) {
-          fireEditingStopped();
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if (stopCellEditing()) {
+            //    fireEditingStopped();
+            }
         }
-      }
     };
     if (editor instanceof UniqueCheckBox) {
       ((UniqueCheckBox) editor).addItemListener(itemListener);
@@ -332,6 +401,10 @@ class UniqueVector extends NamedVector{
     public UniqueVector(String name, int id, Object[] elements) {
         super(name, elements);
         this.id = id;
+    }
+
+    public int getId(){
+        return id;
     }
 }
 
