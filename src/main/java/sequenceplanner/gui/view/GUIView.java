@@ -139,11 +139,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))));
         this.getContentPane().add(rootWindow);
 
-        // treeRoot.add(tab1);
-        //     objectRoot.add(tab2);
-        //  editorRoot.add(tab3);
-
-
 //Test (adding save button to object attribute window) should be cleaned up!!!!
 
         JPanel objectView = new JPanel();
@@ -160,11 +155,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2));
 //--------------------
 
-
-
-        // tab1.addTab(new View("Tree view", null , new TreeView(guiModel.getModel())));
         tab2.addTab(new View("Property view", null, propertyView));
-        // tab3.addTab(new View("Editor view", null, editorView));
 
     }
 
