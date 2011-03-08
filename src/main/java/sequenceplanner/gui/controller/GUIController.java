@@ -1,6 +1,5 @@
 package sequenceplanner.gui.controller;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -12,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileFilter;
+import sequenceplanner.editor.EditorMouseAdapter;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -78,8 +78,9 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
-        guiView.addEditorListener();
+        guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
+        guiView.addSavePropViewL(new SavePropViewListener());
     }
     //Listener classes
 
@@ -126,13 +127,10 @@ public class GUIController {
     }
 
     class AddAllListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.addAllOperations();
             addNewOpTab();
-
-
         }
     }
     //Project menu listeners
@@ -265,6 +263,14 @@ public class GUIController {
         public void treeStructureChanged(TreeModelEvent e) {
             guiView.updatePropertyView();
         }
+
+    }
+
+    class SavePropViewListener implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guiView.getPropertyView().saveSettings();
+            }
 
     }
 

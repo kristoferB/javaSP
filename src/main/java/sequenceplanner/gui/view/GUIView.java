@@ -9,6 +9,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,6 +18,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 
@@ -54,15 +57,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private RootWindow treeRoot;
     private RootWindow editorRoot;
     private RootWindow objectRoot;
+    private RootWindow consoleRoot;
     private EventListenerList listeners;
     private TabWindow tab1;// = new TabWindow();
-    private TabWindow tab2 = new TabWindow();
+    private TabWindow tab2;// = new TabWindow();
     private TabWindow tab3;// = new TabWindow();
     private View objectMenu;
     private EditorView editorView;
     private PropertyView propertyView;
     private OperationView selectedOperationView;
     private int opViewIndex;
+    private JTextArea console;
+    private JButton saveButton;
+
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -86,6 +93,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         createRootWindow();
 
         this.setVisible(true);
+        setExtendedState(MAXIMIZED_BOTH);
 
     }
 
@@ -108,8 +116,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      */
     private void createRootWindow() {
         //Work in progress...
-        //First view
-        //addNewOpTab();
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
         treeRoot = DockingUtil.createRootWindow(rootViewMap, false);
@@ -117,11 +123,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
         editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        consoleRoot = DockingUtil.createRootWindow(rootViewMap, true);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
 
         propertyView = new PropertyView(guiModel.getGlobalProperties());
 
+        //Create first opview
         opViewIndex++;
         opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
         opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
@@ -129,34 +137,31 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         selectedOperationView = guiModel.getOperationViews().getFirst();
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
 
+        consoleRoot.setWindow(new View("console", null, console = new JTextArea()));
         treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, new TreeView(guiModel.getModel()))));
         editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
 
 
+        //Set window starting layout. Should perhaps be moved to a default layout object.
         rootWindow.setWindow(
+                new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
                 new SplitWindow(true, 0.15f, treeRoot,
                 new SplitWindow(true, 0.7f, opRootWindow,
-                new SplitWindow(false, 0.5f, objectRoot, editorRoot))));
+                new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
+                consoleRoot));
         this.getContentPane().add(rootWindow);
 
 //Test (adding save button to object attribute window) should be cleaned up!!!!
 
         JPanel objectView = new JPanel();
-        JButton saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
-        saveButton.addActionListener(new ActionListener() {
+        saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                propertyView.saveSettings();
-            }
-        });
         objectView.add(saveButton);
         objectMenu = new View("Object attribute view", null, objectView);
-        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2));
+        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2 = new TabWindow(new View("Property view", null, propertyView))));
 //--------------------
 
-        tab2.addTab(new View("Property view", null, propertyView));
-
+        printToConsole("Welcome to SP 2.0");
     }
 
     public void closeAllViews() {
@@ -329,12 +334,16 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         efaForMP.addActionListener(l);
     }
 
-    public void addEditorListener() {
-        editorView.addMouseListener(new EditorMouseAdapter(editorView.getTree(), guiModel.getGlobalProperties()));
+    public void addEditorListener(MouseListener l) {
+        editorView.addMouseListener(l);
     }
 
     public void addTreeModelListener(TreeModelListener l) {
         guiModel.addTreeModelListener(l);
+    }
+
+    public void addSavePropViewL(ActionListener l) {
+        saveButton.addActionListener(l);
     }
 //End listeners
 
@@ -362,7 +371,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 //-----
 
         opViewIndex++;
-        View newView = new View(name,null,opView);
+        View newView = new View(name, null, opView);
         opViewMap.addView(opViewIndex, newView);
 
         if (mainDocks.getChildWindowCount() == 0) {
@@ -380,5 +389,17 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void invoke(Object source, mxEventObject evt) {
         propertyView.setOperation();
 
+    }
+
+    public void printToConsole(String text) {
+        console.append(text + "\n");
+    }
+
+    public EditorView getEditorView() {
+        return editorView;
+    }
+
+    public PropertyView getPropertyView(){
+        return propertyView;
     }
 }
