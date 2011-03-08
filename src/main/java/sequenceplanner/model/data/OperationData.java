@@ -55,8 +55,8 @@ public class OperationData extends Data {
    //Actions
    LinkedList<Action> actions;
 
-   //Properties
-   LinkedList<PropertySetting> propertySettings;
+   //Properties (Key = id, value = selected for operation)
+   HashMap<Integer, Boolean> propertySettings;
 
    public OperationData(String name, int id) {
       super(name, id);
@@ -77,7 +77,7 @@ public class OperationData extends Data {
       actions = new LinkedList<Action>();
 
       //Properties
-      propertySettings = new LinkedList<PropertySetting>();
+      propertySettings = new HashMap<Integer, Boolean>();
    }
 
    private void setValue(String key, String value) {
@@ -226,7 +226,16 @@ public class OperationData extends Data {
    }
 
    //TO HANDLE PROPERTY SETTINGS
-   public int[] getPropertyValues(){
+
+   public void savePropertySetting(int id, boolean selected){
+        propertySettings.put(Integer.valueOf(id), Boolean.valueOf(selected));
+   }
+
+   public HashMap<Integer, Boolean> getPropertySettings(){
+        return propertySettings;
+   }
+
+/*   public int[] getPropertyValues(){
       int [] valueIds = new int[propertySettings.size()];
       for(int i = 0; i < propertySettings.size(); i++){
         valueIds[i] = propertySettings.get(i).getValueId();
@@ -268,11 +277,11 @@ public class OperationData extends Data {
       }
    }
 
-   public void addPropertySetting(int propertyId, int valueId){
+   public void addPropertySetting(int propertyId, int valueId, boolean selected){
       //Check if the property is already set first
-      propertySettings.add(new PropertySetting(propertyId, valueId));
+      propertySettings.add(new PropertySetting(propertyId, valueId, selected));
    }
-
+*/
    public boolean isSequence(int id) {
 
       for (LinkedList<SeqCond> linkedList : sequenceCondition) {
@@ -943,14 +952,16 @@ public class OperationData extends Data {
          return new Action(id, state, value);
       }
    }
-
+/*
    private class PropertySetting {
       private int propertyId;
       private int valueId;
+      private boolean selected;
 
-      public PropertySetting(int pId, int vId){
+      public PropertySetting(int pId, int vId, boolean sel){
         propertyId = pId;
         valueId = vId;
+        selected = sel;
       }
 
       public int getPropertyId(){
@@ -960,7 +971,11 @@ public class OperationData extends Data {
       public int getValueId(){
         return valueId;
       }
-   }
 
+      public boolean isSelected(){
+        return selected;
+      }
+   }
+*/
 }
 

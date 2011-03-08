@@ -378,7 +378,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     @Override
     public void invoke(Object source, mxEventObject evt) {
-
         propertyView.setOperation();
 
     }
