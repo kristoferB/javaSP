@@ -65,7 +65,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
-        assertTrue(guiController.openModel(new File(nameOfFile)));
+        assertTrue(guiModel.openModel(new File(nameOfFile)));
     }
 
     /**
@@ -81,7 +81,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void saveToSOPXFile(String nameOfFile) {
-        assertTrue(guiController.saveModelToFile(nameOfFile) instanceof File);
+        assertTrue(guiModel.saveModelToFile(nameOfFile) instanceof File);
     }
 
     /**

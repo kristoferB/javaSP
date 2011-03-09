@@ -7,10 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,7 +18,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 
@@ -32,11 +29,10 @@ import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
 import sequenceplanner.SequencePlanner;
-import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
 
@@ -74,6 +70,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
+        createRootWindow();
+        setStartingWindowsProperties();
     }
 
     /**
@@ -90,8 +88,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         setLocation(getEnvBounds().x, getEnvBounds().y);
         setSize(getEnvBounds().width, getEnvBounds().height);
         setLayout(new BorderLayout());
-
-        createRootWindow();
 
         this.setVisible(true);
         setExtendedState(MAXIMIZED_BOTH);
@@ -142,7 +138,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, new TreeView(guiModel.getModel()))));
         editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
 
-
         //Set window starting layout. Should perhaps be moved to a default layout object.
         rootWindow.setWindow(
                 new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
@@ -165,6 +160,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         printToConsole("Welcome to SP 2.0");
     }
 
+    private void setStartingWindowsProperties(){
+        rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
+        mainDocks.getWindowProperties().setDragEnabled(false);
+    }
     public void closeAllViews() {
         mainDocks = new TabWindow();
     }
@@ -393,7 +392,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void printToConsole(String text) {
-        console.append(text + "\n");
+        console.insert(text + "\n", 0);
     }
 
     public EditorView getEditorView() {

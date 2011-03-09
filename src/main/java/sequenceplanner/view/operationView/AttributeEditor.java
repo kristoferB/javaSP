@@ -22,7 +22,7 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 
 /**
  *
