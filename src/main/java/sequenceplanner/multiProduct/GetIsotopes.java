@@ -128,7 +128,7 @@ public class GetIsotopes {
 
         mOpRoot.getUnitTypeSet("source", returnSet, new HashSet<String>());
         for (final UnitTypeWrapper ut : returnSet) {
-            if (ut.mName.equals("inn")) {
+            if (ut.mName.equals("out")) {
                 return false;
             }
         }
@@ -136,7 +136,7 @@ public class GetIsotopes {
         returnSet.clear();
         mOpRoot.getUnitTypeSet("dest", returnSet, new HashSet<String>());
         for (final UnitTypeWrapper ut : returnSet) {
-            if (ut.mName.equals("out")) {
+            if (ut.mName.equals("inn")) {
                 return false;
             }
         }
