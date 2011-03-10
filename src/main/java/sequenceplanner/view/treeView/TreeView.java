@@ -24,7 +24,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeCellEditor;
@@ -34,8 +33,6 @@ import javax.swing.tree.TreePath;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
-import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.operationView.Editors;
 

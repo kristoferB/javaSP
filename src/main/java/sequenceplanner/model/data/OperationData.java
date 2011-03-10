@@ -557,6 +557,7 @@ public class OperationData extends Data {
     * Clone everything except id that is set to -1.
     * @return
     */
+    @Override
    public Object clone() {
       OperationData ret = new OperationData(this.getName(), getId());
 

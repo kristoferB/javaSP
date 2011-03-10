@@ -9,6 +9,7 @@ import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.treeView.TreeViewController;
 
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
@@ -22,9 +23,14 @@ public class GUIController {
     private GUIModel guiModel;
     private GUIView guiView;
 
+    //TreeviewListener
+    private TreeViewController treeViewController;
+
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
+
+        treeViewController = new TreeViewController(this, guiView.getTreeView());
       //  guiModel.createNewOpView();
       //  addNewOpTab();
         addListeners();
@@ -62,12 +68,9 @@ public class GUIController {
          guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
     }
 
-    public void addNewOpTab(int id) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     public void addNewOpTab(ViewData data){
-        ;
+        
+        guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
     }
 
     //File menu listenrs
@@ -232,7 +235,6 @@ public class GUIController {
         @Override
         public void treeNodesInserted(TreeModelEvent e) {
             guiView.updatePropertyView();
-        //    e.
         }
 
         @Override

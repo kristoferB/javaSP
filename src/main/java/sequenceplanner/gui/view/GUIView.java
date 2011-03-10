@@ -61,6 +61,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private TabWindow tab3;// = new TabWindow();
     private View objectMenu;
     private EditorView editorView;
+    private TreeView treeView;
+
+    public TreeView getTreeView() {
+        return treeView;
+    }
     private PropertyView propertyView;
     private OperationView selectedOperationView;
     private int opViewIndex;
@@ -123,6 +128,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         consoleRoot = DockingUtil.createRootWindow(rootViewMap, true);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
+        treeView = new TreeView(guiModel.getModel());
 
         propertyView = new PropertyView(guiModel.getGlobalProperties());
 
@@ -135,7 +141,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
 
         consoleRoot.setWindow(new View("console", null, console = new JTextArea()));
-        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, new TreeView(guiModel.getModel()))));
+        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, treeView)));
         editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
 
         //Set window starting layout. Should perhaps be moved to a default layout object.

@@ -112,13 +112,12 @@ public class GUIModel {
                 ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
                 removeAllOpViews();
 
-                if(operationViews.size() == 0){
-                toOpen.setName("OperationView 1");
-                createNewOpView(toOpen);
-                }
-                else{
-                toOpen.setName("OperationView " + operationViews.size());
-                createNewOpView(toOpen);
+                if (operationViews.size() == 0) {
+                    toOpen.setName("OperationView 1");
+                    createNewOpView(toOpen);
+                } else {
+                    toOpen.setName("OperationView " + operationViews.size());
+                    createNewOpView(toOpen);
                 }
 
 
@@ -240,4 +239,15 @@ public class GUIModel {
             throw new RuntimeException(e);
         }
     }
+
+    public OperationView getOperationViews(ViewData data) {
+        for (OperationView op : operationViews) {
+            if (op.getName() == null ? data.getName() == null : op.getName().equals(data.getName())) {
+                return op;
+            }
+        }
+        return new OperationView(this.model, data.getName());
+    }
+
+
 }
