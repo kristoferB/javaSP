@@ -338,6 +338,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         editorView.addMouseListener(l);
     }
 
+    //Call the view to add a listener to the model? oO
     public void addTreeModelListener(TreeModelListener l) {
         guiModel.addTreeModelListener(l);
     }

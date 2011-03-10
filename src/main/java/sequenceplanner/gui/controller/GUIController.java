@@ -2,13 +2,13 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import sequenceplanner.editor.EditorMouseAdapter;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.model.data.ViewData;
 
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
@@ -60,6 +60,14 @@ public class GUIController {
     //private methods
     private void addNewOpTab(){
          guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+    }
+
+    public void addNewOpTab(int id) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void addNewOpTab(ViewData data){
+        ;
     }
 
     //File menu listenrs
@@ -136,7 +144,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
     //Convert menu listeners
@@ -145,7 +153,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -153,7 +161,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -161,7 +169,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -169,7 +177,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -177,7 +185,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -186,7 +194,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -194,7 +202,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -202,7 +210,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -210,7 +218,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
