@@ -127,10 +127,6 @@ public class TreeView extends AbstractView {
 
                     @Override
                     public void keyReleased(KeyEvent e) {
-
-
-
-
                         if (e.getKeyCode() == KeyEvent.VK_F2) {
                             tree.startEditingAtPath(tree.getSelectionPath());
                         }

@@ -56,6 +56,11 @@ public class GUIModel {
         operationViews.addLast(new OperationView(this.model, "Opereration view " + (operationViews.size() + 1)));
     }
 
+
+    public void createNewOpView(ViewData toOpen) {
+        operationViews.addLast(new OperationView(this.model, toOpen));
+    }
+    
     public void createNewReView() {
         resourceView = new ResourceView(this.model, this.model.getResourceRoot(), "Resource view");
 
@@ -85,10 +90,6 @@ public class GUIModel {
 
     public ResourceView getResourceView() {
         return resourceView;
-    }
-
-    public void createNewOpView(ViewData toOpen) {
-        operationViews.addLast(new OperationView(this.model, toOpen));
     }
 
     public void setModel(Model model) {
@@ -150,6 +151,8 @@ public class GUIModel {
 
         return true;
     }
+
+
 
     public boolean saveModel(boolean saveAs) {
 
@@ -242,7 +245,7 @@ public class GUIModel {
                 return op;
             }
         }
-        return new OperationView(this.model, data.getName());
+        return new OperationView(this.model, data);
     }
 
 

@@ -9,6 +9,7 @@ import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeViewController;
 
 /**
@@ -72,7 +73,9 @@ public class GUIController {
         guiView.printToConsole(text);
     }
     public void addNewOpTab(ViewData data){
-        
+        for(OperationView op : guiModel.getOperationViews()){
+            System.out.println(op.getName());
+        }
         guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
     }
 
