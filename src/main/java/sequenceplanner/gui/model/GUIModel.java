@@ -104,19 +104,20 @@ public class GUIModel {
 
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
+                removeAllOpViews();
 
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());
             getModel().reloadNamesCache();
             try {
+
                 ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
-                removeAllOpViews();
 
                 if (operationViews.size() == 0) {
-                    toOpen.setName("OperationView 1");
                     createNewOpView(toOpen);
+                    System.out.println(model.toString());
+
                 } else {
-                    toOpen.setName("OperationView " + operationViews.size());
                     createNewOpView(toOpen);
                 }
 

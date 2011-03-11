@@ -176,7 +176,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
 
+    /**
+     * Empties the opViewMap and removes all tabs from mainDocks.
+     */
     public void closeAllViews() {
+        for(int i = 1; opViewMap.getViewCount() != 0; i++)
+            opViewMap.removeView(i);
         mainDocks = new TabWindow();
     }
 
@@ -216,7 +221,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Update model after transport planning
      *      EFA for MP supervisor
      *
-     * @author qw4z1
      */
     private JMenu fileMenu, edit, project, convert, mp;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
