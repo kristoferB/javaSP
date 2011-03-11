@@ -68,6 +68,9 @@ public class GUIController {
          guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
     }
 
+    public void printToConsole(String text){
+        guiView.printToConsole(text);
+    }
     public void addNewOpTab(ViewData data){
         
         guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
@@ -266,6 +269,7 @@ public class GUIController {
             addNewOpTab();
 
         }
+        printToConsole("new model opened!");
     }
 
 

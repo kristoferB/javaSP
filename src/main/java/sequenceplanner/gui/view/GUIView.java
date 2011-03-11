@@ -17,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
@@ -140,7 +141,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         selectedOperationView = guiModel.getOperationViews().getFirst();
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
 
-        consoleRoot.setWindow(new View("console", null, console = new JTextArea()));
+        consoleRoot.setWindow(new View("console", null, new JScrollPane(console = new JTextArea())));
         treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, treeView)));
         editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
 
@@ -166,10 +167,15 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         printToConsole("Welcome to SP 2.0");
     }
 
-    private void setStartingWindowsProperties(){
-        rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
-        mainDocks.getWindowProperties().setDragEnabled(false);
+    private void setStartingWindowsProperties() {
+
+        rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(false);
+        rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
+        
+        //  rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
+        //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
+
     public void closeAllViews() {
         mainDocks = new TabWindow();
     }
@@ -399,14 +405,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void printToConsole(String text) {
-        console.insert(text + "\n", 0);
+        console.append(text + "\n");
     }
 
     public EditorView getEditorView() {
         return editorView;
     }
 
-    public PropertyView getPropertyView(){
+    public PropertyView getPropertyView() {
         return propertyView;
     }
 }
