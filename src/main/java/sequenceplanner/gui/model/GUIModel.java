@@ -112,16 +112,11 @@ public class GUIModel {
             try {
 
                 ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
-
                 if (operationViews.size() == 0) {
                     createNewOpView(toOpen);
-                    System.out.println(model.toString());
-
                 } else {
                     createNewOpView(toOpen);
                 }
-
-
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");
             }
