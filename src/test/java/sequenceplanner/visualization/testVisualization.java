@@ -2,9 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package sequenceplanner.visualization;
 
+import java.util.Set;
+import sequenceplanner.efaconverter.ModelParser;
+import sequenceplanner.efaconverter.OpNode;
+import sequenceplanner.efaconverter.OperationSequencer;
+import sequenceplanner.efaconverter.convertSeqToEFA;
+import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.general.SP;
 
 /**
@@ -12,11 +17,24 @@ import sequenceplanner.general.SP;
  * @author patrik
  */
 public class testVisualization {
-    SP sp = new SP();
 
-    public void test1() {
-    sp.loadFromTemplateSOPXFile("KristoferTASEexample.sopx");
+    SP mSP = new SP();
+    ModelParser mModelparser;
+    OperationSequencer mOperationSequencer;
 
+    public testVisualization() {
     }
 
+    public void test1() {
+        mSP.loadFromTemplateSOPXFile("KristoferTASEexample.sopx");
+
+//        this.mModelparser = new ModelParser(mSP.getModel());
+//        this.mOperationSequencer = new OperationSequencer(mModelparser);
+//        Set<OpNode> tops = mOperationSequencer.sequenceOperations();
+//
+//        convertSeqToEFA seqToEFA = new convertSeqToEFA(tops, mModelparser);
+//        SpEFAutomata automata = seqToEFA.createSpEFA();
+//        seqToEFA.createWmodFile(automata);
+
+    }
 }
