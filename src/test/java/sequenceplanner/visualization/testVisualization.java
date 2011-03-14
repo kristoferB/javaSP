@@ -5,6 +5,7 @@
 package sequenceplanner.visualization;
 
 import java.util.Set;
+import org.junit.Test;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
 import sequenceplanner.efaconverter.OperationSequencer;
@@ -25,16 +26,17 @@ public class testVisualization {
     public testVisualization() {
     }
 
+    @Test
     public void test1() {
-        mSP.loadFromTemplateSOPXFile("KristoferTASEexample.sopx");
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferTASEexample.sopx");
 
-//        this.mModelparser = new ModelParser(mSP.getModel());
-//        this.mOperationSequencer = new OperationSequencer(mModelparser);
-//        Set<OpNode> tops = mOperationSequencer.sequenceOperations();
-//
-//        convertSeqToEFA seqToEFA = new convertSeqToEFA(tops, mModelparser);
-//        SpEFAutomata automata = seqToEFA.createSpEFA();
-//        seqToEFA.createWmodFile(automata);
+        this.mModelparser = new ModelParser(mSP.getModel());
+        this.mOperationSequencer = new OperationSequencer(mModelparser);
+        Set<OpNode> tops = mOperationSequencer.sequenceOperations();
+
+        convertSeqToEFA seqToEFA = new convertSeqToEFA(tops, mModelparser);
+        SpEFAutomata automata = seqToEFA.createSpEFA();
+        seqToEFA.createWmodFile(automata);
 
     }
 }
