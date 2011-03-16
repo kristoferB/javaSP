@@ -6,23 +6,28 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
+import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
 import net.sourceforge.waters.model.des.TransitionProxy;
 import net.sourceforge.waters.model.expr.EvalException;
 import net.sourceforge.waters.model.marshaller.DocumentManager;
+import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
 import net.sourceforge.waters.subject.base.AbstractSubject;
 import net.sourceforge.waters.subject.module.ModuleSubject;
+import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
 import net.sourceforge.waters.subject.module.VariableComponentSubject;
 import org.supremica.automata.*;
 import org.supremica.automata.IO.ProjectBuildFromWaters;
@@ -200,8 +205,29 @@ public class SModule {
             if (execButton == e.getSource()) {
                 generateTransitions();
                 mainFrame.dispose();
-                Calculation.saveWMODFile(getModuleSubject());
+                saveWMODFile(getModuleSubject());
             }
+        }
+    }
+
+    public static void saveWMODFile(ModuleSubject iModuleSubject) {
+        try {
+            String filepath = "";
+            JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+            int fileResult = fc.showSaveDialog(null);
+            if (fileResult == JFileChooser.APPROVE_OPTION) {
+                filepath = fc.getSelectedFile().getAbsolutePath();
+                File file = new File(filepath);
+                file.createNewFile();
+                iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));
+                ModuleSubjectFactory factory = new ModuleSubjectFactory();
+                // Save module to file
+                JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+                marshaller.marshal(iModuleSubject, file);
+            }
+
+        } catch (Exception t) {
+            t.printStackTrace();
         }
     }
 }
