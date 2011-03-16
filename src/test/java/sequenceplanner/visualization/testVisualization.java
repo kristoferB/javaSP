@@ -2,18 +2,14 @@ package sequenceplanner.visualization;
 
 import java.util.Set;
 import org.junit.Test;
-import org.supremica.automata.Automata;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
 import sequenceplanner.efaconverter.OperationSequencer;
-import sequenceplanner.efaconverter.SEFA;
-import sequenceplanner.efaconverter.SEGA;
-import sequenceplanner.efaconverter.SModule;
+import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.general.SP;
-import sequenceplanner.model.data.OperationData;
 
 /**
  *
@@ -43,40 +39,14 @@ public class testVisualization {
     
     @Test
     public void test4() {
-        SModule module = new SModule("Test4");
-        SEFA efa = new SEFA("Single", module);
-        efa.addState("pm", true, true);
-        SEGA ega;
 
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/precon.sopx");
-        mModelparser = new ModelParser(mSP.getModel());
+        VisualizationOfOperationSubset v;
+        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()));
 
-        assertTrue("Id's are not ok",module.testIDs(mModelparser));
+        assertTrue(v.run());
 
-        for (OpNode opNode : mModelparser.getOperations()) {
-            OperationData opData = (OperationData) opNode.getTreeNode().getNodeData();
-            final int id = opData.getId();
-            //Add integer variable for operation
-            final String varName = "o"+id;
-            module.addIntVariable(varName, 0, 2, 0, null);
-            //Add transition to start execute operation
-            ega = new SEGA("e"+id+"up");
-            ega.andGuard(varName+"==0");
-            ega.addGuardBasedOnSPCondition(opData.getRawPrecondition(), "o", mModelparser);
-            ega.addAction(varName+"=1");
-            efa.addStandardSelfLoopTransition(ega);
-            //Add transition to finish execute operation
-            ega = new SEGA("e"+id+"down");
-            ega.andGuard(varName+"==1");
-            ega.addGuardBasedOnSPCondition(opData.getRawPostcondition(), "o", mModelparser);
-            ega.addAction(varName+"=2");
-            efa.addStandardSelfLoopTransition(ega);
-        }
-
-        module.generateTransitions();
-        module.saveToWMODFile();
-        Automata automata = module.getDFA();
-        assertFalse(automata == null);
+        assertTrue(v.getAutomaton().nbrOfStates() == 33);
 
     }
 
