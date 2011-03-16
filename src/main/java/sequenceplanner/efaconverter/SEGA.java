@@ -30,5 +30,39 @@ public class SEGA extends EGA {
             addAction(to + "+1");
         }
     }
+
+    private String guardFromSPtoEFASyntaxTranslation(String ioGuard) {
+        //Change all _i to ==0
+        ioGuard = ioGuard.replaceAll("_i", "==0");
+        //Change all _e to ==1
+        ioGuard = ioGuard.replaceAll("_e", "==1");
+        //Change all _f to ==2
+        ioGuard = ioGuard.replaceAll("_f", "==2");
+        //Change all A to &
+        ioGuard = ioGuard.replaceAll("A", "&");
+        //Change all V to |
+        ioGuard = ioGuard.replaceAll("V", "|");
+
+        return ioGuard;
+    }
+
+    public void addGuardBasedOnSPCondition(String iCondition, String iOpVariablePrefix, ModelParser iModelParser) {
+        //Example of raw precondition 18_f A (143_iV19_f)
+
+        //add precondition to guard
+        if (!iCondition.equals("")) {
+
+            //Change all ID to ProductType_ID
+            for (OpNode opNode : iModelParser.getOperations()) {
+                iCondition = iCondition.replaceAll(opNode.getStringId(), iOpVariablePrefix + opNode.getStringId());
+            }
+
+            iCondition = guardFromSPtoEFASyntaxTranslation(iCondition);
+
+            andGuard(iCondition);
+        }
+    }
+
+
 }
 

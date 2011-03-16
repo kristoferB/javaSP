@@ -89,7 +89,7 @@ public class SModule {
         new TransitionsDialog();
     }
 
-    private ModuleSubject generateTransitions() {
+    public ModuleSubject generateTransitions() {
         for (SEFA sefa : automata) {
             for (HashMap<String, JTextArea> trans : sefa.transitions) {
                 sefa.getEFA().addTransition(trans.get(SEFA.FROM).getText(),
@@ -98,6 +98,23 @@ public class SModule {
             }
         }
         return module.getModule();
+    }
+
+    /**
+     * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118
+     * @return true if IDs are ok else false
+     */
+    public static boolean testIDs(ModelParser iModelParser) {
+        String test = "";
+
+        for (OpNode opNode : iModelParser.getOperations()) {
+            if (test.contains(opNode.getStringId())) {
+                return false;
+            } else {
+                test = test + opNode.getStringId() + "_";
+            }
+        }
+        return true;
     }
 
     /**
@@ -205,12 +222,12 @@ public class SModule {
             if (execButton == e.getSource()) {
                 generateTransitions();
                 mainFrame.dispose();
-                saveWMODFile(getModuleSubject());
+                saveToWMODFile();
             }
         }
     }
 
-    public static void saveWMODFile(ModuleSubject iModuleSubject) {
+    public void saveToWMODFile() {
         try {
             String filepath = "";
             JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
@@ -219,11 +236,11 @@ public class SModule {
                 filepath = fc.getSelectedFile().getAbsolutePath();
                 File file = new File(filepath);
                 file.createNewFile();
-                iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));
+                getModuleSubject().setName(file.getName().replaceAll(".wmod", ""));
                 ModuleSubjectFactory factory = new ModuleSubjectFactory();
                 // Save module to file
                 JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
-                marshaller.marshal(iModuleSubject, file);
+                marshaller.marshal(getModuleSubject(), file);
             }
 
         } catch (Exception t) {
