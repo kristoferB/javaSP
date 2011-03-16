@@ -104,7 +104,7 @@ public class SModule {
      * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118
      * @return true if IDs are ok else false
      */
-    public static boolean testIDs(ModelParser iModelParser) {
+    public boolean testIDs(ModelParser iModelParser) {
         String test = "";
 
         for (OpNode opNode : iModelParser.getOperations()) {
