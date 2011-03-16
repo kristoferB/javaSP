@@ -54,7 +54,7 @@ public class testVisualization {
         }
     }
 
-    @Test
+//    @Test
     public void test3() {
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/precon.sopx");
         mModelparser = new ModelParser(mSP.getModel());
@@ -64,4 +64,11 @@ public class testVisualization {
             System.out.println(" p " + opData.getRawPrecondition());
         }
     }
+    
+    @Test
+    public void test4() {
+        SpEFAutomata automata = new SpEFAutomata();
+        automata.
+    }
+
 }
