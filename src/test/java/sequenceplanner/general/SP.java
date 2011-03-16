@@ -93,13 +93,15 @@ public class SP {
     }
 
     /**
-     * Inserts a new operation as child to root of operation-tree
+     * Inserts a new operation as child to root of operation-
+     * @return the created operation as {@link OperationData}
      */
-    public void insertOperation() {
+    public OperationData insertOperation() {
         Integer idCounter = model.getCounter();
         ++idCounter;
         OperationData opData = new OperationData("OP" + idCounter, idCounter);
         model.getOperationRoot().insert(new TreeNode(opData));
         model.setCounter(idCounter);
+        return opData;
     }
 }
