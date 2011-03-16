@@ -569,7 +569,8 @@ public class ModelParser {
     }
 
    private String createOpName(OperationData od){
-       return "OP_" + Integer.toString(od.getId());
+       return od.getName();
+       //return "OP_" + Integer.toString(od.getId());
        //return od.getName().replace(' ', '_') + EFAVariables.ID_PREFIX + od.getId() + EFAVariables.COST_STRING + od.getCost();
    }
 

@@ -41,10 +41,17 @@ public class IdentifyOpRelations {
     public void identifyRelations(Model spModel){
         this.modelparser = new ModelParser(spModel);
 
+        //The modelParser should be aware of the relations to it's children.
+        //AND WHAT RELATION THAT IS NEEDED TO FINISH THE OPERATION.
+        //What to do if the last to children are in an alternative?
+        //How to get correct disjunction relation in parent.
+
         operationSequencer = new OperationSequencer(modelparser);
         Set<OpNode> tops = operationSequencer.sequenceOperations();
 
         convertSeqToEFA seqToEFA = new convertSeqToEFA(tops, modelparser);
+
+        //Look for a good and general interface to Supremica
         SpEFAutomata automata = seqToEFA.createSpEFA();
         seqToEFA.createWmodFile(automata);
 
