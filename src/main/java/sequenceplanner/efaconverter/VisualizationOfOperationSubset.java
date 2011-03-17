@@ -31,7 +31,6 @@ public class VisualizationOfOperationSubset {
     Automata mAutomata;
     Automaton mAutomaton;
     RVNodeToolbox mRVNodeToolbox;
-
     OperationView mOpView;
     SPGraph mGraph;
 
@@ -69,23 +68,32 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        //Relation identification
-        if (!relationIdentification()) {
-            System.out.println("Problem with relation identification!");
-            return false;
-        }
-
         //Create operation nodes
         if (!createOperationNodes()) {
             System.out.println("Problem with operation node creation!");
             return false;
         }
 
-        //Draw operation nodes
-        if (!drawing()) {
-            System.out.println("Problem with drawing!");
+        //Relation identification
+        if (!relationIdentification()) {
+            System.out.println("Problem with relation identification!");
             return false;
         }
+
+        for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
+            System.out.println(rvNode.mOpNode.getName());
+            for(String key : rvNode.mEventOperationLocationSetMap.keySet()) {
+                System.out.println(key);
+                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
+            }
+        }
+
+
+//        //Draw operation nodes
+//        if (!drawing()) {
+//            System.out.println("Problem with drawing!");
+//            return false;
+//        }
 
         return true;
     }
@@ -96,12 +104,12 @@ public class VisualizationOfOperationSubset {
      * @return true if drawing was ok else false
      */
     private boolean drawing() {
-        if(mOpView != null) {
+        if (mOpView != null) {
             mGraph = mOpView.getGraph();
 
             //Loop children (the operation nodes)
             for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
-                OperationData opData = new OperationData(rvNode.getOpData().getName(), 1000+rvNode.getOpData().getId());
+                OperationData opData = new OperationData(rvNode.getOpData().getName(), 1000 + rvNode.getOpData().getId());
                 mGraph.addCell(rvNode.setCell(opData));
             }
             mGraph.autoArrange((Cell) mGraph.getDefaultParent());
@@ -238,6 +246,7 @@ public class VisualizationOfOperationSubset {
 //        }
 //    }
 //
+
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
         for (OpNode opNode : mModelparser.getOperations()) {
@@ -247,24 +256,38 @@ public class VisualizationOfOperationSubset {
     }
 
     private boolean relationIdentification() {
+
+        //Init of hashmap for storage of states----------------------------------
         final int nbrOfOps = mModelparser.getOperations().size();
-        HashMap<String, Set<String>> eventStateSetMap = new HashMap<String, Set<String>>(nbrOfOps * 2);
-        initEventStateMap(eventStateSetMap);
+        mRVNodeToolbox.mEventStateSetMap = new HashMap<String, Set<String>>(nbrOfOps * 2);
+        initEventStateMap(mRVNodeToolbox.mEventStateSetMap);
+        //Remove Single EFA from automaton name (the name is Single) + extra substrings
+        //From sup(oX||oY||Single) -> oX||oY
+        mRVNodeToolbox.mStateNameExplanation = mAutomaton.getName().replaceAll("sup\\(", "").replaceAll("\\)", "");
+        mRVNodeToolbox.mStateNameExplanation = mRVNodeToolbox.mStateNameExplanation.replaceAll("\\|\\|Single\\|\\|", "\\|\\|").replaceAll("\\|\\|Single", "").replaceAll("Single\\|\\|", "");
+        //-----------------------------------------------------------------------
+
+        //Loop states and events to fill hashmap---------------------------------
         for (StateProxy sp : mAutomaton.getStates()) {
             String stateName = sp.getName();
             for (Arc arc : mAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
-//                stateName = stateName.replaceAll(".pm.", ".").replaceAll(".pm", "").replaceAll("pm.", "");
+                //Remove the single EFA location "pm"
+                stateName = stateName.replaceAll(".pm.", ".").replaceAll(".pm", "").replaceAll("pm.", "");
                 String eventName = arc.getLabel();
                 if (eventName.contains("up")) {
                     eventName = eventName.substring(0, eventName.indexOf("up") + 2);
                 } else {//"down"
                     eventName = eventName.substring(0, eventName.indexOf("down") + 4);
                 }
-                eventStateSetMap.get(eventName).add(stateName);
+                mRVNodeToolbox.mEventStateSetMap.get(eventName).add(stateName);
             }
-        }
-        System.out.println("Automaton name: " + mAutomaton.getName());
-        System.out.println(eventStateSetMap.toString());
+        }//----------------------------------------------------------------------
+
+//        System.out.println(mRVNodeToolbox.mStateNameExplanation);
+//        System.out.println(mRVNodeToolbox.mEventStateSetMap.toString());
+
+        mRVNodeToolbox.findEventOperationRelations();
+
         return true;
     }
 
