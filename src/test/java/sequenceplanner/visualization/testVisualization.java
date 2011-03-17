@@ -7,6 +7,8 @@ import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
 import sequenceplanner.efaconverter.OperationSequencer;
+import sequenceplanner.efaconverter.RVNode;
+import sequenceplanner.efaconverter.RelateTwoOperations;
 import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
@@ -70,7 +72,6 @@ public class testVisualization {
         v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
 
         assertTrue(v.run());
-        
     }
 
 }
