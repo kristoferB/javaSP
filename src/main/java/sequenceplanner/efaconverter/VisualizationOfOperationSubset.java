@@ -27,6 +27,7 @@ public class VisualizationOfOperationSubset {
     ModelParser mModelparser;
     Automata mAutomata;
     Automaton mAutomaton;
+    RVNodeToolbox mRVNodeToolbox;
 
     public VisualizationOfOperationSubset(ModelParser iModelparser) {
         this.mModelparser = iModelparser;
@@ -50,7 +51,7 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        //flatten out
+        //flatten out (EFA->DFA, Module -> Automata)
         if (!flattenOut()) {
             System.out.println("Problem with flatten out!");
             return false;
@@ -68,7 +69,32 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
+        //Create operation nodes
+        if (!createOperationNodes()) {
+            System.out.println("Problem with operation node creation!");
+            return false;
+        }
 
+        //Draw operation nodes
+        if (!drawing()) {
+            System.out.println("Problem with drawing!");
+            return false;
+        }
+
+
+        return true;
+    }
+    
+    private boolean drawing() {
+
+        return true;
+    }
+
+    private boolean createOperationNodes() {
+        mRVNodeToolbox = new RVNodeToolbox();
+        for (OpNode opNode : mModelparser.getOperations()) {
+            mRVNodeToolbox.addOperation(opNode);
+        }
         return true;
     }
 
@@ -89,6 +115,7 @@ public class VisualizationOfOperationSubset {
                 eventStateSetMap.get(eventName).add(stateName);
             }
         }
+        System.out.println("Automaton name: " + mAutomaton.getName());
         System.out.println(eventStateSetMap.toString());
         return true;
     }
@@ -116,8 +143,7 @@ public class VisualizationOfOperationSubset {
             try {
                 mAutomata = as.execute();
                 mAutomaton = mAutomata.getFirstAutomaton();
-                mAutomaton.setName("Supervisor");
-                viewAutomaton(mAutomaton);
+//                viewAutomaton(mAutomaton);
                 return true;
             } catch (Exception e) {
                 System.out.println(e.toString());
