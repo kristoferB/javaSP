@@ -68,6 +68,8 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
+        
+
         //Create operation nodes
         if (!createOperationNodes()) {
             System.out.println("Problem with operation node creation!");
@@ -82,10 +84,11 @@ public class VisualizationOfOperationSubset {
 
         for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
             System.out.println(rvNode.mOpNode.getName());
-            for(String key : rvNode.mEventOperationLocationSetMap.keySet()) {
-                System.out.println(key);
-                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
-            }
+//            for(String key : rvNode.mEventOperationLocationSetMap.keySet()) {
+//                System.out.println(key);
+//                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
+//            }
+            rvNode.getRelationToNode(mRVNodeToolbox.mRoot.getChildWithStringId("5"));
         }
 
 

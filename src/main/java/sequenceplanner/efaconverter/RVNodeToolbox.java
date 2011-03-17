@@ -13,7 +13,7 @@ public class RVNodeToolbox {
     final static String OPERATION = "operation";
     final RVNode mRoot = new RVNode();
     HashMap<String, Set<String>> mEventStateSetMap = null;
-    HashMap<String, HashMap<String, Set<String>>> mEventOperationLocationSetMap = null;
+    HashMap<String, HashMap<RVNode, Set<String>>> mEventOperationLocationSetMap = null;
     String mStateNameExplanation = "";
 
     public RVNodeToolbox() {
@@ -32,16 +32,21 @@ public class RVNodeToolbox {
         return newNode;
     }
 
+    public void findOperatoinRelations(RVNode iRvNode1, RVNode iRvNode2) {
+
+    }
+
     public void findEventOperationRelations() {
         //For result
-        mEventOperationLocationSetMap = new HashMap<String, HashMap<String, Set<String>>>();
+        mEventOperationLocationSetMap = new HashMap<String, HashMap<RVNode, Set<String>>>();
 
         //Create a map between the serial order of an operation in the state name and it's id.
-        HashMap<Integer, String> serialnrOperationMap = new HashMap<Integer, String>();
+        HashMap<Integer, RVNode> serialnrOperationMap = new HashMap<Integer, RVNode>();
         final String[] operationNames = mStateNameExplanation.split("\\|\\|");
         for (int i = 0; i < operationNames.length; ++i) {
-            final String operationName = operationNames[i];
-            serialnrOperationMap.put(i, operationName);
+            final String operationId = operationNames[i].replaceAll("o", "");
+            final RVNode rvNode = mRoot.getChildWithStringId(operationId);
+            serialnrOperationMap.put(i, rvNode);
         }
 
         //Loop all events to find what operation locations that are present
@@ -49,15 +54,12 @@ public class RVNodeToolbox {
             Set<String> stateNameSet = mEventStateSetMap.get(key);
 
             //Init of map where result is stored, add to RVNode (operation)
-//            HashMap<String, Set<String>> opLocationSetMap = new HashMap<String, Set<String>>();
-//            getOperationLocationSetMapForEvent(key, opLocationSetMap);
-            HashMap<String, Set<String>> opLocationSetMap =
-                    getOperationLocationSetMapForEvent(key, new HashMap<String, Set<String>>());
+            HashMap<RVNode, Set<String>> opLocationSetMap = getOperationLocationSetMapForEvent(key);
 
-            mEventOperationLocationSetMap.put(key, new HashMap<String, Set<String>>());
-            for (String operationName : serialnrOperationMap.values()) {
-                mEventOperationLocationSetMap.get(key).put(operationName, new HashSet<String>());
-                opLocationSetMap.put(operationName, new HashSet<String>());
+            mEventOperationLocationSetMap.put(key, new HashMap<RVNode, Set<String>>());
+            for (RVNode operation : serialnrOperationMap.values()) {
+                mEventOperationLocationSetMap.get(key).put(operation, new HashSet<String>());
+                opLocationSetMap.put(operation, new HashSet<String>());
             }
 
             //Loop all states for event and store locations for each operation
@@ -75,7 +77,8 @@ public class RVNodeToolbox {
         }
     }
 
-    private HashMap<String, Set<String>> getOperationLocationSetMapForEvent(String iKey, HashMap<String, Set<String>> oMap) {
+    private HashMap<RVNode, Set<String>> getOperationLocationSetMapForEvent(String iKey) {
+        //Work with name
         iKey = iKey.replaceAll("e", "");
         String eventType = "down";
         if (iKey.contains("up")) {
@@ -83,8 +86,9 @@ public class RVNodeToolbox {
         }
         final String operationId = iKey.replaceAll(eventType, "");
 
-        final RVNode rvNode = mRoot.getChildWithId(Integer.parseInt(operationId));
-        rvNode.mEventOperationLocationSetMap.put(eventType, new HashMap<String, Set<String>>());
+        //Create storage for event
+        final RVNode rvNode = mRoot.getChildWithStringId(operationId);
+        rvNode.mEventOperationLocationSetMap.put(eventType, new HashMap<RVNode, Set<String>>());
 
         return rvNode.mEventOperationLocationSetMap.get(eventType);
     }

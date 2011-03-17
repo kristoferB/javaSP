@@ -125,7 +125,7 @@ public class SModule {
     public Project getDFA() {
 
         Project project = null;
-        if (variableInclusionCheck()) {
+//        if (variableInclusionCheck()) {
             try {
                 project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
 
@@ -139,9 +139,9 @@ public class SModule {
             } catch (EvalException e) {
                 System.out.println(e.toString());
             }
-        } else {
-            System.out.println("No variables appears in guards or actions for automata. I will not go on!");
-        }
+//        } else {
+//            System.out.println("No variables appears in guards or actions for automata. I will not go on!");
+//        }
         return project;
     }
 

@@ -25,10 +25,12 @@ public class RVNode {
      * (R)elation (V)iew NODE<br/>
      * Relations to other operations (their locations).<br/>
      * Outside keyset = {"up" (init->exec), "down" (exec->finish)}.<br/>
-     * Inside keyset = {"o" + operation id} for all operations in project.<br/>
+     * Inside keyset = {{@link RVNode}} for all operations in project.<br/>
      * Inside valueset = {0,1,2,01,02,12,012}
      */
-    HashMap<String, HashMap<String, Set<String>>> mEventOperationLocationSetMap = new HashMap<String, HashMap<String, Set<String>>>(2);
+    HashMap<String, HashMap<RVNode, Set<String>>> mEventOperationLocationSetMap = new HashMap<String, HashMap<RVNode, Set<String>>>(2);
+
+    HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
 
     public RVNode() {
     }
@@ -41,13 +43,13 @@ public class RVNode {
         return (OperationData) mOpNode.getTreeNode().getNodeData();
     }
 
-    public RVNode getChildWithId(Integer iId) {
+    public RVNode getChildWithStringId(String iId) {
         for (RVNode rvNode : mChildren) {
-            if(rvNode.mOpNode.getStringId().equals(iId.toString())) {
+            if(rvNode.mOpNode.getStringId().equals(iId)) {
                 return rvNode;
             }
             if (!rvNode.mChildren.isEmpty()) {
-                RVNode tempNode = rvNode.getChildWithId(iId);
+                RVNode tempNode = rvNode.getChildWithStringId(iId);
                 if (tempNode != null) {
                     return tempNode;
                 }
@@ -63,5 +65,15 @@ public class RVNode {
         mCell = CellFactory.getInstance().getOperation(nodeType);
         mCell.setValue(iOpData);
         return mCell;
+    }
+
+    public void getRelationToNode(RVNode iRvNode) {
+        RelateTwoOperations r = new RelateTwoOperations(this, iRvNode);
+        r.getOperationRelation();
+    }
+
+    @Override
+    public String toString() {
+        return getOpData().getName();
     }
 }
