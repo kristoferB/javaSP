@@ -1,6 +1,7 @@
 package sequenceplanner.visualization;
 
 import java.util.Set;
+import javax.swing.JOptionPane;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
@@ -40,17 +41,20 @@ public class testVisualization {
     }
     
     @Test
-    public void test4() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/precon.sopx");
+    public void testForVisualization() {
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTest.sopx");
+
+        ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
+        mSP.getGUIModel().createNewOpView(vd);
+        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
+        
         VisualizationOfOperationSubset v;
-        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()));
+        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
 
         assertTrue(v.run());
 
-        assertTrue(v.getAutomaton().nbrOfStates() == 33);
-        ViewData vd = new ViewData("PM", mSP.getUpdatedIdCount());
-        mSP.getGUIModel().createNewOpView(vd);
-        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
+        opView.save(false, true);
+        mSP.saveToSOPXFile("C:/Users/patrik/Desktop/visualizationTestResult.sopx");
         
     }
 
