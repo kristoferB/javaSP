@@ -97,11 +97,15 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
-        Integer idCounter = model.getCounter();
-        ++idCounter;
+        Integer idCounter = getUpdatedIdCount();
         OperationData opData = new OperationData("OP" + idCounter, idCounter);
         model.getOperationRoot().insert(new TreeNode(opData));
-        model.setCounter(idCounter);
         return opData;
+    }
+
+    public Integer getUpdatedIdCount() {
+        Integer idCount = model.getCounter();
+        model.setCounter(idCount+1);
+        return idCount;
     }
 }

@@ -10,6 +10,8 @@ import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.general.SP;
+import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
@@ -39,7 +41,6 @@ public class testVisualization {
     
     @Test
     public void test4() {
-
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/precon.sopx");
         VisualizationOfOperationSubset v;
         v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()));
@@ -47,7 +48,10 @@ public class testVisualization {
         assertTrue(v.run());
 
         assertTrue(v.getAutomaton().nbrOfStates() == 33);
-
+        ViewData vd = new ViewData("PM", mSP.getUpdatedIdCount());
+        mSP.getGUIModel().createNewOpView(vd);
+        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
+        
     }
 
 }
