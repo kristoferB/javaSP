@@ -40,7 +40,7 @@ public class testVisualization {
         seqToEFA.createWmodFile(automata);
     }
     
-    @Test
+//    @Test
     public void testForVisualization() {
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTest.sopx");
 
@@ -55,6 +55,21 @@ public class testVisualization {
 
         opView.save(false, true);
         mSP.saveToSOPXFile("C:/Users/patrik/Desktop/visualizationTestResult.sopx");
+        
+    }
+
+    @Test
+    public void testForRelations() {
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTest.sopx");
+
+        ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
+        mSP.getGUIModel().createNewOpView(vd);
+        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
+
+        VisualizationOfOperationSubset v;
+        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
+
+        assertTrue(v.run());
         
     }
 
