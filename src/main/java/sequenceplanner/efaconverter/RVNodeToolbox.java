@@ -13,7 +13,6 @@ public class RVNodeToolbox {
     final static String OPERATION = "operation";
     final RVNode mRoot = new RVNode();
     HashMap<String, Set<String>> mEventStateSetMap = null;
-    HashMap<String, HashMap<RVNode, Set<String>>> mEventOperationLocationSetMap = null;
     String mStateNameExplanation = "";
 
     public RVNodeToolbox() {
@@ -32,14 +31,12 @@ public class RVNodeToolbox {
         return newNode;
     }
 
-    public void findOperatoinRelations(RVNode iRvNode1, RVNode iRvNode2) {
-
-    }
-
+    /**
+     * Loops all children to mRoot.<br/>
+     * Finds in what locations for other operations the events of an operation can take place.<br/>
+     * This info is added to the field mEventOperationLocationSetMap for each RVNode in mRoot.mChildren.
+     */
     public void findEventOperationRelations() {
-        //For result
-        mEventOperationLocationSetMap = new HashMap<String, HashMap<RVNode, Set<String>>>();
-
         //Create a map between the serial order of an operation in the state name and it's id.
         HashMap<Integer, RVNode> serialnrOperationMap = new HashMap<Integer, RVNode>();
         final String[] operationNames = mStateNameExplanation.split("\\|\\|");
@@ -55,10 +52,7 @@ public class RVNodeToolbox {
 
             //Init of map where result is stored, add to RVNode (operation)
             HashMap<RVNode, Set<String>> opLocationSetMap = getOperationLocationSetMapForEvent(key);
-
-            mEventOperationLocationSetMap.put(key, new HashMap<RVNode, Set<String>>());
             for (RVNode operation : serialnrOperationMap.values()) {
-                mEventOperationLocationSetMap.get(key).put(operation, new HashSet<String>());
                 opLocationSetMap.put(operation, new HashSet<String>());
             }
 
@@ -67,16 +61,18 @@ public class RVNodeToolbox {
                 final String[] opLocations = stateName.split("\\.");
                 for (int i = 0; i < opLocations.length; ++i) {
                     final String opLocation = opLocations[i];
-                    mEventOperationLocationSetMap.get(key).get(serialnrOperationMap.get(i)).add(opLocation);
                     opLocationSetMap.get(serialnrOperationMap.get(i)).add(opLocation);
                 }
             }
-
-//            System.out.println(key);
-//            System.out.println(mEventOperationLocationSetMap.get(key).toString());
         }
     }
 
+    /**
+     * Get a pointer to HashMap the describes all possible locations (value) <br/>
+     * forall operations (keyset), where this event can happen.
+     * @param iKey an event (includes operation id and event type "up" or "down")
+     * @return pointer to set the describes all operations locations when this event can happen
+     */
     private HashMap<RVNode, Set<String>> getOperationLocationSetMapForEvent(String iKey) {
         //Work with name
         iKey = iKey.replaceAll("e", "");

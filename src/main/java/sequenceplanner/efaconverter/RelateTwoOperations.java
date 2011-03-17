@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
+ * Finds the relation between two {@link RVNode}s of node type OPERATION.
  * @author patrik
  */
 public class RelateTwoOperations {
@@ -44,6 +44,10 @@ public class RelateTwoOperations {
         initSets();
     }
 
+    /**
+     * To get the relation between the two {@link RVNode}s given in the constructor
+     * @return an {@link Integer} 0-9 for the relation
+     */
     public Integer getOperationRelation() {
         if (compareToSetQuartet(setF, setF, setI, setI)) {
             System.out.println(mRvNode1.mOpNode.getName() + " > " + mRvNode2.mOpNode.getName());

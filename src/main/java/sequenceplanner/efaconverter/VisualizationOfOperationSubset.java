@@ -286,10 +286,9 @@ public class VisualizationOfOperationSubset {
             }
         }//----------------------------------------------------------------------
 
-//        System.out.println(mRVNodeToolbox.mStateNameExplanation);
-//        System.out.println(mRVNodeToolbox.mEventStateSetMap.toString());
-
+        //Find in what locations for other operations the events of an operation can take place
         mRVNodeToolbox.findEventOperationRelations();
+        //-----------------------------------------------------------------------
 
         return true;
     }

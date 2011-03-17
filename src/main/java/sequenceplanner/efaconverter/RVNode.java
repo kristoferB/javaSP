@@ -30,8 +30,6 @@ public class RVNode {
      */
     HashMap<String, HashMap<RVNode, Set<String>>> mEventOperationLocationSetMap = new HashMap<String, HashMap<RVNode, Set<String>>>(2);
 
-    HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
-
     public RVNode() {
     }
 
