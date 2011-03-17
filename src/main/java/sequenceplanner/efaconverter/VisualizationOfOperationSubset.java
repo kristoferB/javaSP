@@ -66,7 +66,7 @@ public class VisualizationOfOperationSubset {
         if (!synthesis()) {
             System.out.println("Problem with synthesis!");
             return false;
-        }  
+        }
 
         //Create operation nodes (RVNode)s
         if (!createOperationNodes()) {
@@ -80,14 +80,21 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
-            System.out.println(rvNode.mOpNode.getName());
-//            for(String key : rvNode.mEventOperationLocationSetMap.keySet()) {
-//                System.out.println(key);
-//                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
-//            }
-            rvNode.getRelationToNode(mRVNodeToolbox.mRoot.getChildWithStringId("9"));
+        //Find hierachy groups
+        if (!hierachyGroups(mRVNodeToolbox.mRoot.mChildren)) {
+            System.out.println("Problem with creation of hierachial groups!");
+            return false;
         }
+
+
+//        for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
+//            System.out.println(rvNode.mOpNode.getName());
+////            for(String key : rvNode.mEventOperationLocationSetMap.keySet()) {
+////                System.out.println(key);
+////                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
+////            }
+//            rvNode.getRelationToNode(mRVNodeToolbox.mRoot.getChildWithStringId("5"));
+//        }
 
 
 //        //Draw operation nodes
@@ -97,6 +104,78 @@ public class VisualizationOfOperationSubset {
 //        }
 
         return true;
+    }
+
+    /**
+     * NOT WORKING!!!
+     * @param iSet
+     * @return
+     */
+    private boolean hierachyGroups(Set<RVNode> iSet) {
+        HashMap<RVNode, Set<RVNode>> noParentChildSetMap = new HashMap<RVNode, Set<RVNode>>();
+        HashMap<RVNode, Set<RVNode>> childParentSetMap = new HashMap<RVNode, Set<RVNode>>();
+
+        //Find operations that lack parents
+        for (RVNode n : iSet) {
+            System.out.println(n + " " + n.getOperationRelationSubSetMap(iSet).toString());
+            if (!n.getOperationRelationSubSetMap(iSet).containsValue(RelateTwoOperations.HIERARCHY_21)) {
+                //Operation lacks parent
+                System.out.println("nop " + n.getName());
+                noParentChildSetMap.put(n, new HashSet<RVNode>());
+                //Get children to this operation
+                for (RVNode k : iSet) {
+                    if (n.mOperationRelationMap.get(k).equals(RelateTwoOperations.HIERARCHY_12)) {
+                        noParentChildSetMap.get(n).add(k);
+                        if (!childParentSetMap.containsKey(k)) {
+                            childParentSetMap.put(k, new HashSet<RVNode>());
+                        }
+                        childParentSetMap.get(k).add(n);
+                    }
+                }
+            }
+        }
+
+        //Find children with single parent
+        for (RVNode k : childParentSetMap.keySet()) {
+            System.out.println("child " + k + " " + childParentSetMap.get(k).toString());
+            if (childParentSetMap.get(k).size() == 1) {
+                //Create hierachy for this parent and child or add child to existing hierachy
+                RVNode parent = childParentSetMap.get(k).iterator().next();
+                if (parent.mChildren.isEmpty()) {
+                    //Create new hierachy node
+                    RVNode newHierachyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERACHY, parent);
+                    newHierachyGroup.mChildren.add(k);
+                } else { //Add child to existing hierachy node
+                    //parent node -> hierachy node -> children
+                    parent.mChildren.iterator().next().mChildren.add(k);
+                }
+                System.out.println(k.getName() + " child of " + parent.getName());
+            }
+        }
+
+        //Loop parents to call method recursively for children
+        Set<RVNode> iSetClone = new HashSet<RVNode>(iSet);
+        for (RVNode n : iSetClone) {
+            if (!n.mChildren.isEmpty()) {
+                //parent node -> hierachy node -> children
+                hierachyGroups(n.mChildren.iterator().next().mChildren);
+            }
+        }
+
+
+        return true;
+//        System.out.println(n.mOpNode.getName());
+//            if(n.isParent()) {
+//                System.out.println("parent " + n.mOpNode.getName());
+//                RVNode newHierachyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERACHY,n);
+//                for(RVNode k : nodes) {
+//                    if(k.mOperationRelationMap.get(n) == RelateTwoOperations.HIERARCHY_21) {
+//                        System.out.println(k.getName() + " child of " + n.getName());
+//                        newHierachyGroup.mChildren.add(k);
+//                    }
+//                    groupList.add(newHierachyGroup);
+//                }
+//            }
     }
 
     /**
@@ -286,6 +365,10 @@ public class VisualizationOfOperationSubset {
 
         //Find in what locations for other operations the events of an operation can take place
         mRVNodeToolbox.findEventOperationRelations();
+        //-----------------------------------------------------------------------
+
+        //Fill relations to HashMap in each operation RVNode for later look up---
+        mRVNodeToolbox.fillOperationRelations();
         //-----------------------------------------------------------------------
 
         return true;

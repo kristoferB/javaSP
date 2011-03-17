@@ -16,10 +16,10 @@ import sequenceplanner.view.operationView.graphextension.CellFactory;
  */
 public class RVNode {
 
-    OpNode mOpNode;
+    OpNode mOpNode = null;
     Set<RVNode> mChildren = new HashSet<RVNode>();
-    RVNode mParent;
-    String nodeType = "";
+    RVNode mParent = null;
+    String mNodeType = "";
     Cell mCell = null;
     /**
      * (R)elation (V)iew NODE<br/>
@@ -30,11 +30,18 @@ public class RVNode {
      */
     HashMap<String, HashMap<RVNode, Set<String>>> mEventOperationLocationSetMap = new HashMap<String, HashMap<RVNode, Set<String>>>(2);
 
-    public RVNode() {
-    }
+    HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
 
     public RVNode(OpNode iOpNode) {
         mOpNode = iOpNode;
+    }
+
+    public HashMap<RVNode, Integer> getOperationRelationSubSetMap(Set<RVNode> iSubSet) {
+        HashMap<RVNode, Integer> operationRelationSubSetMap = new HashMap<RVNode, Integer>();
+        for (RVNode rvNode : iSubSet) {
+            operationRelationSubSetMap.put(rvNode, mOperationRelationMap.get(rvNode));
+        }
+        return operationRelationSubSetMap;
     }
 
     public OperationData getOpData() {
@@ -60,14 +67,31 @@ public class RVNode {
         return setCell(getOpData());
     }
     public Cell setCell(OperationData iOpData) {
-        mCell = CellFactory.getInstance().getOperation(nodeType);
+        mCell = CellFactory.getInstance().getOperation(mNodeType);
         mCell.setValue(iOpData);
         return mCell;
     }
 
-    public void getRelationToNode(RVNode iRvNode) {
+    public Integer getRelationToNode(RVNode iRvNode) {
         RelateTwoOperations r = new RelateTwoOperations(this, iRvNode);
-        r.getOperationRelation();
+        return r.getOperationRelation();
+    }
+
+    public boolean isParent() {
+        if(!mNodeType.equals(RVNodeToolbox.OPERATION)) {
+            return false;
+        }
+        if(!mOperationRelationMap.containsValue(RelateTwoOperations.HIERARCHY_12)) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getName() {
+        if(mOpNode == null) {
+            return null;
+        }
+        return mOpNode.getName();
     }
 
     @Override

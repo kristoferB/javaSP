@@ -10,12 +10,27 @@ import java.util.Set;
  */
 public class RVNodeToolbox {
 
-    final static String OPERATION = "operation";
-    final RVNode mRoot = new RVNode();
+    public static final String OPERATION = "operation";
+    public static final String HIERACHY = "sop";
+    final RVNode mRoot = new RVNode(null);
     HashMap<String, Set<String>> mEventStateSetMap = null;
     String mStateNameExplanation = "";
 
     public RVNodeToolbox() {
+    }
+
+    public RVNode addNode(String iNodeType, RVNode iParent) {
+        //Create new node
+        RVNode newNode = new RVNode(null);
+        //set parent
+        newNode.mParent = iParent;
+        //set node type;
+        newNode.mNodeType = iNodeType;
+        //set child relation
+        iParent.mChildren.add(newNode);
+        mRoot.mChildren.add(newNode);
+
+        return newNode;
     }
 
     public RVNode addOperation(OpNode iOpNode) {
@@ -24,11 +39,19 @@ public class RVNodeToolbox {
         //set parent
         newNode.mParent = mRoot;
         //set node type;
-        newNode.nodeType = OPERATION;
+        newNode.mNodeType = OPERATION;
         //set child relation
         mRoot.mChildren.add(newNode);
 
         return newNode;
+    }
+
+    public void fillOperationRelations() {
+        for(RVNode externalOp : mRoot.mChildren) {
+            for(RVNode internalOp : mRoot.mChildren) {
+                externalOp.mOperationRelationMap.put(internalOp, externalOp.getRelationToNode(internalOp));
+            }
+        }
     }
 
     /**
