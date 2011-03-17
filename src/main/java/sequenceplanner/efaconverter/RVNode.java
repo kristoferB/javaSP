@@ -3,6 +3,8 @@ package sequenceplanner.efaconverter;
 import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.CellFactory;
 
 /**
  * Wrapper class for operations and groups used for visualization.<br/>
@@ -17,6 +19,7 @@ public class RVNode {
     Set<RVNode> mChildren = new HashSet<RVNode>();
     RVNode mParent;
     int nodeType;
+    Cell mCell = null;
 
     public RVNode() {
     }
@@ -29,4 +32,12 @@ public class RVNode {
         return (OperationData) mOpNode.getTreeNode().getNodeData();
     }
 
+    public Cell setCell() {
+        return setCell(getOpData());
+    }
+    public Cell setCell(OperationData iOpData) {
+        mCell = CellFactory.getInstance().getOperation("operation");
+        mCell.setValue(iOpData);
+        return mCell;
+    }
 }

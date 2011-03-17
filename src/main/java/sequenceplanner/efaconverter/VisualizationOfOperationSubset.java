@@ -15,6 +15,9 @@ import org.supremica.automata.algorithms.SynthesisType;
 import org.supremica.automata.algorithms.SynthesizerOptions;
 import org.supremica.gui.VisualProject;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
  *
@@ -29,9 +32,12 @@ public class VisualizationOfOperationSubset {
     Automaton mAutomaton;
     RVNodeToolbox mRVNodeToolbox;
 
-    public VisualizationOfOperationSubset(ModelParser iModelparser) {
-        this.mModelparser = iModelparser;
+    OperationView mOpView;
+    SPGraph mGraph;
 
+    public VisualizationOfOperationSubset(ModelParser iModelparser, OperationView iOpView) {
+        this.mModelparser = iModelparser;
+        this.mOpView = iOpView;
     }
 
     public Automaton getAutomaton() {
@@ -81,15 +87,157 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-
         return true;
     }
-    
+
+    /**
+     * Simple method that creates a new operation for each operation node.<br/>
+     * The new operations are added as {@link Cell}s to the {@link SPGraph} in an {@link OperationView}.
+     * @return true if drawing was ok else false
+     */
     private boolean drawing() {
+        if(mOpView != null) {
+            mGraph = mOpView.getGraph();
 
-        return true;
+            //Loop children (the operation nodes)
+            for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
+                OperationData opData = new OperationData(rvNode.getOpData().getName(), 1000+rvNode.getOpData().getId());
+                mGraph.addCell(rvNode.setCell(opData));
+            }
+            mGraph.autoArrange((Cell) mGraph.getDefaultParent());
+            return true;
+        }
+        return false;
     }
-
+//
+//        private class SimpleDraw {
+//
+//        SPGraph graph = ov.getGraph();
+//
+//        public SimpleDraw(Set<String> namesOfSelectedOperations) {
+//
+//            //Get the selected operations
+//            for (InternalOpData iData : allOperations) {
+//                if (namesOfSelectedOperations.contains(iData.getName())) {
+//                    selectedOps.add(iData);
+//                }
+//            }
+//
+//            if (allOperationsAreOK(selectedOps)) {
+//                CreateInternalSOP();
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Operation relations are to complex. \n I can't visualize operations!");
+//            }
+//        }
+//
+//        private void CreateInternalSOP() {
+//
+//            //root in wrapper class
+//            Wrapper master = new Wrapper();
+//
+//            //create wrapper
+//            for (InternalOpData iData : selectedOps) {
+//                //generate new node
+//                Wrapper w = new Wrapper();
+//                w.iData = iData;
+//                w.head = master;
+//
+//                //child to master
+//                master.children.add(w);
+//            }
+//
+//            //update heads in wrapper class
+//            Set<Wrapper> startCells = new HashSet<Wrapper>(); //Operations without preconditions
+//
+//            for (Wrapper w : master.children) {
+//
+//                Boolean isStartCell = true;
+//
+//                if (!w.iData.getRawPrecondition().isEmpty()) {
+//                    String opInGuard = w.iData.getRawPrecondition().replaceAll(" ", "");
+//                    String suffix = TypeVar.SEPARATION + TypeVar.SP_FINISH;
+//                    opInGuard = opInGuard.substring(0, opInGuard.length() - suffix.length());
+//                    System.out.println(w.iData.getName() + " has id: " + opInGuard + " in guard");
+//
+//                    for (Wrapper wGuard : master.children) {
+//                        if (wGuard.iData.getId().toString().equals(opInGuard)) {
+//                            w.head = wGuard;
+//                            isStartCell = false;
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//                if (isStartCell) {
+//                    //No precondition -> this w has to be a startCell!
+//                    startCells.add(w);
+//                    System.out.println(w.iData.getName() + " is start cell!");
+//                }
+//            }
+//
+//            master.children.removeAll(startCells); //Already knows when these cells occur
+//
+//            for (Wrapper w : startCells) {
+//                graph.addCell(w.setCell());
+//                fillInternalSOP(w, master.children);
+//            }
+//        }
+//
+//        private void fillInternalSOP(Wrapper iWrap, Set<Wrapper> wrapps) {
+//            //Find wrapps that has this node in precondition
+//            Set<Wrapper> swrapps = new HashSet<Wrapper>();
+//            for (Wrapper w : wrapps) {
+//                if (w.head == iWrap) {
+//                    swrapps.add(w);
+//                }
+//            }
+//
+//            if (swrapps.size() >= 1) {
+//                Cell parallelCell = null;
+//                if (swrapps.size() > 1) {
+//                    //Need to create a parallel cell
+//                    parallelCell = CellFactory.getInstance().getOperation("parallel");
+//
+//                    //Add parallel cell after iWrap
+//                    graph.insertNewCell(iWrap.cell, parallelCell, false);
+//                }
+//
+//                wrapps.removeAll(swrapps); //Know how to handle these wrapps -> remove them from set of wrapps
+//
+//                //Add wrapps to cell
+//                for (Wrapper w : swrapps) {
+//                    if (swrapps.size() == 1) {
+//                        //Create a new cell after iWrap
+//                        graph.insertNewCell(iWrap.cell, w.setCell(), false);
+//                    } else {
+//                        //Create new cells in parallel cell
+//                        graph.insertGroupNode(parallelCell, null, w.setCell());
+//                    }
+//                    //Handle wrapps that are left
+//                    fillInternalSOP(w, wrapps);
+//                }
+//            }
+//        }
+//
+//        private class Wrapper {
+//
+//            Wrapper head = null;
+//            Cell cell = null;
+//            Set<Wrapper> children = new HashSet<Wrapper>();
+//            InternalOpData iData = null;
+//
+//            public Wrapper() {
+//            }
+//
+//            public Cell setCell() {
+//                cell = CellFactory.getInstance().getOperation("operation");
+//                //Data d = (Data) opCell.getValue();
+//                cell.setValue(iData.getOpData());
+//                return cell;
+//            }
+//        }
+//    }
+//
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
         for (OpNode opNode : mModelparser.getOperations()) {
