@@ -62,7 +62,7 @@ public class testVisualization {
 
     @Test
     public void testForRelations() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTest.sopx");
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierachy.sopx");
 
         ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
         mSP.getGUIModel().createNewOpView(vd);
