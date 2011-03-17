@@ -66,11 +66,9 @@ public class VisualizationOfOperationSubset {
         if (!synthesis()) {
             System.out.println("Problem with synthesis!");
             return false;
-        }
+        }  
 
-        
-
-        //Create operation nodes
+        //Create operation nodes (RVNode)s
         if (!createOperationNodes()) {
             System.out.println("Problem with operation node creation!");
             return false;
@@ -88,7 +86,7 @@ public class VisualizationOfOperationSubset {
 //                System.out.println(key);
 //                System.out.println(rvNode.mEventOperationLocationSetMap.get(key).toString());
 //            }
-            rvNode.getRelationToNode(mRVNodeToolbox.mRoot.getChildWithStringId("5"));
+            rvNode.getRelationToNode(mRVNodeToolbox.mRoot.getChildWithStringId("9"));
         }
 
 

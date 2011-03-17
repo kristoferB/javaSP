@@ -82,8 +82,8 @@ public class RelateTwoOperations {
     }
 
     private boolean compareToSetQuartet(Set iRefSet1, Set iRefSet2, Set iRefSet3, Set iRefSet4) {
-        return compareSetToRefSet(mRvNode1up, iRefSet1) & compareSetToRefSet(mRvNode1down, iRefSet2) &
-                compareSetToRefSet(mRvNode2up, iRefSet3) & compareSetToRefSet(mRvNode2down, iRefSet4);
+        return compareSetToRefSet(mRvNode2up, iRefSet1) & compareSetToRefSet(mRvNode2down, iRefSet2) &
+                compareSetToRefSet(mRvNode1up, iRefSet3) & compareSetToRefSet(mRvNode1down, iRefSet4);
     }
 
     private boolean compareSetToRefSet(Set iSetToCompare, Set iReferenceSet) {
