@@ -142,7 +142,7 @@ public class VisualizationOfOperationSubset {
             if (childParentSetMap.get(k).size() == 1) {
                 //This child has one parent with no parent
                 RVNode parent = childParentSetMap.get(k).iterator().next();
-                
+
                 //Are there one or more parents among the other children?
                 if (!k.getOperationRelationSubSetMap(noParentChildSetMap.get(parent)).containsValue(RelateTwoOperations.HIERARCHY_21)) {
                     //no, Create hierarchy for "parent" and child (k) or add child (k) to existing hierarchy
@@ -182,8 +182,10 @@ public class VisualizationOfOperationSubset {
 
             //Loop children (the operation nodes)
             for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
-                OperationData opData = new OperationData(rvNode.getOpData().getName(), 1000 + rvNode.getOpData().getId());
-                mGraph.addCell(rvNode.setCell(opData));
+                if (rvNode.mNodeType.equals(RVNodeToolbox.OPERATION)) {
+                    OperationData opData = new OperationData(rvNode.getOpData().getName(), 1000 + rvNode.getOpData().getId());
+                    mGraph.addCell(rvNode.setCell(opData));
+                }
             }
             mGraph.autoArrange((Cell) mGraph.getDefaultParent());
             return true;
@@ -357,7 +359,6 @@ public class VisualizationOfOperationSubset {
 //        }
 //    }
 //
-
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
         for (OpNode opNode : mModelparser.getOperations()) {

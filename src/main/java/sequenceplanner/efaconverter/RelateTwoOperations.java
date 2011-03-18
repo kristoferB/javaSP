@@ -31,8 +31,16 @@ public class RelateTwoOperations {
     private Set<String> mRvNode1down = null;
     private Set<String> mRvNode2down = null;
 
+    public RelateTwoOperations() {
+        initSets();
+    }
 
     public RelateTwoOperations(RVNode iRvNode1, RVNode iRvNode2) {
+        this();
+        setOperationPair(iRvNode1, iRvNode2);
+    }
+
+    public void setOperationPair(RVNode iRvNode1, RVNode iRvNode2) {
         this.mRvNode1 = iRvNode1;
         this.mRvNode2 = iRvNode2;
 
@@ -40,8 +48,6 @@ public class RelateTwoOperations {
         mRvNode2up = iRvNode2.mEventOperationLocationSetMap.get("up").get(iRvNode1);
         mRvNode1down = iRvNode1.mEventOperationLocationSetMap.get("down").get(iRvNode2);
         mRvNode2down = iRvNode2.mEventOperationLocationSetMap.get("down").get(iRvNode1);
-
-        initSets();
     }
 
     /**

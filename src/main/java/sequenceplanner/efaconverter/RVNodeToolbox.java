@@ -57,9 +57,12 @@ public class RVNodeToolbox {
     }
 
     public void fillOperationRelations() {
+        RelateTwoOperations rto = new RelateTwoOperations();
         for(RVNode externalOp : mRoot.mChildren) {
             for(RVNode internalOp : mRoot.mChildren) {
-                externalOp.mOperationRelationMap.put(internalOp, externalOp.getRelationToNode(internalOp));
+                //externalOp.mOperationRelationMap.put(internalOp, externalOp.getRelationToNode(internalOp));
+                rto.setOperationPair(externalOp, internalOp);
+                externalOp.mOperationRelationMap.put(internalOp, rto.getOperationRelation());
             }
         }
     }
