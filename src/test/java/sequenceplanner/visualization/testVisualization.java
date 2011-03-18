@@ -42,9 +42,9 @@ public class testVisualization {
         seqToEFA.createWmodFile(automata);
     }
     
-//    @Test
+    @Test
     public void testForVisualization() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTest.sopx");
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
 
         ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
         mSP.getGUIModel().createNewOpView(vd);
@@ -60,9 +60,9 @@ public class testVisualization {
         
     }
 
-    @Test
+//    @Test
     public void testForRelations() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy.sopx");
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
 
         ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
         mSP.getGUIModel().createNewOpView(vd);
