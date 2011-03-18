@@ -11,7 +11,7 @@ import java.util.Set;
 public class RVNodeToolbox {
 
     public static final String OPERATION = "operation";
-    public static final String HIERACHY = "sop";
+    public static final String HIERARCHY = "sop";
     final RVNode mRoot = new RVNode(null);
     HashMap<String, Set<String>> mEventStateSetMap = null;
     String mStateNameExplanation = "";

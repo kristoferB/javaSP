@@ -80,9 +80,9 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        //Find hierachy groups
-        if (!hierachyGroups(mRVNodeToolbox.mRoot.mChildren)) {
-            System.out.println("Problem with creation of hierachial groups!");
+        //Find hierarchy groups
+        if (!hierarchyGroups(mRVNodeToolbox.mRoot.mChildren)) {
+            System.out.println("Problem with creation of hierarchial groups!");
             return false;
         }
 
@@ -107,20 +107,21 @@ public class VisualizationOfOperationSubset {
     }
 
     /**
-     * NOT WORKING!!!
-     * @param iSet
-     * @return
+     * Method to find hierarchical relations between operation nodes.<br/>
+     * A hierachy is establiched if an operation has a SINGLE parent.<br/>
+     * The method is called recursively to find deep hierachical relations.<br/>
+     * @param iSet set of operations work on
+     * @return always true :)
      */
-    private boolean hierachyGroups(Set<RVNode> iSet) {
+    private boolean hierarchyGroups(Set<RVNode> iSet) {
         HashMap<RVNode, Set<RVNode>> noParentChildSetMap = new HashMap<RVNode, Set<RVNode>>();
         HashMap<RVNode, Set<RVNode>> childParentSetMap = new HashMap<RVNode, Set<RVNode>>();
 
-        //Find operations that lack parents
+        //Find operations that lack parents (in iSet)
         for (RVNode n : iSet) {
-            System.out.println(n + " " + n.getOperationRelationSubSetMap(iSet).toString());
             if (!n.getOperationRelationSubSetMap(iSet).containsValue(RelateTwoOperations.HIERARCHY_21)) {
                 //Operation lacks parent
-                System.out.println("nop " + n.getName());
+                System.out.println(n.getName() + " has no parent op in iSet");
                 noParentChildSetMap.put(n, new HashSet<RVNode>());
                 //Get children to this operation
                 for (RVNode k : iSet) {
@@ -135,47 +136,37 @@ public class VisualizationOfOperationSubset {
             }
         }
 
-        //Find children with single parent
+        //Find children where one of the operations with "noParent" is the single parent
         for (RVNode k : childParentSetMap.keySet()) {
-            System.out.println("child " + k + " " + childParentSetMap.get(k).toString());
+            System.out.println("child candidate " + k + " " + childParentSetMap.get(k).toString());
             if (childParentSetMap.get(k).size() == 1) {
-                //Create hierachy for this parent and child or add child to existing hierachy
+                //This child has one parent with no parent
                 RVNode parent = childParentSetMap.get(k).iterator().next();
-                if (parent.mChildren.isEmpty()) {
-                    //Create new hierachy node
-                    RVNode newHierachyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERACHY, parent);
-                    newHierachyGroup.mChildren.add(k);
-                } else { //Add child to existing hierachy node
-                    //parent node -> hierachy node -> children
-                    parent.mChildren.iterator().next().mChildren.add(k);
+                
+                //Are there one or more parents among the other children?
+                if (!k.getOperationRelationSubSetMap(noParentChildSetMap.get(parent)).containsValue(RelateTwoOperations.HIERARCHY_21)) {
+                    //no, Create hierarchy for "parent" and child (k) or add child (k) to existing hierarchy
+                    if (parent.mChildren.isEmpty()) { //Create new hierarchy node
+                        RVNode newhierarchyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERARCHY, parent);
+                        newhierarchyGroup.mChildren.add(k);
+                    } else { //Add child to existing hierarchy node
+                        //parent node -> hierarchy node -> children
+                        parent.mChildren.iterator().next().mChildren.add(k);
+                    }
+                    System.out.println(k.getName() + " child of " + parent.getName());
                 }
-                System.out.println(k.getName() + " child of " + parent.getName());
+            } else {
+                //This child has multiple parents with no parent
+                //These children are not added as child to any parent
             }
         }
 
-        //Loop parents to call method recursively for children
-        Set<RVNode> iSetClone = new HashSet<RVNode>(iSet);
-        for (RVNode n : iSetClone) {
-            if (!n.mChildren.isEmpty()) {
-                //parent node -> hierachy node -> children
-                hierachyGroups(n.mChildren.iterator().next().mChildren);
-            }
+        //Loop operations with "no parents" to call method recursively for their children
+        for (RVNode n : noParentChildSetMap.keySet()) {
+            hierarchyGroups(noParentChildSetMap.get(n));
         }
-
 
         return true;
-//        System.out.println(n.mOpNode.getName());
-//            if(n.isParent()) {
-//                System.out.println("parent " + n.mOpNode.getName());
-//                RVNode newHierachyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERACHY,n);
-//                for(RVNode k : nodes) {
-//                    if(k.mOperationRelationMap.get(n) == RelateTwoOperations.HIERARCHY_21) {
-//                        System.out.println(k.getName() + " child of " + n.getName());
-//                        newHierachyGroup.mChildren.add(k);
-//                    }
-//                    groupList.add(newHierachyGroup);
-//                }
-//            }
     }
 
     /**
