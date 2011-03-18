@@ -12,36 +12,46 @@ public class RVNodeToolbox {
 
     public static final String OPERATION = "operation";
     public static final String HIERARCHY = "sop";
-    final RVNode mRoot = new RVNode(null);
+    final RVNode mRoot = new RVNode();
+    Set<RVNode> mAllNodes = new HashSet<RVNode>();
     HashMap<String, Set<String>> mEventStateSetMap = null;
     String mStateNameExplanation = "";
 
     public RVNodeToolbox() {
     }
 
-    public RVNode addNode(String iNodeType, RVNode iParent) {
+    /**
+     * Generic method to create a new node
+     * @param iNodeType
+     * @param iParent
+     * @return
+     */
+    public RVNode createNode(String iNodeType, RVNode iParent) {
         //Create new node
-        RVNode newNode = new RVNode(null);
+        RVNode newNode = new RVNode();
+        //Add to set for all nodes
+        mAllNodes.add(newNode);
         //set parent
         newNode.mParent = iParent;
         //set node type;
         newNode.mNodeType = iNodeType;
         //set child relation
         iParent.mChildren.add(newNode);
-        mRoot.mChildren.add(newNode);
 
         return newNode;
     }
 
-    public RVNode addOperation(OpNode iOpNode) {
+    /**
+     * Used when operations are added to tree first time.<br/>
+     * All new nodes has mRoot as parent.
+     * @param iOpNode the new {@link RVNode} built on this {@link OpNode}
+     * @return the created node as {@link RVNode}
+     */
+    public RVNode createOperationNode(OpNode iOpNode) {
         //Create new node
-        RVNode newNode = new RVNode(iOpNode);
-        //set parent
-        newNode.mParent = mRoot;
-        //set node type;
-        newNode.mNodeType = OPERATION;
-        //set child relation
-        mRoot.mChildren.add(newNode);
+        RVNode newNode = createNode(OPERATION, mRoot);
+        //Set OpNode link
+        newNode.mOpNode = iOpNode;
 
         return newNode;
     }

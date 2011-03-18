@@ -32,8 +32,7 @@ public class RVNode {
 
     HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
 
-    public RVNode(OpNode iOpNode) {
-        mOpNode = iOpNode;
+    public RVNode() {
     }
 
     public HashMap<RVNode, Integer> getOperationRelationSubSetMap(Set<RVNode> iSubSet) {
@@ -75,16 +74,6 @@ public class RVNode {
     public Integer getRelationToNode(RVNode iRvNode) {
         RelateTwoOperations r = new RelateTwoOperations(this, iRvNode);
         return r.getOperationRelation();
-    }
-
-    public boolean isParent() {
-        if(!mNodeType.equals(RVNodeToolbox.OPERATION)) {
-            return false;
-        }
-        if(!mOperationRelationMap.containsValue(RelateTwoOperations.HIERARCHY_12)) {
-            return false;
-        }
-        return true;
     }
 
     public String getName() {

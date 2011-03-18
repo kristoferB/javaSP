@@ -97,11 +97,11 @@ public class VisualizationOfOperationSubset {
 //        }
 
 
-//        //Draw operation nodes
-//        if (!drawing()) {
-//            System.out.println("Problem with drawing!");
-//            return false;
-//        }
+        //Draw operation nodes
+        if (!drawing()) {
+            System.out.println("Problem with drawing!");
+            return false;
+        }
 
         return true;
     }
@@ -121,7 +121,7 @@ public class VisualizationOfOperationSubset {
         for (RVNode n : iSet) {
             if (!n.getOperationRelationSubSetMap(iSet).containsValue(RelateTwoOperations.HIERARCHY_21)) {
                 //Operation lacks parent
-                System.out.println(n.getName() + " has no parent op in iSet");
+                System.out.println(n.getName() + " has no parent op in " + iSet.toString());
                 noParentChildSetMap.put(n, new HashSet<RVNode>());
                 //Get children to this operation
                 for (RVNode k : iSet) {
@@ -147,12 +147,14 @@ public class VisualizationOfOperationSubset {
                 if (!k.getOperationRelationSubSetMap(noParentChildSetMap.get(parent)).containsValue(RelateTwoOperations.HIERARCHY_21)) {
                     //no, Create hierarchy for "parent" and child (k) or add child (k) to existing hierarchy
                     if (parent.mChildren.isEmpty()) { //Create new hierarchy node
-                        RVNode newhierarchyGroup = mRVNodeToolbox.addNode(RVNodeToolbox.HIERARCHY, parent);
+                        RVNode newhierarchyGroup = mRVNodeToolbox.createNode(RVNodeToolbox.HIERARCHY, parent);
                         newhierarchyGroup.mChildren.add(k);
                     } else { //Add child to existing hierarchy node
                         //parent node -> hierarchy node -> children
                         parent.mChildren.iterator().next().mChildren.add(k);
                     }
+                    //Remove child as child to root (all operation nodes added to root as default at creation)
+                    mRVNodeToolbox.mRoot.mChildren.remove(k);
                     System.out.println(k.getName() + " child of " + parent.getName());
                 }
             } else {
@@ -188,6 +190,44 @@ public class VisualizationOfOperationSubset {
         }
         return false;
     }
+//-------------------------------------------------------------------------------
+//    private void fillInternalSOP(Wrapper iWrap, Set<Wrapper> wrapps) {
+//        //Find wrapps that has this node in precondition
+//        Set<Wrapper> swrapps = new HashSet<Wrapper>();
+//        for (Wrapper w : wrapps) {
+//            if (w.head == iWrap) {
+//                swrapps.add(w);
+//            }
+//        }
+//
+//        if (swrapps.size() >= 1) {
+//            Cell parallelCell = null;
+//            if (swrapps.size() > 1) {
+//                //Need to create a parallel cell
+//                parallelCell = CellFactory.getInstance().getOperation("parallel");
+//
+//                //Add parallel cell after iWrap
+//                graph.insertNewCell(iWrap.cell, parallelCell, false);
+//            }
+//
+//            wrapps.removeAll(swrapps); //Know how to handle these wrapps -> remove them from set of wrapps
+//
+//            //Add wrapps to cell
+//            for (Wrapper w : swrapps) {
+//                if (swrapps.size() == 1) {
+//                    //Create a new cell after iWrap
+//                    graph.insertNewCell(iWrap.cell, w.setCell(), false);
+//                } else {
+//                    //Create new cells in parallel cell
+//                    graph.insertGroupNode(parallelCell, null, w.setCell());
+//                }
+//                //Handle wrapps that are left
+//                fillInternalSOP(w, wrapps);
+//            }
+//        }
+//    }
+//--------------------------------------------------------------------------------
+
 //
 //        private class SimpleDraw {
 //
@@ -321,7 +361,7 @@ public class VisualizationOfOperationSubset {
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
         for (OpNode opNode : mModelparser.getOperations()) {
-            mRVNodeToolbox.addOperation(opNode);
+            mRVNodeToolbox.createOperationNode(opNode);
         }
         return true;
     }
