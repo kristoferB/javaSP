@@ -748,7 +748,7 @@ public class Editors {
             updateAnd(node);
             label = label.isEmpty() ? "" : label + " " + Constansts.AND;
             label += " ( " + node.representation + " ) ";
-            System.out.println(label);
+     //       System.out.println(label);
             model.set(i, node);
 
          }

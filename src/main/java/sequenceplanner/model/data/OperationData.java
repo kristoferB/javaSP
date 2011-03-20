@@ -82,7 +82,7 @@ public class OperationData extends Data {
 
    private void setValue(String key, String value) {
       if (key != null && value != null) {
-          System.out.println(key + " "+ value);
+         // System.out.println(key + " "+ value);
          preference.put(key, value);
       } else {
          System.out.println("Error in UserFile: Can not pass null values for key " + key);
@@ -228,11 +228,19 @@ public class OperationData extends Data {
    //TO HANDLE PROPERTY SETTINGS
 
    public void savePropertySetting(int id, boolean selected){
-        propertySettings.put(Integer.valueOf(id), Boolean.valueOf(selected));
+       propertySettings.put(id, selected);
    }
 
    public HashMap<Integer, Boolean> getPropertySettings(){
         return propertySettings;
+   }
+
+   public boolean isPropertySet(int id){
+        boolean res = false;
+        if(propertySettings.containsKey(id)){
+            res = propertySettings.get(id);
+        }
+        return res;
    }
 
 /*   public int[] getPropertyValues(){

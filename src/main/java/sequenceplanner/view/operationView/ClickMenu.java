@@ -33,7 +33,6 @@ public class ClickMenu extends JPopupMenu {
 
       Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), invoker);
       OperationView av = (OperationView) invoker;
-      System.out.println(e.getSource().getClass().getName());
 
       Object c = av.getGraphComponent().getCellAt(e.getX(), e.getY());
 

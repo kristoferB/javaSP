@@ -21,7 +21,6 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.editor.IGlobalProperty;
 import sequenceplanner.model.data.OperationData;
@@ -30,7 +29,7 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
- * View for setting properties for operations. Is located in the Object attribute view in SP
+ * View for setting properties for operations.
  *
  * @author Evelina
  */
@@ -49,8 +48,6 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
     public PropertyView(EditorTreeModel m){
         model = m;
         operationIsChosen = false;
-        nodeEditor = new CheckBoxNodeEditor();
-        nodeEditor.addCellEditorListener(this);
         updateTree();
     }
 
@@ -63,17 +60,21 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
         int noProperties = model.getChildCount(root);
         UniqueVector[] properties = new UniqueVector[noProperties];
         IGlobalProperty p;
-
+        //for each property
         for(int i = 0; i < noProperties; i++){
             p = (IGlobalProperty) model.getChild(root, i);
             CheckBoxNode[] values = new CheckBoxNode[model.getChildCount(p)];
+            //for each value
             for(int j = 0; j < model.getChildCount(p); j++){
                 boolean selected = false;
-
+                //check if value is set for operation
                 if(operationIsChosen){
                     SPGraph graph = currentOpView.getGraph();
                     OperationData d = (OperationData) graph.getModel().getValue(currentOperation);
-  //check if value is chosen for current operation
+                    //check if value is selected for current operation
+                    if(d.isPropertySet(p.getValue(j).getId())){
+                        selected = true;
+                    }
                 }
 
             values[j] = new CheckBoxNode(p.getValue(j).getName(), p.getValue(j).getId(), selected);
@@ -87,29 +88,31 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
             tree.expandRow(i);
         }
 
-
         CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
         tree.setCellRenderer(renderer);
-        nodeEditor.setTree(tree);
+        nodeEditor = new CheckBoxNodeEditor(tree);
+        nodeEditor.addCellEditorListener(this);
         tree.setCellEditor(nodeEditor);
         tree.setEditable(true);
         setViewportView(tree);
-
+        tree.setVisible(operationIsChosen);
     }
 
     public void setOperation(){
-        SPGraph graph = currentOpView.getGraph();
-        Object cell = graph.getSelectionCell();
+        if(currentOpView != null){
+            SPGraph graph = currentOpView.getGraph();
+            Object cell = graph.getSelectionCell();
 
-        if (graph.getSelectionCount() == 1 && cell instanceof Cell) {
-            currentOperation = (Cell) cell;
-            operationIsChosen = true;
+            if (graph.getSelectionCount() == 1 && cell instanceof Cell) {
+                currentOperation = (Cell) cell;
+                operationIsChosen = true;
+            }
+            else{
+                operationIsChosen = false;           
+            }
+            tree.setVisible(operationIsChosen);
+            updateTree();
         }
-        else{
-            clear();
-            operationIsChosen = false;
-        }
-        
     }
 
     public void setOpView(OperationView opView){
@@ -126,7 +129,7 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
             int noProperties = mod.getChildCount(root);
             DefaultMutableTreeNode o;
 
-            //For each property, check if any value is set (and thereby also the property is set)
+            //For each property, check if any value is set (and thereby also if the property is set)
             for(int i = 0; i < noProperties; i++){               
                 o = (DefaultMutableTreeNode) mod.getChild(root, i);
                 if(o.getUserObject() instanceof UniqueVector){
@@ -146,15 +149,12 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
                             }
                             //Save to operation
                             d.savePropertySetting(node.getId(), valueSelected);
-                            System.out.println(node.getId() +", " + valueSelected);
                         }
                     }
                     d.savePropertySetting(property.getId(), propertySelected);
-                    System.out.println(property.getId() +", " + propertySelected);
                 }
             }
             graph.setValue(currentOperation, d);
-            System.out.println ("Saved to operation " + d.getName() + ": " + d.getPropertySettings());
         }
     }
 
@@ -165,6 +165,7 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
     @Override
     public void editingStopped(ChangeEvent e) {
         Object o = tree.getCellEditor().getCellEditorValue();
+        
         if(o instanceof CheckBoxNode){
             CheckBoxNode lastUpdatedNode = (CheckBoxNode) o;
 
@@ -180,8 +181,8 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
                     for(int j = 0; j < property.size(); j++){
                         CheckBoxNode node = (CheckBoxNode) property.get(j);
                         if(lastUpdatedNode.getId() == node.getId()){
+                            //update selection of last edited node
                             node.setSelected(lastUpdatedNode.isSelected());
-                            System.out.println(node.getText() + " got set to " + lastUpdatedNode.isSelected());
                         }
                     }
                 }
@@ -271,9 +272,7 @@ class CheckBoxNodeRenderer implements TreeCellRenderer {
 class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
   CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-
   ChangeEvent changeEvent = null;
-
   JTree tree;
 
   public CheckBoxNodeEditor(){
@@ -316,21 +315,22 @@ class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
     @Override
   public Component getTreeCellEditorComponent(JTree tree, Object value,
-      boolean selected, boolean expanded, boolean leaf, int row) {
-
+    boolean selected, boolean expanded, boolean leaf, int row) {
     Component editor = renderer.getTreeCellRendererComponent(tree, value,
         true, expanded, leaf, row, true);
-
+    
     ItemListener itemListener = new ItemListener() {
             @Override
         public void itemStateChanged(ItemEvent itemEvent) {
-            if (stopCellEditing()) {
-            //    fireEditingStopped();
+            if(itemEvent.paramString().indexOf("invalid") == -1){
+                fireEditingStopped();
             }
+            
         }
     };
     if (editor instanceof UniqueCheckBox) {
-      ((UniqueCheckBox) editor).addItemListener(itemListener);
+        UniqueCheckBox unc = (UniqueCheckBox) editor;
+        unc.addItemListener(itemListener);
     }
 
     return editor;
