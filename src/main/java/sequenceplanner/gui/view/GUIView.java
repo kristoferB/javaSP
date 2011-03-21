@@ -145,13 +145,17 @@ public class GUIView extends JFrame {
      *      EFA for transport planning
      *      Update model after transport planning
      *      EFA for MP supervisor
+     *  EM
+     *      Identify operation sequences
+     *      Reduced-order EFA
      *
      * @author qw4z1
      */
-    private JMenu fileMenu, edit, project, convert, mp;
+    private JMenu fileMenu, edit, project, convert, mp, em;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP,
+            opSequences, reduceEFA;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -193,12 +197,19 @@ public class GUIView extends JFrame {
         mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
         this.add(mp);
 
+        //Efficient Model menu
+        em = new JMenu("Efficient Model");
+        em.add(opSequences = new JMenuItem("Identify operation sequences"));
+        em.add(reduceEFA = new JMenuItem("Reduced-order EFA"));
+        this.add(em);
+
         //Add menues to menubar
         mb.add(fileMenu);
         mb.add(edit);
         mb.add(project);
         mb.add(convert);
         mb.add(mp);
+        mb.add(em);
         return mb;
 
     }//End createMenu
@@ -274,6 +285,14 @@ public class GUIView extends JFrame {
 
     public void addEFAForMPL(ActionListener l) {
         efaForMP.addActionListener(l);
+    }
+
+    public void addSeqForOp(ActionListener l) {
+        opSequences.addActionListener(l);
+    }
+
+    public void addReducedEFA(ActionListener l) {
+        reduceEFA.addActionListener(l);
     }
 
     public void addEditorListener(){

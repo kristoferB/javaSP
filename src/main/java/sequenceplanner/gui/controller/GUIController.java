@@ -18,6 +18,8 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 
+import sequenceplanner.efficientModel.EfficientEFA;
+import sequenceplanner.efficientModel.OperationSequences;
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
  * changes the model accordingly and finally tells the view to show the updated
@@ -72,6 +74,8 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
+        guiView.addSeqForOp(new OperationSeqListener());
+        guiView.addReducedEFA(new EfficientEFAListener());
         guiView.addEditorListener();
     }
     //Listener classes
@@ -224,6 +228,23 @@ public class GUIController {
     }
 
     class EFAForMPListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    class OperationSeqListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            OperationSequences ops = new OperationSequences(guiModel.getModel());
+            ops.run();
+        }
+    }
+
+    class EfficientEFAListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
