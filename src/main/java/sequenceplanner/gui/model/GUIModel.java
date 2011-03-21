@@ -105,7 +105,7 @@ public class GUIModel {
 
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
-                removeAllOpViews();
+        removeAllOpViews();
 
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());

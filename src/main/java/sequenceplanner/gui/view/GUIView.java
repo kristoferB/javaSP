@@ -21,11 +21,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
+import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
+import net.infonode.docking.drop.DropFilter;
+import net.infonode.docking.drop.DropInfo;
+import net.infonode.docking.drop.InteriorDropInfo;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
@@ -79,11 +83,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private int opViewIndex;
     private JTextArea console;
     private JButton saveButton;
+
+    /**
+     * Constructor for the GUIView class
+     * Creates main frame, initializes all infonode views
+     * and sets starting properties.
+     * @param m reference to the GUIModel instance
+     */
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
         createRootWindow();
         setStartingWindowsProperties();
+        setRootDropDisabled();
     }
 
     /**
@@ -183,11 +195,24 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         printToConsole("Welcome to SP 2.0");
     }
 
+    private void setRootDropDisabled(){
+                rootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(
+                new DropFilter(){
+                                    public boolean acceptDrop(DropInfo dropInfo){
+                                        InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
+
+                                        if(inter.getDropWindow() instanceof DockingWindow|| inter.getWindow() instanceof DockingWindow)
+                                            return false;
+                                        return true;
+                                    }
+        });
+    }
+
     private void setStartingWindowsProperties() {
 
         rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(false);
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
-        rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
+        //rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
 
         
         //   mainDocks.getWindowProperties().setDragEnabled(false);
