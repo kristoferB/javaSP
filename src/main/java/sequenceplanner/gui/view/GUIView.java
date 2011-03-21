@@ -47,19 +47,26 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     private JMenuBar menuBar;
     private GUIModel guiModel;
+
+    //ViewMaps holding all views for the rootwindows
     private ViewMap rootViewMap = new ViewMap();
-    private RootWindow rootWindow;
-    private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
     private ViewMap opViewMap = new ViewMap();
+    private ViewMap treeViewMap = new ViewMap();
+    private ViewMap consoleViewMap = new ViewMap();
+    private ViewMap editorViewMap = new ViewMap();
+    private ViewMap objectViewMap = new ViewMap();
+
+    private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
+   
+    //RootWindows
+    private RootWindow rootWindow;
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
     private RootWindow treeRoot;
     private RootWindow editorRoot;
     private RootWindow objectRoot;
     private RootWindow consoleRoot;
+
     private EventListenerList listeners;
-    private TabWindow tab1;// = new TabWindow();
-    private TabWindow tab2;// = new TabWindow();
-    private TabWindow tab3;// = new TabWindow();
     private View objectMenu;
     private EditorView editorView;
     private TreeView treeView;
@@ -72,7 +79,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private int opViewIndex;
     private JTextArea console;
     private JButton saveButton;
-
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -121,12 +127,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Work in progress...
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
-        treeRoot = DockingUtil.createRootWindow(rootViewMap, false);
-
+        
+        treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
-        objectRoot = DockingUtil.createRootWindow(rootViewMap, true);
-        editorRoot = DockingUtil.createRootWindow(rootViewMap, true);
-        consoleRoot = DockingUtil.createRootWindow(rootViewMap, true);
+        objectRoot = DockingUtil.createRootWindow(objectViewMap, true);
+        editorRoot = DockingUtil.createRootWindow(editorViewMap, true);
+        consoleRoot = DockingUtil.createRootWindow(consoleViewMap, true);
 
         editorView = new EditorView(guiModel.getGlobalProperties());
         treeView = new TreeView(guiModel.getModel());
@@ -137,13 +143,21 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         opViewIndex++;
         opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
         opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
+
         guiModel.getOperationViews().getFirst().addmxIEventListener(this);
         selectedOperationView = guiModel.getOperationViews().getFirst();
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
 
-        consoleRoot.setWindow(new View("console", null, new JScrollPane(console = new JTextArea())));
-        treeRoot.setWindow(tab1 = new TabWindow(new View("Tree view", null, treeView)));
-        editorRoot.setWindow(tab3 = new TabWindow(new View("Editor view", null, editorView)));
+        //Create consoltreeRoote
+        consoleViewMap.addView(1, new View("console", null, new JScrollPane(console = new JTextArea())));
+        consoleRoot.setWindow(new TabWindow(consoleViewMap.getView(1)));
+
+        //Create treeview
+        treeViewMap.addView(1, new View("Tree view", null, treeView));
+        treeRoot.setWindow(new TabWindow(treeViewMap.getView(1)));
+
+        editorViewMap.addView(1, new View("Editor view", null, editorView));
+        editorRoot.setWindow(new TabWindow(editorViewMap.getView(1)));
 
         //Set window starting layout. Should perhaps be moved to a default layout object.
         rootWindow.setWindow(
@@ -161,7 +175,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         objectView.add(saveButton);
         objectMenu = new View("Object attribute view", null, objectView);
-        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectMenu, tab2 = new TabWindow(new View("Property view", null, propertyView))));
+        objectViewMap.addView(1, objectMenu);
+        objectViewMap.addView(2, new View("Property view", null, propertyView));
+        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), new TabWindow(objectViewMap.getView(2))));
 //--------------------
 
         printToConsole("Welcome to SP 2.0");
@@ -171,8 +187,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(false);
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
+        rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
+
         
-        //  rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
         //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
 
