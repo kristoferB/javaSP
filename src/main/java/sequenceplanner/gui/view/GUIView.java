@@ -35,6 +35,7 @@ import net.infonode.docking.util.ViewMap;
 
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.editor.EditorView;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.utils.IconHandler;
@@ -51,7 +52,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     private JMenuBar menuBar;
     private GUIModel guiModel;
-
     //ViewMaps holding all views for the rootwindows
     private ViewMap rootViewMap = new ViewMap();
     private ViewMap opViewMap = new ViewMap();
@@ -59,9 +59,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private ViewMap consoleViewMap = new ViewMap();
     private ViewMap editorViewMap = new ViewMap();
     private ViewMap objectViewMap = new ViewMap();
-
     private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
-   
     //RootWindows
     private RootWindow rootWindow;
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
@@ -69,7 +67,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private RootWindow editorRoot;
     private RootWindow objectRoot;
     private RootWindow consoleRoot;
-
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -139,7 +136,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Work in progress...
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
-        
+
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(objectViewMap, true);
@@ -195,17 +192,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         printToConsole("Welcome to SP 2.0");
     }
 
-    private void setRootDropDisabled(){
-                rootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(
-                new DropFilter(){
-                                    public boolean acceptDrop(DropInfo dropInfo){
-                                        InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
+    private void setRootDropDisabled() {
+        rootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(
+                new DropFilter() {
 
-                                        if(inter.getDropWindow() instanceof DockingWindow|| inter.getWindow() instanceof DockingWindow)
-                                            return false;
-                                        return true;
-                                    }
-        });
+                    public boolean acceptDrop(DropInfo dropInfo) {
+                        InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
+
+                        if (inter.getDropWindow() instanceof DockingWindow || inter.getWindow() instanceof DockingWindow) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
     }
 
     private void setStartingWindowsProperties() {
@@ -214,7 +213,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
         //rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
 
-        
+
         //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
 
@@ -222,8 +221,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * Empties the opViewMap and removes all tabs from mainDocks.
      */
     public void closeAllViews() {
-        for(int i = 1; opViewMap.getViewCount() != 0; i++)
+        for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             opViewMap.removeView(i);
+        }
         mainDocks = new TabWindow();
     }
 
@@ -406,6 +406,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 //End listeners
 
+    /**
+     * Opens a new window with a preference pane in it.
+     */
     public void showPrefPane() {
         PreferencePane p = createPrefPane();
         p.setVisible(true);
@@ -440,6 +443,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }
     }
 
+    /**
+     * Adds a tab to the main tabwindow with a resourceview in it.
+     */
     public void addResourceView() {
         mainDocks.addTab(new View(guiModel.getResourceView().getName(), null, guiModel.getResourceView()));
     }
@@ -460,5 +466,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public PropertyView getPropertyView() {
         return propertyView;
+    }
+
+    public void setFocused(ViewData data) {
+        System.out.println("Not yet implemented!");
     }
 }

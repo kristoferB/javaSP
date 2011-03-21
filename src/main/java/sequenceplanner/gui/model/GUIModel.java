@@ -56,11 +56,10 @@ public class GUIModel {
         operationViews.addLast(new OperationView(this.model, "Opereration view " + (operationViews.size() + 1)));
     }
 
-
     public void createNewOpView(ViewData toOpen) {
         operationViews.addLast(new OperationView(this.model, toOpen));
     }
-    
+
     public void createNewReView() {
         resourceView = new ResourceView(this.model, this.model.getResourceRoot(), "Resource view");
 
@@ -112,12 +111,13 @@ public class GUIModel {
             getModel().reloadNamesCache();
             try {
 
-                ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
-                if (operationViews.size() == 0) {
-                    createNewOpView(toOpen);
-                } else {
-                    createNewOpView(toOpen);
-                }
+ //               for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+                    if (getModel().getViewRoot().getChildAt(0).getNodeData() != null) {
+                        ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
+                            createNewOpView(toOpen);
+                    }
+ //               }
+
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");
             }
@@ -151,8 +151,6 @@ public class GUIModel {
 
         return true;
     }
-
-
 
     public boolean saveModel(boolean saveAs) {
 
@@ -247,6 +245,4 @@ public class GUIModel {
         }
         return new OperationView(this.model, data);
     }
-
-
 }
