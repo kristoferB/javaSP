@@ -18,22 +18,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for actions complex type.
+ * <p>Java class for properties complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="actions">
+ * &lt;complexType name="properties">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Action" maxOccurs="unbounded" minOccurs="0">
+ *         &lt;element name="Property" maxOccurs="unbounded" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="variable" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                 &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                 &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *               &lt;/restriction>
  *             &lt;/complexContent>
  *           &lt;/complexType>
@@ -47,41 +46,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "actions", propOrder = {
-    "action"
+@XmlType(name = "properties", propOrder = {
+    "property"
 })
-public class Actions {
+public class Properties {
 
-    @XmlElement(name = "Action")
-    protected List<Actions.Action> action;
+    @XmlElement(name = "Property")
+    protected List<Properties.Property> property;
 
     /**
-     * Gets the value of the action property.
+     * Gets the value of the property property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the action property.
+     * This is why there is not a <CODE>set</CODE> method for the property property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAction().add(newItem);
+     *    getProperty().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Actions.Action }
+     * {@link Properties.Property }
      * 
      * 
      */
-    public List<Actions.Action> getAction() {
-        if (action == null) {
-            action = new ArrayList<Actions.Action>();
+    public List<Properties.Property> getProperty() {
+        if (property == null) {
+            property = new ArrayList<Properties.Property>();
         }
-        return this.action;
+        return this.property;
     }
 
 
@@ -94,9 +93,8 @@ public class Actions {
      * &lt;complexType>
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="variable" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
      *     &lt;/restriction>
      *   &lt;/complexContent>
      * &lt;/complexType>
@@ -106,36 +104,34 @@ public class Actions {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class Action {
+    public static class Property {
 
-        @XmlAttribute(name = "variable", required = true)
-        protected int variable;
+        @XmlAttribute(name = "id", required = true)
+        protected int id;
         @XmlAttribute(name = "value", required = true)
-        protected int value;
-        @XmlAttribute(name = "type", required = true)
-        protected int type;
+        protected boolean value;
 
         /**
-         * Gets the value of the variable property.
+         * Gets the value of the id property.
          * 
          */
-        public int getVariable() {
-            return variable;
+        public int getId() {
+            return id;
         }
 
         /**
-         * Sets the value of the variable property.
+         * Sets the value of the id property.
          * 
          */
-        public void setVariable(int value) {
-            this.variable = value;
+        public void setId(int value) {
+            this.id = value;
         }
 
         /**
          * Gets the value of the value property.
          * 
          */
-        public int getValue() {
+        public boolean isValue() {
             return value;
         }
 
@@ -143,24 +139,8 @@ public class Actions {
          * Sets the value of the value property.
          * 
          */
-        public void setValue(int value) {
+        public void setValue(boolean value) {
             this.value = value;
-        }
-
-        /**
-         * Gets the value of the type property.
-         * 
-         */
-        public int getType() {
-            return type;
-        }
-
-        /**
-         * Sets the value of the type property.
-         * 
-         */
-        public void setType(int value) {
-            this.type = value;
         }
 
     }
