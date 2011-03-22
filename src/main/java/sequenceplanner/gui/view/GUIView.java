@@ -135,7 +135,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private void createRootWindow() {
         //Work in progress...
 
-        rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
+        //Create main RootWindow and set it's dragrectangleborderwidth
+        //to 0, i.e. invisible.
+        rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
+        rootWindow.getRootWindowProperties().setDragRectangleBorderWidth(0);
 
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
@@ -196,6 +199,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(
                 new DropFilter() {
 
+                    @Override
                     public boolean acceptDrop(DropInfo dropInfo) {
                         InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
 
