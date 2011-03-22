@@ -471,4 +471,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void setFocused(ViewData data) {
         System.out.println("Not yet implemented!");
     }
+
+    /**
+     * To get the viewmap used for SOPs.<br/>
+     * The method is used for JUnit testing.
+     * @return {@link ViewMap} for the SOP root window.
+     */
+    public ViewMap getSOPViewMap() {
+        return opViewMap;
+    }
+
 }
