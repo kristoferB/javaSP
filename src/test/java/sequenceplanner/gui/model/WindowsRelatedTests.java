@@ -1,46 +1,38 @@
-//package sequenceplanner.gui.model;
-//
-//import java.io.File;
-//import org.junit.AfterClass;
-//import org.junit.Before;
-//import org.junit.BeforeClass;
-//import org.junit.Test;
-//import sequenceplanner.model.ConvertFromXML;
-//import sequenceplanner.general.SP;
-//import sequenceplanner.xml.SequencePlannerProjectFile;
-//import static org.junit.Assert.*;
-//
-///**
-// *
-// * @author patrik
-// */
-//public class WindowsRelatedTests {
-//
-//    WindowInfoWrapper windows = new WindowInfoWrapper();
-//    //Instances of the model and view.
-//    GUIModel guiModel = new GUIModel();
-//
-//    SP sp = new SP();
-//
-//    public WindowsRelatedTests() {
-//    }
-//
-//    @BeforeClass
-//    public static void setUpClass() throws Exception {
-//    }
-//
-//    @AfterClass
-//    public static void tearDownClass() throws Exception {
-//    }
-//
-//    @Before
-//    public void beforeTest() {
-//        sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
-////        openFile(SequencePlanner.class.getResource("resources/filesForTesting/fileForTesting.sopx").getFile());
-////        openFile("C:/cygwin/home/patrik/Sequence-Planner/src/main/resources/sequenceplanner/resources/filesForTesting/fileForTesting.sopx");
-//        //reinitialize "windows"
-//    }
-//
+package sequenceplanner.gui.model;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import sequenceplanner.general.SP;
+import sequenceplanner.model.data.ViewData;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author patrik
+ */
+public class WindowsRelatedTests {
+
+    //Instance of SP
+    SP mSP = new SP();
+
+    public WindowsRelatedTests() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void beforeTest() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
+    }
+
 //    /**
 //     * test of id 99 (manually testing is also needed)
 //     */
@@ -54,37 +46,32 @@
 //        //Open/unhide object root window
 //        assertTrue("Can't open windows!", windows.getStatistics(WindowInfoWrapper.NBR_OF_OPEN) == childWindows);
 //    }
-//
-//    /**
-//     * test of id 88
-//     */
-//    @Test
-//    public void id88() {
-//
-//        for(WindowInfoWrapper window : windows.children) {
-//            //guiModel open window "window"
-//        }
-//
-//        assertTrue("SOP views are not opened correct!",windows.getStatistics(windows.NBR_OF)==windows.getStatistics(windows.NBR_OF_OPEN));
-//    }
-//
-//    public void openFile(String nameOfFile) {
-//        SequencePlannerProjectFile project = null;
-//
-//        try {
-//            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(SequencePlannerProjectFile.class.getPackage().getName());
-//            javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
-//            project = (SequencePlannerProjectFile) unmarshaller.unmarshal(new File(nameOfFile));
-//
-//        } catch (javax.xml.bind.JAXBException ex) {
-//            fail(ex.toString());
-//
-//        } catch (ClassCastException ex) {
-//            fail(ex.toString());
-//        }
-//
-//        ConvertFromXML con = new ConvertFromXML(guiModel.getModel());
-//        guiModel.setModel(con.convert(project));
-//        guiModel.getModel().rootUpdated();
-//    }
-//}
+    /**
+     * test of id 88<br/>
+     * Opens all SOP views for a project and checks that they are added to correct root window.<br/>
+     * The views are opened two times in order to check that a view can not be added mutiple times.<br/>
+     */
+    @Test
+    public void id88() {
+        int nbrOfSOPViewsInOperationRootWindowAtState = mSP.getGUIView().getSOPViewMap().getViewCount();
+
+        for (int i = 0; i < mSP.getModel().getViewRoot().getChildCount(); ++i) {
+            ViewData vd = (ViewData) mSP.getModel().getViewRoot().getChildAt(i).getNodeData();
+            mSP.getGUIController().addNewOpTab(vd);
+        }
+
+        for (int i = 0; i < mSP.getModel().getViewRoot().getChildCount(); ++i) {
+            ViewData vd = (ViewData) mSP.getModel().getViewRoot().getChildAt(i).getNodeData();
+            mSP.getGUIController().addNewOpTab(vd);
+        }
+
+        int nbrOfSOPViewsInOperationRootWindow = mSP.getGUIView().getSOPViewMap().getViewCount();
+        System.out.println("nbrOfSOPViewsInOperationRootWindow: " + nbrOfSOPViewsInOperationRootWindow);
+
+        int nbrOfSOPViewsInViewRootTree = mSP.getModel().getViewRoot().getChildCount();
+        System.out.println("nbrOfSOPViewsInViewRootTree: " + nbrOfSOPViewsInViewRootTree);
+
+        assertTrue((nbrOfSOPViewsInOperationRootWindow - nbrOfSOPViewsInOperationRootWindowAtState) == nbrOfSOPViewsInViewRootTree);
+
+    }
+}
