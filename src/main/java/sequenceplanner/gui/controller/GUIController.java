@@ -49,6 +49,7 @@ public class GUIController {
         guiView.addSaveL(new SaveListener());
         guiView.addSaveAsL(new SaveAsListener());
         guiView.addCloseL(new CloseListener());
+        guiView.addDefWindL(new DefaultListener());
         guiView.addSaveEFAoL(new SaveEFAoListener());
         guiView.addSaveEFArL(new SaveEFArListener());
         guiView.addSaveCostL(new SaveCostListener());
@@ -156,6 +157,15 @@ public class GUIController {
             guiView.printToConsole("Not supported yet.");
         }
     }
+    
+    class DefaultListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            defaultWindows();
+        }
+    }
+
     //Convert menu listeners
 
     class SaveEFAoListener implements ActionListener {
@@ -278,6 +288,10 @@ public class GUIController {
 
     private void saveModel(boolean saveAs){
         guiModel.saveModel(saveAs);
+    }
+    private void defaultWindows(){
+        guiView.setWindowLayout();
+
     }
 
 }

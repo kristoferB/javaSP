@@ -47,7 +47,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     private JMenuBar menuBar;
     private GUIModel guiModel;
-
     //ViewMaps holding all views for the rootwindows
     private ViewMap rootViewMap = new ViewMap();
     private ViewMap opViewMap = new ViewMap();
@@ -55,9 +54,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private ViewMap consoleViewMap = new ViewMap();
     private ViewMap editorViewMap = new ViewMap();
     private ViewMap objectViewMap = new ViewMap();
-
     private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
-   
     //RootWindows
     private RootWindow rootWindow;
     private RootWindow opRootWindow;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
@@ -65,7 +62,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private RootWindow editorRoot;
     private RootWindow objectRoot;
     private RootWindow consoleRoot;
-
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -79,6 +75,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private int opViewIndex;
     private JTextArea console;
     private JButton saveButton;
+
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
@@ -127,13 +124,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Work in progress...
 
         rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
-        
+
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(objectViewMap, true);
         editorRoot = DockingUtil.createRootWindow(editorViewMap, true);
         consoleRoot = DockingUtil.createRootWindow(consoleViewMap, true);
-
+        opRootWindow.getPropertyChangeListeners();
         editorView = new EditorView(guiModel.getGlobalProperties());
         treeView = new TreeView(guiModel.getModel());
 
@@ -166,6 +163,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(true, 0.7f, opRootWindow,
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
                 consoleRoot));
+        //setWindowLayout();
         this.getContentPane().add(rootWindow);
 
 //Test (adding save button to object attribute window) should be cleaned up!!!!
@@ -189,7 +187,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
         rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
 
-        
+
         //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
 
@@ -197,8 +195,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * Empties the opViewMap and removes all tabs from mainDocks.
      */
     public void closeAllViews() {
-        for(int i = 1; opViewMap.getViewCount() != 0; i++)
+        for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             opViewMap.removeView(i);
+        }
         mainDocks = new TabWindow();
     }
 
@@ -241,7 +240,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      */
     private JMenu fileMenu, edit, project, convert, mp;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
-            open, save, saveAs, close, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
+            open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP;
 
     private JMenuBar createMenu() {
@@ -265,6 +264,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         project.add(save = new JMenuItem("Save"));
         project.add(saveAs = new JMenuItem("Save As"));
         project.add(close = new JMenuItem("Close"));
+        project.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(project);
 
         //Convert menu
@@ -329,6 +329,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addCloseL(ActionListener l) {
         close.addActionListener(l);
+    }
+
+    public void addDefWindL(ActionListener l) {
+        defaultWindows.addActionListener(l);
     }
 
     public void addSaveEFAoL(ActionListener l) {
@@ -435,5 +439,38 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public PropertyView getPropertyView() {
         return propertyView;
+    }
+
+    public void setWindowLayout() {
+
+        for (int i = 1; i <= opViewMap.getViewCount(); i++) {
+            System.out.println(i);
+            opViewMap.getView(i).dock();
+            opViewMap.getView(i).restore();
+        }
+        //mainDocks.dock();
+        //editorViewMap.dock();
+        //treeView.dock();
+        for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
+                System.out.println(i);
+                editorViewMap.getView(i).dock();
+                editorViewMap.getView(i).restore();
+        }
+        for (int i = 1; i <= treeViewMap.getViewCount(); i++) {
+                System.out.println(i);
+                treeViewMap.getView(i).dock();
+                treeViewMap.getView(i).restore();
+        }
+        for (int i = 1; i <= consoleViewMap.getViewCount(); i++) {
+                System.out.println(i);
+                consoleViewMap.getView(i).dock();
+                consoleViewMap.getView(i).restore();
+        }
+        for (int i = 1; i <= objectViewMap.getViewCount(); i++) {
+                System.out.println(i);
+                objectViewMap.getView(i).dock();
+                objectViewMap.getView(i).restore();
+        }
+        
     }
 }
