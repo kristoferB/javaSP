@@ -23,7 +23,6 @@ public class GUIController {
     //Instances of the model and view.
     private GUIModel guiModel;
     private GUIView guiView;
-
     //TreeviewListener
     private TreeViewController treeViewController;
 
@@ -32,8 +31,8 @@ public class GUIController {
         guiView = v;
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
-      //  guiModel.createNewOpView();
-      //  addNewOpTab();
+        //  guiModel.createNewOpView();
+        //  addNewOpTab();
         addListeners();
 
 
@@ -66,18 +65,29 @@ public class GUIController {
     //Listener classes
 
     //private methods
-    private void addNewOpTab(){
-         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+    private void addNewOpTab() {
+        guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
     }
 
-    public void printToConsole(String text){
+    public void printToConsole(String text) {
         guiView.printToConsole(text);
     }
-    public void addNewOpTab(ViewData data){
-        for(OperationView op : guiModel.getOperationViews()){
-            System.out.println(op.getName());
+
+    /**
+     * Creates a new Operations View in the GUIModel using the
+     * ViewData. If an operation with the same name exists,
+     * this method shifts focus to that Operation View instead.
+     *
+     * @param data ViewData on which the operationview is based
+     */
+    public void addNewOpTab(ViewData data) {
+        if (!isOpened(data)) {
+            guiModel.createNewOpView(data);
+            guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
+        } else {
+            guiView.setFocused(data);
+            printToConsole("Already open!");
         }
-        guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
     }
 
     //File menu listenrs
@@ -118,6 +128,7 @@ public class GUIController {
     }
 
     class AddAllListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.addAllOperations();
@@ -241,7 +252,7 @@ public class GUIController {
         }
     }
 
-    class EditorTreeModelListener implements TreeModelListener{
+    class EditorTreeModelListener implements TreeModelListener {
 
         @Override
         public void treeNodesChanged(TreeModelEvent e) {
@@ -262,22 +273,21 @@ public class GUIController {
         public void treeStructureChanged(TreeModelEvent e) {
             guiView.updatePropertyView();
         }
-
     }
 
-    class SavePropViewListener implements ActionListener{
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                guiView.getPropertyView().saveSettings();
-            }
+    class SavePropViewListener implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            guiView.getPropertyView().saveSettings();
+        }
     }
 
     /**
      * Tells the model to open a new project and adds a new tab in the view
      */
     private void openModel() {
-        if(guiModel.openModel()){
+        if (guiModel.openModel()) {
             guiView.closeAllViews();
             addNewOpTab();
 
@@ -285,8 +295,7 @@ public class GUIController {
         printToConsole("new model opened!");
     }
 
-
-    private void saveModel(boolean saveAs){
+    private void saveModel(boolean saveAs) {
         guiModel.saveModel(saveAs);
     }
     private void defaultWindows(){
@@ -294,4 +303,17 @@ public class GUIController {
 
     }
 
+    /**
+     * Checks if a view with the selected data already is opened.
+     * @param data ViewData to check
+     * @return true if the SOP is already opened else false
+     */
+    public boolean isOpened(ViewData data) {
+        for (OperationView op : guiModel.getOperationViews()) {
+            if (op.getName().equals(data.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

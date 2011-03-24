@@ -31,6 +31,7 @@ import net.infonode.docking.util.ViewMap;
 
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.editor.EditorView;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.utils.IconHandler;
@@ -76,11 +77,18 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JTextArea console;
     private JButton saveButton;
 
+    /**
+     * Constructor for the GUIView class
+     * Creates main frame, initializes all infonode views
+     * and sets starting properties.
+     * @param m reference to the GUIModel instance
+     */
     public GUIView(GUIModel m) {
         guiModel = m;
         initJFrame();
         createRootWindow();
         setStartingWindowsProperties();
+        //setRootDropDisabled();
     }
 
     /**
@@ -123,7 +131,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private void createRootWindow() {
         //Work in progress...
 
-        rootWindow = DockingUtil.createRootWindow(rootViewMap, false);
+        //Create main RootWindow and set it's dragrectangleborderwidth
+        //to 0, i.e. invisible.
+        rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
 
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         opRootWindow = DockingUtil.createRootWindow(opViewMap, true);
@@ -185,7 +195,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(false);
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
-        rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
+        //rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
 
 
         //   mainDocks.getWindowProperties().setDragEnabled(false);
@@ -385,6 +395,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 //End listeners
 
+    /**
+     * Opens a new window with a preference pane in it.
+     */
     public void showPrefPane() {
         PreferencePane p = createPrefPane();
         p.setVisible(true);
@@ -419,6 +432,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }
     }
 
+    /**
+     * Adds a tab to the main tabwindow with a resourceview in it.
+     */
     public void addResourceView() {
         mainDocks.addTab(new View(guiModel.getResourceView().getName(), null, guiModel.getResourceView()));
     }
@@ -473,4 +489,18 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }
         
     }
+
+    public void setFocused(ViewData data) {
+        System.out.println("Not yet implemented!");
+    }
+
+    /**
+     * To get the viewmap used for SOPs.<br/>
+     * The method is used for JUnit testing.
+     * @return {@link ViewMap} for the SOP root window.
+     */
+    public ViewMap getSOPViewMap() {
+        return opViewMap;
+    }
+
 }

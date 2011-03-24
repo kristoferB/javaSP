@@ -22,42 +22,56 @@ public class SP {
      * Hold info about all that is shown in the GUIView.<br/>
      * see {@link GUIModel guiModel}
      */
-    private GUIModel guiModel;
+    private GUIModel mGUIModel;
     /**
      * Main view class for the gui package.<br/>
      * see {@link GUIView guiView}
      */
-    private GUIView guiView;
+    private GUIView mGUIView;
     /**
      * Main controller in the GUI package.<br/>
      * see {@link GUIController guiController}
      */
-    private GUIController guiController;
+    private GUIController mGUIController;
     /**
      * This class will be specialized to keep operations, liasons and resources.<br/>
      * see {@link Model model}
      */
-    private Model model;
+    private Model mModel;
 
     public SP() {
-        guiModel = new GUIModel();
-        model = guiModel.getModel();
-        guiView = new GUIView(guiModel);
-        guiController = new GUIController(guiModel, guiView);
+        mGUIModel = new GUIModel();
+        mModel = mGUIModel.getModel();
+        mGUIView = new GUIView(mGUIModel);
+        mGUIController = new GUIController(mGUIModel, mGUIView);
     }
 
     /**
-     * @return {@link GUIModel guiModel}
+     * @return pointer to the {@link GUIModel} for this SP object
      */
     public GUIModel getGUIModel() {
-        return guiModel;
+        return mGUIModel;
     }
 
     /**
-     * @return {@link Model model}
+     * @return pointer to the {@link Model} for this SP object
      */
     public Model getModel() {
-        return model;
+        return mModel;
+    }
+
+    /**
+     * @return pointer to the {@link GUIView} for this SP object
+     */
+    public GUIView getGUIView() {
+        return mGUIView;
+    }
+
+    /**
+     * @return pointer to the {@link GUIController} for this SP object
+     */
+    public GUIController getGUIController() {
+        return mGUIController;
     }
 
     /**
@@ -65,7 +79,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
-        assertTrue(guiModel.openModel(new File(nameOfFile)));
+        assertTrue(mGUIModel.openModel(new File(nameOfFile)));
     }
 
     /**
@@ -81,14 +95,14 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void saveToSOPXFile(String nameOfFile) {
-        assertTrue(guiModel.saveModelToFile(nameOfFile) instanceof File);
+        assertTrue(mGUIModel.saveModelToFile(nameOfFile) instanceof File);
     }
 
     /**
      * Ugly fix to see current layout (window arrangement).
      */
     public void visualizeGUI() {
-        GUIView view = new GUIView(guiModel);
+        GUIView view = new GUIView(mGUIModel);
         JOptionPane.showMessageDialog(view, "Hello world");
     }
 
@@ -99,13 +113,17 @@ public class SP {
     public OperationData insertOperation() {
         Integer idCounter = getUpdatedIdCount();
         OperationData opData = new OperationData("OP" + idCounter, idCounter);
-        model.getOperationRoot().insert(new TreeNode(opData));
+        mModel.getOperationRoot().insert(new TreeNode(opData));
         return opData;
     }
 
+    /**
+     * Updates idcounter with one and returns this new value.
+     * @return the new value
+     */
     public Integer getUpdatedIdCount() {
-        Integer idCount = model.getCounter();
-        model.setCounter(idCount+1);
+        Integer idCount = mModel.getCounter();
+        mModel.setCounter(idCount+1);
         return idCount;
     }
 }
