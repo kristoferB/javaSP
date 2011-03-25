@@ -63,6 +63,10 @@ public class SEFA {
 
     }
 
+    /**
+     * Requires that there exists a location in this object with label "pm".<br/>
+     * @param ega
+     */
     public void addStandardSelfLoopTransition(SEGA ega) {
         addTransition("pm", "pm", ega.getEvent(), ega.getGuard(), ega.getAction());
     }

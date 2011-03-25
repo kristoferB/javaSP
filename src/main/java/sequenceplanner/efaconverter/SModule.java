@@ -64,8 +64,12 @@ public class SModule {
         getModuleSubject().setComment(comment);
     }
 
-    public void addComment(String comment) {
-        setComment(getModuleSubject().getComment() + "\n" + comment);
+    public void addComment(String iComment) {
+        if(getModuleSubject().getComment() == null) {
+            setComment(iComment);
+        } else {
+            setComment(getModuleSubject().getComment() + "\n" + iComment);
+        }
     }
 
     /**
@@ -126,19 +130,19 @@ public class SModule {
 
         Project project = null;
 //        if (variableInclusionCheck()) {
-            try {
-                project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
+        try {
+            project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
 
-                for (Automaton automaton : project) {
-                    System.out.println("Automaton: " + automaton.getName());
-                    for (TransitionProxy tp : automaton.getTransitions()) {
-                        System.out.println("Event: " + tp.getEvent().getName());
-                    }
+            for (Automaton automaton : project) {
+                System.out.println("Automaton: " + automaton.getName());
+                for (TransitionProxy tp : automaton.getTransitions()) {
+                    System.out.println("Event: " + tp.getEvent().getName());
                 }
-
-            } catch (EvalException e) {
-                System.out.println(e.toString());
             }
+
+        } catch (EvalException e) {
+            System.out.println(e.toString());
+        }
 //        } else {
 //            System.out.println("No variables appears in guards or actions for automata. I will not go on!");
 //        }
@@ -227,6 +231,9 @@ public class SModule {
         }
     }
 
+    /**
+     * User is given dialog to select file name and path.<br/>
+     */
     public void saveToWMODFile() {
         try {
             String filepath = "";
@@ -246,5 +253,27 @@ public class SModule {
         } catch (Exception t) {
             t.printStackTrace();
         }
+    }
+
+    /**
+     * Save to wmod file given as parameter.<br/>
+     * @param iFilePath path to file
+     * @return true if save was ok else false
+     */
+    public boolean saveToWMODFile(final String iFilePath) {
+        generateTransitions();
+        try {
+            File file = new File(iFilePath);
+            getModuleSubject().setName(file.getName().replaceAll(".wmod", ""));
+            ModuleSubjectFactory factory = new ModuleSubjectFactory();
+            // Save module to file
+            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+            marshaller.marshal(getModuleSubject(), file);
+
+            return true;
+        } catch (Exception t) {
+            t.printStackTrace();
+        }
+        return false;
     }
 }
