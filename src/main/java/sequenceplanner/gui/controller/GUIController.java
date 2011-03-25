@@ -12,7 +12,6 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeViewController;
 
-import sequenceplanner.efficientModel.EfficientEFA;
 import sequenceplanner.efficientModel.OperationSequences;
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
@@ -60,15 +59,12 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
-<<<<<<< HEAD
         guiView.addSeqForOp(new OperationSeqListener());
         guiView.addReducedEFA(new EfficientEFAListener());
         guiView.addEditorListener();
-=======
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
->>>>>>> cbe8babd91337bebd11ec601b3d9afe3c1ea7f2c
     }
     //Listener classes
 
@@ -235,7 +231,6 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -254,36 +249,6 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
-
-    /**
-     * Opens a filechooser and lets the user select a previously created project
-     * to open.
-     * @return
-     */
-    private boolean openModel() {
-        JFileChooser fc = new JFileChooser("user.dir");
-
-        fc.setFileFilter(filter);
-        int answer = fc.showOpenDialog(null);
-
-        if (answer == JFileChooser.APPROVE_OPTION) {
-            openModel(fc.getSelectedFile());
-            guiModel.getModel().reloadNamesCache();
-            try {
-                ViewData toOpen = (ViewData) guiModel.getModel().getViewRoot().getChildAt(0).getNodeData();
-                guiModel.removeAllOpViews();
-                guiModel.createNewOpView(toOpen);
-                guiView.addNewOpTab();
-
-            } catch (ClassCastException e) {
-                System.out.println("Could not cast first child of viewroot to viewData");
-            }
-            return true;
-=======
-            guiView.printToConsole("Not supported yet.");
->>>>>>> cbe8babd91337bebd11ec601b3d9afe3c1ea7f2c
         }
     }
 

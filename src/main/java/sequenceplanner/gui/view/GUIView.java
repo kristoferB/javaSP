@@ -30,6 +30,7 @@ import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
 import sequenceplanner.SequencePlanner;
+import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.editor.EditorView;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
@@ -378,7 +379,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         efaForMP.addActionListener(l);
     }
 
-<<<<<<< HEAD
     public void addSeqForOp(ActionListener l) {
         opSequences.addActionListener(l);
     }
@@ -389,7 +389,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addEditorListener(){
         editorView.addMouseListener(new EditorMouseAdapter(editorView.getTree(), guiModel.getGlobalProperties()));
-=======
+    }
+
     public void addEditorListener(MouseAdapter l) {
         editorView.addMouseListener(l);
     }
@@ -401,7 +402,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addSavePropViewL(ActionListener l) {
         saveButton.addActionListener(l);
->>>>>>> cbe8babd91337bebd11ec601b3d9afe3c1ea7f2c
     }
 //End listeners
 
