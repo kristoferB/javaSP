@@ -63,18 +63,18 @@ public class ClickMenu extends JPopupMenu {
          add(first,0);
          draw = true;
          
-      } else if (model.isLiasonRoot(node) || model.isLiason(d)) {
+      } else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
          first.setAction(av.createAction("Insert Liason",
                new InsertVariable(node, Data.LIASON), "resources/icons/min.png"));
 
          add(first,0);
-         if (model.isLiason(d)) {
+         if (Model.isLiason(d)) {
             add(rem);
          }
             
          draw = true;
 
-      } else if (model.isResource(d)) {
+      } else if (Model.isResource(d)) {
          first.setAction(av.createAction("Insert Resource",
                new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png") );
 
@@ -84,24 +84,24 @@ public class ClickMenu extends JPopupMenu {
          add(first,0);
          draw = true;
 
-      } else if (model.isVariable(d)) {
+      } else if (Model.isVariable(d)) {
          add(rem,0);
          draw = true;
       }
-      else if (model.isOperation(d) && d.getName().contains(TypeVar.SEPARATION+TypeVar.TRANSPORT+TypeVar.SEPARATION)) { //Added PM 101130
+      else if (Model.isOperation(d) && d.getName().contains(TypeVar.SEPARATION+TypeVar.TRANSPORT+TypeVar.SEPARATION)) { //Added PM 101130
           add(rem,0);
           draw = true;
       }
       
       
-      if (model.isResource(d) || model.isLiason(d)
+      if (Model.isResource(d) || Model.isLiason(d)
             || model.isResourceRoot(node) || model.isLiasonRoot(node) ) {
          JMenu menu = new JMenu("Views");
          menu.add(new JMenuItem(av.createAction("Open treeview",
             new OpenResourceView(node), "resources/icons/res.png") ) );
          add(menu);
 
-         if (model.isResource(d)) {
+         if (Model.isResource(d)) {
             menu.add(new JMenuItem(av.createAction("Open operations realized by",
                   new OpenOperationsRealizedBy(node), "resources/icons/res.png") ) );
          }
@@ -136,9 +136,4 @@ public class ClickMenu extends JPopupMenu {
       g.setColor(Color.BLACK);
       g.fillPolygon(polX, polY, 3);
    }
-
-
-
-
-
 }

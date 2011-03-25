@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.TreeMap;
+import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import sequenceplanner.editor.EditorTreeModel;
@@ -35,7 +36,8 @@ public class Model implements IModel {
    public static final String VARIABLE_ROOT_NAME = "Variables";
 
    static Logger logger = Logger.getLogger(Model.class);
-   private static int idConter = 0;
+   private static int idConter = 1001;
+   private static int propertyIdCounter = 0;
    //Holds a cache for easy access to all operations names and paths
    private NameCacheMap nameCache;
    //Holds operationspecific view
@@ -109,6 +111,10 @@ public class Model implements IModel {
       syncListeners.remove(l);
    }
 
+   public void addTreeModelListener(TreeModelListener l){
+      globalProperties.addTreeModelListener(l);
+   }
+
    public TreeNode getRoot() {
       return treeRoot;
    }
@@ -139,6 +145,10 @@ public class Model implements IModel {
 
    public static int newId() {
       return idConter++;
+   }
+
+   public static int newPropertyId(){
+      return propertyIdCounter++;
    }
 
    // Handle views
@@ -209,8 +219,7 @@ public class Model implements IModel {
     */
    public void saveOperationData(TreeNode[] data) {
 
-      for (int i = 0; i <
-            data.length; i++) {
+      for (int i = 0; i < data.length; i++) {
          TreeNode node = data[i];
 
          if (node.getNodeData() instanceof OperationData) {

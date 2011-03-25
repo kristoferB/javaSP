@@ -7,12 +7,12 @@ import sequenceplanner.general.SP;
 import static org.junit.Assert.*;
 
 /**
- *
+ * To test properties
  * @author patrik
  */
-public class PropertryTests {
+public class PropertyTests {
 
-    public PropertryTests() {
+    public PropertyTests() {
     }
 
     @BeforeClass

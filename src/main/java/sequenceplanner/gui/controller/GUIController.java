@@ -2,21 +2,15 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Calendar;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import sequenceplanner.editor.EditorMouseAdapter;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
-import sequenceplanner.model.ConvertFromXML;
-import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.view.operationView.Constansts;
-import sequenceplanner.xml.SequencePlannerProjectFile;
+import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.treeView.TreeViewController;
 
 import sequenceplanner.efficientModel.EfficientEFA;
 import sequenceplanner.efficientModel.OperationSequences;
@@ -28,28 +22,20 @@ import sequenceplanner.efficientModel.OperationSequences;
  */
 public class GUIController {
 
-    //Project file if project is saved so far.
-    File projectFile;
     //Instances of the model and view.
     private GUIModel guiModel;
     private GUIView guiView;
-    // Filefilter for the project
-    private static final FileFilter filter = new FileFilter() {
 
-        @Override
-        public boolean accept(File f) {
-            return f.getName().toLowerCase().endsWith(".sopx") || f.isDirectory();
-        }
-
-        @Override
-        public String getDescription() {
-            return "Sequence Planner Project File";
-        }
-    };
+    //TreeviewListener
+    private TreeViewController treeViewController;
 
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
+
+        treeViewController = new TreeViewController(this, guiView.getTreeView());
+      //  guiModel.createNewOpView();
+      //  addNewOpTab();
         addListeners();
 
 
@@ -74,11 +60,32 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
+<<<<<<< HEAD
         guiView.addSeqForOp(new OperationSeqListener());
         guiView.addReducedEFA(new EfficientEFAListener());
         guiView.addEditorListener();
+=======
+        guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
+        guiView.addTreeModelListener(new EditorTreeModelListener());
+        guiView.addSavePropViewL(new SavePropViewListener());
+>>>>>>> cbe8babd91337bebd11ec601b3d9afe3c1ea7f2c
     }
     //Listener classes
+
+    //private methods
+    private void addNewOpTab(){
+         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+    }
+
+    public void printToConsole(String text){
+        guiView.printToConsole(text);
+    }
+    public void addNewOpTab(ViewData data){
+        for(OperationView op : guiModel.getOperationViews()){
+            System.out.println(op.getName());
+        }
+        guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
+    }
 
     //File menu listenrs
     private class CreateOpListener implements ActionListener {
@@ -86,7 +93,7 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.createNewOpView();
-            guiView.addNewOpTab();
+            addNewOpTab();
         }
     }
 
@@ -118,13 +125,10 @@ public class GUIController {
     }
 
     class AddAllListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.addAllOperations();
-            guiView.addNewOpTab();
-
-
+            addNewOpTab();
         }
     }
     //Project menu listeners
@@ -157,7 +161,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
     //Convert menu listeners
@@ -166,7 +170,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -174,7 +178,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -182,7 +186,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -190,7 +194,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -198,7 +202,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -207,7 +211,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -215,7 +219,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -223,7 +227,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -231,6 +235,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -276,118 +281,59 @@ public class GUIController {
                 System.out.println("Could not cast first child of viewroot to viewData");
             }
             return true;
+=======
+            guiView.printToConsole("Not supported yet.");
+>>>>>>> cbe8babd91337bebd11ec601b3d9afe3c1ea7f2c
         }
-        return false;
     }
 
-    public boolean openModel(File inputFile) {
+    class EditorTreeModelListener implements TreeModelListener{
 
-        SequencePlannerProjectFile project = null;
-
-        try {
-            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(SequencePlannerProjectFile.class.getPackage().getName());
-            javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
-            project = (SequencePlannerProjectFile) unmarshaller.unmarshal(inputFile);
-
-        } catch (javax.xml.bind.JAXBException ex) {
-            java.util.logging.Logger.getLogger("global").log(
-                    java.util.logging.Level.SEVERE, null, ex); // NOI18N
-            return false;
-        } catch (ClassCastException ex) {
-            System.out.println("Class Cast Error in openModel");
-            return false;
+        @Override
+        public void treeNodesChanged(TreeModelEvent e) {
+            guiView.updatePropertyView();
         }
 
-        ConvertFromXML con = new ConvertFromXML(guiModel.getModel());
-        guiModel.setModel(con.convert(project));
+        @Override
+        public void treeNodesInserted(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
 
-        guiModel.getModel().rootUpdated();
+        @Override
+        public void treeNodesRemoved(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
 
-        return true;
+        @Override
+        public void treeStructureChanged(TreeModelEvent e) {
+            guiView.updatePropertyView();
+        }
+
     }
 
-    private boolean saveModel(boolean saveAs) {
-
-        if (projectFile == null && !saveAs) {
-            saveAs = true;
-        }
-
-        if (saveAs) {
-            String filepath = "";
-
-            JFileChooser fc = new JFileChooser("user.dir");
-            fc.setFileFilter(filter);
-
-            int fileResult = fc.showSaveDialog(null);
-
-            if (fileResult == JFileChooser.APPROVE_OPTION) {
-                filepath = fc.getSelectedFile().getAbsolutePath();
-
-                filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
-                        : filepath + Constansts.FILEFORMAT;
-
-                if (filepath.endsWith(Constansts.FILEFORMAT)) {
-
-                    projectFile = saveModelToFile(filepath);
-                    return true;
-                }
+    class SavePropViewListener implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guiView.getPropertyView().saveSettings();
             }
-        } else {
-            return saveModelToFile(projectFile);
-        }
 
-        return false;
     }
 
-    public void saveBackup() {
-        if (projectFile != null) {
-            String path = projectFile.getParent();
-            path = path + File.separatorChar + "backup";
+    /**
+     * Tells the model to open a new project and adds a new tab in the view
+     */
+    private void openModel() {
+        if(guiModel.openModel()){
+            guiView.closeAllViews();
+            addNewOpTab();
 
-            File f = new File(path);
-            f.mkdir();
-
-            Calendar c = Calendar.getInstance();
-            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
-
-            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constansts.FILEFORMAT;
-            saveModelToFile(path);
         }
+        printToConsole("new model opened!");
     }
 
-    public File saveModelToFile(String filepath) {
-        File file = new File(filepath);
 
-        try {
-            file.createNewFile();
-            saveModelToFile(file);
-            return file;
-
-        } catch (IOException ex) {
-            System.out.println("File save error\n " + ex.getMessage());
-            return null;
-        }
+    private void saveModel(boolean saveAs){
+        guiModel.saveModel(saveAs);
     }
 
-    public boolean saveModelToFile(File file) {
-        ConvertToXML converter = new ConvertToXML(guiModel.getModel());
-        SequencePlannerProjectFile project = converter.convert();
-
-        try {
-            javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(project.getClass().getPackage().getName());
-            javax.xml.bind.Marshaller marshaller = jaxbCtx.createMarshaller();
-            marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING,
-                    "UTF-8"); // NOI18N
-            marshaller.setProperty(
-                    javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT,
-                    Boolean.TRUE);
-            marshaller.marshal(project, new FileOutputStream(file));
-            return true;
-
-        } catch (javax.xml.bind.JAXBException ex) {
-            throw new RuntimeException("File save error\n " + ex.getMessage(), ex);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

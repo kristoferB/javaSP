@@ -7,7 +7,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.apache.log4j.Logger;
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;

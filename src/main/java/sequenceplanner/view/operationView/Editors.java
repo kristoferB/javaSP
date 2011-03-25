@@ -30,7 +30,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -748,7 +748,7 @@ public class Editors {
             updateAnd(node);
             label = label.isEmpty() ? "" : label + " " + Constansts.AND;
             label += " ( " + node.representation + " ) ";
-            System.out.println(label);
+     //       System.out.println(label);
             model.set(i, node);
 
          }

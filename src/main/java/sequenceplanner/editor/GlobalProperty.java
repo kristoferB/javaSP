@@ -1,6 +1,7 @@
 package sequenceplanner.editor;
 
 import java.util.LinkedList;
+import sequenceplanner.model.Model;
 
 /**
  * Describes a global property with arbitrary number of text values
@@ -11,16 +12,26 @@ public class GlobalProperty implements IGlobalProperty{
 
     // The name of the property
     private String name;
+    private int id;
     // The values of the property
-    private LinkedList<String> values = new LinkedList();
+    private LinkedList<Value> values = new LinkedList();
 
     public GlobalProperty(String n){
         name = n;
+        id = Model.newPropertyId();
     }
 
     public GlobalProperty(String n, LinkedList<String> val){
         name = n;
-        values = val;
+        id = Model.newPropertyId();
+        for(int i = 0; i < val.size(); i++){
+            Value v = new Value(val.get(i));
+            values.add(v);
+        }
+    }
+
+    public int getId(){
+        return id;
     }
 
     @Override
@@ -34,21 +45,28 @@ public class GlobalProperty implements IGlobalProperty{
     }
 
     @Override
-    public String getValue(int i){
+    public Value getValue(int i){
         return values.get(i);
     }
 
     @Override
     public void setValue(int i, Object value){
         if(value instanceof String){
-            values.set(i, (String) value);
+            values.get(i).setName((String) value);
+        }
+        if(value instanceof Value){
+            values.add(i, (Value) value);
         }
     }
     
     @Override
     public void addValue(Object value){
         if(value instanceof String){
-            values.add((String) value);
+            Value v = new Value((String) value);
+            values.add(v);
+        }
+        if(value instanceof Value){
+            values.add((Value) value);
         }
     }
 
@@ -63,9 +81,9 @@ public class GlobalProperty implements IGlobalProperty{
     }
 
     @Override
-    public int indexOfValue(Object o) {
+    public int indexOfValue(Value value) {
         for(int i = 0; i < values.size(); i++){
-            if(o.equals((Object) values.get(i))){
+            if(value.equals(values.get(i))){
                 return i;
             }
         }

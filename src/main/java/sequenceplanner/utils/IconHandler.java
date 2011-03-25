@@ -1,4 +1,4 @@
-package sequenceplanner.spIcon;
+package sequenceplanner.utils;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;

@@ -22,7 +22,7 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 
 /**
  *
@@ -133,6 +133,7 @@ public class AttributeEditor extends JPanel
       ((JSplitPane) getParent()).resetToPreferredSizes();
    }
 
+    @Override
    public void invoke(Object source, mxEventObject evt) {
       SPGraph graph = view.getGraph();
       Object cell = graph.getSelectionCell();

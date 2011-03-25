@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
-import sequenceplanner.spIcon.IconHandler;
+import sequenceplanner.utils.IconHandler;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;

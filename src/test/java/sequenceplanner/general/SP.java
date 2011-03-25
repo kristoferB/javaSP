@@ -65,7 +65,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
-        assertTrue(guiController.openModel(new File(nameOfFile)));
+        assertTrue(guiModel.openModel(new File(nameOfFile)));
     }
 
     /**
@@ -81,7 +81,7 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void saveToSOPXFile(String nameOfFile) {
-        assertTrue(guiController.saveModelToFile(nameOfFile) instanceof File);
+        assertTrue(guiModel.saveModelToFile(nameOfFile) instanceof File);
     }
 
     /**
@@ -93,13 +93,19 @@ public class SP {
     }
 
     /**
-     * Inserts a new operation as child to root of operation-tree
+     * Inserts a new operation as child to root of operation-
+     * @return the created operation as {@link OperationData}
      */
-    public void insertOperation() {
-        Integer idCounter = model.getCounter();
-        ++idCounter;
+    public OperationData insertOperation() {
+        Integer idCounter = getUpdatedIdCount();
         OperationData opData = new OperationData("OP" + idCounter, idCounter);
         model.getOperationRoot().insert(new TreeNode(opData));
-        model.setCounter(idCounter);
+        return opData;
+    }
+
+    public Integer getUpdatedIdCount() {
+        Integer idCount = model.getCounter();
+        model.setCounter(idCount+1);
+        return idCount;
     }
 }

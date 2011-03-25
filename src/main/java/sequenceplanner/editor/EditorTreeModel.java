@@ -28,7 +28,7 @@ public class EditorTreeModel implements TreeModel{
      *
      * @param name the name of the new property
      */
-    public void addProperty(String name){
+    public TreePath addProperty(String name){
         GlobalProperty newProperty = new GlobalProperty(name);
         globalProperties.add(newProperty);
 
@@ -37,6 +37,10 @@ public class EditorTreeModel implements TreeModel{
         Object[] child = {newProperty};
         TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
         fireTreeNodesInserted(e);
+
+        Object[] newPath = {root,newProperty};
+        TreePath treePath = new TreePath(newPath);
+        return treePath;
 
     }
 
@@ -65,19 +69,24 @@ public class EditorTreeModel implements TreeModel{
      * @param property the parent of the new value
      * @param newValue the value to be added
      */
-    public void addValue(Object property, String newValue){
+    public TreePath addValue(Object property, String newValue){
 
         if(property instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) property;
-            gp.addValue(newValue);
+            Value v = new Value(newValue);
+            gp.addValue(v);
         
             Object[] path = {root,gp};
-            int[] childIndex = {gp.indexOfValue((Object) newValue)};
-            Object[] child = {newValue};
+            int[] childIndex = {gp.indexOfValue(v)};
+            Object[] child = {v};
             TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
             fireTreeNodesInserted(e);
+            Object[] newPath = {root,gp,v};
+            TreePath treePath = new TreePath(newPath);
+            return treePath;
         
         }
+        return null;
     }
 
     /**
@@ -89,14 +98,17 @@ public class EditorTreeModel implements TreeModel{
     public void removeValue(Object property, Object value){
         if(property instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) property;
-            int oldIndex = gp.indexOfValue(value);
-            gp.removeValue(oldIndex);
+            if(value instanceof Value){
+                Value v = (Value) value;
+                int oldIndex = gp.indexOfValue(v);
+                gp.removeValue(oldIndex);
 
-            Object[] path = {root,gp};
-            int[] childIndex = {oldIndex};
-            Object[] child = {value};
-            TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
-            fireTreeNodesRemoved(e);
+                Object[] path = {root,gp};
+                int[] childIndex = {oldIndex};
+                Object[] child = {v};
+                TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
+                fireTreeNodesRemoved(e);
+            }
         }
     }
 
@@ -156,17 +168,17 @@ public class EditorTreeModel implements TreeModel{
             TreeModelEvent e = new TreeModelEvent(this, eventPath, childIndex, child);
             fireTreeNodesChanged(e);
         }
-        else if(o instanceof String){
+        else if(o instanceof Value){
+            Value v = (Value) o;
             Object parent = path.getPathComponent(path.getPathCount()-2);
             if(parent instanceof IGlobalProperty){
                 IGlobalProperty gp = (GlobalProperty) parent;
                 int index = getIndexOfChild(parent, o);
-                String nv = (String) newValue;
-                gp.setValue(index, nv);
+                v.setName((String) newValue);
 
                 Object[] eventPath = {root,gp};
                 int[] childIndex = {index};
-                Object[] child = {nv};
+                Object[] child = {v};
                 TreeModelEvent e = new TreeModelEvent(this, eventPath, childIndex, child);
                 fireTreeNodesChanged(e);
             }
@@ -181,10 +193,13 @@ public class EditorTreeModel implements TreeModel{
         }
         if(parent instanceof IGlobalProperty){
             IGlobalProperty gp = (IGlobalProperty) parent;
-            return gp.indexOfValue(child);
+            if(child instanceof Value){
+                Value value = (Value) child;
+                return gp.indexOfValue(value);
+            }
 
         }
-            return -1;
+        return -1;
     }
 
     @Override
@@ -237,4 +252,5 @@ public class EditorTreeModel implements TreeModel{
             treeModelListener.treeStructureChanged(e);
         }
     }
+
 }

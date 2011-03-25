@@ -555,9 +555,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         edit.registerEditor(OperationData.class,
                 new Editors.ActionEditor(this, "Actions"));
 
-
         graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
-
 
         pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false);
 
@@ -755,6 +753,10 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         }
 
         return name;
+    }
+
+    public void addmxIEventListener(mxIEventListener l){
+        graph.getSelectionModel().addListener(mxEvent.CHANGE, l);
     }
 
     private void registerKeystrokes(InputMap iMap, ActionMap aMap) {

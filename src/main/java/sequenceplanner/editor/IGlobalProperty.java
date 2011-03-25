@@ -5,13 +5,15 @@ package sequenceplanner.editor;
  *
  * @author Evelina
  */
-interface IGlobalProperty {
+public interface IGlobalProperty {
 
     public String getName();
 
     public void setName(String n);
 
-    public String getValue(int i);
+    public int getId();
+
+    public Value getValue(int i);
 
     public void setValue(int i, Object value);
 
@@ -21,6 +23,6 @@ interface IGlobalProperty {
 
     public int getNumberOfValues();
 
-    public int indexOfValue(Object o);
+    public int indexOfValue(Value value);
 
 }

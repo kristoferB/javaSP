@@ -24,7 +24,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeCellEditor;
@@ -34,7 +33,6 @@ import javax.swing.tree.TreePath;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
-import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.operationView.Editors;
 
@@ -90,8 +88,6 @@ public class TreeView extends AbstractView {
                         return "Id: " + Integer.toString(((TreeNode) t).getId());
 
                     }
-
-
                 }
                 return "";
             }
@@ -113,9 +109,6 @@ public class TreeView extends AbstractView {
                 true);
 
 
-
-
-
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
 
         JTextField comboBox = new JTextField();
@@ -134,81 +127,28 @@ public class TreeView extends AbstractView {
 
                     @Override
                     public void keyReleased(KeyEvent e) {
-
-
-
-
                         if (e.getKeyCode() == KeyEvent.VK_F2) {
                             tree.startEditingAtPath(tree.getSelectionPath());
                         }
                     }
                 });
 
-
-
-
-
-
         this.setLayout(
                 new BorderLayout());
 
 
-        this.add(
-                new JScrollPane(tree), BorderLayout.CENTER);
+        this.add( new JScrollPane(tree), BorderLayout.CENTER);
 
 
-        tree.addMouseListener(
-                new MouseAdapter() {
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        popup(e);
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        popup(e);
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() >= 2) {
-                            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-
-                            if (path != null) {
-                                TreeNode t = (TreeNode) path.getLastPathComponent();
-                                if (Model.isView(t.getNodeData())) {
-                                    //   container.createOperationView((ViewData) t.getNodeData());
-                                } else if (Model.isOperation(t.getNodeData())) {
-                                    OperationData data = (OperationData) t.getNodeData();
-                                    //  container.createOperationView(model.getOperationView(data.getId()));
-                                }
-
-                            }
-
-
-                        }
-                    }
-
-                    private void popup(MouseEvent e) {
-
-                        if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-
-                            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-                            if (path != null) {
-                                tree.setSelectionPath(path);
-                                ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), TreeView.this.model);
-                                c.show(TreeView.this, e);
-                            }
-                        }
-                    }
-                });
         tree.setDragEnabled(false);
 //      expandListener();
         drag = new TreeDragSource(tree, DnDConstants.ACTION_COPY_OR_MOVE);
 
     }
 
+    public void addTreeMouseListener(MouseAdapter ma){
+        tree.addMouseListener(ma);
+    }
 //   private void expandListener() {
 //      tree.addTreeWillExpandListener(new TreeWillExpandListener() {
 //
@@ -250,6 +190,7 @@ public class TreeView extends AbstractView {
         /*
          * Drag Gesture Handler
          */
+        @Override
         public void dragGestureRecognized(DragGestureEvent dge) {
             TreePath path = tree.getSelectionPath();
 
@@ -285,13 +226,16 @@ public class TreeView extends AbstractView {
             }
         }
 
+        @Override
         public void dragExit(DragSourceEvent d) {
             d.getDragSourceContext().setCursor(defaultCursor);
         }
 
+        @Override
         public void dragOver(DragSourceDragEvent dd) {
         }
 
+        @Override
         public void dropActionChanged(DragSourceDragEvent dd) {
             //Can maby change the cursor?
 
@@ -307,6 +251,7 @@ public class TreeView extends AbstractView {
             }
         }
 
+        @Override
         public void dragDropEnd(DragSourceDropEvent dsd) {
             System.out.println("End; TargetAction: " + dsd.getDropAction());
 
