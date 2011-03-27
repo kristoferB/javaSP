@@ -198,7 +198,6 @@ public class Model implements IModel {
     */
    public boolean saveView(ViewData data) {
       //TODO verify that an inputted view is valid
-
       String name = data.getName();
 
       for (int i = 0; i < getViewRoot().getChildCount(); i++) {
@@ -207,7 +206,6 @@ public class Model implements IModel {
             return true;
          }
       }
-
       TreeNode viewNode = new TreeNode(data);
       insertChild(getViewRoot(), viewNode);
       return true;
