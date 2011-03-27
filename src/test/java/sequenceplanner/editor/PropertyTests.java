@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
+import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
 
 /**
@@ -24,65 +25,71 @@ public class PropertyTests {
     }
 
     @Test
-    public void testtest() {
+    public void id85() {
         SP sp = new SP();
         sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
-        sp.insertOperation();
+
+        //Create properties
+        GlobalProperty gpColor = new GlobalProperty("Color");
+        gpColor.addValue("blue");
+        gpColor.addValue("red");
+        gpColor.addValue("green");
+        GlobalProperty gpLetters = new GlobalProperty("Letters");
+        gpLetters.addValue("A");
+        gpLetters.addValue("B");
+        gpLetters.addValue("C");
+        gpLetters.addValue("D");
+
+        //Create operations
+        OperationData opA = sp.insertOperation();
+        opA.setName("opA");
+        OperationData opB = sp.insertOperation();
+        opB.setName("opB");
+
+
         sp.saveToSOPXFile("C:/Users/patrik/Desktop/result.sopx");
     }
 
     /**
      * test of id 100
      */
-    @Test
+//    @Test
     public void id100() {
-
         //Insert property (A) with name Adam
         //Insert property (B) with name Bertil
-
         //assertTrue(all property names are different);
-
         //Insert propery (C) with name empty
         //assertTrue(nbr of properties == 2)
-
         //Insert property (D) with name Ad
         //assertTrue(nbr of properties == 3)
-
         //Change name of B to empty
         //assertTrue(nbr of properties == 3)
         //assertTrue(A.getName.equals("Adam"))
         //assertTrue(B.getName.equals("Bertil"))
         //assertTrue(C.getName.equals("Ad"))
-
         //Change name of B to Adam
         //assertTrue(nbr of properties == 3)
         //assertTrue(A.getName.equals("Adam"))
         //assertTrue(B.getName.equals("Bertil"))
         //assertTrue(C.getName.equals("Ad"))
-
         //Insert value (1) with name ett to A
         //Insert value (2) with name två to A
         //assertTrue(A."nbr of values" == 2)
-
         //Change name of 1 to empty
         //assertTrue(A."nbr of values" == 2)
         //assertTrue(1.getName.equals("ett"))
         //assertTrue(2.getName.equals("två"))
-
         //Change name of 1 to två
         //assertTrue(A."nbr of values" == 2)
         //assertTrue(1.getName.equals("ett"))
         //assertTrue(2.getName.equals("två"))
-
         //Insert value (3) with name ett to B
         //assertTrue(B."nbr of values" == 1)
         //assertTrue(3.getName.equals("ett"))
         //assertTrue(A."nbr of values" == 2)
         //assertTrue(1.getName.equals("ett"))
         //assertTrue(2.getName.equals("två"))
-
         //Insert value (4) with name empty to C
         //assertTrue(C."nbr of values" == 0)
     }
-
 }
