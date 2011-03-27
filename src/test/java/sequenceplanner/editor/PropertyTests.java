@@ -46,7 +46,17 @@ public class PropertyTests {
         OperationData opB = sp.insertOperation();
         opB.setName("opB");
 
+        //Set letters A and B for operation A
+        opA.savePropertySetting(((Value) gpLetters.getValue(gpLetters.indexOfValue("A"))).getId(), true);
+        opA.savePropertySetting(((Value) gpLetters.getValue(gpLetters.indexOfValue("B"))).getId(), true);
+        opA.savePropertySetting(gpLetters.getId(), true);
 
+        //Set Color=red and Letters=C for operation B
+        opB.savePropertySetting(((Value) gpColor.getValue(gpColor.indexOfValue("red"))).getId(), true);
+        opB.savePropertySetting(gpColor.getId(), true);
+        opB.savePropertySetting(((Value) gpLetters.getValue(gpLetters.indexOfValue("C"))).getId(), true);
+        opB.savePropertySetting(gpLetters.getId(), true);
+        
         sp.saveToSOPXFile("C:/Users/patrik/Desktop/result.sopx");
     }
 

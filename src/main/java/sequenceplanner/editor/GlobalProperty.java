@@ -90,6 +90,15 @@ public class GlobalProperty implements IGlobalProperty{
         return -1;
     }
 
+    public int indexOfValue(String value){
+        for(int i = 0; i < values.size(); i++){
+            if(value.equals(values.get(i).getName())){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public String toString(){
         return getName();
