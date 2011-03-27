@@ -113,7 +113,9 @@ public class SP {
     public OperationData insertOperation() {
         Integer idCounter = getUpdatedIdCount();
         OperationData opData = new OperationData("OP" + idCounter, idCounter);
-        mModel.getOperationRoot().insert(new TreeNode(opData));
+        TreeNode[] toAdd = new TreeNode[1];
+        toAdd[0] = new TreeNode(opData);
+        mModel.saveOperationData(toAdd);
         return opData;
     }
 

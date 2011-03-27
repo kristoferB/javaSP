@@ -503,6 +503,7 @@ public class SequencePlannerProjectFile {
          * 
          */
         public List<ViewType> getView() {
+            
             if (view == null) {
                 view = new ArrayList<ViewType>();
             }
