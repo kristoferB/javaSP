@@ -1,9 +1,12 @@
 package sequenceplanner.editor;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
+import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
 
@@ -26,41 +29,76 @@ public class PropertyTests {
 
     @Test
     public void id85() {
+        //Create data------------------------------------------------------------
         SP sp = new SP();
         sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
 
         //Create properties
         GlobalProperty gpColor = new GlobalProperty("Color");
         Value blueValue = new Value("blue");
+        gpColor.addValue(blueValue);
         Value redValue = new Value("red");
+        gpColor.addValue(redValue);
         Value greenValue = new Value("green");
-        gpColor.addValue("blue");
-        gpColor.addValue("red");
-        gpColor.addValue("green");
+        gpColor.addValue(greenValue);
+
         GlobalProperty gpLetters = new GlobalProperty("Letters");
         Value aValue = new Value("A");
+        gpLetters.addValue(aValue);
         Value bValue = new Value("B");
+        gpLetters.addValue(bValue);
         Value cValue = new Value("C");
+        gpLetters.addValue(cValue);
         Value dValue = new Value("D");
+        gpLetters.addValue(dValue);
         
         //Create operations
         OperationData opA = sp.insertOperation();
         opA.setName("opA");
+        final int idOpA = opA.getId();
         OperationData opB = sp.insertOperation();
         opB.setName("opB");
+        final int idOpB = opB.getId();
 
         //Set letters A and B for operation A
+        Set<Integer> opAValueSet = new HashSet<Integer>();
         opA.savePropertySetting(aValue.getId(), true);
+        opAValueSet.add(aValue.getId());
         opA.savePropertySetting(bValue.getId(), true);
+        opAValueSet.add(bValue.getId());
         opA.savePropertySetting(gpLetters.getId(), true);
+        opAValueSet.add(gpLetters.getId());
 
         //Set Color=red and Letters=C for operation B
+        Set<Integer> opBValueSet = new HashSet<Integer>();
         opB.savePropertySetting(redValue.getId(), true);
+        opBValueSet.add(redValue.getId());
         opB.savePropertySetting(gpColor.getId(), true);
+        opBValueSet.add(gpColor.getId());
         opB.savePropertySetting(cValue.getId(), true);
+        opBValueSet.add(cValue.getId());
         opB.savePropertySetting(gpLetters.getId(), true);
-        
+        opBValueSet.add(gpLetters.getId());
+
+        //Save project
         sp.saveToSOPXFile("C:/Users/patrik/Desktop/result.sopx");
+
+        //-----------------------------------------------------------------------
+
+        //Open a new project and compare inserted data with opened data.---------
+        SP sp2 = new SP();
+
+        //Open project
+        sp2.loadFromSOPXFile("C:/Users/patrik/Desktop/result.sopx");
+
+        TreeNode td;
+        td = sp2.getModel().getOperation(idOpA);
+        assertTrue("Op A could not be opened!", td != null);
+        OperationData opData = (OperationData) td.getNodeData();
+        assertTrue("No properties loaded to opA",opData.getPropertySettings().keySet().size()>0);
+        for (final Integer i : opData.getPropertySettings().keySet()) {
+            assertTrue(opAValueSet.contains(i));
+        }
     }
 
     /**
