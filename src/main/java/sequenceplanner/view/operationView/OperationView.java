@@ -281,7 +281,10 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //TODO maby error with id = -1;
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
-
+            OperationData od = (OperationData) data[0].getNodeData();
+            System.out.println("OperationView prop: " + od.getPropertySettings());
+            System.out.println("OperationView act: " + od.getActions());
+            System.out.println("OperationView id: " + od.getId());
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());

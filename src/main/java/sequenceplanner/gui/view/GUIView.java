@@ -9,6 +9,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -149,8 +151,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Create first opview
         opViewIndex++;
         opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
+        
         opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
-
+        
         guiModel.getOperationViews().getFirst().addmxIEventListener(this);
         selectedOperationView = guiModel.getOperationViews().getFirst();
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
@@ -173,7 +176,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(true, 0.7f, opRootWindow,
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
                 consoleRoot));
-        //setWindowLayout();
         this.getContentPane().add(rootWindow);
 
 //Test (adding save button to object attribute window) should be cleaned up!!!!
@@ -208,7 +210,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             opViewMap.removeView(i);
         }
+        
+        //opRootWindow.remove(mainDocks);
         mainDocks = new TabWindow();
+
     }
 
     public void updateViews() {
@@ -248,7 +253,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      EFA for MP supervisor
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp;
+    private JMenu fileMenu, edit, project, convert, mp, windows;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP;
@@ -274,7 +279,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         project.add(save = new JMenuItem("Save"));
         project.add(saveAs = new JMenuItem("Save As"));
         project.add(close = new JMenuItem("Close"));
-        project.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(project);
 
         //Convert menu
@@ -294,14 +298,20 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
         this.add(mp);
 
+        windows = new JMenu("Windows");
+        windows.add(defaultWindows = new JMenuItem("Default Windows"));
+        this.add(windows);
+
         //Add menues to menubar
         mb.add(fileMenu);
         mb.add(edit);
         mb.add(project);
         mb.add(convert);
         mb.add(mp);
+        mb.add(windows);
         return mb;
 
+        
     }//End createMenu
 
     //Menubar listeners
@@ -459,14 +469,28 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void setWindowLayout() {
 
+//--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
+        closeAllViews();
+
+        LinkedList <OperationView> modelViews = guiModel.getOperationViews();
+        Iterator modelViews2 = modelViews.listIterator(0);
+        opViewIndex = 0;
+        while(modelViews2.hasNext()){
+            opViewIndex++;
+            OperationView op12 = (OperationView) modelViews2.next();
+            opViewMap.addView(opViewIndex, new View(op12.toString(), null,
+                    op12));
+            System.out.println(op12);
+
+        }
+//---------------
+
+//------- Docking the undocked windows ---------
         for (int i = 1; i <= opViewMap.getViewCount(); i++) {
-            System.out.println(i);
-            opViewMap.getView(i).dock();
+
+            opViewMap.getView(i).dock();            
             opViewMap.getView(i).restore();
         }
-        //mainDocks.dock();
-        //editorViewMap.dock();
-        //treeView.dock();
         for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
                 System.out.println(i);
                 editorViewMap.getView(i).dock();
@@ -487,7 +511,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 objectViewMap.getView(i).dock();
                 objectViewMap.getView(i).restore();
         }
-        
+        rootWindow.setWindow(
+                new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
+                new SplitWindow(true, 0.15f, treeRoot,
+                new SplitWindow(true, 0.7f, opRootWindow,
+                new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
+                consoleRoot));
+        mainDocks.restore();
     }
 
     public void setFocused(ViewData data) {
