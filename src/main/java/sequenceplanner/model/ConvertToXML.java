@@ -70,6 +70,7 @@ public class ConvertToXML {
 
       for (int i = 0; i < node.getChildCount(); i++) {
          TreeNode child = node.getChildAt(i);
+         sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) child.getNodeData();
          result.getOperation().add(getOperation(child));
       }
 
@@ -140,8 +141,8 @@ public class ConvertToXML {
       }
 
       //Properties
-      if (!data.getPropertySettings().isEmpty()){
-        dataX.setProperties(getProperties(data.getPropertySettings()));
+      if (!data.getProperties().isEmpty()){
+        dataX.setProperties(getProperties(data.getProperties()));
       }
 
       //PostConditions
@@ -175,13 +176,16 @@ public class ConvertToXML {
    }
 
    private Properties getProperties(HashMap<Integer, Boolean> data){
+
       Properties dataX = new Properties();
 
-      for (int id : data.keySet()){
+      for(Integer id : data.keySet()){
         Properties.Property p = new Properties.Property();
         p.setId(id);
         p.setValue(data.get(id));
+        dataX.getProperty().add(p);
       }
+
       return dataX;
    }
 

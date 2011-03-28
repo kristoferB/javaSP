@@ -1095,7 +1095,6 @@ public class Editors {
             result.add(a.model);
          }
 
-         System.out.println("Result: " + result.size());
          return result;
 
       }

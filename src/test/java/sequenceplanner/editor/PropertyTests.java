@@ -62,22 +62,22 @@ public class PropertyTests {
 
         //Set letters A and B for operation A
         Set<Integer> opAValueSet = new HashSet<Integer>();
-        opA.savePropertySetting(aValue.getId(), true);
+        opA.setProperty(aValue.getId(), true);
         opAValueSet.add(aValue.getId());
-        opA.savePropertySetting(bValue.getId(), true);
+        opA.setProperty(bValue.getId(), true);
         opAValueSet.add(bValue.getId());
-        opA.savePropertySetting(gpLetters.getId(), true);
+        opA.setProperty(gpLetters.getId(), true);
         opAValueSet.add(gpLetters.getId());
 
         //Set Color=red and Letters=C for operation B
         Set<Integer> opBValueSet = new HashSet<Integer>();
-        opB.savePropertySetting(redValue.getId(), true);
+        opB.setProperty(redValue.getId(), true);
         opBValueSet.add(redValue.getId());
-        opB.savePropertySetting(gpColor.getId(), true);
+        opB.setProperty(gpColor.getId(), true);
         opBValueSet.add(gpColor.getId());
-        opB.savePropertySetting(cValue.getId(), true);
+        opB.setProperty(cValue.getId(), true);
         opBValueSet.add(cValue.getId());
-        opB.savePropertySetting(gpLetters.getId(), true);
+        opB.setProperty(gpLetters.getId(), true);
         opBValueSet.add(gpLetters.getId());
 
         //Save project
@@ -95,8 +95,8 @@ public class PropertyTests {
         td = sp2.getModel().getOperation(idOpA);
         assertTrue("Op A could not be opened!", td != null);
         OperationData opData = (OperationData) td.getNodeData();
-        assertTrue("No properties loaded to opA",opData.getPropertySettings().keySet().size()>0);
-        for (final Integer i : opData.getPropertySettings().keySet()) {
+        assertTrue("No properties loaded to opA",opData.getProperties().keySet().size()>0);
+        for (final Integer i : opData.getProperties().keySet()) {
             assertTrue(opAValueSet.contains(i));
         }
     }

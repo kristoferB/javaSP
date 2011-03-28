@@ -148,10 +148,10 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
                                 }
                             }
                             //Save to operation
-                            d.savePropertySetting(node.getId(), valueSelected);
+                            d.setProperty(node.getId(), valueSelected);
                         }
                     }
-                    d.savePropertySetting(property.getId(), propertySelected);
+                    d.setProperty(property.getId(), propertySelected);
                 }
             }
             graph.setValue(currentOperation, d);

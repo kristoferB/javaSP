@@ -221,6 +221,7 @@ public class Model implements IModel {
          TreeNode node = data[i];
 
          if (node.getNodeData() instanceof OperationData) {
+             OperationData od = (OperationData) node.getNodeData();
             saveNode(data[i], operationRoot);
          } else {
             logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
@@ -293,7 +294,9 @@ public class Model implements IModel {
       fireSyncBigChangeEvent(getPath(parent));
 
       reloadNamesCache();
-
+      if(newNode.getNodeData() instanceof OperationData){
+          OperationData od = (OperationData) newNode.getNodeData();
+      }
       return newNode;
 
    }
@@ -307,18 +310,15 @@ public class Model implements IModel {
     * @param id
     * @return return node if found else it return null.
     */
-   public TreeNode getResource(
-         int id) {
+   public TreeNode getResource(int id) {
       return getNode(id, getResourceRoot());
    }
 
-   public TreeNode getOperation(
-         int id) {
+   public TreeNode getOperation(int id) {
       return getNode(id, getOperationRoot());
    }
 
-   public TreeNode getNode(
-         int id) {
+   public TreeNode getNode(int id) {
       return getNode(id, getRoot());
    }
 
@@ -441,8 +441,7 @@ public class Model implements IModel {
             return temp;
          }
 
-         for (int i = 0; i <
-               temp.getChildCount(); i++) {
+         for (int i = 0; i < temp.getChildCount(); i++) {
             children.push(temp.getChildAt(i));
          }
 
@@ -501,8 +500,7 @@ public class Model implements IModel {
 
    protected void updatePreconditions(TreeNode node) {
 
-      for (int i = 0; i <
-            node.getChildCount(); i++) {
+      for (int i = 0; i < node.getChildCount(); i++) {
          OperationData d = ((OperationData) node.getChildAt(i).getNodeData());
 
          d.setPrecondition(Model.updateCondition(nameCache, d.getSequenceCondition(), d.getResourceBooking()));
