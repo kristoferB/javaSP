@@ -15,12 +15,18 @@ import static org.junit.Assert.*;
  */
 public class ExcelSupervisor {
 
-    @Test
+//    @Test
     public void test1() {
         SupervisorFromExcelFile s = new SupervisorFromExcelFile(
                 SequencePlanner.class.getResource("resources/filesForTesting/ExcelTestIndata_ForJUnitTests.xls").getFile());
         assertTrue(s.runPart1());
+        assertTrue(s.runPart2());
+    }
 
+    @Test
+    public void test2() {
+        SupervisorFromExcelFile s = new SupervisorFromExcelFile("Z:/FLEXA/OperationsFromExcel_SmallFlexaCell2.xls");
+        assertTrue(s.runPart1());
         assertTrue(s.runPart2());
     }
 
@@ -46,11 +52,9 @@ public class ExcelSupervisor {
                 System.out.println("Test resource m2");
                 assertTrue("initValue", r.mInitValue.equals("läge1"));
                 assertTrue("nbr of values", r.mValueLL.size() == 3);
-                assertTrue("via resources for m2.läge1",r.mValueViaMap.get(1) == null); //No via resources for m2.läge1
-                assertTrue(r.mValueViaMap.get(2).keySet().size() == 1); //o1 is single via resource for m2.läge2
+                assertTrue("via resources for m2", r.mViaResourceValueMap.keySet().size() == 1); //o1 is single via resource for m2
                 final OperationResourceDataStructure.Resource o1 = data.getResourceInSet("o1");
-                assertTrue(r.mValueViaMap.get(2).get(o1).size() == 1);
-                assertTrue(r.mValueViaMap.get(2).get(o1).contains(o1.mValueLL.indexOf("m2:läge1_m2:läge2::m3:taken")));
+                assertTrue(r.mViaResourceValueMap.get(o1).contains(o1.mValueLL.indexOf("m2:läge1_m2:läge2::m3:taken")));
             }
 
             //Test o1
@@ -66,7 +70,7 @@ public class ExcelSupervisor {
         //Operations
         for (final OperationResourceDataStructure.Operation op : data.mOperationSet) {
 
-            if(op.mName.equals("op1")) {
+            if (op.mName.equals("op1")) {
                 System.out.println("Test operation op1");
                 assertTrue(op.mSourceResourceMap.keySet().size() == 2);
                 final OperationResourceDataStructure.Resource m2 = data.getResourceInSet("m2");
@@ -80,16 +84,16 @@ public class ExcelSupervisor {
 
                 //extra
                 assertTrue(op.mExtraStartConditionMap.keySet().size() == 2);
-                assertTrue(op.mExtraStartConditionMap.get("guard").equals("guardex"));
+                assertTrue(op.mExtraStartConditionMap.get("guard").equals("guardex==0"));
                 assertTrue(op.mExtraFinishConditionMap.keySet().size() == 1);
-                assertTrue(op.mExtraFinishConditionMap.get("action").equals("actiontyp"));
+                assertTrue(op.mExtraFinishConditionMap.get("action").equals("actiontyp+=10"));
             }
 
-            if(op.mName.equals("12open")) {
+            if (op.mName.equals("12open")) {
                 System.out.println("Test operation 12open");
                 //extra
                 assertTrue(op.mExtraFinishConditionMap.keySet().size() == 1);
-                assertTrue(op.mExtraFinishConditionMap.get("guard").equals("guard1"));
+                assertTrue(op.mExtraFinishConditionMap.get("guard").equals("guard1>22"));
             }
         }
         //-----------------------------------------------------------------------
