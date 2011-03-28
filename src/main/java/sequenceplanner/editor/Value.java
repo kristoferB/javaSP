@@ -15,6 +15,10 @@ public class Value {
         name = n;
         id = Model.newPropertyId();
     }
+    public Value(int id, String n){
+        name = n;
+        this.id = id;
+    }
 
     public String getName(){
         return name;

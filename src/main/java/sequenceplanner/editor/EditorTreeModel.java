@@ -44,6 +44,22 @@ public class EditorTreeModel implements TreeModel{
 
     }
 
+    public TreePath addProperty(int id, String name){
+        GlobalProperty newProperty = new GlobalProperty(id, name);
+        globalProperties.add(newProperty);
+
+        Object[] path = {root};
+        int[] childIndex = {globalProperties.indexOf(newProperty)};
+        Object[] child = {newProperty};
+        TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
+        fireTreeNodesInserted(e);
+
+        Object[] newPath = {root,newProperty};
+        TreePath treePath = new TreePath(newPath);
+        return treePath;
+
+    }
+
     /**
      * Removes specified property from the model
      *
@@ -85,6 +101,26 @@ public class EditorTreeModel implements TreeModel{
             TreePath treePath = new TreePath(newPath);
             return treePath;
         
+        }
+        return null;
+    }
+
+        public TreePath addValue(Object property, int id, String newValue){
+
+        if(property instanceof IGlobalProperty){
+            IGlobalProperty gp = (IGlobalProperty) property;
+            Value v = new Value(id, newValue);
+            gp.addValue(v);
+
+            Object[] path = {root,gp};
+            int[] childIndex = {gp.indexOfValue(v)};
+            Object[] child = {v};
+            TreeModelEvent e = new TreeModelEvent(this, path, childIndex, child);
+            fireTreeNodesInserted(e);
+            Object[] newPath = {root,gp,v};
+            TreePath treePath = new TreePath(newPath);
+            return treePath;
+
         }
         return null;
     }
@@ -145,6 +181,10 @@ public class EditorTreeModel implements TreeModel{
 
     public LinkedList<IGlobalProperty> getAllProperties(){
         return globalProperties;
+    }
+
+    public void setProperties(LinkedList<IGlobalProperty> globProps){
+        globalProperties = globProps;
     }
 
     @Override

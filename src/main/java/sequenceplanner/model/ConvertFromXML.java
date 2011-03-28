@@ -22,11 +22,11 @@ import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
+import sequenceplanner.editor.IGlobalProperty;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import java.util.HashMap;
-import net.infonode.properties.base.Property;
 
 /**
  *
@@ -54,7 +54,7 @@ public class ConvertFromXML {
       //Recreate operations and operationViews
       setOperationRoot(project.getOperations());
 
-
+      setGlobalProperties(project.getGlobalProperties());
 
       return this.model;
    }
@@ -260,5 +260,21 @@ public class ConvertFromXML {
       }
 
       return res;
+   }
+
+   private void setGlobalProperties(SequencePlannerProjectFile.GlobalProperties inputX){
+
+       LinkedList<IGlobalProperty> output = new LinkedList<IGlobalProperty>();
+
+       for(sequenceplanner.xml.GlobalProperty gpX: inputX.getGlobalProperty()){
+            sequenceplanner.editor.GlobalProperty gp = new sequenceplanner.editor.GlobalProperty(gpX.getId(), gpX.getName());
+
+            for(sequenceplanner.xml.Value v : gpX.getValue()){
+                gp.addValue(new sequenceplanner.editor.Value(v.getId(), v.getName()));
+            }
+            output.add(gp);
+       }
+       model.getGlobalProperties().setProperties(output);
+
    }
 }

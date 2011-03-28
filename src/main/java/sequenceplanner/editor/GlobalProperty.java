@@ -30,6 +30,11 @@ public class GlobalProperty implements IGlobalProperty{
         }
     }
 
+    public GlobalProperty(int id, String n){
+        name = n;
+        this.id = id;
+    }
+
     public int getId(){
         return id;
     }

@@ -289,6 +289,8 @@ public class GUIController {
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
+            guiView.updateEditorView();
+            guiView.updatePropertyView();
             addNewOpTab();
 
         }

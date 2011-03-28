@@ -251,6 +251,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void updatePropertyView() {
         propertyView.updateTree();
     }
+
+    public void updateEditorView(){
+        editorView.setEditorTreeModel(guiModel.getModel().getGlobalProperties());
+    }
+
     /**
      * Main menu bar for sequenceplanner.
      * Only graphical if used alone.
