@@ -25,6 +25,9 @@ import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
+import sequenceplanner.editor.IGlobalProperty;
+import sequenceplanner.editor.Value;
+import sequenceplanner.xml.GlobalProperty;
 
 /**
  *
@@ -60,7 +63,7 @@ public class ConvertToXML {
       project.setOperations(getOperationRoot());
 
       //Global properties
-//      project.setGlobalProperties(getGlobalProperties());
+      project.setGlobalProperties(getGlobalProperties());
 
 
       return project;
@@ -158,14 +161,27 @@ public class ConvertToXML {
 
       return dataX;
    }
- /*
+ 
    private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
        SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
-       model.getglo
+       LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();
 
-       return
+       for(IGlobalProperty gp : data){
+            GlobalProperty gpX = new GlobalProperty();
+            gpX.setId(gp.getId());
+            gpX.setName(gp.getName());
+            for(int i = 0; i < gp.getNumberOfValues(); i++){
+                sequenceplanner.xml.Value vX = new sequenceplanner.xml.Value();
+                vX.setId(gp.getValue(i).getId());
+                vX.setName(gp.getValue(i).getName());
+                gpX.getValue().add(vX);
+            }
+            dataX.getGlobalProperty().add(gpX);
+       }
+
+       return dataX;
    }
-*/
+
    private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
       Conditions dataX = new Conditions();
 

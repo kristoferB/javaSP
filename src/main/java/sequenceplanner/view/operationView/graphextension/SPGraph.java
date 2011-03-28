@@ -506,7 +506,7 @@ public class SPGraph extends mxGraph {
          model.beginUpdate();
          try {
             OperationData d = (OperationData) value;
-
+             System.out.println("SPGraph, prop: " + d.getProperties());
             getModel().setValue(cell, value);
             d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
                   d.getSequenceCondition(), d.getResourceBooking()));

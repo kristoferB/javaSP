@@ -143,6 +143,10 @@ public class EditorTreeModel implements TreeModel{
         }
     }
 
+    public LinkedList<IGlobalProperty> getAllProperties(){
+        return globalProperties;
+    }
+
     @Override
     public boolean isLeaf(Object node) {
         if(node.equals(root) || node instanceof IGlobalProperty){
