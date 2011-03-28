@@ -85,7 +85,7 @@
 //            return false;
 //        }
 //
-//        if(!mSModule.saveToWMODFile("C:/Users/patrik/Desktop/resultEFA.wmod")) {
+//        if (!mSModule.saveToWMODFile("C:/Users/patrik/Desktop/resultEFA.wmod")) {
 //            return false;
 //        }
 //
@@ -97,27 +97,52 @@
 //            return false;
 //        }
 //
-//        int opNbr = 101;
+//        int opNbr = 1000;
 //
-//        for(final OperationResourceDataStructure.Operation op : mData.mOperationSet) {
+//        for (final OperationResourceDataStructure.Operation op : mData.mOperationSet) {
 //            SEGA sega; //Help class used during transition creation
-//
-//            //Create eventLabel
-//            String eventLabel = "s_" + opNbr; //s for start
+//            String eventLabel = "";
 //            ++opNbr;
-//            if(!op.mName.equals("")) {
-//                eventLabel += "_"+op.mName;
+//
+//            //Operation start transition-----------------------------------------
+//            //Create eventLabel
+//            eventLabel = "s_" + opNbr; //s for start
+//            if (!op.mName.equals("")) {
+//                eventLabel += "_" + op.mName;
 //            }
 //
 //            //Create "event guard action" for transition
 //            sega = new SEGA(eventLabel);
 //
 //            op.startGuard(sega);
-//
-//            System.out.println("Guard: " + sega.getGuard());
+//            op.startAction(sega);
+////            System.out.println("Event: " + eventLabel);
+////            System.out.println("Guard: " + sega.getGuard());
+////            System.out.println("Action: " + sega.getAction());
 //
 //            //Add transition
 //            mSEFA.addStandardSelfLoopTransition(sega);
+//            //-------------------------------------------------------------------
+//
+//            //Operation finish transition----------------------------------------
+//            //Create eventLabel
+//            eventLabel = "f_" + opNbr; //f for finish
+//            if (!op.mName.equals("")) {
+//                eventLabel += "_" + op.mName;
+//            }
+//
+//            //Create "event guard action" for transition
+//            sega = new SEGA(eventLabel);
+//
+//            op.finishGuard(sega);
+//            op.finishAction(sega);
+////            System.out.println("Event: " + eventLabel);
+////            System.out.println("Guard: " + sega.getGuard());
+////            System.out.println("Action: " + sega.getAction());
+//
+//            //Add transition
+//            mSEFA.addStandardSelfLoopTransition(sega);
+//            //-------------------------------------------------------------------
 //
 //        }
 //
@@ -141,11 +166,11 @@
 //            return false;
 //        }
 //
-//        for(final OperationResourceDataStructure.Resource r : mData.mResourceSet) {
+//        for (final OperationResourceDataStructure.Resource r : mData.mResourceSet) {
 //
 //            final String varName = r.mVarName;
 //            final int lowerBound = 0;
-//            final int upperBound = r.mValueLL.size()-1;
+//            final int upperBound = r.mValueLL.size() - 1;
 //            final int initialValue = r.mValueLL.indexOf(r.mInitValue);
 //            final Integer markedValue = r.mValueLL.indexOf(r.mInitValue);
 //

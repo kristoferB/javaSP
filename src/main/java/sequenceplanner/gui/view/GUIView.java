@@ -9,6 +9,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
-import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
@@ -209,7 +210,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             opViewMap.removeView(i);
         }
+        
+        //opRootWindow.remove(mainDocks);
         mainDocks = new TabWindow();
+
     }
 
     public void updateViews() {
@@ -464,14 +468,26 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void setWindowLayout() {
-        //opRootWindow.setWindow(mainDocks);
 
-        //System.out.println(mainDocks.getTabWindowProperties().toString() + " hej");
-        
-        //opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(3)));
+//--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
+        closeAllViews();
+
+        LinkedList <OperationView> modelViews = guiModel.getOperationViews();
+        Iterator modelViews2 = modelViews.listIterator(0);
+        opViewIndex = 0;
+        while(modelViews2.hasNext()){
+            opViewIndex++;
+            OperationView op12 = (OperationView) modelViews2.next();
+            opViewMap.addView(opViewIndex, new View(op12.toString(), null,
+                    op12));
+            System.out.println(op12);
+
+        }
+//---------------
+
+//------- Docking the undocked windows ---------
         for (int i = 1; i <= opViewMap.getViewCount(); i++) {
-            System.out.println(i);
-            mainDocks.addTab(opViewMap.getView(i));
+
             opViewMap.getView(i).dock();            
             opViewMap.getView(i).restore();
         }
@@ -501,10 +517,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(true, 0.7f, opRootWindow,
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
                 consoleRoot));
-        //opRootWindow.setWindow(new TabWindow (mainDocks));
-
         mainDocks.restore();
-        //ToDo: Fixa resourceview också
     }
 
     public void setFocused(ViewData data) {
