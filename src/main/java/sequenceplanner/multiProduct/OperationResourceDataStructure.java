@@ -175,10 +175,9 @@ public class OperationResourceDataStructure {
 
     private boolean updateDestResourceWithViaValues(final Operation iOp) {
         for (Resource destResource : iOp.mDestResourceMap.keySet()) {
-            final Integer destResourceValue = iOp.mDestResourceMap.get(destResource);
             for (Resource viaResource : iOp.mViaResourceMap.keySet()) {
                 final Integer viaResourceValue = iOp.mViaResourceMap.get(viaResource);
-                destResource.addToValueViaMap(destResourceValue, viaResource, viaResourceValue);
+                destResource.addToViaResourceValueMap(viaResource, viaResourceValue);
             }
         }
         return true;
@@ -260,39 +259,72 @@ public class OperationResourceDataStructure {
     public class Resource extends GeneralDataStructureObject {
 
         public String mVarName;
-        public Map<Integer, Map<Resource, Set<Integer>>> mValueViaMap = null;
+//        public Map<Integer, Map<Resource, Set<Integer>>> mValueViaMap = null;
+        /**
+         * ASSUMES SINGLE CAPACITY RESOURCE!!!!
+         * Resources with values that either enter or exit from this resource.<br/>
+         * I.e. The system can not be in this resource at the same time as one of the resoruces in keyset has a value in their set of values.<br/>
+         */
+        public Map<Resource, Set<Integer>> mViaResourceValueMap = null;
+        /**
+         * Values for the resource.<br/>
+         * The integer value for a value is the same as position in list.<br/>
+         */
         public LinkedList<String> mValueLL = null;
+        /**
+         * Inititial and single marked value for the resource.
+         */
         public String mInitValue = "";
 
         public Resource() {
             mValueLL = new LinkedList<String>();
-            mValueViaMap = new HashMap<Integer, Map<Resource, Set<Integer>>>();
+            mViaResourceValueMap = new HashMap<Resource, Set<Integer>>();
         }
 
-        public boolean addToValueViaMap(final Integer iValue, final Resource iViaResource, final Integer iViaResourceValue) {
-            if (iValue < 0 || iValue > (mValueLL.size() - 1)) {
-                return false;
-            }
+        public boolean addToViaResourceValueMap(final Resource iViaResource, final Integer iViaResourceValue) {
             if (iViaResourceValue < 0 || iViaResourceValue > (iViaResource.mValueLL.size() - 1)) {
                 return false;
             }
 
             //Check if this is first time and take action if it is
-            Map<Resource, Set<Integer>> map = mValueViaMap.get(iValue);
-            if (map == null) {
-//                System.out.println("addToValueViaMap | iValue: " + iValue + ", resource: " + mName + " is null");
-                map = new HashMap<Resource, Set<Integer>>();
-            }
-            if (!map.containsKey(iViaResource)) {
-                map.put(iViaResource, new HashSet<Integer>());
+            if (!mViaResourceValueMap.containsKey(iViaResource)) {
+                mViaResourceValueMap.put(iViaResource, new HashSet<Integer>());
             }
 
-            map.get(iViaResource).add(iViaResourceValue);
-            mValueViaMap.put(iValue, map);
+            //Add new via value
+            mViaResourceValueMap.get(iViaResource).add(iViaResourceValue);
 
             return true;
         }
 
+//        public boolean addToValueViaMap(final Integer iValue, final Resource iViaResource, final Integer iViaResourceValue) {
+//            if (iValue < 0 || iValue > (mValueLL.size() - 1)) {
+//                return false;
+//            }
+//            if (iViaResourceValue < 0 || iViaResourceValue > (iViaResource.mValueLL.size() - 1)) {
+//                return false;
+//            }
+//
+//            //Check if this is first time and take action if it is
+//            Map<Resource, Set<Integer>> map = mValueViaMap.get(iValue);
+//            if (map == null) {
+////                System.out.println("addToValueViaMap | iValue: " + iValue + ", resource: " + mName + " is null");
+//                map = new HashMap<Resource, Set<Integer>>();
+//            }
+//            if (!map.containsKey(iViaResource)) {
+//                map.put(iViaResource, new HashSet<Integer>());
+//            }
+//
+//            map.get(iViaResource).add(iViaResourceValue);
+//            mValueViaMap.put(iValue, map);
+//
+//            return true;
+//        }
+        /**
+         * A a value to list of values.<br/>
+         * @param iValueName the value to add
+         * @return true if added, false if value already in the list
+         */
         public boolean addValue(String iValueName) {
             if (mValueLL.contains(iValueName)) {
                 System.out.println("Resource " + mName + " already has a value with name " + iValueName);
@@ -331,10 +363,25 @@ public class OperationResourceDataStructure {
 
     public class Operation extends GeneralDataStructureObject {
 
+        /**
+         * E.g. a keyset={"guard","action"}, To add e.g. limit for product.
+         */
         public Map<String, String> mExtraStartConditionMap;
+        /**
+         * E.g. a keyset={"guard","action"}, To add e.g. limit for product.
+         */
         public Map<String, String> mExtraFinishConditionMap;
+        /**
+         * The operation can start when the resources in keyset has values given as valueset.<br/>
+         */
         public Map<Resource, Integer> mSourceResourceMap;
+        /**
+         * The operation uses the resources in keyset with values in valueset only in execution location.<br/>
+         */
         public Map<Resource, Integer> mViaResourceMap;
+        /**
+         * The operation finishes with the resources in keyset set to valueset.<br/>
+         */
         public Map<Resource, Integer> mDestResourceMap;
 
         public Operation() {
@@ -352,59 +399,134 @@ public class OperationResourceDataStructure {
         }
 
         public void startGuard(SEGA ioSEGA) {
+            //Include set to enter resources that has been given a fixt value.<br/>
+            //E.g. robot2==0, then a later entry robot2!=3 makes no difference.
+            Set<Resource> fixValueResoureSet = new HashSet<Resource>();
+
             //in X
             //loop mSourceResourceMap. Set key.mVarName == value
             for (final Resource r : mSourceResourceMap.keySet()) {
                 final String varName = r.mVarName;
                 final Integer value = mSourceResourceMap.get(r);
                 ioSEGA.andGuard(varName + "==" + value);
+                fixValueResoureSet.add(r);
             }
 
-            Set<Resource> intersectionSet;
+            //Include temp set in order to perform set minus without affecting the orignal set.
+            Set<Resource> subSet;
 
             //CHANGE WHEN INCLUDE RESOURCES WITH CAPACITY GREATER THAN 1
             //Resources in Z has enough capacity right now (This step makes no sense when all resources has capacity =1. It is included for later extension.)
             //loop mViaResourceMap keyset. Set key.mVarName <max capacity if key not in keyset for mSourceResourceMap
-            intersectionSet = new HashSet<Resource>(mViaResourceMap.keySet());
-            intersectionSet.removeAll(mSourceResourceMap.keySet());
-            for (final Resource r : intersectionSet) {
+            subSet = new HashSet<Resource>(mViaResourceMap.keySet());
+            subSet.removeAll(mSourceResourceMap.keySet());
+            subSet.removeAll(fixValueResoureSet);
+            for (final Resource r : subSet) {
                 final String varName = r.mVarName;
                 final Integer value = 0;
                 ioSEGA.andGuard(varName + "==" + value);
+                fixValueResoureSet.add(r);
             }
 
             //CHANGE WHEN INCLUDE RESOURCES WITH CAPACITY GREATER THAN 1
             //Resources in Y has enough capacity right now
             //loop mDestResourceMap keyset. Set key.mVarName ==0 if key not in keyset for mSourceResourceMap
-            intersectionSet = new HashSet<Resource>(mDestResourceMap.keySet());
-            intersectionSet.removeAll(mSourceResourceMap.keySet());
-            for (final Resource r : intersectionSet) {
+            subSet = new HashSet<Resource>(mDestResourceMap.keySet());
+            subSet.removeAll(mSourceResourceMap.keySet());
+            subSet.removeAll(fixValueResoureSet);
+            for (final Resource r : subSet) {
                 final String varName = r.mVarName;
                 final Integer value = 0;
                 ioSEGA.andGuard(varName + "==" + value);
+                fixValueResoureSet.add(r);
             }
 
 
             //CHANGE CHAGNE CHANGE NEED TO ONLY ADD EACH GUARD ONE TIME IT CAN APPER IN ALL DEST RESOURCES...
             //via for Y is not taken
-            //loop mDestResourceMap keyset. Set key.mValueViaMap.get(mDestResourceMap.get(key)) loop key.mVarName' != value' (key' and value' in mValueViaMap in key resource.
-            intersectionSet = new HashSet<Resource>(mDestResourceMap.keySet());
-            intersectionSet.removeAll(mSourceResourceMap.keySet());
+            //loop mDestResourceMap keyset. Set key.mViaResourceValueMap loop key'.mVarName != value' (key' and value' in mViaResourceValueMap in key resource.
             for (final Resource r : mDestResourceMap.keySet()) {
-                final Integer value = mDestResourceMap.get(r);
-                final Map<Resource, Set<Integer>> viaResourceIntegerMap = r.mValueViaMap.get(value);
-                intersectionSet = new HashSet<Resource>(viaResourceIntegerMap.keySet());
-                intersectionSet.removeAll(mSourceResourceMap.keySet());
-                for (final Resource rIn : intersectionSet) {
+                final Map<Resource, Set<Integer>> viaResourceIntegerMap = r.mViaResourceValueMap;
+                subSet = new HashSet<Resource>(viaResourceIntegerMap.keySet());
+                subSet.removeAll(fixValueResoureSet);
+                for (final Resource rIn : subSet) {
                     final String varName = rIn.mVarName;
-                    final Integer valueIn = 0;
-                    ioSEGA.andGuard(varName + "!=" + valueIn);
+                    for (final Integer valueIn : viaResourceIntegerMap.get(rIn)) {
+                        ioSEGA.andGuard(varName + "!=" + valueIn);
+                    }
                 }
             }
 
             //Limit
             //mExtraStartConditionMap.get("guard") using addExtraCondtion()
             addExtraCondtion(mExtraStartConditionMap, "guard", ioSEGA);
+        }
+
+        public void startAction(SEGA ioSEGA) {
+            //set Z
+            //loop mViaResourceMap keyset. Set key.mVarName = value
+            for (final Resource r : mViaResourceMap.keySet()) {
+                final String varName = r.mVarName;
+                final Integer value = mViaResourceMap.get(r);
+                ioSEGA.addAction(varName + "=" + value);
+            }
+
+            //Include temp set in order to perform set minus without affecting the orignal set.
+            Set<Resource> subSet;
+
+            //unbook X
+            //loop mSourceResourceMap keyset. Set key.mVarName = 0, minus resources set to use in Z
+            subSet = new HashSet<Resource>(mSourceResourceMap.keySet());
+            subSet.removeAll(mViaResourceMap.keySet());
+            for (final Resource r : subSet) {
+                final String varName = r.mVarName;
+                final Integer value = 0;
+                ioSEGA.addAction(varName + "=" + value);
+            }
+
+            //Limit
+            //mExtraStartConditionMap.get("action")
+            addExtraCondtion(mExtraStartConditionMap, "action", ioSEGA);
+        }
+
+        public void finishGuard(SEGA ioSEGA) {
+            //in Z
+            //loop mViaResourceMap keyset. Set key.mVarName == value
+            for (final Resource r : mViaResourceMap.keySet()) {
+                final String varName = r.mVarName;
+                final Integer value = mViaResourceMap.get(r);
+                ioSEGA.andGuard(varName + "==" + value);
+            }
+
+            //mExtraFinishConditionMap.get("guard")
+            addExtraCondtion(mExtraFinishConditionMap, "guard", ioSEGA);
+        }
+
+        public void finishAction(SEGA ioSEGA) {
+            //set Y
+            //loop mDestResourceMap keyset. Set key.mVarName = value
+            for (final Resource r : mDestResourceMap.keySet()) {
+                final String varName = r.mVarName;
+                final Integer value = mDestResourceMap.get(r);
+                ioSEGA.addAction(varName + "=" + value);
+            }
+
+            //Include temp set in order to perform set minus without affecting the orignal set.
+            Set<Resource> subSet;
+
+            //unbook Z
+            //loop mViaResourceMap keyset. Set key.mVarName = 0, minus resources set to use in Y
+            subSet = new HashSet<Resource>(mViaResourceMap.keySet());
+            subSet.removeAll(mDestResourceMap.keySet());
+            for (final Resource r : subSet) {
+                final String varName = r.mVarName;
+                final Integer value = 0;
+                ioSEGA.addAction(varName + "=" + value);
+            }
+            
+            //Limit
+            //mExtraFinishConditionActionMap.get("action")
+            addExtraCondtion(mExtraFinishConditionMap, "action", ioSEGA);
         }
 
         private boolean addExtraCondtion(final Map<String, String> iMap, final String iKey, SEGA ioSEGA) {
@@ -419,32 +541,6 @@ public class OperationResourceDataStructure {
             }
 
             return true;
-        }
-
-        public void startAction() {
-            //Better to first unbook all resource in X and then book (possible) the same resoruce used in Z
-            //unbook X
-            //loop mSourceResourceMap keyset. Set key.mVarName = 0
-            //set Z
-            //loop mViaResourceMap keyset. Set key.mVarName = value
-            //Limit
-            //mExtraStartConditionMap.get("action")
-        }
-
-        public void finishGuard() {
-            //in Z
-            //loop mViaResourceMap keyset. Set key.mVarName == value
-            //mExtraFinishConditionMap.get("guard")
-        }
-
-        public void finishAction() {
-            //Better to first unbook all resource in Z and then book (possible) the same resoruce used in Y
-            //unbook Z
-            //loop mViaResourceMap keyset. Set key.mVarName = 0
-            //set Y
-            //loop mDestResourceMap keyset. Set key.mVarName = value
-            //Limit
-            //mExtraFinishConditionActionMap.get("action")
         }
     }
 }
