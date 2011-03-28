@@ -96,7 +96,7 @@ public class PropertyTests {
         assertTrue("Op A could not be opened!", td != null);
         OperationData opData = (OperationData) td.getNodeData();
         assertTrue("No properties loaded to opA",opData.getProperties().keySet().size()>0);
-        for (final Integer i : opData.getProperties().keySet()) {
+        for (Integer i : opData.getProperties().keySet()) {
             assertTrue(opAValueSet.contains(i));
         }
     }
