@@ -31,22 +31,35 @@ public class PropertyTests {
 
         //Create properties
         GlobalProperty gpColor = new GlobalProperty("Color");
+        Value blueValue = new Value("blue");
+        Value redValue = new Value("red");
+        Value greenValue = new Value("green");
         gpColor.addValue("blue");
         gpColor.addValue("red");
         gpColor.addValue("green");
         GlobalProperty gpLetters = new GlobalProperty("Letters");
-        gpLetters.addValue("A");
-        gpLetters.addValue("B");
-        gpLetters.addValue("C");
-        gpLetters.addValue("D");
-
+        Value aValue = new Value("A");
+        Value bValue = new Value("B");
+        Value cValue = new Value("C");
+        Value dValue = new Value("D");
+        
         //Create operations
         OperationData opA = sp.insertOperation();
         opA.setName("opA");
         OperationData opB = sp.insertOperation();
         opB.setName("opB");
 
+        //Set letters A and B for operation A
+        opA.savePropertySetting(aValue.getId(), true);
+        opA.savePropertySetting(bValue.getId(), true);
+        opA.savePropertySetting(gpLetters.getId(), true);
 
+        //Set Color=red and Letters=C for operation B
+        opB.savePropertySetting(redValue.getId(), true);
+        opB.savePropertySetting(gpColor.getId(), true);
+        opB.savePropertySetting(cValue.getId(), true);
+        opB.savePropertySetting(gpLetters.getId(), true);
+        
         sp.saveToSOPXFile("C:/Users/patrik/Desktop/result.sopx");
     }
 
