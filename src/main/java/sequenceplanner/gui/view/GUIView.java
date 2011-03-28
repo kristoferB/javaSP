@@ -23,11 +23,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
+import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
+import net.infonode.docking.drop.DropFilter;
+import net.infonode.docking.drop.DropInfo;
+import net.infonode.docking.drop.InteriorDropInfo;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 
@@ -91,7 +95,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         initJFrame();
         createRootWindow();
         setStartingWindowsProperties();
-        //setRootDropDisabled();
+        setRootDropDisabled();
     }
 
     /**
@@ -152,9 +156,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Create first opview
         opViewIndex++;
         opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
-        
+
         opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
-        
+
         guiModel.getOperationViews().getFirst().addmxIEventListener(this);
         selectedOperationView = guiModel.getOperationViews().getFirst();
         propertyView.setOpView(guiModel.getOperationViews().getFirst());
@@ -194,13 +198,36 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         printToConsole("Welcome to SP 2.0");
     }
 
+    private void setRootDropDisabled() {
+        DropFilter df = new DropFilter() {
+
+            @Override
+            public boolean acceptDrop(DropInfo dropInfo) {
+                InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
+
+                if (inter.getDropWindow() instanceof DockingWindow || inter.getWindow() instanceof DockingWindow) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        rootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+        opRootWindow.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+        treeRoot.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+        editorRoot.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+        objectRoot.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+        consoleRoot.getRootWindowProperties().getDockingWindowProperties().getDropFilterProperties().setInteriorDropFilter(df);
+    }
+
     private void setStartingWindowsProperties() {
 
         rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(false);
         rootWindow.getRootWindowProperties().setRecursiveTabsEnabled(false);
+
         //rootWindow.getRootWindowProperties().getDockingWindowProperties().setDragEnabled(false);
-
-
+        rootWindow.getRootWindowProperties().getSplitWindowProperties().setDividerLocationDragEnabled(false);
+        rootWindow.getRootWindowProperties().setEdgeSplitDistance(0);
+        opRootWindow.getRootWindowProperties().getSplitWindowProperties().setDividerLocationDragEnabled(false);
         //   mainDocks.getWindowProperties().setDragEnabled(false);
     }
 
@@ -211,7 +238,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             opViewMap.removeView(i);
         }
-        
+
         //opRootWindow.remove(mainDocks);
         mainDocks = new TabWindow();
 
@@ -312,7 +339,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(windows);
         return mb;
 
-        
+
     }//End createMenu
 
     //Menubar listeners
@@ -438,9 +465,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 
         if (mainDocks.getChildWindowCount() == 0) {
+
             opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
         } else {
             mainDocks.addTab(newView);
+            mainDocks.restore();
         }
     }
 
@@ -477,41 +506,41 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void setWindowLayout() {
 
 //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
-        
+
 //---------------
 
 //------- Docking the undocked windows ---------
         for (int i = 1; i <= opViewMap.getViewCount(); i++) {
 
-            opViewMap.getView(i).dock();            
+            opViewMap.getView(i).dock();
             opViewMap.getView(i).restore();
         }
         for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
-                System.out.println(i);
-                editorViewMap.getView(i).dock();
-                editorViewMap.getView(i).restore();
+            System.out.println(i);
+            editorViewMap.getView(i).dock();
+            editorViewMap.getView(i).restore();
         }
         for (int i = 1; i <= treeViewMap.getViewCount(); i++) {
-                System.out.println(i);
-                treeViewMap.getView(i).dock();
-                treeViewMap.getView(i).restore();
+            System.out.println(i);
+            treeViewMap.getView(i).dock();
+            treeViewMap.getView(i).restore();
         }
         for (int i = 1; i <= consoleViewMap.getViewCount(); i++) {
-                System.out.println(i);
-                consoleViewMap.getView(i).dock();
-                consoleViewMap.getView(i).restore();
+            System.out.println(i);
+            consoleViewMap.getView(i).dock();
+            consoleViewMap.getView(i).restore();
         }
         for (int i = 1; i <= objectViewMap.getViewCount(); i++) {
-                System.out.println(i);
-                objectViewMap.getView(i).dock();
-                objectViewMap.getView(i).restore();
+            System.out.println(i);
+            objectViewMap.getView(i).dock();
+            objectViewMap.getView(i).restore();
         }
-        
+
         closeAllViews();
-        LinkedList <OperationView> modelViews = guiModel.getOperationViews();
+        LinkedList<OperationView> modelViews = guiModel.getOperationViews();
         Iterator modelViews2 = modelViews.listIterator(0);
         opViewIndex = 0;
-        while(modelViews2.hasNext()){
+        while (modelViews2.hasNext()) {
             opViewIndex++;
             OperationView op12 = (OperationView) modelViews2.next();
             opViewMap.addView(opViewIndex, new View(op12.toString(), null,
@@ -519,7 +548,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             System.out.println(op12);
 
         }
-        if(resourceViewOpen == true){
+        if (resourceViewOpen == true) {
             addResourceView();
         }
         rootWindow.setWindow(
@@ -543,5 +572,4 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public ViewMap getSOPViewMap() {
         return opViewMap;
     }
-
 }
