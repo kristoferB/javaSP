@@ -69,6 +69,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View objectMenu;
     private EditorView editorView;
     private TreeView treeView;
+    private boolean resourceViewOpen = false;
 
     public TreeView getTreeView() {
         return treeView;
@@ -424,7 +425,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @param opView    operationview to be shown in the TabWindow
      */
     public void addNewOpTab(String name, OperationView opView) {
-
+        System.out.println(mainDocks.getChildWindowCount());
 //Should not be done here..
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
@@ -434,6 +435,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         opViewIndex++;
         View newView = new View(name, null, opView);
         opViewMap.addView(opViewIndex, newView);
+
 
         if (mainDocks.getChildWindowCount() == 0) {
             opRootWindow.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
@@ -446,7 +448,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * Adds a tab to the main tabwindow with a resourceview in it.
      */
     public void addResourceView() {
-        mainDocks.addTab(new View(guiModel.getResourceView().getName(), null, guiModel.getResourceView()));
+        opViewIndex++;
+        View newView = new View(guiModel.getResourceView().getName(), null, guiModel.getResourceView());
+        opViewMap.addView(opViewIndex, newView);
+
+        mainDocks.addTab(newView);
+        resourceViewOpen = true;
     }
 
     @Override
@@ -470,19 +477,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void setWindowLayout() {
 
 //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
-        closeAllViews();
-
-        LinkedList <OperationView> modelViews = guiModel.getOperationViews();
-        Iterator modelViews2 = modelViews.listIterator(0);
-        opViewIndex = 0;
-        while(modelViews2.hasNext()){
-            opViewIndex++;
-            OperationView op12 = (OperationView) modelViews2.next();
-            opViewMap.addView(opViewIndex, new View(op12.toString(), null,
-                    op12));
-            System.out.println(op12);
-
-        }
+        
 //---------------
 
 //------- Docking the undocked windows ---------
@@ -511,10 +506,26 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 objectViewMap.getView(i).dock();
                 objectViewMap.getView(i).restore();
         }
+        
+        closeAllViews();
+        LinkedList <OperationView> modelViews = guiModel.getOperationViews();
+        Iterator modelViews2 = modelViews.listIterator(0);
+        opViewIndex = 0;
+        while(modelViews2.hasNext()){
+            opViewIndex++;
+            OperationView op12 = (OperationView) modelViews2.next();
+            opViewMap.addView(opViewIndex, new View(op12.toString(), null,
+                    op12));
+            System.out.println(op12);
+
+        }
+        if(resourceViewOpen == true){
+            addResourceView();
+        }
         rootWindow.setWindow(
                 new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
                 new SplitWindow(true, 0.15f, treeRoot,
-                new SplitWindow(true, 0.7f, opRootWindow,
+                new SplitWindow(true, 0.7f, opRootWindow = DockingUtil.createRootWindow(opViewMap, true),
                 new SplitWindow(false, 0.5f, objectRoot, editorRoot))),
                 consoleRoot));
         mainDocks.restore();
