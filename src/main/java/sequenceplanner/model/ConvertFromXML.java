@@ -10,6 +10,7 @@ import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.xml.Actions;
+import sequenceplanner.xml.Properties;
 import sequenceplanner.xml.Bookings;
 import sequenceplanner.xml.Bookings.ResourceBooking;
 import sequenceplanner.xml.CellData;
@@ -24,6 +25,8 @@ import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
+import java.util.HashMap;
+import net.infonode.properties.base.Property;
 
 /**
  *
@@ -106,6 +109,11 @@ public class ConvertFromXML {
          data.setSeqInvariant(getCondition(dataX.getOperationData().getSequenceInvariants()));
       }
 
+      //Properties
+      if (dataX.getOperationData().getProperties() != null){
+         data.setProperties(getProperties(dataX.getOperationData().getProperties()));
+      }
+      
       //Post
       if (dataX.getOperationData().getPostSequenceCondtions() != null) {
          data.setPSequenceCondition(getCondition(dataX.getOperationData().getPostSequenceCondtions()));
@@ -150,6 +158,15 @@ public class ConvertFromXML {
       }
 
 
+      return output;
+   }
+   
+   private HashMap<Integer, Boolean> getProperties(Properties propX){
+      HashMap<Integer, Boolean> output = new HashMap<Integer, Boolean>();
+      
+      for (Properties.Property p : propX.getProperty()){
+        output.put(p.getId(), p.isValue());
+      }
       return output;
    }
 

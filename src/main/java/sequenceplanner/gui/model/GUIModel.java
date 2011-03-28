@@ -216,6 +216,7 @@ public class GUIModel {
     }
 
     public boolean saveModelToFile(File file) {
+        System.out.println("");
         ConvertToXML converter = new ConvertToXML(getModel());
         SequencePlannerProjectFile project = converter.convert();
 
