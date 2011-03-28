@@ -59,6 +59,9 @@ public class ConvertToXML {
       //Operations
       project.setOperations(getOperationRoot());
 
+      //Global properties
+//      project.setGlobalProperties(getGlobalProperties());
+
 
       return project;
    }
@@ -155,7 +158,14 @@ public class ConvertToXML {
 
       return dataX;
    }
+ /*
+   private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
+       SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
+       model.getglo
 
+       return
+   }
+*/
    private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
       Conditions dataX = new Conditions();
 

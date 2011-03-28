@@ -292,7 +292,8 @@ public class GUIController {
             addNewOpTab();
 
         }
-        printToConsole("new model opened!");
+        printToConsole("New model opened!");
+//Add global properties...
     }
 
     private void saveModel(boolean saveAs) {

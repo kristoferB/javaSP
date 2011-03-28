@@ -233,7 +233,7 @@ public class OperationData extends Data {
 
    public void setProperties(HashMap<Integer, Boolean> propertySettings){
        this.propertySettings = propertySettings;
-       System.out.println("OperationData, props: " + propertySettings);
+
    }
 
    public HashMap<Integer, Boolean> getProperties(){
