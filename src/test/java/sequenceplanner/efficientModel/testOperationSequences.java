@@ -36,4 +36,13 @@ public class testOperationSequences {
         assertEquals(20, ops.nbrOfOperation());
     }
 
+    @Test
+    public void testNumberOfPaths(){
+        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/testOperationSequences.sopx");
+        Model model = mSP.getModel();
+        OperationSequences ops = new OperationSequences(model);
+        ops.run();
+        assertEquals(14, ops.nbrOfPaths());
+    }
+
 }
