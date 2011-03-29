@@ -291,7 +291,7 @@ public class GUIController {
             guiView.closeAllViews();
             guiView.updateEditorView();
             guiView.updatePropertyView();
-//            addNewOpTab();
+            addNewOpTab();
 
         }
         printToConsole("New model opened!");
