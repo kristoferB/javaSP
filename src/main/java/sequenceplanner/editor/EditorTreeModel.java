@@ -16,7 +16,7 @@ import javax.swing.tree.TreePath;
 public class EditorTreeModel implements TreeModel{
 
     private DefaultMutableTreeNode root;
-    private LinkedList<IGlobalProperty> globalProperties = new LinkedList();
+    private LinkedList<IGlobalProperty> globalProperties = new LinkedList<IGlobalProperty>();
     private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
     public EditorTreeModel(){

@@ -266,14 +266,17 @@ public class ConvertFromXML {
 
        LinkedList<IGlobalProperty> output = new LinkedList<IGlobalProperty>();
 
-       for(sequenceplanner.xml.GlobalProperty gpX: inputX.getGlobalProperty()){
-            sequenceplanner.editor.GlobalProperty gp = new sequenceplanner.editor.GlobalProperty(gpX.getId(), gpX.getName());
+       if(inputX !=null){
+           for(sequenceplanner.xml.GlobalProperty gpX : inputX.getGlobalProperty()){
+                sequenceplanner.editor.GlobalProperty gp = new sequenceplanner.editor.GlobalProperty(gpX.getId(), gpX.getName());
 
-            for(sequenceplanner.xml.Value v : gpX.getValue()){
-                gp.addValue(new sequenceplanner.editor.Value(v.getId(), v.getName()));
-            }
-            output.add(gp);
+                for(sequenceplanner.xml.Value v : gpX.getValue()){
+                    gp.addValue(new sequenceplanner.editor.Value(v.getId(), v.getName()));
+                }
+                output.add(gp);
+           }
        }
+
        model.getGlobalProperties().setProperties(output);
 
    }

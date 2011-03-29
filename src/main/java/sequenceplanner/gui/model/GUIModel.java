@@ -111,12 +111,12 @@ public class GUIModel {
             getModel().reloadNamesCache();
             try {
 
- //               for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+               for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
                     if (getModel().getViewRoot().getChildAt(0).getNodeData() != null) {
                         ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
                             createNewOpView(toOpen);
                     }
- //               }
+               }
 
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");

@@ -165,7 +165,7 @@ public class ConvertToXML {
    private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
        SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
        LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();
-
+       
        for(IGlobalProperty gp : data){
             GlobalProperty gpX = new GlobalProperty();
             gpX.setId(gp.getId());
@@ -178,6 +178,7 @@ public class ConvertToXML {
             }
             dataX.getGlobalProperty().add(gpX);
        }
+       
 
        return dataX;
    }

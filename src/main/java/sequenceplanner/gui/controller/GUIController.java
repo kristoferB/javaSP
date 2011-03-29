@@ -284,18 +284,17 @@ public class GUIController {
     }
 
     /**
-     * Tells the model to open a new project and adds a new tab in the view
+     * Tells the model to open a new project (and adds a new tab in the view?)
      */
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
             guiView.updateEditorView();
             guiView.updatePropertyView();
-            addNewOpTab();
+//            addNewOpTab();
 
         }
         printToConsole("New model opened!");
-//Add global properties...
     }
 
     private void saveModel(boolean saveAs) {
