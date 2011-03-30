@@ -23,6 +23,9 @@ import org.supremica.automata.algorithms.minimization.AutomatonMinimizer;
 import org.supremica.automata.algorithms.minimization.MinimizationOptions;
 import org.supremica.gui.VisualProject;
 
+import sequenceplanner.efaconverter.SEFA;
+import sequenceplanner.efaconverter.SEGA;
+import sequenceplanner.efaconverter.SModule;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
