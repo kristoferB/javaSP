@@ -114,7 +114,7 @@ public class convertSeqToEFA {
        
         saveToFile(module);
     }
-
+      
     private SpEFA createSeqEFA(OpNode firstOp, SpEFAutomata automata){
         String efaName = createEFAName(firstOp);
         String seqName = "Seq_" + efaName;

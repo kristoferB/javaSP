@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.OperationData.Action;
 
 /**
  *
@@ -37,11 +38,21 @@ public class OperationSequences {
         }
     }
 
-    public void run(){        
-        OperationGraph graph = new OperationGraph();
-        buildGraph(graph);
-        graph.calculate(0);
-        paths = graph.getPaths();
+    public void run(){
+        for(TreeNode node : operationList)
+            printGuards(node);
+
+//        DialogEM dialogem = new DialogEM();
+//        dialogem.createAndShow();
+        //OperationGraph graph = new OperationGraph();
+        //buildGraph(graph);
+        // mode 0: Save no graph
+        // mode 1: Save system graph (iteration zero)
+        // mode 2: Saved each iteration graph
+        //int mode = 0;
+        //graph.calculate(mode);
+        //paths = graph.getPaths();
+        //createOperationView("Name of view", paths);
     }
 
     public int nbrOfOperation(){
@@ -81,4 +92,22 @@ public class OperationSequences {
         }
     }
 
+    private void createOperationView(String string, List<List<String>> paths) {
+
+    }
+
+    private void printGuards(TreeNode node){
+        OperationData opData = (OperationData)node.getNodeData();
+
+        print("===== "+node.getId()+" =====");
+        String rawPrecondition = opData.getRawPrecondition();
+        print(rawPrecondition);
+//        String action = "Action: ";
+//
+//        LinkedList<Action> actions = opData.getActions();
+//        for(Action a : actions)
+//            action  += a.id+Model.getActionSetType(a.state)+a.value+"; ";
+//
+//        opData.getSequenceCondition();
+    }
 }

@@ -36,7 +36,7 @@ public class Model implements IModel {
    public static final String VARIABLE_ROOT_NAME = "Variables";
 
    static Logger logger = Logger.getLogger(Model.class);
-   private static int idConter = 1001;
+   private static int idConter = 5;
    private static int propertyIdCounter = 0;
    //Holds a cache for easy access to all operations names and paths
    private NameCacheMap nameCache;
