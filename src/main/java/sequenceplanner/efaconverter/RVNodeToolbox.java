@@ -12,8 +12,8 @@ public class RVNodeToolbox {
 
     public static final String OPERATION = "operation";
     public static final String HIERARCHY = "sop";
-    final RVNode mRoot = new RVNode();
-    Set<RVNode> mAllNodes = new HashSet<RVNode>();
+    public final RVNode mRoot = new RVNode();
+    public Set<RVNode> mAllNodes = new HashSet<RVNode>();
     HashMap<String, Set<String>> mEventStateSetMap = null;
     String mStateNameExplanation = "";
 

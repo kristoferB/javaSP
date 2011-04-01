@@ -31,7 +31,7 @@ public class SEGA extends EGA {
         }
     }
 
-    private String guardFromSPtoEFASyntaxTranslation(String ioGuard) {
+    public String guardFromSPtoEFASyntaxTranslation(String ioGuard) {
         //Change all _i to ==0
         ioGuard = ioGuard.replaceAll("_i", "==0");
         //Change all _e to ==1

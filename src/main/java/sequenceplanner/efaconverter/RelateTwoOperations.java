@@ -87,6 +87,43 @@ public class RelateTwoOperations {
         return OTHER;
     }
 
+    public static String relationIntegerToString(final Integer iRelation, final String iPrefix, final String iSufix) {
+        String returnString = "";
+
+        if (iPrefix != null) {
+            returnString += iPrefix;
+        }
+
+        switch (iRelation) {
+            case 0:
+                returnString += ">"; break;
+            case 1:
+                returnString += "<"; break;
+            case 2:
+                returnString += ">~"; break;
+            case 3:
+                returnString += ">~"; break;
+            case 4:
+                returnString += "||"; break;
+            case 5:
+                returnString += "+"; break;
+            case 6:
+                returnString += "(+)"; break;
+            case 7:
+                returnString += "["; break;
+            case 8:
+                returnString += "]"; break;
+            default:
+                returnString += "^"; break;
+        }
+
+        if (iSufix != null) {
+            returnString += iSufix;
+        }
+
+        return returnString;
+    }
+
     private boolean compareToSetQuartet(Set iRefSet1, Set iRefSet2, Set iRefSet3, Set iRefSet4) {
         return compareSetToRefSet(mRvNode2up, iRefSet1) & compareSetToRefSet(mRvNode2down, iRefSet2) &
                 compareSetToRefSet(mRvNode1up, iRefSet3) & compareSetToRefSet(mRvNode1down, iRefSet4);

@@ -118,6 +118,11 @@ public class SModule {
                 test = test + opNode.getStringId() + "_";
             }
         }
+        for (OpNode opNode : iModelParser.getOperations()) {
+            if (test.contains(opNode.getStringId())) {
+                return false;
+            }
+        }
         return true;
     }
 

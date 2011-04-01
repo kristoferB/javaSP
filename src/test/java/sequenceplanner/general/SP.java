@@ -107,12 +107,23 @@ public class SP {
     }
 
     /**
-     * Inserts a new operation as child to root of operation-
+     * Inserts a new operation as child to root of operation<br/>
+     * Default name is "OP" + id<br/>
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
+        final Integer count = mModel.getCounter() +1;
+        return insertOperation("OP" + count);
+    }
+
+    /**
+     * Inserts a new operation as child to root of operation
+     * @param iName Name for operation
+     * @return the created operation as {@link OperationData}
+     */
+    public OperationData insertOperation(final String iName) {
         Integer idCounter = getUpdatedIdCount();
-        OperationData opData = new OperationData("OP" + idCounter, idCounter);
+        OperationData opData = new OperationData(iName, idCounter);
         TreeNode[] toAdd = new TreeNode[1];
         toAdd[0] = new TreeNode(opData);
         mModel.saveOperationData(toAdd);

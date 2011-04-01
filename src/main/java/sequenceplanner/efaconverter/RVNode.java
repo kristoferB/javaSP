@@ -20,7 +20,7 @@ public class RVNode {
 
     OpNode mOpNode = null;
     LinkedList<RVNode> mChildren2 = new LinkedList<RVNode>();
-    Set<RVNode> mChildren = new HashSet<RVNode>();
+    public Set<RVNode> mChildren = new HashSet<RVNode>();
     RVNode mParent = null;
     String mNodeType = "";
     Cell mCell = null;
@@ -34,7 +34,7 @@ public class RVNode {
     /**
      * Key: other {@link RVNode} operation, Value: Relation between this and key.
      */
-    HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
+    public HashMap<RVNode, Integer> mOperationRelationMap = new HashMap<RVNode, Integer>();
 
     public RVNode() {
     }

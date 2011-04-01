@@ -30,7 +30,7 @@ public class VisualizationOfOperationSubset {
     ModelParser mModelparser;
     Automata mAutomata;
     Automaton mAutomaton;
-    RVNodeToolbox mRVNodeToolbox;
+    public RVNodeToolbox mRVNodeToolbox;
     OperationView mOpView;
     SPGraph mGraph;
 
@@ -45,10 +45,10 @@ public class VisualizationOfOperationSubset {
 
     public boolean run() {
         //Test ids
-        if (!mModule.testIDs(mModelparser)) {
-            System.out.println("Problem with ids!");
-            return false;
-        }
+//        if (!mModule.testIDs(mModelparser)) {
+//            System.out.println("Problem with ids!");
+//            return false;
+//        }
 
         //Translate operations to EFA
         if (!translateToEFA()) {
@@ -80,11 +80,11 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        //Find hierarchy groups
-        if (!hierarchyGroups(mRVNodeToolbox.mRoot.mChildren)) {
-            System.out.println("Problem with creation of hierarchial groups!");
-            return false;
-        }
+//        //Find hierarchy groups
+//        if (!hierarchyGroups(mRVNodeToolbox.mRoot.mChildren)) {
+//            System.out.println("Problem with creation of hierarchial groups!");
+//            return false;
+//        }
 
 
 //        for (RVNode rvNode : mRVNodeToolbox.mRoot.mChildren) {
@@ -97,11 +97,11 @@ public class VisualizationOfOperationSubset {
 //        }
 
 
-        //Draw operation nodes
-        if (!drawing()) {
-            System.out.println("Problem with drawing!");
-            return false;
-        }
+//        //Draw operation nodes
+//        if (!drawing()) {
+//            System.out.println("Problem with drawing!");
+//            return false;
+//        }
 
         return true;
     }
@@ -362,6 +362,7 @@ public class VisualizationOfOperationSubset {
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
         for (OpNode opNode : mModelparser.getOperations()) {
+            System.out.println(opNode.getName());
             mRVNodeToolbox.createOperationNode(opNode);
         }
         return true;
