@@ -47,7 +47,7 @@ public class SpEFA {
         return initialLocation;
     }
 
-    public void setInitialLocation(String name){
+    public final void setInitialLocation(String name){
         SpLocation l = locations.get(name);
         if (l != null){
             initialLocation = l;

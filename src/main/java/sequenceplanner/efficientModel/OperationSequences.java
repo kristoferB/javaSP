@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.OperationData.Action;
 
 /**
  *
