@@ -1,5 +1,6 @@
 package sequenceplanner.efaconverter;
 
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +15,8 @@ import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
 import org.supremica.automata.algorithms.SynthesizerOptions;
 import org.supremica.gui.VisualProject;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -33,6 +36,7 @@ public class VisualizationOfOperationSubset {
     public RVNodeToolbox mRVNodeToolbox;
     OperationView mOpView;
     SPGraph mGraph;
+    public SopNode mSopRoot = new SopNode();
 
     public VisualizationOfOperationSubset(ModelParser iModelparser, OperationView iOpView) {
         this.mModelparser = iModelparser;
@@ -74,7 +78,15 @@ public class VisualizationOfOperationSubset {
             return false;
         }
 
-        //Relation identification
+        System.out.println("----------------------------------");
+        for(final ISopNode Inode : mSopRoot.getSequencesAsSet()) {
+            SopNode node = (SopNode) Inode;
+            final String name = node.getNodeInfo().getmOpNode().getName();
+            System.out.println(name);
+        }
+        System.out.println("----------------------------------");
+
+//        Relation identification
         if (!relationIdentification()) {
             System.out.println("Problem with relation identification!");
             return false;
@@ -361,9 +373,12 @@ public class VisualizationOfOperationSubset {
 //
     private boolean createOperationNodes() {
         mRVNodeToolbox = new RVNodeToolbox();
+        mSopRoot = new SopNode();
         for (OpNode opNode : mModelparser.getOperations()) {
             System.out.println(opNode.getName());
             mRVNodeToolbox.createOperationNode(opNode);
+            mSopRoot.addNode(opNode);
+
         }
         return true;
     }

@@ -1,5 +1,6 @@
 package sequenceplanner.efaconverter;
 
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -76,10 +77,10 @@ public class RVNode {
         return mCell;
     }
 
-    public Integer getRelationToNode(RVNode iRvNode) {
-        RelateTwoOperations r = new RelateTwoOperations(this, iRvNode);
-        return r.getOperationRelation();
-    }
+//    public Integer getRelationToNode(RVNode iRvNode) {
+//        RelateTwoOperations r = new RelateTwoOperations(this, iRvNode);
+//        return r.getOperationRelation();
+//    }
 
     public String getName() {
         if (mOpNode == null) {

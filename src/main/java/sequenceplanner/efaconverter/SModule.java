@@ -65,7 +65,7 @@ public class SModule {
     }
 
     public void addComment(String iComment) {
-        if(getModuleSubject().getComment() == null) {
+        if (getModuleSubject().getComment() == null) {
             setComment(iComment);
         } else {
             setComment(getModuleSubject().getComment() + "\n" + iComment);
@@ -119,7 +119,31 @@ public class SModule {
             }
         }
         for (OpNode opNode : iModelParser.getOperations()) {
-            if (test.contains(opNode.getStringId())) {
+            final String test2 = test.replaceFirst(opNode.getStringId(), "");
+            if (test2.contains(opNode.getStringId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118
+     * @return true if IDs are ok else false
+     */
+    public boolean testIDs(final Set<Integer> iSet) {
+        String test = "";
+
+        for (final Integer id : iSet) {
+            if (test.contains(Integer.toString(id))) {
+                return false;
+            } else {
+                test = test + Integer.toString(id) + "_";
+            }
+        }
+        for (final Integer id : iSet) {
+            final String test2 = test.replaceFirst(Integer.toString(id), "");
+            if (test2.contains(Integer.toString(id))) {
                 return false;
             }
         }

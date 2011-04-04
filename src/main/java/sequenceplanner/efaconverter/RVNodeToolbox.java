@@ -1,5 +1,6 @@
 package sequenceplanner.efaconverter;
 
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class RVNodeToolbox {
         for(RVNode externalOp : mRoot.mChildren) {
             for(RVNode internalOp : mRoot.mChildren) {
                 //externalOp.mOperationRelationMap.put(internalOp, externalOp.getRelationToNode(internalOp));
-                rto.setOperationPair(externalOp, internalOp);
+//                rto.setOperationPair(externalOp, internalOp);
                 externalOp.mOperationRelationMap.put(internalOp, rto.getOperationRelation());
             }
         }
