@@ -5,13 +5,14 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sequenceplanner.algorithms.visualization.OperationRelations;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
 import sequenceplanner.efaconverter.OperationSequencer;
 import sequenceplanner.efaconverter.RVNode;
 import sequenceplanner.efaconverter.RVNodeToolbox;
-import sequenceplanner.efaconverter.RelateTwoOperations;
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
@@ -72,7 +73,7 @@ public class testVisualization {
 
     }
 
-    @Test
+//    @Test
     public void testForRelations() {
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
 
@@ -84,6 +85,27 @@ public class testVisualization {
         v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
 
         assertTrue(v.run());
+    }
+
+    @Test
+    public void testRelations() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
+
+        OperationRelations or = new OperationRelations(mSP.getModel());
+
+        assertTrue(or.getOperationIds());
+
+        or.addToRelationOperationSet(1006, true); //op1
+        or.addToRelationOperationSet(1010, false); //op5
+        or.addToRelationOperationSet(1012, true); //op7
+        or.addToRelationOperationSet(1015, false); //op10
+
+        assertTrue(or.identifyRelations());
+
+        assertTrue(or.getRelationOperationSetAsSOPNode().getSequencesAsSet().size()==4);
+
+        or.getSModule().saveToWMODFile("C:/Users/patrik/Desktop/result.wmod");
+
     }
 
 }

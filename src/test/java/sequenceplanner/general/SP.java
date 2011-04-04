@@ -42,6 +42,12 @@ public class SP {
     public SP() {
         mGUIModel = new GUIModel();
         mModel = mGUIModel.getModel();
+    }
+
+    /**
+     * To init view and controller fields<br/>
+     */
+    public void initViewAndController() {
         mGUIView = new GUIView(mGUIModel);
         mGUIController = new GUIController(mGUIModel, mGUIView);
     }
@@ -112,7 +118,7 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
-        final Integer count = mModel.getCounter() +1;
+        final Integer count = mModel.getCounter() + 1;
         return insertOperation("OP" + count);
     }
 
@@ -136,7 +142,7 @@ public class SP {
      */
     public Integer getUpdatedIdCount() {
         Integer idCount = mModel.getCounter();
-        mModel.setCounter(idCount+1);
+        mModel.setCounter(idCount + 1);
         return idCount;
     }
 }
