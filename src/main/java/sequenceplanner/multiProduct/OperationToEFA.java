@@ -12,12 +12,17 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Class with methods to translate all operations in root to flower EFA.<br/>
+ * One variable {0,1,2} for each operation. Value 2 is single marked value.<br/>
+ * Example of method calls:<br/>
+ * testIDs();<br/>
+ * startToGetOperations();<br/>
+ * mSModule.saveToWMODFile("C:/result.wmod");<br/>
  * @author patrik
  */
 public class OperationToEFA {
 
-    SModule mSModule = new SModule("PPU riverting");
+    SModule mSModule = new SModule("PPU riveting");
     Map<Integer, String> mOperationIdNameMap = new HashMap<Integer, String>();
     Model mModel;
     Map<Integer, String> mIdNameMap;
@@ -65,7 +70,7 @@ public class OperationToEFA {
             //Finish event
             sega = new SEGA("e_" + name + "_" + id + "_finish");
             sega.andGuard(variableName(name, id) + "==1");
-            addGuardBasedOnSPpreCondition(iOpData.getRawPostcondition(),sega);
+            addGuardBasedOnSPpreCondition(iOpData.getRawPostcondition(), sega);
             sega.addAction(variableName(name, id) + "=2");
             sefa.addStandardSelfLoopTransition(sega);
 
@@ -116,7 +121,11 @@ public class OperationToEFA {
         //Test on each value on complete string
         for (final Integer id : operationIds) {
             if (test.contains(id.toString())) {
-                return false;
+                //All ids occur atleast once in string test. Remove this and check again.s
+                final String test2 = test.replaceFirst(id.toString(), "");
+                if (test2.contains(id.toString())) {
+                    return false;
+                }
             }
         }
 
