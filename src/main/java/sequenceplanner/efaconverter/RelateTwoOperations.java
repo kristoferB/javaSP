@@ -56,34 +56,34 @@ public class RelateTwoOperations {
      */
     public Integer getOperationRelation() {
         if (compareToSetQuartet(setF, setF, setI, setI)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " > " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(0, " ", " ") + mRvNode2.mOpNode.getName());
             return ALWAYS_IN_SEQUENCE_12;
         } else if (compareToSetQuartet(setI, setI, setF, setF)) {
-            System.out.println(mRvNode2.mOpNode.getName() + " > " + mRvNode1.mOpNode.getName());
+            System.out.println(mRvNode2.mOpNode.getName() + relationIntegerToString(0, " ", " ") + mRvNode1.mOpNode.getName());
             return ALWAYS_IN_SEQUENCE_21;
         } else if (compareToSetQuartet(setIF, setIF, setI, setI)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " >~ " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(2, " ", " ") + mRvNode2.mOpNode.getName());
             return SOMETIMES_IN_SEQUENCE_12;
         } else if (compareToSetQuartet(setI, setI, setIF, setIF)) {
-            System.out.println(mRvNode2.mOpNode.getName() + " >~ " + mRvNode1.mOpNode.getName());
+            System.out.println(mRvNode2.mOpNode.getName() + relationIntegerToString(2, " ", " ") + mRvNode1.mOpNode.getName());
             return SOMETIMES_IN_SEQUENCE_21;
         } else if (compareToSetQuartet(setIEF, setIEF, setIEF, setIEF)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " || " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(4, " ", " ") + mRvNode2.mOpNode.getName());
             return PARALLEL;
         } else if (compareToSetQuartet(setI, setI, setI, setI)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " + " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(5, " ", " ") + mRvNode2.mOpNode.getName());
             return ALTERNATIVE;
         } else if (compareToSetQuartet(setIF, setIF, setIF, setIF)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " (+) " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(6, " ", " ") + mRvNode2.mOpNode.getName());
             return ARBITRARY_ORDER;
         } else if (compareToSetQuartet(setE, setE, setI, setF)) {
-            System.out.println(mRvNode1.mOpNode.getName() + " [ " + mRvNode2.mOpNode.getName());
+            System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(7, " ", " ") + mRvNode2.mOpNode.getName());
             return HIERARCHY_12;
         } else if (compareToSetQuartet(setI, setF, setE, setE)) {
-            System.out.println(mRvNode2.mOpNode.getName() + " [ " + mRvNode1.mOpNode.getName());
+            System.out.println(mRvNode2.mOpNode.getName() + relationIntegerToString(7, " ", " ") + mRvNode1.mOpNode.getName());
             return HIERARCHY_21;
         }
-        System.out.println(mRvNode1.mOpNode.getName() + " ^ " + mRvNode2.mOpNode.getName());
+        System.out.println(mRvNode1.mOpNode.getName() + relationIntegerToString(9, " ", " ") + mRvNode2.mOpNode.getName());
         return OTHER;
     }
 
@@ -102,7 +102,7 @@ public class RelateTwoOperations {
             case 2:
                 returnString += ">~"; break;
             case 3:
-                returnString += ">~"; break;
+                returnString += "~<"; break;
             case 4:
                 returnString += "||"; break;
             case 5:
