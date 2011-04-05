@@ -9,7 +9,7 @@ import sequenceplanner.model.data.OperationData;
  *
  * @author patrik
  */
-public class SopNode implements ISopNode {
+public class SopNode implements ISopNode{
 
     private SopNodeInfoPointer mInfo = new SopNodeInfoPointer();
     private Set<ISopNode> mSequenceSet = new HashSet<ISopNode>();
@@ -39,7 +39,6 @@ public class SopNode implements ISopNode {
         return mSuccessor;
     }
 
-    @Override
     public SopNode createNode() {
         SopNode node = new SopNode();
         mSequenceSet.add(node);
@@ -48,9 +47,34 @@ public class SopNode implements ISopNode {
     }
 
     @Override
+    public ISopNode createNode(String iType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean generateView() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean insertNode(ISopNode iNode, Object iWhere) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean resolve() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean toSelfContainedOperations() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public SopNode addNode(final OperationData iOperationData) {
         SopNode node = createNode();
-        node.mInfo.setmNodeType(SopNodeToolbox.OPERATION);
+        node.mInfo.setmNodeType(OPERATION);
         node.mInfo.setmOperationData(iOperationData);
 
         return node;
@@ -59,10 +83,16 @@ public class SopNode implements ISopNode {
     @Override
     public SopNode addNode(final OpNode iOpNode) {
         SopNode node = createNode();
-        node.mInfo.setmNodeType(SopNodeToolbox.OPERATION);
+        node.mInfo.setmNodeType(OPERATION);
         node.mInfo.setmOpNode(iOpNode);
 
         return node;
     }
+
+    @Override
+    public boolean containsAllOperations(final ISopNode iSopNode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
 }
