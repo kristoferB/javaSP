@@ -1,8 +1,6 @@
 package sequenceplanner.visualization;
 
-import java.util.ListIterator;
 import java.util.Set;
-import javax.swing.JOptionPane;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.algorithms.visualization.OperationRelations;
@@ -10,9 +8,6 @@ import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
 import sequenceplanner.efaconverter.OperationSequencer;
-import sequenceplanner.efaconverter.RVNode;
-import sequenceplanner.efaconverter.RVNodeToolbox;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
