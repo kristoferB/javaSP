@@ -104,5 +104,5 @@ public interface ISopNodeToolbox {
      * Relations in SOP added to as conditions for (selfcontained) operation data.<br/>
      * @param iRootNode container for sequences where conditions should be found
      */
-    public void preRelationsToSelfContainedOperations(ISopNode iRootNode);
+    public void relationsToSelfContainedOperations(ISopNode iRootNode);
 }
