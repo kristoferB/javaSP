@@ -1,11 +1,12 @@
 package sequenceplanner.algorithms.visualization;
 
 /**
- *
+ * Interface for class that finds relations between two {@link IROperation} operations.
  * @author patrik
  */
 public interface IRelateTwoOperations {
 
+    //Possible relations
     Integer ALWAYS_IN_SEQUENCE_12 = 0;
     Integer ALWAYS_IN_SEQUENCE_21 = 1;
     Integer SOMETIMES_IN_SEQUENCE_12 = 2;

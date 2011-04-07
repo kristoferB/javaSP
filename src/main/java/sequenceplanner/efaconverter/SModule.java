@@ -163,9 +163,9 @@ public class SModule {
             project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
 
             for (Automaton automaton : project) {
-                System.out.println("Automaton: " + automaton.getName());
+//                System.out.println("Automaton: " + automaton.getName());
                 for (TransitionProxy tp : automaton.getTransitions()) {
-                    System.out.println("Event: " + tp.getEvent().getName());
+//                    System.out.println("Event: " + tp.getEvent().getName());
                 }
             }
 

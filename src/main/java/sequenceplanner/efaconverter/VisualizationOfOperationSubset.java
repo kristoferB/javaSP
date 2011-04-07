@@ -79,9 +79,9 @@ public class VisualizationOfOperationSubset {
         }
 
         System.out.println("----------------------------------");
-        for(final ISopNode Inode : mSopRoot.getSequencesAsSet()) {
+        for(final ISopNode Inode : mSopRoot.getFirstNodesInSequencesAsSet()) {
             SopNode node = (SopNode) Inode;
-            final String name = node.getNodeInfo().getmOpNode().getName();
+            final String name = node.getNodeType().toString();
             System.out.println(name);
         }
         System.out.println("----------------------------------");
@@ -377,7 +377,7 @@ public class VisualizationOfOperationSubset {
         for (OpNode opNode : mModelparser.getOperations()) {
             System.out.println(opNode.getName());
             mRVNodeToolbox.createOperationNode(opNode);
-            mSopRoot.addNode(opNode);
+//            mSopRoot.addNode(opNode);
 
         }
         return true;

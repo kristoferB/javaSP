@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Toolbox to use when working with {@link IROperation}s
  * @author patrik
  */
 public class ROperationToolbox {
@@ -16,24 +18,23 @@ public class ROperationToolbox {
     private String mStateNameExplanation = "";
 
     public ROperationToolbox() {
-
     }
 
-    public boolean addToRelationOperationSet(final int iId, final boolean iHasToFinish) {
-        final String thisStringId = Integer.toString(iId);
-        IROperation iROp = getROperationWithStringId(thisStringId);
-        if (iROp != null) { //Operation already exists
-            return false;
-        }
-        System.out.println("Size: " + getmRelationOperationSet().size());
-        IROperation rOp = new ROperation(iId, iHasToFinish);
+    public void addToRelationOperationSet(ISopNode iNode) {
+        IROperation rOp = new ROperation(iNode);
         getmRelationOperationSet().add(rOp);
-        return true;
+
+        final OperationData opData = (OperationData) iNode.getNodeType();
+        final int id = opData.getId();
+
+        //Look for events to this operaiton in supervisor automaton.
+        mEventStateSetMap.put(ISupremicaInteractionForVisualization.EVENT_PREFIX + id + ISupremicaInteractionForVisualization.EVENT_UP, new HashSet<String>());
+        mEventStateSetMap.put(ISupremicaInteractionForVisualization.EVENT_PREFIX + id + ISupremicaInteractionForVisualization.EVENT_DOWN, new HashSet<String>());
     }
 
     public IROperation getROperationWithStringId(final String iId) {
         for (final IROperation iROp : getmRelationOperationSet()) {
-            if (iId.equals(iROp.getStringId())) {
+            if (iId.equals(iROp.getIdAsString())) {
                 return iROp;
             }
         }
@@ -61,7 +62,7 @@ public class ROperationToolbox {
         for (final IROperation externalOp : getmRelationOperationSet()) {
             for (final IROperation internalOp : getmRelationOperationSet()) {
                 rto.setOperationPair(externalOp, internalOp);
-                ROperation rOp = (ROperation) externalOp;
+                AROperation rOp = (AROperation) externalOp;
                 if (rOp.getmOperationRelationMap() == null) {
                     rOp.setmOperationRelationMap(new HashMap<IROperation, Integer>());
                 }
@@ -76,11 +77,11 @@ public class ROperationToolbox {
      * This info is added to the field mEventOperationLocationSetMap for each RVNode in mRoot.mChildren.
      */
     public void findEventOperationRelations() {
-        //Create a map between the serial order of an operation in the state name and it's id.
+        //Create a map between the order of an operation in the state name and it's id.
         Map<Integer, IROperation> serialnrOperationMap = new HashMap<Integer, IROperation>();
         final String[] operationNames = mStateNameExplanation.split("\\|\\|");
         for (int i = 0; i < operationNames.length; ++i) {
-            final String operationId = operationNames[i].replaceAll("o", "");
+            final String operationId = operationNames[i].replaceAll(ISupremicaInteractionForVisualization.OPERATION_VARIABLE_PREFIX, "");
             final IROperation iROp = getROperationWithStringId(operationId);
             serialnrOperationMap.put(i, iROp);
         }
@@ -114,15 +115,15 @@ public class ROperationToolbox {
      */
     private Map<IROperation, Set<String>> getOperationLocationSetMapForEvent(String iKey) {
         //Work with name
-        iKey = iKey.replaceAll("e", "");
-        String eventType = "down";
-        if (iKey.contains("up")) {
-            eventType = "up";
+        iKey = iKey.replaceAll(ISupremicaInteractionForVisualization.EVENT_PREFIX, "");
+        String eventType = ISupremicaInteractionForVisualization.EVENT_DOWN;
+        if (iKey.contains(ISupremicaInteractionForVisualization.EVENT_UP)) {
+            eventType = ISupremicaInteractionForVisualization.EVENT_UP;
         }
         final String operationId = iKey.replaceAll(eventType, "");
 
         //Create storage for event
-        final ROperation rOp = (ROperation) getROperationWithStringId(operationId);
+        final AROperation rOp = (AROperation) getROperationWithStringId(operationId);
         if (rOp.getmEventOperationLocationSetMap() == null) {
             rOp.setmEventOperationLocationSetMap(new HashMap<String, Map<IROperation, Set<String>>>(2));
         }

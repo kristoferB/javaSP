@@ -1,11 +1,10 @@
 package sequenceplanner.algorithms.visualization;
 
-import sequenceplanner.efaconverter.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Finds the relation between two {@link IROperation}s of node type OPERATION.
+ * Finds the relation between two {@link IROperation} operations.
  * @author patrik
  */
 public class RelateTwoOperations implements IRelateTwoOperations{
@@ -15,8 +14,8 @@ public class RelateTwoOperations implements IRelateTwoOperations{
     private Set<String> setF = new HashSet<String>(1);
     private Set<String> setIF = new HashSet<String>(2);
     private Set<String> setIEF = new HashSet<String>(3);
-    private ROperation mOperation1 = null;
-    private ROperation mOperation2 = null;
+    private AROperation mOperation1 = null;
+    private AROperation mOperation2 = null;
     private Set<String> mOperation1up = null;
     private Set<String> mOperation2up = null;
     private Set<String> mOperation1down = null;
@@ -28,17 +27,17 @@ public class RelateTwoOperations implements IRelateTwoOperations{
 
     @Override
     public void setOperationPair(IROperation iOperation1, IROperation iOperation2) {
-        this.mOperation1 = (ROperation) iOperation1;
-        this.mOperation2 = (ROperation) iOperation2;
+        this.mOperation1 = (AROperation) iOperation1;
+        this.mOperation2 = (AROperation) iOperation2;
 
-        mOperation1up = mOperation1.getmEventOperationLocationSetMap().get("up").get(iOperation2);
-        mOperation2up = mOperation2.getmEventOperationLocationSetMap().get("up").get(iOperation1);
-        mOperation1down = mOperation1.getmEventOperationLocationSetMap().get("down").get(iOperation2);
-        mOperation2down = mOperation2.getmEventOperationLocationSetMap().get("down").get(iOperation1);
+        mOperation1up = mOperation1.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOperation2);
+        mOperation2up = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOperation1);
+        mOperation1down = mOperation1.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation2);
+        mOperation2down = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation1);
     }
 
     /**
-     * To get the relation between the two {@link RVNode}s given in the constructor
+     * To get the relation between the two {@link IROperation)s given.
      * @return an {@link Integer} 0-9 for the relation
      */
     @Override
@@ -75,6 +74,13 @@ public class RelateTwoOperations implements IRelateTwoOperations{
         return OTHER;
     }
 
+    /**
+     * Relation as Integer -> relation as sign.<br/>
+     * @param iRelation
+     * @param iPrefix
+     * @param iSufix
+     * @return iPrefix + iRelation + iSufix
+     */
     public static String relationIntegerToString(final Integer iRelation, final String iPrefix, final String iSufix) {
         String returnString = "";
 

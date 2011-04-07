@@ -10,10 +10,13 @@ import sequenceplanner.model.data.OperationData;
  */
 public abstract class ASopNode implements ISopNode {
 
-    String mType = "";
-    Set<ISopNode> mSequenceSet = null;
-    ISopNode mPredecessor = null;
-    ISopNode mSuccessor = null;
+    private Object mType = null;
+    /**
+     * Set containing the first ISopNode in all sequences that are children to this node.<br/>
+     */
+    private Set<ISopNode> mSequenceSet = null;
+    private ISopNode mPredecessor = null;
+    private ISopNode mSuccessor = null;
 
     public ASopNode() {
         mSequenceSet = new HashSet<ISopNode>();
@@ -40,11 +43,13 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
+    public void addNodeToSequenceSet(ISopNode iNode) {
+        mSequenceSet.add(iNode);
+    }
+
+    @Override
     public void setNodeType(Object iType) {
-        if (iType instanceof OperationData) {
-            iType = ((OperationData) iType).getName();
-        }
-        mType = iType.toString();
+        mType = iType;
     }
 
     @Override
@@ -58,19 +63,57 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
-    public String toString() {
+    public String typeToString() {
         String returnString = "";
-        returnString += "Node type: " + getNodeType().toString() + "\n";
-        returnString += "{";
-        for (final ISopNode node : mSequenceSet) {
+        if (getNodeType() instanceof OperationData) {
+            OperationData opData = (OperationData) getNodeType();
+            returnString += opData.getName();
+        } else if(getNodeType() instanceof String) {
+            String s = (String) getNodeType();
+            returnString += s;
+        } else {
+            returnString += null;
+        }
+        return returnString;
+    }
+
+    @Override
+    public String toString() {
+        String returnString = "\n";
+        //-----------------------------------------------------------------------
+        returnString += "Node type: ";
+        if (getNodeType() != null) {
+            returnString += typeToString();
+        } else {
+            returnString += null;
+        }
+        returnString += "\n";
+        //-----------------------------------------------------------------------
+        returnString += "Sequence set: {";
+        for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
             if (!returnString.endsWith("{")) {
                 returnString += ",";
             }
-            returnString += node.getNodeType().toString();
+            returnString += node.typeToString();
         }
         returnString += "}\n";
-        returnString += "Predecessor: " + mPredecessor.getNodeType().toString() + "\n";
-        returnString += "Successor: " + mSuccessor.getNodeType().toString() + "\n";
+        //-----------------------------------------------------------------------
+        returnString += "Predecessor: ";
+        if (getPredecessorNode() != null) {
+            returnString += getPredecessorNode().typeToString();
+        } else {
+            returnString += null;
+        }
+        returnString += "\n";
+        //-----------------------------------------------------------------------
+        returnString += "Successor: ";
+        if (getSuccessorNode() != null) {
+            returnString += getSuccessorNode().typeToString();
+        } else {
+            returnString += null;
+        }
+        returnString += "";
+        //-----------------------------------------------------------------------
         return returnString;
     }
 }

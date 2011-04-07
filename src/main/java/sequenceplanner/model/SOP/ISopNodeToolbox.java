@@ -18,12 +18,11 @@ public interface ISopNodeToolbox {
      * This gives: the sequence should NOT be extended to node1->node2->node3.<br/>
      * null is returned.<br/>
      * --------------------<br/>
-     * @param iNodeType see {@link ISopNode}
-     * @param iOperation pointer to operation if operation node else null
-     * @param iWhere Before or after som other node, or as the first node in a sequence
+     * @param iNodeType see {@link ISopNodeType}
+     * @param iWhere Before or after som other node, or as the first node in a sequence, CHANGE TO FIT WHAT IS BEST
      * @return the created {@link ISopNode} or null if no node was created
      */
-    public ISopNode createNode(Object iNodeType, Object iOperation, Object iWhere);
+    public ISopNode createNode(Object iNodeType, Object iWhere);
 
     /**
      * Removes a node and all sequence nodes to this node.<br/>
@@ -34,8 +33,9 @@ public interface ISopNodeToolbox {
      * node1 has sequence set {node5,node3} and node6 as prececessor.<br/>
      * --------------------<br/>
      * @param iNodeToRemove node to remove
+     * @param iRootNode container for sequences where node can be found
      */
-    public void removeNode(ISopNode iNodeToRemove);
+    public void removeNode(ISopNode iNodeToRemove, ISopNode iRootNode);
 
     /**
      * Draw all nodes that are in any of iRootNode's sequences and iteratively sequences for nodes in the sequences.<br/>
@@ -105,12 +105,4 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences where conditions should be found
      */
     public void preRelationsToSelfContainedOperations(ISopNode iRootNode);
-
-    /**
-     * Compare two node pointers.<br/>
-     * @param iNodeWestSide
-     * @param iNodeEastSide
-     * @return true if iNodeWestSide is equal to iNodeEastSide else false
-     */
-    public boolean equal(ISopNode iNodeWestSide, ISopNode iNodeEastSide);
 }

@@ -1,22 +1,20 @@
 package sequenceplanner.algorithms.visualization;
 
-import java.util.Set;
+import sequenceplanner.model.SOP.ISopNode;
 
 /**
- *
+ * Interface for wrapper to {@link ISopNode}, to also contain information about relations to other operations.
  * @author patrik
  */
 public interface IROperation {
 
     public int getId();
 
-    public String getStringId();
+    public String getIdAsString();
 
-    public boolean hasToFinish();
+    ISopNode getNode();
+
+    boolean setNode(ISopNode iNode);
 
     public Integer getRelationToIOperation(final IROperation iOperation);
-
-    public boolean subsetContainsRelationValue(final Set<IROperation> iSet, final Integer iRelation);
-
-    public boolean equals(final int iId);
 }

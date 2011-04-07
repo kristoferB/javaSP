@@ -1,11 +1,10 @@
 package sequenceplanner.model.SOP;
 
 /**
- *
+ * Maybe something for the future...<br/>
  * @author patrik
  */
 public interface ISopNodeType {
-    String OPERATION = "operation";
     String GROUP = "group";
     String ALTERNATIVE = "alternative";
     String ARBITRARY = "arbitrary";

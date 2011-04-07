@@ -14,6 +14,8 @@ public interface ISopNode {
 
     Set<ISopNode> getFirstNodesInSequencesAsSet();
 
+    void addNodeToSequenceSet(ISopNode iNode);
+
     ISopNode getPredecessorNode();
 
     void setPredecessorNode(ISopNode iPredecessor);
@@ -21,4 +23,6 @@ public interface ISopNode {
     ISopNode getSuccessorNode();
 
     void setSuccessorNode(ISopNode iSuccessor);
+
+    String typeToString();
 }

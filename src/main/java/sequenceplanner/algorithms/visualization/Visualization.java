@@ -1,5 +1,6 @@
 package sequenceplanner.algorithms.visualization;
 
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 
 /**
@@ -8,9 +9,10 @@ import sequenceplanner.model.SOP.ISopNode;
  */
 public class Visualization implements IVisualization{
 
-    RelationsForOperationSet mRFOS = new RelationsForOperationSet();
+    RelationsForOperationSet mRFOS;
 
-    public Visualization() {
+    public Visualization(Model iModel) {
+        mRFOS = new RelationsForOperationSet(iModel);
     }
 
     @Override
@@ -20,12 +22,14 @@ public class Visualization implements IVisualization{
 
     @Override
     public boolean addOsubset(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        mRFOS.setmSopNodeOsubset(iSopNode);
+        return mRFOS.OsetSupersetForOsubset();
     }
 
     @Override
     public boolean addToOfinish(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        mRFOS.setmSopNodeOfinish(iSopNode);
+        return mRFOS.OsetSupersetForOfinish();
     }
 
     @Override
@@ -44,8 +48,10 @@ public class Visualization implements IVisualization{
     }
 
     @Override
-    public IRelationsForOperationSet identifyRelations() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RelationsForOperationSet identifyRelations() {
+        mRFOS.run();
+        mRFOS.getWrapSet(); //set of IROperations. Each IRoperation contains both ISopNode and relations to other operations in set.
+        return mRFOS;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class Visualization implements IVisualization{
     }
 
     @Override
-    public boolean sopNodeToGraphicalView() {
+    public boolean sopNodeToGraphicalView(ISopNode iSopNode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -21,6 +21,7 @@ public class SEFA {
     final static String EVENT = "event";
     final static String GUARD = "guard";
     final static String ACTION = "action";
+    public final static String SINGLE_LOCATION_NAME = "pm";
 
     public SEFA(String name, SModule sm) {
         efa = new EFA(name, sm.getModule());
@@ -68,7 +69,7 @@ public class SEFA {
      * @param ega
      */
     public void addStandardSelfLoopTransition(SEGA ega) {
-        addTransition("pm", "pm", ega.getEvent(), ega.getGuard(), ega.getAction());
+        addTransition(SINGLE_LOCATION_NAME, SINGLE_LOCATION_NAME, ega.getEvent(), ega.getGuard(), ega.getAction());
     }
 }
 

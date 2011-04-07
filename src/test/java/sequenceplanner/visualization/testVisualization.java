@@ -1,9 +1,10 @@
 package sequenceplanner.visualization;
 
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import sequenceplanner.algorithms.visualization.OperationRelations;
+import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
 import sequenceplanner.efaconverter.OpNode;
@@ -12,6 +13,12 @@ import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
 import sequenceplanner.efaconverter.convertSeqToEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.general.SP;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -21,7 +28,7 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class testVisualization {
 
-    static SP mSP ;
+    static SP mSP;
 //    SP mSP = new SP();
     ModelParser mModelparser;
     OperationSequencer mOperationSequencer;
@@ -83,24 +90,51 @@ public class testVisualization {
     }
 
     @Test
-    public void testRelations() {
+    public void testVisualizationUseingSopNode() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
-        OperationRelations or = new OperationRelations(mSP.getModel());
+        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println(allOpSet.toString());
 
-        assertTrue(or.getOperationIds());
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1006); //op1
+        subsetIds.add(1010); //op5
+        subsetIds.add(1012); //op7
+        subsetIds.add(1015); //op10
+        SopNode subOpSet = getOperations(subsetIds);
+        System.out.println(subOpSet.toString());
 
-        or.addToRelationOperationSet(1006, true); //op1
-        or.addToRelationOperationSet(1010, false); //op5
-        or.addToRelationOperationSet(1012, true); //op7
-        or.addToRelationOperationSet(1015, false); //op10
+        Visualization v = new Visualization(mSP.getModel());
 
-        assertTrue(or.identifyRelations());
+        v.addOset(allOpSet);
+        assertTrue(v.addOsubset(subOpSet));
 
-        assertTrue(or.getRelationOperationSetAsSOPNode().getSequencesAsSet().size()==4);
+        v.identifyRelations();
 
-        or.getSModule().saveToWMODFile("C:/Users/patrik/Desktop/result.wmod");
 
     }
 
+    public SopNode getOperationsInModel(TreeNode iTree) {
+        SopNode node = new SopNode();
+        for (int i = 0; i < iTree.getChildCount(); ++i) {
+            OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
+            ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
+            toolbox.createNode(opData, node);
+        }
+        return node;
+    }
+
+    public SopNode getOperations(Set<Integer> iSet) {
+        SopNode returnSop = new SopNode();
+        SopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
+        for (ISopNode node : sop.getFirstNodesInSequencesAsSet()) {
+            if (node.getNodeType() instanceof OperationData) {
+                OperationData opData = (OperationData) node.getNodeType();
+                if (iSet.contains(opData.getId())) {
+                    returnSop.addNodeToSequenceSet(node);
+                }
+            }
+        }
+        return returnSop;
+    }
 }
