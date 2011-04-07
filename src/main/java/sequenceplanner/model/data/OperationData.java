@@ -714,7 +714,7 @@ public class OperationData extends Data {
                out += Integer.toString(seqCond.id) + Model.getVariabelCheck(seqCond.state) + Integer.toString(seqCond.value);
             }
 
-            out = it.hasNext() ? out + EFAVariables.SP_OR : out;
+            out = it.hasNext() ? out + " " + EFAVariables.SP_OR + " " : out;
 
          }
          out += ")";

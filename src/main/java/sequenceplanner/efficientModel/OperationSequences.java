@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
+import sequenceplanner.efaconverter.efamodel.DefaultEFAConverter;
+import sequenceplanner.efaconverter.efamodel.DefaultEFAutomaton;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -38,8 +40,8 @@ public class OperationSequences {
     }
 
     public void run(){
-        for(TreeNode node : operationList)
-            printGuards(node);
+//        for(TreeNode node : operationList)
+//            printGuards(node);
 
 //        DialogEM dialogem = new DialogEM();
 //        dialogem.createAndShow();
