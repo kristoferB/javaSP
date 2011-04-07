@@ -60,7 +60,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void preRelationsToSelfContainedOperations(ISopNode iRootNode) {
+    public void relationsToSelfContainedOperations(ISopNode iRootNode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

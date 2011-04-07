@@ -41,7 +41,7 @@ public interface ISopNodeToolbox {
      * Draw all nodes that are in any of iRootNode's sequences and iteratively sequences for nodes in the sequences.<br/>
      * Use mxGraph/JGraph.<br/>
      * Each node type has its own representation. see SP1.0<br/>
-     * @param iRootNode container for sequences to be drawn
+     * @param iRootNode container for sequences to be drawn, CHANGE TO FIT WHAT IS BEST
      * @param iView a view already exists or null if a new view should be created.
      */
     public void drawNode(ISopNode iRootNode, Object iView);

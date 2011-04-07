@@ -5,7 +5,7 @@ package sequenceplanner.model.SOP;
  * @author patrik
  */
 public interface ISopNodeType {
-    String GROUP = "group";
+    String SOP = "sop";
     String ALTERNATIVE = "alternative";
     String ARBITRARY = "arbitrary";
     String PARALLEL = "parallel";
