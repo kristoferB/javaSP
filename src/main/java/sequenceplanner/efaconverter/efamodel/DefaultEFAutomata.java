@@ -5,77 +5,86 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import org.supremica.automata.ExtendedAutomaton;
 import org.supremica.external.avocades.common.Module;
 
 /**
  *
  * @author shoaei
  */
-public class DefaultEFAutomata implements IEFAutomata {
+public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
 
     private Module module;
-    private HashMap<String, ExtendedAutomaton> automatons;
+    private HashMap<String, DefaultEFAutomaton> automatons;
 
     public DefaultEFAutomata(String iName){
         module = new Module(iName, false);
-        automatons = new HashMap<String, ExtendedAutomaton>();
+        automatons = new HashMap<String, DefaultEFAutomaton>();
     }
 
-    @Override
     public void addEvent(String iEvent){
         module.addEvent(iEvent);
     }
 
-    @Override
     public void addEvent(String iName, String iKind){
         module.addEvent(iName, iKind);
     }
 
-    @Override
-    public LinkedList<String> getAlphabet(){
-        return (LinkedList<String>) module.getEvents();
+    public void addAllEvent(Collection<String> iEvents){
+        for(String e : iEvents)
+            module.addEvent(e);
     }
 
-    @Override
-    public void addEFAutomaton(IEFAutomaton iAutomaton) {
-        automatons.put(iAutomaton.getName(), (ExtendedAutomaton)iAutomaton);
-        module.addAutomaton((ExtendedAutomaton)iAutomaton);
+    public Collection<String> getAlphabet(){
+        return module.getEvents();
     }
 
-    @Override
-    public IEFAutomaton addEFAVariable(String iName, int iMin, int iMax, int iInitialValue) {
-        ExtendedAutomaton var = new ExtendedAutomaton(iName, module, true);
-        var.addIntegerVariable(iName, iMin, iMin, iInitialValue, null);
-        automatons.put(iName, var);
-        module.addAutomaton(var);
-        return (IEFAutomaton)var;
+    public boolean addEFAutomaton(DefaultEFAutomaton iAutomaton) {
+        boolean check = false;
+        if(!automatons.containsKey(iAutomaton.getName())){
+            automatons.put(iAutomaton.getName(), iAutomaton);
+            module.addAutomaton(iAutomaton);
+            check = true;
+        }
+        return check;
     }
 
-    @Override
-    public IEFAutomaton getEFAutomaton(String iName) {
-        return (IEFAutomaton) automatons.get(iName);
+    public DefaultEFAutomaton getEFAutomaton(String iName) {
+        return automatons.get(iName);
     }
 
-    @Override
-    public Module getModule() {
+    public Module getThisModule() {
         return module;
     }
 
-    public void addEFAutomata(IEFAutomata iAutomata){
+    public void addEFAutomata(DefaultEFAutomata iAutomata){
         for(String e : iAutomata.getAlphabet())
             this.addEvent(e);
 
-        for(Iterator<IEFAutomaton> itr = iAutomata.iterator(); itr.hasNext();)
+        for(Iterator<DefaultEFAutomaton> itr = iAutomata.iterator(); itr.hasNext();)
             this.addEFAutomaton(itr.next());
     }
 
     @Override
-    public Iterator<IEFAutomaton> iterator() {
-        return (Iterator<IEFAutomaton>)(IEFAutomaton) automatons.values().iterator();
+    public Iterator<DefaultEFAutomaton> iterator() {
+        return (Iterator<DefaultEFAutomaton>) automatons.values().iterator();
     }
 
+    public boolean addIntegralVariable(String iName, int iMin, int iMax, int iInitialValue) {
+        boolean check = false;
+        if(!automatons.containsKey(iName)){
+        DefaultEFAutomaton var = new DefaultEFAutomaton(iName, module);
+        var.addIntegerVariable(iName, iMin, iMin, iInitialValue, null);
+        automatons.put(iName, var);
+        module.addAutomaton(var);
+            check = true;
+        }
+        return check;
+    }
+
+    public boolean containsAutomaton(DefaultEFAutomaton iAutomaton){
+        return automatons.containsKey(iAutomaton.getName());
+    }
 }
