@@ -6,7 +6,6 @@
 package sequenceplanner.efaconverter.efamodel;
 
 import java.util.LinkedList;
-import org.supremica.automata.ExtendedAutomaton;
 
 /**
  *
@@ -14,6 +13,13 @@ import org.supremica.automata.ExtendedAutomaton;
  */
 public interface IEFAutomaton {
 
+    public enum EFAType {
+        ExtendedFiniteAutomaton,
+        LocationVariable,
+        ResourceVariable,
+        LiaisonVariable
+    }
+    
     public void addLocation(String iName);
 
     public void addInitialLocation(String iName);
@@ -41,4 +47,7 @@ public interface IEFAutomaton {
     public boolean locationExist(String iLocation);
 
     public String getName();
+
+    public EFAType getType(IEFAutomaton iAutomaton);
+
 }

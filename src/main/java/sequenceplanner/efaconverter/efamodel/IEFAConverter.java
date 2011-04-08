@@ -5,17 +5,11 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import sequenceplanner.model.Model;
-import sequenceplanner.model.TreeNode;
 
 /**
  *
  * @author shoaei
  */
 public interface IEFAConverter {
-
-    public IEFAutomata getEFAutomata(Model iModel);
-    public IEFAutomata getEFAutomata(TreeNode iOperation);
-    public IEFAutomaton getProjectEFAutomaton(Model model);
 
 }

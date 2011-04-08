@@ -5,75 +5,146 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import java.util.LinkedList;
-import java.util.Stack;
-import sequenceplanner.efaconverter.EFAVariables;
-import sequenceplanner.model.Model;
-import sequenceplanner.model.TreeNode;
+import java.util.Set;
 
 /**
  *
  * @author shoaei
  */
-public class DefaultEFAConverter implements IEFAConverter{
+public class DefaultEFAConverter {
 
-
-//    private Model model;
-//    private Module module;
-//    private String name;
+    private SpEFAutomata sp;
     private DefaultEFAutomata automata;
 
-    public DefaultEFAConverter(){
+    public DefaultEFAConverter(SpEFAutomata iSpEFAutomata){
+        this.sp = iSpEFAutomata;
+        this.automata = new DefaultEFAutomata(sp.getName());
     }
 
-    @Override
-    public IEFAutomata getEFAutomata(Model iModel) {
-        automata = new DefaultEFAutomata(iModel.getOperationRoot().toString());
-        LinkedList<TreeNode> operationList = createOperationList(iModel);
-        for(TreeNode op : operationList)
-             automata.addEFAutomata((DefaultEFAutomata)getEFAutomata(op));
-
-        automata.addEFAutomaton((DefaultEFAutomaton)getProjectEFAutomaton(iModel));
+    public DefaultEFAutomata getEFAutomata(){
+        convertSpEFA();
+        convertSpVariables();
         return automata;
     }
 
-
-    @Override
-    public IEFAutomata getEFAutomata(TreeNode iOperation) {
-        DefaultEFAutomata oAutomata = new DefaultEFAutomata(Integer.toString(iOperation.getId()));
-        DefaultEFAutomaton oAutomaton = new DefaultEFAutomaton(createEFAName(iOperation), automata);
-        return oAutomata;
-    }
-
-    @Override
-    public IEFAutomaton getProjectEFAutomaton(Model model) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private String createEFAName(TreeNode iOperation) {
-        String opName = EFAVariables.OPERATION_NAME_PREFIX + iOperation.getId() + EFAVariables.EFA_NAME_POSTFIX;
-        return opName;
-    }
-
-
-    private LinkedList<TreeNode> createOperationList(Model model) {
-        LinkedList<TreeNode> operationList = new LinkedList<TreeNode>();
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        for (int i = 0; i < model.getOperationRoot().getChildCount(); ++i){
-            stack.add(model.getOperationRoot().getChildAt(i));
+    private void convertSpEFA() {
+        for(SpEFA efa : sp.getAutomatons()){
+            addSpEvents(efa.getAlphabet());
         }
-        while(!stack.isEmpty()){
-            TreeNode node = stack.peek();
-            if(node.getChildCount() > 0){
-                for (int i = 0; i < node.getChildCount(); ++i){
-                    stack.add(node.getChildAt(i));
-                }
-            }
-            operationList.add(stack.pop());
-        }
-        return operationList;
     }
 
+    private void convertSpVariables() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void addSpEvents(Set<SpEvent> alphabet) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+//    private Model model;
+//    private String name;
+//    private DefaultEFAutomata automata;
+//    private HashMap<Integer, TreeNode> operations;
+//
+//    public DefaultEFAConverter(String iProjectName, Model iModel){
+//        this.name = iProjectName;
+//        this.model = iModel;
+//        automata = new DefaultEFAutomata(name);
+//        operations = new HashMap<Integer, TreeNode>();
+//        init();
+//    }
+//
+//    public final void init(){
+//        createOperationList();
+//    }
+//
+//    public IEFAutomata getEFAutomata() {
+//        buildEFA();
+//        buildLocationVariables();
+//        buildResouceVariables();
+//        buildLiaisonVariables();
+//        parseGuards();
+//        parseActions();
+//        checkConsistency();
+//        return automata;
+//    }
+//
+//    private void buildEFA() {
+//        for(TreeNode op : operations.values()){
+//            String opName = createOperationName(op);
+//            DefaultEFAutomaton automaton = new DefaultEFAutomaton(opName + EFAVariables.EFA_NAME_POSTFIX, EFAType.ExtendedFiniteAutomaton ,automata);
+//
+//            String initL = opName + EFAVariables.STATE_INITIAL_POSTFIX;
+//            String execL = opName + EFAVariables.STATE_EXECUTION_POSTFIX;
+//            String finiL = opName + EFAVariables.STATE_FINAL_POSTFIX;
+//
+//            String startE = EFAVariables.EFA_START_EVENT_PREFIX + opName;
+//            String stopE = EFAVariables.EFA_STOP_EVENT_PREFIX + opName;
+//
+//            automaton.addLocation(initL, true, true);
+//            automaton.addLocation(execL, false, false);
+//            automaton.addLocation(finiL, true, false);
+//
+//            automaton.addTransition(initL, execL, startE,"","");
+//            automaton.addTransition(execL, finiL, stopE,"","");
+//        }
+//    }
+//
+//
+//    private IEFAutomata getNodeEFAutomata(TreeNode iOperation) {
+//        DefaultEFAutomata opAutomata = new DefaultEFAutomata(Integer.toString(iOperation.getId()));
+//
+//        String opName = createOperationName(iOperation);
+//        DefaultEFAutomaton opAutomaton = new DefaultEFAutomaton(opName + EFAVariables.EFA_NAME_POSTFIX, Type.ExtendedFiniteAutomaton ,automata);
+//
+//        String initL = opName + EFAVariables.STATE_INITIAL_POSTFIX;
+//        String execL = opName + EFAVariables.STATE_EXECUTION_POSTFIX;
+//        String finiL = opName + EFAVariables.STATE_FINAL_POSTFIX;
+//
+//        String startE = EFAVariables.EFA_START_EVENT_PREFIX + opName;
+//        String stopE = EFAVariables.EFA_STOP_EVENT_PREFIX + opName;
+//
+//        OperationData opData = (OperationData) iOperation.getNodeData();
+//
+//        opAutomaton.addLocation(initL, true, true);
+//        opAutomaton.addLocation(execL, false, false);
+//        opAutomaton.addLocation(finiL, true, false);
+//
+//        String startGuard = "";
+//        startGuard += createConditionGuard(opData.getSequenceCondition());
+//        startGuard += createResourceBookingGuard(opData.getResourceBooking());
+//
+//        String startAction = "";
+//        startAction += createActions(opData.getActions());
+//        startAction += createResourceBookingActions(opData.getResourceBooking());
+//
+//        return opAutomata;
+//    }
+//
+//    public IEFAutomaton getProjectEFAutomaton(Model model) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    private String createOperationName(TreeNode iOperation) {
+//        return EFAVariables.OPERATION_NAME_PREFIX + iOperation.getId();
+//    }
+//
+//
+//    private void createOperationList() {
+//        Stack<TreeNode> stack = new Stack<TreeNode>();
+//        for (int i = 0; i < model.getOperationRoot().getChildCount(); ++i){
+//            stack.add(model.getOperationRoot().getChildAt(i));
+//        }
+//        while(!stack.isEmpty()){
+//            TreeNode node = stack.pop();
+//            if(node.getChildCount() > 0){
+//                for (int i = 0; i < node.getChildCount(); ++i){
+//                    stack.add(node.getChildAt(i));
+//                }
+//            }
+//            operations.put(node.getId(), node);
+//        }
+//    }
+//
 //    private LinkedList<String> locations;
 //    private LinkedList<String> events;
 //    private LinkedList<String> variable;

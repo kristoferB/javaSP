@@ -13,6 +13,7 @@ package sequenceplanner.efaconverter.efamodel;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -25,6 +26,7 @@ public class SpEFA {
     String efaName;
     SpLocation initialLocation;
     HashMap<String,SpLocation> locations;
+    HashMap<String,SpTransition> transitions;
     Set<SpEvent> alphabet;
 
 
@@ -40,6 +42,7 @@ public class SpEFA {
     private void init(String name){
         this.efaName = name;
         locations = new HashMap<String, SpLocation>();
+        transitions = new HashMap<String, SpTransition>();
         alphabet = new HashSet<SpEvent>();
     }
 
@@ -140,6 +143,9 @@ public class SpEFA {
         return this.alphabet;
     }
 
+    public Iterator<SpLocation> iterateLocations(){
+        return locations.values().iterator();
+    }
 
     @Override
     public String toString(){

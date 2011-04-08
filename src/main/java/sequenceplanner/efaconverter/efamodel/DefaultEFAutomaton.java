@@ -15,19 +15,19 @@ import org.supremica.external.avocades.common.Module;
  *
  * @author shoaei
  */
-public class DefaultEFAutomaton implements IEFAutomaton {
+public class DefaultEFAutomaton extends ExtendedAutomaton {
 
     private Module module;
     private LinkedList<String> events;
     private LinkedList<String> locations;
     private LinkedList<LinkedList<String>> transitions;
-    private ExtendedAutomaton exAutomaton;
+    private ExtendedAutomaton automaton;
     private String name;
 
 
 
     public DefaultEFAutomaton(String iName, Module iModule){
-        exAutomaton = new ExtendedAutomaton(iName, iModule, true);
+        super(iName, iModule, true);
         this.module = iModule;
         this.name = iName;
         locations = new LinkedList<String>();
@@ -39,27 +39,22 @@ public class DefaultEFAutomaton implements IEFAutomaton {
         this(iName, iAutomata.getModule());
     }
 
-    @Override
     public void addLocation(String iName){
         this.addLocation(iName, false, false);
     }
 
-    @Override
     public void addInitialLocation(String iName){
        this.addLocation(iName, false, true);
     }
 
-    @Override
     public void addInitialLocation(String iName, boolean isAccepting){
        this.addLocation(iName, isAccepting, true);
     }
 
-    @Override
     public void addAcceptingLocation(String iName){
        this.addLocation(iName, true, false);
     }
 
-    @Override
     public void addLocation(String iName, boolean isAccepting, boolean isInitial){
        //check in data
        if(iName == null){
@@ -74,11 +69,10 @@ public class DefaultEFAutomaton implements IEFAutomaton {
        }
 
        //add new state
-       exAutomaton.addState(iName, isAccepting, isInitial);
+       super.addState(iName, isAccepting, isInitial);
        locations.add(iName);
     }
 
-    @Override
     public void addEvent(String iEvent){
        //check in data
        if(iEvent == null || iEvent.length() == 0){
@@ -91,14 +85,12 @@ public class DefaultEFAutomaton implements IEFAutomaton {
        //add new event to automata
        for(int i = 0; i < es.length; i++){
            if(!eventExist(es[i]) && !es[i].isEmpty()){
-                   if(module != null)
-                       module.addEvent(es[i]);
+                   module.addEvent(es[i]);
                    events.add(es[i]);
            }
        }
     }
 
-    @Override
     public void addEvent(String iEvent, String iKind){
 
        //check in data
@@ -115,8 +107,7 @@ public class DefaultEFAutomaton implements IEFAutomaton {
        //add new event to automata
        for(int i = 0; i < es.length; i++){
            if(!eventExist(es[i])){
-                   if(module != null)
-                       module.addEvent(es[i], iKind);
+                   module.addEvent(es[i], iKind);
                    events.add(es[i]);
            }
        }
@@ -142,39 +133,29 @@ public class DefaultEFAutomaton implements IEFAutomaton {
        transition.add(iGuard);
        transition.add(iAction);
        transitions.add(transition);
-       exAutomaton.addTransition(iSource,iTarget,iEvent,iGuard,iAction);
+       super.addTransition(iSource,iTarget,iEvent,iGuard,iAction);
     }
 
-    @Override
     public boolean eventExist(String iEvent) {
         return events.contains(iEvent);
     }
 
-    @Override
     public boolean locationExist(String iLocation){
         return locations.contains(iLocation);
     }
 
-    public ExtendedAutomaton getExtendedAutomaton(){
-        return exAutomaton;
-    }
-
-    @Override
     public LinkedList<String> getLocations() {
         return locations;
     }
 
-    @Override
     public LinkedList<String> getEvents() {
         return events;
     }
 
-    @Override
     public LinkedList<LinkedList<String>> getTransitions() {
         return transitions;
     }
 
-    @Override
     public String getName() {
         return name;
     }

@@ -14,9 +14,7 @@ import org.supremica.external.avocades.common.Module;
  */
 public interface IEFAutomata extends Iterable<IEFAutomaton> {
 
-    public void addEFAutomaton(IEFAutomaton iAutomaton);
-
-    public IEFAutomaton addEFAVariable(String iName, int iMin, int iMax, int iInitialValue);
+    public boolean addEFAutomaton(IEFAutomaton iAutomaton);
 
     public void addEvent(String iEvent);
 
@@ -27,6 +25,8 @@ public interface IEFAutomata extends Iterable<IEFAutomaton> {
     public IEFAutomaton getEFAutomaton(String iName);
 
     public void addEFAutomata(IEFAutomata iAutomata);
+
+    public boolean addIntegralVariable(String iName, int iMin, int iMax, int iInitialValue);
 
     public Module getModule();
 
