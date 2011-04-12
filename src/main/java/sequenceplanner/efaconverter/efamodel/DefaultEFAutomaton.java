@@ -15,28 +15,23 @@ import org.supremica.external.avocades.common.Module;
  *
  * @author shoaei
  */
-public class DefaultEFAutomaton extends ExtendedAutomaton {
+public class DefaultEFAutomaton {
 
     private Module module;
     private LinkedList<String> events;
     private LinkedList<String> locations;
     private LinkedList<LinkedList<String>> transitions;
-    private ExtendedAutomaton automaton;
     private String name;
-
+    private ExtendedAutomaton automaton;
 
 
     public DefaultEFAutomaton(String iName, Module iModule){
-        super(iName, iModule, true);
+        automaton = new ExtendedAutomaton(iName, iModule, true);
         this.module = iModule;
         this.name = iName;
         locations = new LinkedList<String>();
         events = new LinkedList<String>();
         transitions = new LinkedList<LinkedList<String>>();
-    }
-
-    public DefaultEFAutomaton(String iName, IEFAutomata iAutomata){
-        this(iName, iAutomata.getModule());
     }
 
     public void addLocation(String iName){
@@ -69,7 +64,7 @@ public class DefaultEFAutomaton extends ExtendedAutomaton {
        }
 
        //add new state
-       super.addState(iName, isAccepting, isInitial);
+       automaton.addState(iName, isAccepting, isInitial);
        locations.add(iName);
     }
 
@@ -91,7 +86,7 @@ public class DefaultEFAutomaton extends ExtendedAutomaton {
        }
     }
 
-    public void addEvent(String iEvent, String iKind){
+    public void addEvent(String iEvent, boolean isControllable){
 
        //check in data
        if(iEvent == null ){
@@ -107,33 +102,34 @@ public class DefaultEFAutomaton extends ExtendedAutomaton {
        //add new event to automata
        for(int i = 0; i < es.length; i++){
            if(!eventExist(es[i])){
-                   module.addEvent(es[i], iKind);
-                   events.add(es[i]);
+               String kind = isControllable ? "controllable" : "uncontrollable";
+               module.addEvent(es[i], kind);
+               events.add(es[i]);
            }
        }
     }
 
-    @Override
-    public void addTransition(String iSource, String iTarget, String iEvent, String iGuard, String iAction){
-       this.addEvent(iEvent);
+    public void addTransition(String iFrom, String iTo, String iEvent, String iGuard, String iAction){
 
        //event, guard and action must ends with ";"
        if(iEvent.length() > 0 && !iEvent.endsWith(";")){
            iEvent = iEvent.concat(";");
        }
 
+       this.addEvent(iEvent);
+       
        if(iAction.length() > 0 && !iAction.endsWith(";")){
            iAction = iAction.concat(";");
        }
-
+       
        LinkedList<String> transition = new LinkedList<String>();
-       transition.add(iSource);
-       transition.add(iTarget);
+       transition.add(iFrom);
+       transition.add(iTo);
        transition.add(iEvent);
        transition.add(iGuard);
        transition.add(iAction);
        transitions.add(transition);
-       super.addTransition(iSource,iTarget,iEvent,iGuard,iAction);
+       automaton.addTransition(iFrom,iTo,iEvent,iGuard,iAction);
     }
 
     public boolean eventExist(String iEvent) {
@@ -159,6 +155,10 @@ public class DefaultEFAutomaton extends ExtendedAutomaton {
     public String getName() {
         return name;
     }
+    
+    public void addVariable(int iMin, int iMax, int iInitialValue){
+        automaton.addIntegerVariable(name, iMin, iMax, iInitialValue, null);
+    }
 
     public LinkedList<String[]> regEx(String iPattern, String iText){
         Pattern p = Pattern.compile(iPattern);
@@ -177,5 +177,9 @@ public class DefaultEFAutomaton extends ExtendedAutomaton {
         }
 
         return groups;
+    }
+    
+    public ExtendedAutomaton getAutomaton(){
+        return automaton;
     }
 }

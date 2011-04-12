@@ -45,7 +45,7 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
         boolean check = false;
         if(!automatons.containsKey(iAutomaton.getName())){
             automatons.put(iAutomaton.getName(), iAutomaton);
-            module.addAutomaton(iAutomaton);
+            //module.addAutomaton(iAutomaton);
             check = true;
         }
         return check;
@@ -76,9 +76,9 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
         boolean check = false;
         if(!automatons.containsKey(iName)){
         DefaultEFAutomaton var = new DefaultEFAutomaton(iName, module);
-        var.addIntegerVariable(iName, iMin, iMin, iInitialValue, null);
+        //var.addIntegerVariable(iName, iMin, iMin, iInitialValue, null);
         automatons.put(iName, var);
-        module.addAutomaton(var);
+        //module.addAutomaton(var);
             check = true;
         }
         return check;

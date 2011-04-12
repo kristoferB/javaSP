@@ -17,7 +17,7 @@ import sequenceplanner.general.SP;
  */
 public class testOperationSequences {
     
-    static SP mSP ;
+    static SP mSP;
 
     public testOperationSequences() {
     }

@@ -34,6 +34,7 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         this.expressionRoot = expressionRoot;
     }
 
+    @Override
     public Iterator<ConditionElement> iterator() {
         return new ConditionElementIterator(expressionRoot);
     }

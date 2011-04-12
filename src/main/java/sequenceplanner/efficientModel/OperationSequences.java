@@ -11,6 +11,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import sequenceplanner.efaconverter.efamodel.DefaultEFAConverter;
 import sequenceplanner.efaconverter.efamodel.DefaultEFAutomaton;
+import sequenceplanner.efaconverter.efamodel.SpEFA;
+import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
+import sequenceplanner.efaconverter.efamodel.SpEvent;
+import sequenceplanner.efaconverter.efamodel.SpLocation;
+import sequenceplanner.efaconverter.efamodel.SpVariable;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -40,6 +45,35 @@ public class OperationSequences {
     }
 
     public void run(){
+        
+        SpEFAutomata automata = new SpEFAutomata("Test EFA");
+        SpEFA efa = new SpEFA("Test EFA");
+        
+        SpLocation iL = new SpLocation("5_i");
+        iL.setInitialLocation();
+        iL.setAccepting();
+        
+        SpLocation eL = new SpLocation("5_e");
+        SpLocation fL = new SpLocation("5_f");
+        fL.setAccepting();
+        
+        efa.addLocation(iL);
+        efa.addLocation(eL);
+        efa.addLocation(fL);
+        
+        SpEvent startE = new SpEvent("start", true);
+        SpEvent stopE = new SpEvent("stop", true);
+        
+        efa.addTransition(iL.getName(), eL.getName(), startE.getName(), "V_Op6==0", "V_Op5=1");
+        efa.addTransition(eL.getName(), fL.getName(), stopE.getName(), "", "V_Op5=2");
+        
+        SpVariable var = new SpVariable("Name", 0, 3, 0);
+        automata.addVariable(var);
+        automata.addAutomaton(efa);
+        
+        DefaultEFAConverter converter = new DefaultEFAConverter("Test", automata);
+        converter.saveToFile();
+        
 //        for(TreeNode node : operationList)
 //            printGuards(node);
 

@@ -5,7 +5,17 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import java.util.Set;
+import java.io.File;
+import java.util.Iterator;
+import javax.swing.JFileChooser;
+import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
+import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
+import net.sourceforge.waters.subject.module.ModuleSubject;
+import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
+import org.supremica.automata.ExtendedAutomata;
+import org.supremica.automata.ExtendedAutomaton;
+import org.supremica.external.avocades.common.Module;
+import sequenceplanner.efaconverter.EFAVariables;
 
 /**
  *
@@ -14,32 +24,87 @@ import java.util.Set;
 public class DefaultEFAConverter {
 
     private SpEFAutomata sp;
-    private DefaultEFAutomata automata;
-
-    public DefaultEFAConverter(SpEFAutomata iSpEFAutomata){
+    private Module module;
+    
+    public DefaultEFAConverter(String iName, SpEFAutomata iSpEFAutomata){
         this.sp = iSpEFAutomata;
-        this.automata = new DefaultEFAutomata(sp.getName());
+        this.module = new Module(iName, false);
+        convert();
     }
 
-    public DefaultEFAutomata getEFAutomata(){
-        convertSpEFA();
-        convertSpVariables();
-        return automata;
-    }
+    private void convert() {
+        for(SpVariable spv : sp.getVariables()){
+            DefaultEFAutomaton var = new DefaultEFAutomaton(createVariableName(spv.getName()), module);
+            var.addVariable(spv.getMin(), spv.getMax(), spv.getInit());
+        }
+        System.err.println(sp.getVariables().size());
+        
+        for(SpEFA spefa : sp.getAutomatons()){
+            DefaultEFAutomaton efa = new DefaultEFAutomaton(createEFAName(spefa.getName()), module);
 
-    private void convertSpEFA() {
-        for(SpEFA efa : sp.getAutomatons()){
-            addSpEvents(efa.getAlphabet());
+            for(SpLocation spl : spefa.getLocations()){
+                efa.addLocation(spl.getName(), spl.isAccepting(), spl.isInitialLocation());
+                System.err.println(spl.isAccepting() + " ===== " + spl.isInitialLocation());
+            }
+            
+            for(SpEvent spe : spefa.getAlphabet())
+                efa.addEvent(spe.getName(), spe.isControllable());
+            
+            for(Iterator<SpTransition> itr = spefa.iterateTransitions(); itr.hasNext();){
+                SpTransition tran = itr.next();
+                efa.addTransition(tran.getFrom().getName(), 
+                                  tran.getTo().getName(), 
+                                  tran.getEvent().getName(), 
+                                  tran.getGuard(), 
+                                  tran.getAction());
+            }
+            module.addAutomaton(efa.getAutomaton());
         }
     }
-
-    private void convertSpVariables() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    
+    public Module getModule(){
+        return module;
     }
 
-    private void addSpEvents(Set<SpEvent> alphabet) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    private String createEFAName(String iOperationName) {
+        return EFAVariables.OPERATION_NAME_PREFIX + iOperationName;
     }
+
+    private String createVariableName(String iVariableName) {
+        return EFAVariables.VARIABLE_NAME_PREFIX + iVariableName;
+    }
+    
+    public void saveToFile(){
+        try {
+            ModuleSubject moduleSubject = module.getModule();
+            moduleSubject.setName("Sequence Planner to EFA output");
+
+            String filepath = "";
+            JFileChooser fc = new JFileChooser();
+            int fileResult = fc.showSaveDialog(null);
+            if (fileResult == JFileChooser.APPROVE_OPTION) {
+                filepath = fc.getSelectedFile().getAbsolutePath();
+
+                File file = new File(filepath);
+
+                file.createNewFile();
+
+                ModuleSubjectFactory factory = new ModuleSubjectFactory();
+
+                //Save module to file
+
+                JAXBModuleMarshaller marshaller =
+                        new JAXBModuleMarshaller(factory,
+                        CompilerOperatorTable.getInstance());
+
+                marshaller.marshal(moduleSubject, file);
+
+            }
+        } catch (Exception t) {
+            System.err.println(t);
+        }
+    }
+}    
 //    private Model model;
 //    private String name;
 //    private DefaultEFAutomata automata;
@@ -232,6 +297,4 @@ public class DefaultEFAConverter {
 //
 //    private String createAction(String[] rawActions) {
 //        throw new UnsupportedOperationException("Not yet implemented");
-//    }
-    
-}
+//    }    
