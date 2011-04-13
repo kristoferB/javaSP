@@ -90,7 +90,7 @@ public class testVisualization {
     }
 
     @Test
-    public void testVisualizationUseingSopNode() {
+    public void testVisualizationUsingSopNode() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
         SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
