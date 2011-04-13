@@ -7,7 +7,7 @@ import sequenceplanner.model.SOP.ISopNode;
  *
  * @author patrik
  */
-public class Visualization implements IVisualization{
+public class Visualization implements IVisualization {
 
     RelationsForOperationSet mRFOS;
 
@@ -23,13 +23,13 @@ public class Visualization implements IVisualization{
     @Override
     public boolean addOsubset(ISopNode iSopNode) {
         mRFOS.setmSopNodeOsubset(iSopNode);
-        return mRFOS.OsetSupersetForOsubset();
+        return mRFOS.OsetIsSupersetForOsubset();
     }
 
     @Override
     public boolean addToOfinish(ISopNode iSopNode) {
         mRFOS.setmSopNodeOfinish(iSopNode);
-        return mRFOS.OsetSupersetForOfinish();
+        return mRFOS.OsetIsSupersetForOfinish();
     }
 
     @Override
@@ -43,15 +43,18 @@ public class Visualization implements IVisualization{
     }
 
     @Override
-    public ISopNode hierarchicalPartition(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean hierarchicalPartition(SopNodeWithRelations ioNode) {
+        HierarchicalPartition hp = new HierarchicalPartition(ioNode);
+        return true;
     }
 
     @Override
-    public RelationsForOperationSet identifyRelations() {
+    public SopNodeWithRelations identifyRelations() {
         mRFOS.run();
-        mRFOS.getWrapSet(); //set of IROperations. Each IRoperation contains both ISopNode and relations to other operations in set.
-        return mRFOS;
+        if (!mRFOS.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
+            return null;
+        }
+        return mRFOS.getSopRootWithRelations();
     }
 
     @Override
@@ -68,6 +71,4 @@ public class Visualization implements IVisualization{
     public boolean sopNodeToGraphicalView(ISopNode iSopNode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-
 }

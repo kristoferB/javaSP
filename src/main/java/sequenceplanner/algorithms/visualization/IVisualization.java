@@ -7,7 +7,7 @@ import sequenceplanner.model.SOP.ISopNode;
  * Set: Oset, in most cases all operations def in SP. The operations that the relations should be based on.<br/>
  * Subset: Osubset s.t. Osubset \subseteq Oset, the subset of operations that should be visualized in a SOP.<br/>
  * HasToFinishSet: Ofinish s.t. Ofinish \subseteq Oset, a user can select what operations that has to finish (gives Mk = {Of} instead of Mk = {Oi,Oe,Of}).<br/>
- * The Ofinish set affects non-blocking synthesis.<br/>
+ * The Ofinish set affects the non-blocking synthesis.<br/>
  * @author patrik
  */
 public interface IVisualization {
@@ -39,14 +39,14 @@ public interface IVisualization {
      * -> identify relations for each operation pair in Osubset -> create ARelationsForOperationSet.<br/>
      * @return The relations according to interface ARelationsForOperationSet
      */
-    public RelationsForOperationSet identifyRelations();
+    public SopNodeWithRelations identifyRelations();
 
     /**
-     * Algorithm for hierarchical partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @return a {@link ISopNode} where operations are hierarchical partitioned
+     * Algorithm for hierarchical partition of operations in an {@link ISopNode}.<br/>
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode hierarchicalPartition(final ISopNode iSopNode);
+    public boolean hierarchicalPartition(SopNodeWithRelations ioNode);
 
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>

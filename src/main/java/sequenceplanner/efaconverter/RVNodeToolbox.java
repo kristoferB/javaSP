@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * THIS CLASS SHOULD BE REMOVED!!!
  * Methods to enhance a tree built up from {@link RVNode}s.
  * @author patrik
  */

@@ -1,6 +1,7 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Functions to be performed on a {@link ISopNode}
@@ -98,7 +99,7 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences where operation should be picked
      * @return the set of operations found
      */
-    public Set<Object> getOperations(ISopNode iRootNode);
+    public Set<OperationData> getOperations(ISopNode iRootNode);
 
     /**
      * Relations in SOP added to as conditions for (selfcontained) operation data.<br/>

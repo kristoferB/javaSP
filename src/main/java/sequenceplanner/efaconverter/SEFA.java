@@ -7,7 +7,7 @@ import javax.swing.JTextArea;
 import org.supremica.external.avocades.common.EFA;
 
 /**
- *
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * @author patrik
  */
 public class SEFA {

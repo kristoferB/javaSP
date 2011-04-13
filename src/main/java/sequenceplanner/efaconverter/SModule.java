@@ -35,7 +35,7 @@ import org.supremica.automata.VariableHelper;
 import org.supremica.external.avocades.common.Module;
 
 /**
- *
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * @author patrik
  */
 public class SModule {

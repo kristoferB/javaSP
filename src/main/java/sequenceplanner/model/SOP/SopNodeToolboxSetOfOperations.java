@@ -37,11 +37,11 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public Set<Object> getOperations(ISopNode iRootNode) {
-        Set<Object> opSet = new HashSet<Object>();
+    public Set<OperationData> getOperations(ISopNode iRootNode) {
+        Set<OperationData> opSet = new HashSet<OperationData>();
         for (final ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
             if (node.getNodeType() instanceof OperationData) {
-                opSet.add(node.getNodeType());
+                opSet.add((OperationData) node.getNodeType());
             }
         }
         return opSet;
@@ -54,8 +54,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
      * @return true if "operations in iSubsetToTest" \subseteq "operations in iSet" else false
      */
     public boolean operationsAreSubset(ISopNode iSubsetToTest, ISopNode iSet) {
-        final Set<Object> opSet = getOperations(iSet);
-        final Set<Object> opSubset = getOperations(iSubsetToTest);
+        final Set<OperationData> opSet = getOperations(iSet);
+        final Set<OperationData> opSubset = getOperations(iSubsetToTest);
         return opSet.containsAll(opSubset);
     }
 

@@ -56,6 +56,16 @@ public abstract class AROperation implements IROperation {
         return getmOperationRelationMap().get(iOperation);
     }
 
+    @Override
+    public boolean containsRelation(Set<IROperation> iSet, Integer iRelation) {
+        for(final IROperation otherOp : iSet) {
+            if(getRelationToIOperation(otherOp) == iRelation) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Map<String, Map<IROperation, Set<String>>> getmEventOperationLocationSetMap() {
         return mEventOperationLocationSetMap;
     }

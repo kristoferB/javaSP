@@ -1,6 +1,5 @@
 package sequenceplanner.efaconverter;
 
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,6 +9,7 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 
 /**
+ * THIS CLASS SHOULD BE REMOVED!!!
  * (R)elation (V)iew NODE<br/>
  * Wrapper class for operations and groups used for visualization.<br/>
  * A tree is successive built up to handle <i>hierarchy</i>, <i>alternative</i>,

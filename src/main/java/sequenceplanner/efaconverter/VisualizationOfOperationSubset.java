@@ -23,7 +23,7 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
- *
+ * THIS CLASS SHOULD BE REMOVED!!!
  * @author patrik
  */
 public class VisualizationOfOperationSubset {

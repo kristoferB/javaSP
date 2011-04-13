@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sequenceplanner.algorithms.visualization.SopNodeWithRelations;
 import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
@@ -55,6 +56,7 @@ public class testVisualization {
     }
 
     /**
+     * THE IDEA IS TO PHASE OUT THE METHODS IN THIS TEST!!!
      * Not working with opView.save ...
      */
 //    @Test
@@ -75,6 +77,9 @@ public class testVisualization {
 
     }
 
+    /**
+     * THE IDEA IS TO PHASE OUT THE METHODS IN THIS TEST!!!
+     */
 //    @Test
     public void testForRelations() {
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
@@ -91,25 +96,42 @@ public class testVisualization {
 
     @Test
     public void testVisualizationUsingSopNode() {
-        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
-
-        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
-        System.out.println(allOpSet.toString());
-
-        Set<Integer> subsetIds = new HashSet<Integer>();
-        subsetIds.add(1006); //op1
-        subsetIds.add(1010); //op5
-        subsetIds.add(1012); //op7
-        subsetIds.add(1015); //op10
-        SopNode subOpSet = getOperations(subsetIds);
-        System.out.println(subOpSet.toString());
+//        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy3.sopx");
 
         Visualization v = new Visualization(mSP.getModel());
 
+        //Add operations---------------------------------------------------------
+        //All operations
+        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println(allOpSet.toString());
         v.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1006);
+        subsetIds.add(1007);
+        subsetIds.add(1010);
+        SopNode subOpSet = getOperations(subsetIds);
+        System.out.println(subOpSet.toString());
         assertTrue(v.addOsubset(subOpSet));
 
-        v.identifyRelations();
+        //Operations that has to finish
+//        Set<Integer> finishSetIds = new HashSet<Integer>();
+//        finishSetIds.add(1006);
+//        finishSetIds.add(1007);
+//        finishSetIds.add(1008);
+//        finishSetIds.add(1009);
+//        SopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println(finishSet.toString());
+        assertTrue(v.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+        
+        //Work with data---------------------------------------------------------
+        SopNodeWithRelations snwr = v.identifyRelations();
+        assertTrue(snwr != null);
+        assertTrue(v.hierarchicalPartition(snwr));
 
 
     }

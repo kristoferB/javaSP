@@ -66,8 +66,12 @@ public class RelationsForOperationSet {
         }
 
         printRelations();
-
+        
         return true;
+    }
+
+    public boolean saveFormalModel(final String iPath) {
+        return formalMethods.saveSupervisorAsWmodFile(iPath);
     }
 
     public void printRelations() {
@@ -87,8 +91,8 @@ public class RelationsForOperationSet {
         System.out.println("--------------------------------");
     }
 
-    public Set<IROperation> getWrapSet() {
-        return mROpToolbox.getmRelationOperationSet();
+    public SopNodeWithRelations getSopRootWithRelations() {
+        return new SopNodeWithRelations(mSopNodeOsubset, mROpToolbox.getmRelationOperationSet());
     }
 
     private boolean relationIdentification(final Automaton iAutomaton, final Map<String,Set<String>> iEventStateSpaceMap) {
@@ -154,11 +158,11 @@ public class RelationsForOperationSet {
         this.mSopNodeOsubset = mSopNodeOsubset;
     }
 
-    public boolean OsetSupersetForOsubset() {
+    public boolean OsetIsSupersetForOsubset() {
         return new SopNodeToolboxSetOfOperations().operationsAreSubset(getmSopNodeOsubset(), getmSopNodeOset());
     }
 
-    public boolean OsetSupersetForOfinish() {
+    public boolean OsetIsSupersetForOfinish() {
         return new SopNodeToolboxSetOfOperations().operationsAreSubset(getmSopNodeOfinish(), getmSopNodeOset());
     }
 }
