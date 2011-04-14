@@ -68,7 +68,7 @@ public abstract class ASopNode implements ISopNode {
         if (getNodeType() instanceof OperationData) {
             OperationData opData = (OperationData) getNodeType();
             returnString += opData.getName();
-        } else if(getNodeType() instanceof String) {
+        } else if (getNodeType() instanceof String) {
             String s = (String) getNodeType();
             returnString += s;
         } else {
@@ -79,7 +79,7 @@ public abstract class ASopNode implements ISopNode {
 
     @Override
     public String toString() {
-        String returnString = "\n";
+        String returnString = "";
         //-----------------------------------------------------------------------
         returnString += "Node type: ";
         if (getNodeType() != null) {
@@ -112,8 +112,23 @@ public abstract class ASopNode implements ISopNode {
         } else {
             returnString += null;
         }
-        returnString += "";
+        returnString += "\n";
         //-----------------------------------------------------------------------
+        return returnString;
+    }
+
+    @Override
+    public String inDepthToString() {
+
+        if (getFirstNodesInSequencesAsSet().isEmpty()) {
+            return typeToString() + " is sink \n";
+        }
+
+        String returnString = "";
+        returnString += toString();
+        for (ISopNode node : getFirstNodesInSequencesAsSet()) {
+            returnString += node.inDepthToString();
+        }
         return returnString;
     }
 }

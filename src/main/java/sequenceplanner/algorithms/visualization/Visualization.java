@@ -2,6 +2,7 @@ package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 
 /**
  *
@@ -33,13 +34,15 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public ISopNode alternativePartition(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean alternativePartition(SopNodeWithRelations ioNode) {
+        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.ALTERNATIVE);
+        return true;
     }
 
     @Override
-    public ISopNode arbitraryOrderPartition(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean arbitraryOrderPartition(SopNodeWithRelations ioNode) {
+        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.ARBITRARY_ORDER);
+        return true;
     }
 
     @Override
@@ -50,7 +53,14 @@ public class Visualization implements IVisualization {
 
     @Override
     public SopNodeWithRelations identifyRelations() {
-        mRFOS.run();
+        switch (mRFOS.run()) {
+            case 0:
+                return null;
+            case 1:
+                return new SopNodeWithRelations(new SopNode(), null); //No supervisor found
+            case 2:
+                break;
+        }
         if (!mRFOS.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
             return null;
         }
@@ -58,8 +68,9 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public ISopNode parallelPartition(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean parallelPartition(SopNodeWithRelations ioNode) {
+        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.PARALLEL);
+        return true;
     }
 
     @Override

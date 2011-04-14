@@ -50,24 +50,24 @@ public interface IVisualization {
 
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are alternative partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @returna true if ok else false
      */
-    public ISopNode alternativePartition(final ISopNode iSopNode);
+    public boolean alternativePartition(SopNodeWithRelations ioNode);
 
     /**
      * Algorithm for arbitrary order partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are arbitrary order partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode arbitraryOrderPartition(final ISopNode iSopNode);
+    public boolean arbitraryOrderPartition(SopNodeWithRelations ioNode);
 
     /**
      * Algorithm for parallel partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are parallel partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @returna true if ok else false
      */
-    public ISopNode parallelPartition(final ISopNode iSopNode);
+    public boolean parallelPartition(SopNodeWithRelations ioNode);
 
     /**
      * Algorithm for sequenceing of operations in {@link ISopNode}.<br/>

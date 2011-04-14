@@ -31,26 +31,36 @@ public class RelationsForOperationSet {
         formalMethods = new SupremicaInteractionForVisualization();
     }
 
-    public boolean run() {
+    /**
+     *
+     * @return 0 = error occurred, 1 = no supervisor exists, 2 = ok
+     */
+    public int run() {
         //Translate operations to EFA
         ModuleSubject ms = formalMethods.getModuleSubject(getmSopNodeOset(), getmSopNodeOfinish());
         if (ms == null) {
             System.out.println("Problem with translation from op to efa!");
-            return false;
+            return 0;
         }
 
         //flatten out (EFA->DFA, Module -> Automata)
         Automata automata = formalMethods.flattenOut(ms);
         if (automata == null) {
             System.out.println("Problem with flatten out!");
-            return false;
+            return 0;
         }
 
         //synthesis
         Automaton automaton = formalMethods.synthesize(automata);
         if (automaton == null) {
             System.out.println("Problem with synthesis!");
-            return false;
+            return 0;
+        }
+
+        //Check if supervisor exists
+        if(automaton.nbrOfStates() == 0) {
+            System.out.println("No supervisor found :( Specifications are to strict! \n 1) Modifiy conditions \n 2) Modifiy what operations that have to finish");
+            return 1;
         }
 
         //Get states where each event is enabled
@@ -62,12 +72,12 @@ public class RelationsForOperationSet {
         //Relation identification
         if (!relationIdentification(automaton, eventStateSpaceMap)) {
             System.out.println("Problem with relation identification!");
-            return false;
+            return 0;
         }
 
         printRelations();
         
-        return true;
+        return 2;
     }
 
     public boolean saveFormalModel(final String iPath) {
