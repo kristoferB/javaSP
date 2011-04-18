@@ -1,5 +1,7 @@
 package sequenceplanner.algorithms.visualization;
 
+import sequenceplanner.model.data.OperationData;
+
 /**
  * Interface for class that finds relations between two {@link IROperation} operations.
  * @author patrik
@@ -18,7 +20,9 @@ public interface IRelateTwoOperations {
     Integer HIERARCHY_21 = 8;
     Integer OTHER = 9;
 
-    public void setOperationPair(final IROperation iOperation1, final IROperation iOperation2);
+    void setOperationPair(IROperation iOperation1, IROperation iOperation2);
 
-    public Integer getOperationRelation();
+    void setOperationPair(IRelationContainer iRC, OperationData iOpData1, OperationData iOpData2);
+
+    Integer getOperationRelation();
 }

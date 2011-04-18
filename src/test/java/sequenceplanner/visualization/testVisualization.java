@@ -107,7 +107,8 @@ public class testVisualization {
     @Test
     public void testVisualizationAlgorithms() {
 //        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationAlgorithmTestFile.sopx");
+//        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationAlgorithmTestFile.sopx");
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy3.sopx");
 
         Visualization v = new Visualization(mSP.getModel());
 
@@ -115,27 +116,43 @@ public class testVisualization {
         //All operations
         SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
-        v.addOset(allOpSet);
+//        try{
+            v.addOset(allOpSet);
+//    }
+//        catch(Exception e) {
+//            System.out.println(e.toString());
+//        }
 
         //Operations to view
         Set<Integer> subsetIds = new HashSet<Integer>();
+//        //Algorithm test----
+//        subsetIds.add(1006);
+//        subsetIds.add(1007);
+//        subsetIds.add(1008);
+//        subsetIds.add(1009);
+//        subsetIds.add(1010);
+//        //------------------
+
         subsetIds.add(1006);
         subsetIds.add(1007);
-        subsetIds.add(1008);
-        subsetIds.add(1009);
         subsetIds.add(1010);
+        subsetIds.add(1017);
+        subsetIds.add(1033);
+        subsetIds.add(1034);
+        
         SopNode subOpSet = getOperations(subsetIds);
         System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
         assertTrue(v.addOsubset(subOpSet));
 
         //Operations that has to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
-        subsetIds.add(1006);
-        subsetIds.add(1007);
-        subsetIds.add(1010);
-        SopNode finishSet = getOperations(finishSetIds);
+//        //Algorithm test----
+//        subsetIds.add(1006);
+//        subsetIds.add(1007);
+//        subsetIds.add(1010);
+//        SopNode finishSet = getOperations(finishSetIds);
         //all operations have to finish :)
-//        SopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        SopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
         assertTrue(v.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
@@ -145,10 +162,10 @@ public class testVisualization {
         assertTrue(snwr != null);
 
         assertTrue(v.hierarchicalPartition(snwr));
-        assertTrue(v.alternativePartition(snwr));
-        assertTrue(v.arbitraryOrderPartition(snwr));
+//        assertTrue(v.alternativePartition(snwr));
+//        assertTrue(v.arbitraryOrderPartition(snwr));
+//        assertTrue(v.parallelPartition(snwr));
 
-        assertTrue(v.parallelPartition(snwr));
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
         System.out.println(snwr.getmRootSop().inDepthToString());

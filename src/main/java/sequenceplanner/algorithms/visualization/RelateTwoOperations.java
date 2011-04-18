@@ -2,6 +2,7 @@ package sequenceplanner.algorithms.visualization;
 
 import java.util.HashSet;
 import java.util.Set;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Finds the relation between two {@link IROperation} operations.
@@ -34,6 +35,14 @@ public class RelateTwoOperations implements IRelateTwoOperations{
         mOperation2up = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOperation1);
         mOperation1down = mOperation1.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation2);
         mOperation2down = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation1);
+    }
+
+    @Override
+    public void setOperationPair(final IRelationContainer iRC, final OperationData iOpData1, final OperationData iOpData2) {
+        mOperation1up = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOpData2);
+        mOperation2up = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOpData1);
+        mOperation1down = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOpData2);
+        mOperation2down = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOpData1);
     }
 
     /**

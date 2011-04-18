@@ -1,6 +1,7 @@
 package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.OperationData;
 
 /**
  *
@@ -8,8 +9,12 @@ import sequenceplanner.model.SOP.ISopNode;
  */
 public class ROperation extends AROperation {
 
-    public ROperation(ISopNode iNode) {
-        super(iNode);
+//    public ROperation(ISopNode iNode) {
+//        super(iNode);
+//    }
+
+    public ROperation(OperationData iSelfContainedOperation) {
+        super(iSelfContainedOperation);
     }
 
 }

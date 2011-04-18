@@ -17,7 +17,7 @@ public interface ISupremicaInteractionForVisualization {
     String EVENT_UP = "up";
     String EVENT_DOWN = "down";
     String OPERATION_VARIABLE_PREFIX = "o";
-    String BIG_FLOWER_EFA_NAME = "Big flower";
+    String BIG_FLOWER_EFA_NAME = "Single";
 
     /**
      * DOES NOT HANDLE VARIABLES IN CONDITIONS!!!<br/>

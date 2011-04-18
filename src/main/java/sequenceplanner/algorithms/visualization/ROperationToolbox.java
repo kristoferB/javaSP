@@ -20,12 +20,11 @@ public class ROperationToolbox {
     public ROperationToolbox() {
     }
 
-    public void addToRelationOperationSet(ISopNode iNode) {
-        IROperation rOp = new ROperation(iNode);
+    public void addToRelationOperationSet(final OperationData iOpData) {
+        IROperation rOp = new ROperation(iOpData);
         getmRelationOperationSet().add(rOp);
 
-        final OperationData opData = (OperationData) iNode.getNodeType();
-        final int id = opData.getId();
+        final int id = iOpData.getId();
 
         //Look for events to this operaiton in supervisor automaton.
         mEventStateSetMap.put(ISupremicaInteractionForVisualization.EVENT_PREFIX + id + ISupremicaInteractionForVisualization.EVENT_UP, new HashSet<String>());
@@ -108,7 +107,7 @@ public class ROperationToolbox {
     }
 
     /**
-     * Get a pointer to HashMap the describes all possible locations (value) <br/>
+     * Get a pointer to Map that describes all possible locations (value) <br/>
      * forall operations (keyset), where this event can happen.
      * @param iKey an event (includes operation id and event type "up" or "down")
      * @return pointer to set the describes all operations locations when this event can happen

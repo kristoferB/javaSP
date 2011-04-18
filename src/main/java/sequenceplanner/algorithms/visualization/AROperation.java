@@ -3,6 +3,8 @@ package sequenceplanner.algorithms.visualization;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -30,15 +32,23 @@ public abstract class AROperation implements IROperation {
      */
     private ISopNode mNode = null;
 
-    public AROperation(ISopNode iNode) {
-        setNode(iNode);
+    /**
+     * The {@link OperationData} that is wrapped
+     */
+    private OperationData mSelfContainedOperation = null;
+
+//    public AROperation(ISopNode iNode) {
+//        setNode(iNode);
+//    }
+
+    public AROperation(OperationData iSelfContainedOperation) {
+        setSelfContainedOperation(iSelfContainedOperation);
     }
 
     @Override
     public int getId() {
-        if (mNode != null) {
-            OperationData opData = (OperationData) mNode.getNodeType();
-            return opData.getId();
+        if (getSelfContainedOperation() != null) {
+            return getSelfContainedOperation().getId();
         }
         return -1;
     }
@@ -87,14 +97,32 @@ public abstract class AROperation implements IROperation {
         return mNode;
     }
 
-    @Override
-    public boolean setNode(ISopNode iNode) {
-        if (iNode.getNodeType() instanceof OperationData) {
-            mNode = iNode;
-            return true;
-        }
-        return false;
-    }
+    /**
+     * To get {@link ISopNode} for this object
+     * @param iRoot Contianer for {@link ISopNode}s
+     * @return the {@link ISopNode} if found, else null
+     */
+//    @Override
+//    public ISopNode getNode(final ISopNode iRoot) {
+//        for(final ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+//            if(node.getNodeType() instanceof OperationData) {
+//                final OperationData nodeOpData = (OperationData) node.getNodeType();
+//                if(nodeOpData == getSelfContainedOperation()) {
+//                    return node;
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+//    @Override
+//    public boolean setNode(ISopNode iNode) {
+//        if (iNode.getNodeType() instanceof OperationData) {
+//            mNode = iNode;
+//            return true;
+//        }
+//        return false;
+//    }
 
     public OperationData getOperationData() {
         if (mNode == null) {
@@ -102,4 +130,16 @@ public abstract class AROperation implements IROperation {
         }
         return (OperationData) mNode.getNodeType();
     }
+
+    @Override
+    public OperationData getSelfContainedOperation() {
+        return mSelfContainedOperation;
+    }
+
+    @Override
+    public void setSelfContainedOperation(OperationData iOpData) {
+        this.mSelfContainedOperation = iOpData;
+    }
+
+
 }

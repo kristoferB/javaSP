@@ -2,6 +2,7 @@ package sequenceplanner.algorithms.visualization;
 
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Interface for wrapper to {@link ISopNode}, to also contain information about relations to other operations.
@@ -13,9 +14,13 @@ public interface IROperation {
 
     public String getIdAsString();
 
-    ISopNode getNode();
+    OperationData getSelfContainedOperation();
 
-    boolean setNode(ISopNode iNode);
+    void setSelfContainedOperation(OperationData iOpData);
+
+    ISopNode getNode();
+//
+//    ISopNode getNode(ISopNode iRoot);
 
     /**
      *

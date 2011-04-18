@@ -16,11 +16,17 @@ import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 public class HierarchicalPartition {
 
     private SopNodeWithRelations mSNWR = null;
+    private IRelationContainer mRC = null;
     private SopNodeToolboxSetOfOperations mToolbox = new SopNodeToolboxSetOfOperations();
 
     public HierarchicalPartition(SopNodeWithRelations iSNWR) {
         setmSNWR(iSNWR);
         partition(getmSNWR());
+    }
+
+    public HierarchicalPartition(IRelationContainer iRC) {
+        setmRC(mRC);
+        partition(mSNWR);
     }
 
     public void partition(SopNodeWithRelations iSNWR) {
@@ -64,11 +70,11 @@ public class HierarchicalPartition {
                         subset.remove(localParentOp);
                     }
                 }
-                subset.removeAll(hasNoParentWithChildrenMap.get(parentOp));
+                subset.removeAll(hasNoParentWithChildrenMap.get(parentOp)); //Remove all children that have parentOp as parent
                 if (!hasStrictHierarchicalRelation(parentOp, childOp, subset)) {
                     hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
                 } else {
-                    updateHierarchicalRelation(parentOp.getNode(), root, childOp.getNode());
+                    updateHierarchicalRelation(parentOp, root, childOp);
                 }
             }
         }
@@ -76,7 +82,7 @@ public class HierarchicalPartition {
 
         //Recusive calls---------------------------------------------------------
         for (final IROperation parentOp : hasNoParentWithChildrenMap.keySet()) {
-            final ISopNode parentNode = parentOp.getNode();
+            final ISopNode parentNode = mSNWR.getSopNode(parentOp);
             final Set<IROperation> childSet = hasNoParentWithChildrenMap.get(parentOp);
             if (!childSet.isEmpty()) {
                 SopNodeWithRelations newSNWR = new SopNodeWithRelations(parentNode, childSet);
@@ -88,9 +94,13 @@ public class HierarchicalPartition {
         return;
     }
 
-    private boolean updateHierarchicalRelation(final ISopNode iNewParent, final ISopNode iOldParent, final ISopNode iChild) {
-        mToolbox.removeNode(iChild, iOldParent);
-        iNewParent.addNodeToSequenceSet(iChild);
+    private boolean updateHierarchicalRelation(final IROperation iNewParent, final ISopNode iOldParent, final IROperation iChild) {
+        final ISopNode childNode = mSNWR.getSopNode(iChild);
+        mToolbox.removeNode(childNode, iOldParent);
+
+        final ISopNode parentNode = mSNWR.getSopNode(iNewParent);
+        parentNode.addNodeToSequenceSet(childNode);
+        
         return true;
     }
 
@@ -100,6 +110,14 @@ public class HierarchicalPartition {
 
     public void setmSNWR(SopNodeWithRelations mSNWR) {
         this.mSNWR = mSNWR;
+    }
+
+    public IRelationContainer getmRC() {
+        return mRC;
+    }
+
+    public void setmRC(IRelationContainer mRC) {
+        this.mRC = mRC;
     }
 
     private boolean hasStrictHierarchicalRelation(final IROperation iParent, final IROperation iChild, final Set<IROperation> iSet) {

@@ -15,8 +15,9 @@ public interface IVisualization {
     /**
      * Add operations to Oset.<br/>
      * @param iSopNode operations to base relation on.
+     * @return true if ok else false
      */
-    public void addOset(final ISopNode iSopNode);
+    public boolean addOset(final ISopNode iSopNode);
 
     /**
      * Add Osubset as operations in {@link ISopNode}.<br/>

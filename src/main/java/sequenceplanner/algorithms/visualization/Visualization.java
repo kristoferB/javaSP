@@ -10,27 +10,25 @@ import sequenceplanner.model.SOP.SopNode;
  */
 public class Visualization implements IVisualization {
 
-    RelationsForOperationSet mRFOS;
+    RelationContainer mRC;
 
     public Visualization(Model iModel) {
-        mRFOS = new RelationsForOperationSet(iModel);
+        mRC = new RelationContainer();
     }
 
     @Override
-    public void addOset(ISopNode iSopNode) {
-        mRFOS.setmSopNodeOset(iSopNode);
+    public boolean addOset(ISopNode iSopNode) {
+        return mRC.setOsetSopNode(iSopNode);
     }
 
     @Override
     public boolean addOsubset(ISopNode iSopNode) {
-        mRFOS.setmSopNodeOsubset(iSopNode);
-        return mRFOS.OsetIsSupersetForOsubset();
+        return mRC.setOsubsetSopNode(iSopNode);
     }
 
     @Override
     public boolean addToOfinish(ISopNode iSopNode) {
-        mRFOS.setmSopNodeOfinish(iSopNode);
-        return mRFOS.OsetIsSupersetForOfinish();
+        return mRC.setOfinishsetSopNode(iSopNode);
     }
 
     @Override
@@ -53,7 +51,8 @@ public class Visualization implements IVisualization {
 
     @Override
     public SopNodeWithRelations identifyRelations() {
-        switch (mRFOS.run()) {
+        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC());
+        switch (rfos.run()) {
             case 0:
                 return null;
             case 1:
@@ -61,10 +60,10 @@ public class Visualization implements IVisualization {
             case 2:
                 break;
         }
-        if (!mRFOS.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
+        if (!rfos.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
             return null;
         }
-        return mRFOS.getSopRootWithRelations();
+        return rfos.getSopRootWithRelations();
     }
 
     @Override
@@ -82,4 +81,14 @@ public class Visualization implements IVisualization {
     public boolean sopNodeToGraphicalView(ISopNode iSopNode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public RelationContainer getmRC() {
+        return mRC;
+    }
+
+    public void setmRC(RelationContainer mRC) {
+        this.mRC = mRC;
+    }
+
+
 }
