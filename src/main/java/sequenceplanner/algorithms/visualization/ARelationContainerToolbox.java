@@ -2,6 +2,7 @@ package sequenceplanner.algorithms.visualization;
 
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 

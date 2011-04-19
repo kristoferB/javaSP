@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sequenceplanner.algorithms.visualization.RelationContainer;
 import sequenceplanner.algorithms.visualization.SopNodeWithRelations;
 import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
@@ -90,18 +91,18 @@ public class testVisualization {
         //-----------------------------------------------------------------------
         
         //Work with data---------------------------------------------------------
-        SopNodeWithRelations snwr = v.identifyRelations();
-        assertTrue(snwr != null);
-
-        assertTrue(v.hierarchicalPartition(snwr));
-        assertTrue(v.alternativePartition(snwr));
-        assertTrue(v.arbitraryOrderPartition(snwr));
-
-        assertTrue(v.parallelPartition(snwr));
-        System.out.println("\n--------------------------------");
-        System.out.println("After partition");
-        System.out.println(snwr.getmRootSop().inDepthToString());
-        System.out.println("--------------------------------");
+//        SopNodeWithRelations snwr = v.identifyRelations();
+//        assertTrue(snwr != null);
+//
+//        assertTrue(v.hierarchicalPartition(snwr));
+//        assertTrue(v.alternativePartition(snwr));
+//        assertTrue(v.arbitraryOrderPartition(snwr));
+//
+//        assertTrue(v.parallelPartition(snwr));
+//        System.out.println("\n--------------------------------");
+//        System.out.println("After partition");
+//        System.out.println(snwr.getmRootSop().inDepthToString());
+//        System.out.println("--------------------------------");
     }
 
     @Test
@@ -158,17 +159,17 @@ public class testVisualization {
         //-----------------------------------------------------------------------
 
         //Work with data---------------------------------------------------------
-        SopNodeWithRelations snwr = v.identifyRelations();
-        assertTrue(snwr != null);
+        RelationContainer rc = v.identifyRelations();
+        assertTrue(rc != null);
 
-        assertTrue(v.hierarchicalPartition(snwr));
+        assertTrue(v.hierarchicalPartition1(rc));
 //        assertTrue(v.alternativePartition(snwr));
 //        assertTrue(v.arbitraryOrderPartition(snwr));
 //        assertTrue(v.parallelPartition(snwr));
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
-        System.out.println(snwr.getmRootSop().inDepthToString());
+        System.out.println(rc.getOsubsetSopNode().inDepthToString());
         System.out.println("--------------------------------");
     }
 

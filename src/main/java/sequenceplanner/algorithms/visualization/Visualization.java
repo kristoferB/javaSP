@@ -44,26 +44,27 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public boolean hierarchicalPartition(SopNodeWithRelations ioNode) {
-        HierarchicalPartition hp = new HierarchicalPartition(ioNode);
+    public boolean hierarchicalPartition1(RelationContainer ioRC) {
+        HierarchicalPartition1 hp = new HierarchicalPartition1(ioRC);
         return true;
     }
 
     @Override
-    public SopNodeWithRelations identifyRelations() {
+    public RelationContainer identifyRelations() {
         RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC());
         switch (rfos.run()) {
             case 0:
                 return null;
             case 1:
-                return new SopNodeWithRelations(new SopNode(), null); //No supervisor found
+                rfos.getmRC().setRootNode(null);
+                return rfos.getmRC(); //No supervisor found
             case 2:
                 break;
         }
         if (!rfos.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
             return null;
         }
-        return rfos.getSopRootWithRelations();
+        return rfos.getmRC();
     }
 
     @Override
@@ -89,6 +90,4 @@ public class Visualization implements IVisualization {
     public void setmRC(RelationContainer mRC) {
         this.mRC = mRC;
     }
-
-
 }

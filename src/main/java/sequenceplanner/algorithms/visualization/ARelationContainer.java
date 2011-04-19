@@ -28,6 +28,7 @@ public abstract class ARelationContainer implements IRelationContainer {
     private ISopNode mSopNodeOset = null;
     private ISopNode mSopNodeOsubset = null;
     private ISopNode mSopNodeOfinish = null;
+    private ISopNode mRoot = null;
 
     public ARelationContainer() {
         mEventOperationLocationSetMap = new HashMap<OperationData, Map<String, Map<OperationData, Set<String>>>>();
@@ -115,4 +116,15 @@ public abstract class ARelationContainer implements IRelationContainer {
 
         return false;
     }
+
+    @Override
+    public ISopNode getRootNode() {
+        return mRoot;
+    }
+
+    @Override
+    public void setRootNode(ISopNode iSopNode) {
+        this.mRoot = iSopNode;
+    }
+
 }

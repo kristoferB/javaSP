@@ -30,4 +30,8 @@ public interface IRelationContainer {
     Map<OperationData, Integer> getOperationRelationMap(OperationData iOpData);
 
     void setOperationRelationMap(Map<OperationData, Map<OperationData, Integer>> iOperationRelationMap);
+
+    ISopNode getRootNode();
+
+    void setRootNode(ISopNode iSopNode);
 }

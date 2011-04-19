@@ -66,7 +66,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public void removeNode(ISopNode iNodeToRemove, ISopNode iRootNode) {
-        iRootNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+        boolean b = iRootNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+        System.out.println("removeNode was:" + b);
     }
 
     @Override

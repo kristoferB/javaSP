@@ -40,14 +40,14 @@ public interface IVisualization {
      * -> identify relations for each operation pair in Osubset -> create ARelationsForOperationSet.<br/>
      * @return The relations according to interface ARelationsForOperationSet
      */
-    public SopNodeWithRelations identifyRelations();
+    public RelationContainer identifyRelations();
 
     /**
      * Algorithm for hierarchical partition of operations in an {@link ISopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
-    public boolean hierarchicalPartition(SopNodeWithRelations ioNode);
+    public boolean hierarchicalPartition1(RelationContainer ioRC);
 
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>

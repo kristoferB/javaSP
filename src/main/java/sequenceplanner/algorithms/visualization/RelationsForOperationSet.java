@@ -21,7 +21,7 @@ public class RelationsForOperationSet {
     private RelationContainer mRC = null;
 
     public RelationsForOperationSet(final RelationContainer iRC) {
-        this.mRC = iRC;
+        setmRC(iRC);
         formalMethods = new SupremicaInteractionForVisualization();
     }
 
@@ -100,4 +100,14 @@ public class RelationsForOperationSet {
     public SopNodeWithRelations getSopRootWithRelations() {
         return new SopNodeWithRelations(mRC.getOsubsetSopNode(), mROpToolbox.getmRelationOperationSet());
     }
+
+    public RelationContainer getmRC() {
+        return mRC;
+    }
+
+    public void setmRC(RelationContainer mRC) {
+        this.mRC = mRC;
+    }
+
+
 }
