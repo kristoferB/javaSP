@@ -5,7 +5,7 @@ import java.util.Set;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Finds the relation between two {@link IROperation} operations.
+ * Finds the relation between two {@link OperationData} operations.
  * @author patrik
  */
 public class RelateTwoOperations implements IRelateTwoOperations{
@@ -15,8 +15,6 @@ public class RelateTwoOperations implements IRelateTwoOperations{
     private Set<String> setF = new HashSet<String>(1);
     private Set<String> setIF = new HashSet<String>(2);
     private Set<String> setIEF = new HashSet<String>(3);
-    private AROperation mOperation1 = null;
-    private AROperation mOperation2 = null;
     private Set<String> mOperation1up = null;
     private Set<String> mOperation2up = null;
     private Set<String> mOperation1down = null;
@@ -24,17 +22,6 @@ public class RelateTwoOperations implements IRelateTwoOperations{
 
     public RelateTwoOperations() {
         initSets();
-    }
-
-    @Override
-    public void setOperationPair(IROperation iOperation1, IROperation iOperation2) {
-        this.mOperation1 = (AROperation) iOperation1;
-        this.mOperation2 = (AROperation) iOperation2;
-
-        mOperation1up = mOperation1.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOperation2);
-        mOperation2up = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOperation1);
-        mOperation1down = mOperation1.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation2);
-        mOperation2down = mOperation2.getmEventOperationLocationSetMap().get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOperation1);
     }
 
     @Override

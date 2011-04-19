@@ -37,9 +37,9 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public Set<OperationData> getOperations(ISopNode iRootNode) {
+    public Set<OperationData> getOperations(ISopNode iRootNode, boolean iGoDeep) {
         Set<OperationData> opSet = new HashSet<OperationData>();
-        for (final ISopNode node : getAllNodesBeneathNode(iRootNode)) {
+        for (final ISopNode node : getNodes(iRootNode, iGoDeep)) {
             if (node.getNodeType() instanceof OperationData) {
                 opSet.add((OperationData) node.getNodeType());
             }
@@ -54,8 +54,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
      * @return true if "operations in iSubsetToTest" \subseteq "operations in iSet" else false
      */
     public boolean operationsAreSubset(ISopNode iSubsetToTest, ISopNode iSet) {
-        final Set<OperationData> opSet = getOperations(iSet);
-        final Set<OperationData> opSubset = getOperations(iSubsetToTest);
+        final Set<OperationData> opSet = getOperations(iSet,true);
+        final Set<OperationData> opSubset = getOperations(iSubsetToTest,true);
         return opSet.containsAll(opSubset);
     }
 
@@ -75,29 +75,25 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public Set<ISopNode> getAllNodesBeneathNode(ISopNode iRootNode) {
+    public Set<ISopNode> getNodes(ISopNode iRootNode, boolean iGoDeep) {
         Set<ISopNode> returnSet = new HashSet<ISopNode>();
-
-        //Go to successor
-        final ISopNode successor = iRootNode.getSuccessorNode();
-        if (successor != null) {
-            //Add successor
-            if (successor.getNodeType() instanceof OperationData) {
-                returnSet.add(successor);
-            }
-            returnSet.addAll(getAllNodesBeneathNode(successor));
-        }
 
         //Go through children
         for (final ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
             //Add node to set
-            if (node.getNodeType() instanceof OperationData) {
-                returnSet.add(node);
+            returnSet.add(node);
+
+            //Go to successor
+            final ISopNode successor = node.getSuccessorNode();
+            if (successor != null) {
+                //Add successor
+                returnSet.add(successor);
+                returnSet.addAll(getNodes(successor, iGoDeep)); //next successor
             }
 
-            //Go through children
-            if (!node.getFirstNodesInSequencesAsSet().isEmpty()) {
-                returnSet.addAll(getAllNodesBeneathNode(node));
+            //Go deep
+            if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
+                returnSet.addAll(getNodes(node, iGoDeep));
             }
         }
         return returnSet;

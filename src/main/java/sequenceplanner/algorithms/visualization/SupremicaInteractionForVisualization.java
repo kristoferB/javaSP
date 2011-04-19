@@ -82,7 +82,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
             //Add integer variable for operation---------------------------------
             Integer marking = null;
-            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet).contains((OperationData) node.getNodeType())) {
+            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet,false).contains((OperationData) node.getNodeType())) {
                 marking = 2;
             }
             mModule.addIntVariable(varName, 0, 2, 0, marking);

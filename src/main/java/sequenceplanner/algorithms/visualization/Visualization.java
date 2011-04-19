@@ -32,18 +32,18 @@ public class Visualization implements IVisualization {
 
     @Override
     public boolean alternativePartition(SopNodeWithRelations ioNode) {
-        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.ALTERNATIVE);
+//        RelationPartition3 rp = new RelationPartition3(ioNode, IRelateTwoOperations.ALTERNATIVE);
         return true;
     }
 
     @Override
     public boolean arbitraryOrderPartition(SopNodeWithRelations ioNode) {
-        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.ARBITRARY_ORDER);
+//        RelationPartition3 rp = new RelationPartition3(ioNode, IRelateTwoOperations.ARBITRARY_ORDER);
         return true;
     }
 
     @Override
-    public boolean hierarchicalPartition(RelationContainer ioRC) {
+    public boolean hierarchicalPartition(IRelationContainer ioRC) {
         HierarchicalPartition hp = new HierarchicalPartition(ioRC);
         return true;
     }
@@ -67,8 +67,8 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public boolean parallelPartition(SopNodeWithRelations ioNode) {
-        RelationPartition rp = new RelationPartition(ioNode, IRelateTwoOperations.PARALLEL);
+    public boolean parallelPartition(IRelationContainer ioRC) {
+        RelationPartition rp = new RelationPartition(ioRC, IRelateTwoOperations.PARALLEL);
         return true;
     }
 

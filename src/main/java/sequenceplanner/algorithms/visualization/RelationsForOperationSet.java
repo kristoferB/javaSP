@@ -81,7 +81,7 @@ public class RelationsForOperationSet {
     }
 
     public void printRelations() {
-        Set<OperationData> setToPrint = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode());
+        Set<OperationData> setToPrint = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
         for (final OperationData opDataExternal :setToPrint) {
             System.out.println("--------------------------------");
             for (final OperationData  opDataInternal : setToPrint) {
@@ -94,11 +94,6 @@ public class RelationsForOperationSet {
             }
         }
         System.out.println("--------------------------------");
-    }
-
-
-    public SopNodeWithRelations getSopRootWithRelations() {
-        return new SopNodeWithRelations(mRC.getOsubsetSopNode(), mROpToolbox.getmRelationOperationSet());
     }
 
     public RelationContainer getmRC() {

@@ -9,7 +9,7 @@ import sequenceplanner.model.data.OperationData;
  */
 public interface IRelationContainerToolbox {
 
-    boolean hasRelation(OperationData iOpData, IRelationContainer iRC, Integer iRelation);
+    boolean hasRelation(OperationData iOpData, IRelationContainer iRC, Integer iRelation, boolean iGoDeep);
 
     Integer getRelation(OperationData iOpData1, OperationData iOpData2, IRelationContainer iRC);
 

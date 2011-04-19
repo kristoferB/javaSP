@@ -20,8 +20,6 @@ public interface IRelateTwoOperations {
     Integer HIERARCHY_21 = 8;
     Integer OTHER = 9;
 
-    void setOperationPair(IROperation iOperation1, IROperation iOperation2);
-
     void setOperationPair(IRelationContainer iRC, OperationData iOpData1, OperationData iOpData2);
 
     Integer getOperationRelation();

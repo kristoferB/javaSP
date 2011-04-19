@@ -99,7 +99,7 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences where operation should be picked
      * @return the set of operations found
      */
-    public Set<OperationData> getOperations(ISopNode iRootNode);
+    Set<OperationData> getOperations(ISopNode iRootNode, boolean iGoDeep);
 
     /**
      * Relations in SOP added to as conditions for (selfcontained) operation data.<br/>
@@ -107,5 +107,5 @@ public interface ISopNodeToolbox {
      */
     public void relationsToSelfContainedOperations(ISopNode iRootNode);
 
-    Set<ISopNode> getAllNodesBeneathNode(ISopNode iRootNode);
+    Set<ISopNode> getNodes(ISopNode iRootNode, boolean iGoDeep);
 }

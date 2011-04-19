@@ -166,11 +166,11 @@ public class testVisualization {
         assertTrue(v.hierarchicalPartition(rc));
 //        assertTrue(v.alternativePartition(snwr));
 //        assertTrue(v.arbitraryOrderPartition(snwr));
-//        assertTrue(v.parallelPartition(snwr));
+        assertTrue(v.parallelPartition(rc));
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
-        System.out.println(rc.getOsubsetSopNode().inDepthToString());
+//        System.out.println(rc.getOsubsetSopNode().inDepthToString());
         System.out.println("--------------------------------");
     }
 

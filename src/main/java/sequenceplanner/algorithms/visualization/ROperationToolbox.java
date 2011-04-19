@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -60,7 +59,7 @@ public class ROperationToolbox {
         IRelateTwoOperations rto = new RelateTwoOperations();
         for (final IROperation externalOp : getmRelationOperationSet()) {
             for (final IROperation internalOp : getmRelationOperationSet()) {
-                rto.setOperationPair(externalOp, internalOp);
+//                rto.setOperationPair(externalOp, internalOp);
                 AROperation rOp = (AROperation) externalOp;
                 if (rOp.getmOperationRelationMap() == null) {
                     rOp.setmOperationRelationMap(new HashMap<IROperation, Integer>());

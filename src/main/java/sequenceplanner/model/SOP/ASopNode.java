@@ -94,7 +94,11 @@ public abstract class ASopNode implements ISopNode {
             if (!returnString.endsWith("{")) {
                 returnString += ",";
             }
+            if(node != null) {
             returnString += node.typeToString();
+            } else {
+                System.out.println("Problem with child to " + typeToString());
+            }
         }
         returnString += "}\n";
         //-----------------------------------------------------------------------

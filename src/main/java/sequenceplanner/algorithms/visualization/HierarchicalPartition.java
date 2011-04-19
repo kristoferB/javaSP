@@ -26,7 +26,7 @@ public class HierarchicalPartition {
 
     public boolean partition(IRelationContainer iRC) {
         final ISopNode root = iRC.getRootNode();
-        final Set<OperationData> allOpSet = mSNToolbox.getOperations(root);
+        final Set<OperationData> allOpSet = mSNToolbox.getOperations(root,false);
         if (root == null || allOpSet == null) {
             System.out.println("HierarchicalPartition.partition: root or allOpSet is null");
             return false;
@@ -35,7 +35,7 @@ public class HierarchicalPartition {
         //find operations with no parents----------------------------------------
         Map<OperationData, Set<OperationData>> hasNoParentWithChildrenMap = new HashMap<OperationData, Set<OperationData>>();
         for (final OperationData op : allOpSet) {
-            if (!mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.HIERARCHY_21)) {
+            if (!mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.HIERARCHY_21,false)) {
                 //->op has no parent in set
                 hasNoParentWithChildrenMap.put(op, new HashSet<OperationData>());
             }
