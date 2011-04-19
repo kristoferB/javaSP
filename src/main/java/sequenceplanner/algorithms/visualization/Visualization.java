@@ -2,7 +2,6 @@ package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.SopNode;
 
 /**
  *
@@ -44,8 +43,8 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public boolean hierarchicalPartition1(RelationContainer ioRC) {
-        HierarchicalPartition1 hp = new HierarchicalPartition1(ioRC);
+    public boolean hierarchicalPartition(RelationContainer ioRC) {
+        HierarchicalPartition hp = new HierarchicalPartition(ioRC);
         return true;
     }
 

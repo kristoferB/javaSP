@@ -106,4 +106,6 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences where conditions should be found
      */
     public void relationsToSelfContainedOperations(ISopNode iRootNode);
+
+    Set<ISopNode> getAllNodesBeneathNode(ISopNode iRootNode);
 }

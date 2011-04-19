@@ -47,7 +47,7 @@ public interface IVisualization {
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
-    public boolean hierarchicalPartition1(RelationContainer ioRC);
+    public boolean hierarchicalPartition(RelationContainer ioRC);
 
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>

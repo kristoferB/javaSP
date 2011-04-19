@@ -13,5 +13,5 @@ public interface IRelationContainerToolbox {
 
     Integer getRelation(OperationData iOpData1, OperationData iOpData2, IRelationContainer iRC);
 
-    ISopNode getSopNode(OperationData iOpData, IRelationContainer iRC);
+    ISopNode getSopNode(OperationData iOpData, ISopNode iRoot);
 }

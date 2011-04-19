@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Class to perform hierarchical partition.<br/>
@@ -15,44 +16,36 @@ import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
  */
 public class HierarchicalPartition {
 
-    private SopNodeWithRelations mSNWR = null;
-    private IRelationContainer mRC = null;
-    private SopNodeToolboxSetOfOperations mToolbox = new SopNodeToolboxSetOfOperations();
-
-    public HierarchicalPartition(SopNodeWithRelations iSNWR) {
-        setmSNWR(iSNWR);
-        partition(getmSNWR());
-    }
+    private SopNodeToolboxSetOfOperations mSNToolbox = new SopNodeToolboxSetOfOperations();
+    private RelationContainerToolbox mRCToolbox = new RelationContainerToolbox();
 
     public HierarchicalPartition(IRelationContainer iRC) {
-        setmRC(mRC);
-        partition(mSNWR);
+        iRC.setRootNode(iRC.getOsubsetSopNode());
+        partition(iRC);
     }
 
-    public void partition(SopNodeWithRelations iSNWR) {
-        if (iSNWR == null) {
-            return;
-        }
-        final ISopNode root = iSNWR.getmRootSop();
-        final Set<IROperation> allOpSet = iSNWR.getOpSetFromSopNode(root);
+    public boolean partition(IRelationContainer iRC) {
+        final ISopNode root = iRC.getRootNode();
+        final Set<OperationData> allOpSet = mSNToolbox.getOperations(root);
         if (root == null || allOpSet == null) {
-            return;
+            System.out.println("HierarchicalPartition.partition: root or allOpSet is null");
+            return false;
         }
-        
+
         //find operations with no parents----------------------------------------
-        Map<IROperation, Set<IROperation>> hasNoParentWithChildrenMap = new HashMap<IROperation, Set<IROperation>>();
-        for (final IROperation op : allOpSet) {
-            if (!op.containsRelation(allOpSet, RelateTwoOperations.HIERARCHY_21)) {
+        Map<OperationData, Set<OperationData>> hasNoParentWithChildrenMap = new HashMap<OperationData, Set<OperationData>>();
+        for (final OperationData op : allOpSet) {
+            if (!mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.HIERARCHY_21)) {
                 //->op has no parent in set
-                hasNoParentWithChildrenMap.put(op, new HashSet<IROperation>());
+                hasNoParentWithChildrenMap.put(op, new HashSet<OperationData>());
             }
         }
         //-----------------------------------------------------------------------
 
         //add children to operations without parents (children are candidates at this stage)
-        for (final IROperation childCandidateOp : allOpSet) {
-            for (final IROperation parentCandidateOp : hasNoParentWithChildrenMap.keySet()) {
-                if (parentCandidateOp.getRelationToIOperation(childCandidateOp) == RelateTwoOperations.HIERARCHY_12) {
+        for (final OperationData childCandidateOp : allOpSet) {
+            for (final OperationData parentCandidateOp : hasNoParentWithChildrenMap.keySet()) {
+                if (mRCToolbox.getRelation(parentCandidateOp, childCandidateOp, iRC) == RelateTwoOperations.HIERARCHY_12) {
                     hasNoParentWithChildrenMap.get(parentCandidateOp).add(childCandidateOp);
                 }
             }
@@ -61,69 +54,53 @@ public class HierarchicalPartition {
 
         //remove child parent pairs without a strict hierarchial relation--------
         //-> children that remain are not candidates anymore, they are true children
-        for (final IROperation parentOp : hasNoParentWithChildrenMap.keySet()) {
-            final Set<IROperation> childSet = new HashSet<IROperation>(hasNoParentWithChildrenMap.get(parentOp));
-            for (final IROperation childOp : childSet) {
-                Set<IROperation> subset = new HashSet<IROperation>(allOpSet);
-                for (final IROperation localParentOp : hasNoParentWithChildrenMap.keySet()) { //Remove all parents to child
-                    if (localParentOp.getRelationToIOperation(childOp).toString().equals(IRelateTwoOperations.HIERARCHY_12.toString())) {
+        for (final OperationData parentOp : hasNoParentWithChildrenMap.keySet()) {
+            final Set<OperationData> childSet = new HashSet<OperationData>(hasNoParentWithChildrenMap.get(parentOp));
+            for (final OperationData childOp : childSet) {
+                Set<OperationData> subset = new HashSet<OperationData>(allOpSet);
+                for (final OperationData localParentOp : hasNoParentWithChildrenMap.keySet()) { //Remove all parents to child
+                    if (mRCToolbox.getRelation(localParentOp, childOp, iRC) == IRelateTwoOperations.HIERARCHY_12) {
                         subset.remove(localParentOp);
                     }
                 }
                 subset.removeAll(hasNoParentWithChildrenMap.get(parentOp)); //Remove all children that have parentOp as parent
-                if (!hasStrictHierarchicalRelation(parentOp, childOp, subset)) {
+                if (!hasStrictHierarchicalRelation(parentOp, childOp, subset, iRC)) {
                     hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
                 } else {
-                    updateHierarchicalRelation(parentOp, root, childOp);
+                    updateHierarchicalRelation(parentOp, root, childOp, iRC);
                 }
             }
         }
         //-----------------------------------------------------------------------
 
-        //Recusive calls---------------------------------------------------------
-        for (final IROperation parentOp : hasNoParentWithChildrenMap.keySet()) {
-            final ISopNode parentNode = mSNWR.getSopNode(parentOp);
-            final Set<IROperation> childSet = hasNoParentWithChildrenMap.get(parentOp);
+        //Recursive calls--------------------------------------------------------
+        for (final OperationData parentOp : hasNoParentWithChildrenMap.keySet()) {
+            final ISopNode parentNode = mRCToolbox.getSopNode(parentOp, iRC.getOsubsetSopNode());
+            final Set<OperationData> childSet = hasNoParentWithChildrenMap.get(parentOp);
             if (!childSet.isEmpty()) {
-                SopNodeWithRelations newSNWR = new SopNodeWithRelations(parentNode, childSet);
-                partition(newSNWR);
+                iRC.setRootNode(parentNode);
+                partition(iRC);
             }
         }
         //-----------------------------------------------------------------------
 
-        return;
-    }
-
-    private boolean updateHierarchicalRelation(final IROperation iNewParent, final ISopNode iOldParent, final IROperation iChild) {
-        final ISopNode childNode = mSNWR.getSopNode(iChild);
-        mToolbox.removeNode(childNode, iOldParent);
-
-        final ISopNode parentNode = mSNWR.getSopNode(iNewParent);
-        parentNode.addNodeToSequenceSet(childNode);
-        
         return true;
     }
 
-    public SopNodeWithRelations getmSNWR() {
-        return mSNWR;
+    private boolean updateHierarchicalRelation(final OperationData iNewParent, final ISopNode iOldParent, final OperationData iChild, final IRelationContainer iRC) {
+        final ISopNode childNode = mRCToolbox.getSopNode(iChild, iOldParent);
+        mSNToolbox.removeNode(childNode, iOldParent);
+
+        final ISopNode parentNode = mRCToolbox.getSopNode(iNewParent, iOldParent);
+        mSNToolbox.createNode(iChild, parentNode);
+
+        return true;
     }
 
-    public void setmSNWR(SopNodeWithRelations mSNWR) {
-        this.mSNWR = mSNWR;
-    }
-
-    public IRelationContainer getmRC() {
-        return mRC;
-    }
-
-    public void setmRC(IRelationContainer mRC) {
-        this.mRC = mRC;
-    }
-
-    private boolean hasStrictHierarchicalRelation(final IROperation iParent, final IROperation iChild, final Set<IROperation> iSet) {
-        for (final IROperation op : iSet) {
-            final Integer parentRelation = iParent.getRelationToIOperation(op);
-            final Integer childRelation = iChild.getRelationToIOperation(op);
+    private boolean hasStrictHierarchicalRelation(final OperationData iParent, final OperationData iChild, final Set<OperationData> iSet, final IRelationContainer iRC) {
+        for (final OperationData op : iSet) {
+            final Integer parentRelation = mRCToolbox.getRelation(iParent, op, iRC);
+            final Integer childRelation = mRCToolbox.getRelation(iChild, op, iRC);
             if (parentRelation < IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 || parentRelation > IRelateTwoOperations.OTHER ||
                     childRelation < IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 || childRelation > IRelateTwoOperations.OTHER) {
                 return false;

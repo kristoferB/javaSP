@@ -5,7 +5,6 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.algorithms.visualization.RelationContainer;
-import sequenceplanner.algorithms.visualization.SopNodeWithRelations;
 import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter.ModelParser;
@@ -138,8 +137,10 @@ public class testVisualization {
         subsetIds.add(1007);
         subsetIds.add(1010);
         subsetIds.add(1017);
+        subsetIds.add(1025);
         subsetIds.add(1033);
         subsetIds.add(1034);
+        subsetIds.add(1053);
         
         SopNode subOpSet = getOperations(subsetIds);
         System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
@@ -162,7 +163,7 @@ public class testVisualization {
         RelationContainer rc = v.identifyRelations();
         assertTrue(rc != null);
 
-        assertTrue(v.hierarchicalPartition1(rc));
+        assertTrue(v.hierarchicalPartition(rc));
 //        assertTrue(v.alternativePartition(snwr));
 //        assertTrue(v.arbitraryOrderPartition(snwr));
 //        assertTrue(v.parallelPartition(snwr));

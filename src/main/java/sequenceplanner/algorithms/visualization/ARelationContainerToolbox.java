@@ -16,7 +16,7 @@ public abstract class ARelationContainerToolbox implements IRelationContainerToo
 
     @Override
     public boolean hasRelation(OperationData iOpData, IRelationContainer iRC, Integer iRelation) {
-        Set<OperationData> setToLoop = mSopNodeToolbox.getOperations(iRC.getOsubsetSopNode());
+        Set<OperationData> setToLoop = mSopNodeToolbox.getOperations(iRC.getRootNode());
         for(final OperationData opData : setToLoop) {
             if(getRelation(iOpData, opData, iRC) == iRelation) {
                 return true;
@@ -31,8 +31,8 @@ public abstract class ARelationContainerToolbox implements IRelationContainerToo
     }
 
     @Override
-    public ISopNode getSopNode(OperationData iOpData, IRelationContainer iRC) {
-        for(final ISopNode node : iRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()) {
+    public ISopNode getSopNode(OperationData iOpData, ISopNode iRoot) {
+        for(final ISopNode node : mSopNodeToolbox.getAllNodesBeneathNode(iRoot)) {
             if(node.getNodeType() instanceof OperationData) {
                 final OperationData internalOpData = (OperationData) node.getNodeType();
                 if(internalOpData.equals(iOpData)) {
