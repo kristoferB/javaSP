@@ -170,7 +170,7 @@ public class testVisualization {
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
-//        System.out.println(rc.getOsubsetSopNode().inDepthToString());
+        System.out.println(rc.getOsubsetSopNode().inDepthToString());
         System.out.println("--------------------------------");
     }
 

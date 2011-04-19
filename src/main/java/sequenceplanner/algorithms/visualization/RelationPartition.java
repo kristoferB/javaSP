@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
-import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -19,7 +18,8 @@ public class RelationPartition {
     private Integer mRelationInt = null;
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
     private IRelationContainerToolbox mRCToolbox = new RelationContainerToolbox();
-    Map<Set<OperationData>,ISopNode> mOpSetOfSetsForThisLevel = null;
+//    Map<Set<OperationData>, ISopNode> mOpSetOfSetsForThisLevel = null;
+    Map<ISopNode, Set<OperationData>> mNodeOperationSetMap = null;
 
     public RelationPartition(final IRelationContainer iRC, final Integer iRelationInt) {
         iRC.setRootNode(iRC.getOsubsetSopNode());
@@ -36,13 +36,12 @@ public class RelationPartition {
         System.out.println("root: " + root.typeToString());
 
         //-----------------------------------------------------------------------
-//        Map<Set<OperationData>,ISopNode> opSetOfSetsForThisLevel = new HashMap<Set<OperationData>, ISopNode>();
-        mOpSetOfSetsForThisLevel = new HashMap<Set<OperationData>, ISopNode>();
+        mNodeOperationSetMap = new HashMap<ISopNode, Set<OperationData>>();
         Set<ISopNode> sopNodesForThisLevel = mSNToolbox.getNodes(root, false);
         for (final ISopNode node : sopNodesForThisLevel) {
             System.out.println(node.typeToString());
             Set<OperationData> set = new HashSet<OperationData>();
-            mOpSetOfSetsForThisLevel.put(set,node);
+
             if (node.getNodeType() instanceof OperationData) {
                 final OperationData opData = (OperationData) node.getNodeType();
                 set.add(opData);
@@ -50,13 +49,14 @@ public class RelationPartition {
                 Set<OperationData> opDataSet = mSNToolbox.getOperations(node, true);
                 set.addAll(opDataSet);
             }
+            mNodeOperationSetMap.put(node, set);
         }
         //-----------------------------------------------------------------------
 
-        final Set<OperationData> operationsOnThisLevel = mSNToolbox.getOperations(root, false);
-        if (root == null || operationsOnThisLevel == null) {
-            return;
-        }
+//        final Set<OperationData> operationsOnThisLevel = mSNToolbox.getOperations(root, false);
+//        if (root == null || operationsOnThisLevel == null) {
+//            return;
+//        }
 
         //Recursive calls to children (root.set)---------------------------------
         //The recusive calls are done in the beginning because new nodes are introduced as children and some nodes are remove in the remainder of this method.
@@ -70,28 +70,31 @@ public class RelationPartition {
 //        }
         //-----------------------------------------------------------------------
 
-        Map<Set<OperationData>, Set<Set<OperationData>>> opRelationMap = null;
-
+        Map<ISopNode, Set<ISopNode>> nodeRelationMap = null;
         //Find operation with largest relation set (nbr of elements)-------------
-        opRelationMap = getLargestRelationSet(mOpSetOfSetsForThisLevel.keySet(), mOpSetOfSetsForThisLevel.keySet(), iRC);
+        nodeRelationMap = getLargestRelationSet(mNodeOperationSetMap, mNodeOperationSetMap, iRC);
         //-----------------------------------------------------------------------
 
-        for(final Set<OperationData> opSet : opRelationMap.keySet()) {
-            
-            for(final OperationData op : opSet) {
-                System.out.println(op.getName());
-                System.out.println("-------");
-                for(final Set<OperationData> opDataSet : opRelationMap.get(opSet)) {
-                    System.out.println("----");
-                    for(final OperationData opIn : opDataSet) {
-                        System.out.println(opIn.getName());
-                    }
+        System.out.println("Contains2: " + mNodeOperationSetMap.keySet().contains(nodeRelationMap.keySet().iterator().next()));
+        for (final ISopNode externalNode : nodeRelationMap.keySet()) {
+            for (final OperationData opData : mNodeOperationSetMap.get(externalNode)) {
+                System.out.println(opData.getName());
+            }
+            System.out.println("-------");
+            final Set<ISopNode> internalNodeSet = nodeRelationMap.get(externalNode);
+            for (final ISopNode internalNode : internalNodeSet) {
+                for (final OperationData opData : mNodeOperationSetMap.get(internalNode)) {
+                    System.out.println(opData.getName());
                 }
+                System.out.println("----");
             }
         }
 
         //Return if no relations have been found---------------------------------
-        if (opRelationMap.isEmpty()) {
+//        if (opRelationMap.isEmpty()) {
+//            return;
+//        }
+        if (nodeRelationMap.isEmpty()) {
             return;
         }
         //-----------------------------------------------------------------------
@@ -100,20 +103,20 @@ public class RelationPartition {
         //MasterSet: the opSet with largest relation set
         //RelationSet: the largest relation set
         //RemainingElementsSet: operationsOnThisLevel - masterSet - relationSet
-        Set<OperationData> opSetWithLargestRelationSet = opRelationMap.keySet().iterator().next();
-        Set<Set<OperationData>> masterSet = new HashSet<Set<OperationData>>();
+        ISopNode opSetWithLargestRelationSet = nodeRelationMap.keySet().iterator().next();
+        Set<ISopNode> masterSet = new HashSet<ISopNode>();
         masterSet.add(opSetWithLargestRelationSet);
 
-        Set<Set<OperationData>> relationSet = new HashSet<Set<OperationData>>();
-        relationSet.addAll(opRelationMap.get(opSetWithLargestRelationSet));
+        Set<ISopNode> relationSet = new HashSet<ISopNode>();
+        relationSet.addAll(nodeRelationMap.get(opSetWithLargestRelationSet));
 
-        Set<Set<OperationData>> remainingElementsSet = new HashSet<Set<OperationData>>(mOpSetOfSetsForThisLevel.keySet());
+        Set<ISopNode> remainingElementsSet = new HashSet<ISopNode>(mNodeOperationSetMap.keySet());
         remainingElementsSet.removeAll(masterSet);
         remainingElementsSet.removeAll(relationSet);
 //        getLargestRelationSet(remainingElementsSet, relationSet, iRC);
 
-        while (possibleChangeInPartition(masterSet, relationSet, remainingElementsSet, iRC)) {
-        }
+//        while (possibleChangeInPartition(masterSet, relationSet, remainingElementsSet, iRC)) {
+//        }
         //-----------------------------------------------------------------------
 
         //Update ISopNode--------------------------------------------------------
@@ -129,90 +132,91 @@ public class RelationPartition {
 
         //Recursive calls to partitioned sets------------------------------------
         //Do partition on elements in MasterSet, RelationSet and, RemainingElementsSet
-        if (masterSetNode != null) {
-            System.out.println("masterSet");
-            System.out.println(iRC.getRootNode().inDepthToString());
-            IRelationContainer newRC = new RelationContainer();
-            newRC.setRootNode(masterSetNode);
-            partition(newRC, iRelationInt);
-        }
+//        if (masterSetNode != null) {
+//            System.out.println("masterSet");
+//            System.out.println(iRC.getRootNode().inDepthToString());
+//            IRelationContainer newRC = new RelationContainer();
+//            newRC.setRootNode(masterSetNode);
+//            partition(newRC, iRelationInt);
+//        }
 
-        if (relationSetNode != null) {
-            System.out.println("relationSet");
-            IRelationContainer newRC = new RelationContainer();
-            newRC.setRootNode(relationSetNode);
-            partition(newRC, iRelationInt);
-        }
-        if (!remainingElementsSet.isEmpty()) {
-            System.out.println("remainingSet");
-            ISopNode remainingElementsAsSop = null;
-            if (remainingElementsSet.size() == 1) {
-                Set<OperationData> singleOp = remainingElementsSet.iterator().next();
-//                remainingElementsAsSop = mRCToolbox.getSopNode(singleOp, root);
-                remainingElementsAsSop = mOpSetOfSetsForThisLevel.get(singleOp);
-            } else { //remainingElementsSet.size() > 1
-                remainingElementsAsSop = mSNToolbox.createNode("SOP", root);
-            }
-                //Move nodes in remaining set from root, to sop node
-                moveNodeSetToSopNode(remainingElementsSet, root, remainingElementsAsSop);
-            
-            IRelationContainer newRC = new RelationContainer();
-            newRC.setRootNode(root);
-            partition(newRC, iRelationInt);
-        }
+//        if (relationSetNode != null) {
+//            System.out.println("relationSet");
+//            IRelationContainer newRC = new RelationContainer();
+//            newRC.setRootNode(relationSetNode);
+//            partition(newRC, iRelationInt);
+//        }
+
+//        if (!remainingElementsSet.isEmpty()) {
+//            System.out.println("remainingSet");
+//            ISopNode remainingElementsAsSop = null;
+//            if (remainingElementsSet.size() == 1) {
+//                Set<OperationData> singleOp = remainingElementsSet.iterator().next();
+////                remainingElementsAsSop = mRCToolbox.getSopNode(singleOp, root);
+//                remainingElementsAsSop = mOpSetOfSetsForThisLevel.get(singleOp);
+//            } else { //remainingElementsSet.size() > 1
+//                remainingElementsAsSop = mSNToolbox.createNode("SOP", root);
+//            }
+//            //Move nodes in remaining set from root, to sop node
+//            moveNodeSetToSopNode(remainingElementsSet, root, remainingElementsAsSop);
+//
+//            IRelationContainer newRC = new RelationContainer();
+//            newRC.setRootNode(root);
+//            partition(newRC, iRelationInt);
+//        }
         //-----------------------------------------------------------------------
     }
 
-    private ISopNode moveNodeSetToSopNode(final Set<Set<OperationData>> iSetToMove, final ISopNode iRoot, final ISopNode iNewNode) {
-        System.out.println("moveNodeSetToSopNode iSetToMove.size: " + iSetToMove.size());
+    private ISopNode moveNodeSetToSopNode(final Set<ISopNode> iSetToMove, final ISopNode iRoot, final ISopNode iNewNode) {
         if (iSetToMove.size() > 1) {
             ISopNode groupNode = mSNToolbox.createNode("SOP", iNewNode);
-            for (final Set<OperationData> opSet : iSetToMove) {
-//                ISopNode opNode = mRCToolbox.getSopNode(op, iRoot);
-                ISopNode opNode = mOpSetOfSetsForThisLevel.get(opSet);
-                groupNode.addNodeToSequenceSet(opNode);
-                mSNToolbox.removeNode(opNode, iRoot);
+            for (final ISopNode node : iSetToMove) {
+                groupNode.addNodeToSequenceSet(node);
+                mSNToolbox.removeNode(node, iRoot);
             }
             return groupNode;
         } else if (iSetToMove.size() == 1) {
-//Skapas null pointer här. mOpset... ger tillbaka en null!
-//            ISopNode opNode = mRCToolbox.getSopNode(iSetToMove.iterator().next(), iRoot);
-            ISopNode opNode = mOpSetOfSetsForThisLevel.get(iSetToMove.iterator().next());
+            ISopNode opNode = iSetToMove.iterator().next();
             iNewNode.addNodeToSequenceSet(opNode);
             mSNToolbox.removeNode(opNode, iRoot);
-            System.out.println(iRoot.inDepthToString());
+//            System.out.println(iRoot.inDepthToString());
             return iRoot;
         }
         return null;
     }
-
-    private boolean possibleChangeInPartition(Set<Set<OperationData>> ioMasterSet, Set<Set<OperationData>> ioRelationSet, Set<Set<OperationData>> ioRemainingSet, final IRelationContainer iRC) {
-        Map<Set<OperationData>, Set<Set<OperationData>>> opRelationMap = null;
-        opRelationMap = getLargestRelationSet(ioRemainingSet, ioRelationSet, iRC);
-
-        //No relations were found
-        if (opRelationMap.isEmpty()) {
-            return false;
-        }
-        Set<OperationData> opWithLargestRelationSubset = opRelationMap.keySet().iterator().next();
-
-        Set<Set<OperationData>> newMasterSet = new HashSet<Set<OperationData>>(ioMasterSet);
-        newMasterSet.add(opWithLargestRelationSubset);
-        Set<Set<OperationData>> newRelationSet = opRelationMap.get(opWithLargestRelationSubset);
-
-        int oldPartitionSize = ioMasterSet.size() + ioRelationSet.size();
-        int newPartitionSize = newMasterSet.size() + newRelationSet.size();
-        if (newPartitionSize > oldPartitionSize) {
-            ioMasterSet.addAll(newMasterSet);
-            ioRelationSet = newRelationSet;
-            ioRemainingSet.addAll(ioRelationSet); //put back
-            ioRemainingSet.removeAll(ioMasterSet); //remove new partition
-            ioRemainingSet.removeAll(ioRelationSet); //remove new partition
-            return true;
-        } else {
-            return false;
-        }
-    }
+//
+//    private boolean possibleChangeInPartition(Set<ISopNode> ioMasterSet, Set<ISopNode> ioRelationSet, Set<ISopNode> ioRemainingSet, final IRelationContainer iRC) {
+//        Map<ISopNode,Set<OperationData>> ioRemainingMap = new HashMap<ISopNode, Set<OperationData>>();
+//        for(final ISopNode node : ioMasterSet) {
+//
+//        }
+//
+//        Map<ISopNode, Set<ISopNode>> opRelationMap = null;
+//        opRelationMap = getLargestRelationSet2(ioRemainingSet, ioRelationSet, iRC);
+//
+//        //No relations were found
+//        if (opRelationMap.isEmpty()) {
+//            return false;
+//        }
+//        Set<OperationData> opWithLargestRelationSubset = opRelationMap.keySet().iterator().next();
+//
+//        Set<Set<OperationData>> newMasterSet = new HashSet<Set<OperationData>>(ioMasterSet);
+//        newMasterSet.add(opWithLargestRelationSubset);
+//        Set<Set<OperationData>> newRelationSet = opRelationMap.get(opWithLargestRelationSubset);
+//
+//        int oldPartitionSize = ioMasterSet.size() + ioRelationSet.size();
+//        int newPartitionSize = newMasterSet.size() + newRelationSet.size();
+//        if (newPartitionSize > oldPartitionSize) {
+//            ioMasterSet.addAll(newMasterSet);
+//            ioRelationSet = newRelationSet;
+//            ioRemainingSet.addAll(ioRelationSet); //put back
+//            ioRemainingSet.removeAll(ioMasterSet); //remove new partition
+//            ioRemainingSet.removeAll(ioRelationSet); //remove new partition
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
     /**
      * To get the operation (OP) with largest relation set (RS) (nbr of elements)
@@ -221,17 +225,17 @@ public class RelationPartition {
      * @param iRelationInt relation type
      * @return OP as key and RS as value. The map is empty if no relation sets can be found
      */
-    private Map<Set<OperationData>, Set<Set<OperationData>>> getLargestRelationSet(final Set<Set<OperationData>> iOpSetToCheck, final Set<Set<OperationData>> iSetToLookIn, final IRelationContainer iRC) {
-        Map<Set<OperationData>, Set<Set<OperationData>>> opRelationMap = new HashMap<Set<OperationData>, Set<Set<OperationData>>>(); //Only to store op with largest relation set
+    private Map<ISopNode, Set<ISopNode>> getLargestRelationSet(final Map<ISopNode, Set<OperationData>> iOpSetToCheck, final Map<ISopNode, Set<OperationData>> iSetToLookIn, final IRelationContainer iRC) {
+        Map<ISopNode, Set<ISopNode>> opRelationMap = new HashMap<ISopNode, Set<ISopNode>>(); //Only to store op with largest relation set
         int nbrOfElementsInLargestRelationSet = 0;
-
-        for (final Set<OperationData> opSet : iOpSetToCheck) {
+        for (final ISopNode node : iOpSetToCheck.keySet()) {
+            final Set<OperationData> opSet = iOpSetToCheck.get(node);
             for (final OperationData op : opSet) {
-                final Set<Set<OperationData>> localRelationSet = getRelationSet(op, iSetToLookIn, iRC);
+                final Set<ISopNode> localRelationSet = getRelationSet(op, iSetToLookIn, iRC);
                 if (localRelationSet.size() > nbrOfElementsInLargestRelationSet) {
                     nbrOfElementsInLargestRelationSet = localRelationSet.size();
                     opRelationMap.clear();
-                    opRelationMap.put(opSet, localRelationSet);
+                    opRelationMap.put(node, localRelationSet);
                 }
             }
         }
@@ -239,9 +243,10 @@ public class RelationPartition {
         return opRelationMap;
     }
 
-    private Set<Set<OperationData>> getRelationSet(final OperationData iOp, final Set<Set<OperationData>> iSetToLookIn, final IRelationContainer iRC) {
-        Set<Set<OperationData>> returnSet = new HashSet<Set<OperationData>>();
-        for (final Set<OperationData> opSet : iSetToLookIn) {
+    private Set<ISopNode> getRelationSet(final OperationData iOp, final Map<ISopNode, Set<OperationData>> iSetToLookIn, final IRelationContainer iRC) {
+        Set<ISopNode> returnSet = new HashSet<ISopNode>();
+        for (final ISopNode node : iSetToLookIn.keySet()) {
+            final Set<OperationData> opSet = iSetToLookIn.get(node);
             boolean toAdd = true;
             //Check if all operations in set follows the relation
             for (final OperationData op : opSet) {
@@ -251,7 +256,7 @@ public class RelationPartition {
                 }
             }
             if (toAdd) {
-                returnSet.add(opSet);
+                returnSet.add(node);
             }
         }
         return returnSet;
