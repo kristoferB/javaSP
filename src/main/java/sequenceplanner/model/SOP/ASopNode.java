@@ -97,7 +97,7 @@ public abstract class ASopNode implements ISopNode {
             if(node != null) {
             returnString += node.typeToString();
             } else {
-                System.out.println("Problem with child to " + typeToString());
+                return returnString + "\n" + typeToString() + " contains null child...";
             }
         }
         returnString += "}\n";

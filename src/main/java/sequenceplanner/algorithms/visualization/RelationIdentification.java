@@ -9,7 +9,7 @@ import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Translates information in an {@link Automaton} to a {@link IRelationContainer}.<br/>
  * @author patrik
  */
 public class RelationIdentification {
@@ -28,18 +28,19 @@ public class RelationIdentification {
     public boolean run() {
         initStateName();
         initEventOperationLocationSetMapForRelationContainer();
-        if(!findEventOperationRelations()) {
+        if (!findEventOperationRelations()) {
             return false;
         }
         initOperationRelationMapForRelationContainer();
         fillOperationRelations();
         return true;
     }
+
     /**
      * Loops operations in subset and adds two events per operation to a map in {@link RelationContainer} object.
      */
     private void initEventOperationLocationSetMapForRelationContainer() {
-        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
+        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         Map<OperationData, Map<String, Map<OperationData, Set<String>>>> map = new HashMap<OperationData, Map<String, Map<OperationData, Set<String>>>>();
         for (final OperationData opData : setToLoop) {
 
@@ -63,17 +64,17 @@ public class RelationIdentification {
 
     private void fillOperationRelations() {
         IRelateTwoOperations rto = new RelateTwoOperations();
-        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
+        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         for (final OperationData externalOp : setToLoop) {
             for (final OperationData internalOp : setToLoop) {
-                rto.setOperationPair(mRC,externalOp, internalOp);
+                rto.setOperationPair(mRC, externalOp, internalOp);
                 mRC.getOperationRelationMap(externalOp).put(internalOp, rto.getOperationRelation());
             }
         }
     }
 
     private void initOperationRelationMapForRelationContainer() {
-        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
+        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         Map<OperationData, Map<OperationData, Integer>> returnMap = new HashMap<OperationData, Map<OperationData, Integer>>();
         for (final OperationData opData : setToLoop) {
             returnMap.put(opData, new HashMap<OperationData, Integer>());
@@ -82,7 +83,7 @@ public class RelationIdentification {
     }
 
     private OperationData getOperationWithStringId(final String iId) {
-        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
+        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         for (final OperationData opData : setToLoop) {
             if (iId.equals(Integer.toString(opData.getId()))) {
                 return opData;
@@ -107,7 +108,7 @@ public class RelationIdentification {
         }
 
         //Loop events of interest to find what operation locations that are present
-        Set<OperationData> opDataSet = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
+        Set<OperationData> opDataSet = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         for (final OperationData opDataExternal : opDataSet) {
             Set<String> eventSet = mRC.getEventOperationLocationSetMap(opDataExternal).keySet();
             for (final String eventType : eventSet) {
@@ -120,7 +121,7 @@ public class RelationIdentification {
                 final Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);
 
                 //Init of map where result is stored
-                Map<OperationData, Set<String>> opLocationSetMap = 
+                Map<OperationData, Set<String>> opLocationSetMap =
                         mRC.getEventOperationLocationSetMap(opDataExternal).get(eventType);
                 for (final OperationData opData : serialnrOperationMap.values()) {
                     opLocationSetMap.put(opData, new HashSet<String>());

@@ -50,7 +50,12 @@ public interface ISupremicaInteractionForVisualization {
      * @return keyset: event, valueset: states where key is enabled
      */
     Map<String,Set<String>> getStateSpaceForEventSetMap(Automaton iAutomaton);
-    
+
+    /**
+     * To save a Module as wmod file
+     * @param iFilePath wherer the wmod file should be saved
+     * @return true if ok else false
+     */
     boolean saveSupervisorAsWmodFile(String iFilePath);
 
 }

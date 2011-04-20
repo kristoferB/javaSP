@@ -6,7 +6,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * To store relations between operations.
+ * To store relations between {@link OperationData} operations.
  * @author patrik
  */
 public interface IRelationContainer {

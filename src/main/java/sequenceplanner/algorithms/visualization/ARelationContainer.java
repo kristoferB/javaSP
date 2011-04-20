@@ -8,26 +8,32 @@ import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Class used as container for relations between {@link OperationData} operations.<br/>
  * @author patrik
  */
 public abstract class ARelationContainer implements IRelationContainer {
 
     /**
      * Relations to other operations (their locations).<br/>
+     * Externl keyset = {{@link OperationData}} for all operations in Osubset.<br/>
      * Outside keyset = {"up" (init->exec), "down" (exec->finish)}.<br/>
-     * Inside keyset = {{@link IROperation}} for all operations in project.<br/>
+     * Inside keyset = {{@link OperationData}} for all operations in project - external key.<br/>
      * Inside valueset \subseteq {0,1,2,01,02,12,012}
      */
     private Map<OperationData, Map<String, Map<OperationData, Set<String>>>> mEventOperationLocationSetMap = null;
     /**
-     * Key: other {@link IROperation} operation, Value: Relation between this operation and key operation.<br/>
+     * Externl keyset = {{@link OperationData}} for all operations in Osubset.<br/>
+     * Key: other {@link OperationData} operation, Value: Relation between this operation and key operation.<br/>
      * See {@link IRelateTwoOperations} for map between value and Integer.
      */
     private Map<OperationData, Map<OperationData, Integer>> mOperationRelationMap = null;
     private ISopNode mSopNodeOset = null;
     private ISopNode mSopNodeOsubset = null;
     private ISopNode mSopNodeOfinish = null;
+    /**
+     * A pointer to the current root node.<br/>
+     * Used in {@link HierarchicalPartition} and {@link RelationPartition}.<br/>
+     */
     private ISopNode mRoot = null;
 
     public ARelationContainer() {

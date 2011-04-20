@@ -11,13 +11,14 @@ import sequenceplanner.model.data.OperationData;
 
 /**
  * To find relations between a set of operations given in a {@link ISopNode}.<br/>
- * The relations should be found with respect to some superset of operations also given as a {@link ISopNode}.<br/>
+ * The relations should be found with respect to: <br/>
+ * 1) some superset of operations also given as a {@link ISopNode}.<br/>
+ * 2) some set \subset superset of operations that has to finish also given as a {@link ISopNode}.<br/>
  * @author patrik
  */
 public class RelationsForOperationSet {
 
     private ISupremicaInteractionForVisualization formalMethods;
-    private ROperationToolbox mROpToolbox = new ROperationToolbox();
     private RelationContainer mRC = null;
 
     public RelationsForOperationSet(final RelationContainer iRC) {

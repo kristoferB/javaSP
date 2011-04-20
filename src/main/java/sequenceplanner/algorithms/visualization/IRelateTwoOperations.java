@@ -3,7 +3,7 @@ package sequenceplanner.algorithms.visualization;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Interface for class that finds relations between two {@link IROperation} operations.
+ * Interface for class that finds relations between two {@link OperationData} operations.
  * @author patrik
  */
 public interface IRelateTwoOperations {

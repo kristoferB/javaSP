@@ -11,7 +11,7 @@ import sequenceplanner.model.data.OperationData;
 /**
  * Class to perform hierarchical partition.<br/>
  * Partitions a set of operations according to <b>strict hierarchical relation</b>.<br/>
- * The {@link ISopNode} in the {@link SopNodeWithRelations} object has to have all operations as first nodes in its set.
+ * The {@link ISopNode} in the {@link IRelationContainer} object has to have all operations as first nodes in its set.
  * @author patrik
  */
 public class HierarchicalPartition {
@@ -87,6 +87,14 @@ public class HierarchicalPartition {
         return true;
     }
 
+    /**
+     * To move a child from one node to another node
+     * @param iNewParent
+     * @param iOldParent
+     * @param iChild
+     * @param iRC
+     * @return always true :)
+     */
     private boolean updateHierarchicalRelation(final OperationData iNewParent, final ISopNode iOldParent, final OperationData iChild, final IRelationContainer iRC) {
         final ISopNode childNode = mRCToolbox.getSopNode(iChild, iOldParent);
         mSNToolbox.removeNode(childNode, iOldParent);
@@ -97,6 +105,15 @@ public class HierarchicalPartition {
         return true;
     }
 
+    /**
+     * To check if a parent and child has a strict hierarchical relation wrt some set.<br/>
+     * I.e. if parent and child have the same relation to all operations in "some" set.<br/>
+     * @param iParent parent
+     * @param iChild child
+     * @param iSet to check the relation wrt this set
+     * @param iRC relation container
+     * @return true if parent and child has a strict hierarchical relation, else false
+     */
     private boolean hasStrictHierarchicalRelation(final OperationData iParent, final OperationData iChild, final Set<OperationData> iSet, final IRelationContainer iRC) {
         for (final OperationData op : iSet) {
             final Integer parentRelation = mRCToolbox.getRelation(iParent, op, iRC);

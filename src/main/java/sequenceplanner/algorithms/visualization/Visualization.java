@@ -4,7 +4,17 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 
 /**
- *
+ * The methods should be called in the following order:<br/>
+ * addOset<br/>
+ * addOsubset<br/>
+ * addOfinish<br/>
+ * identifyRelations<br/>
+ * hierarchicalPartition<br/>
+ * alternativePartition<br/>
+ * arbitraryOrderPartition<br/>
+ * parallelPartition<br/>
+ * sequenceing<br/>
+ * sopNodeToGraphicalView<br/>
  * @author patrik
  */
 public class Visualization implements IVisualization {
@@ -59,9 +69,6 @@ public class Visualization implements IVisualization {
                 return rfos.getmRC(); //No supervisor found
             case 2:
                 break;
-        }
-        if (!rfos.saveFormalModel("C:/Users/patrik/Desktop/VisualizationAutomaton.wmod")) {
-            return null;
         }
         return rfos.getmRC();
     }
