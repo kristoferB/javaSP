@@ -71,7 +71,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public void resolve(ISopNode iRootNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        new ResolveSopNode(iRootNode);
     }
 
     @Override

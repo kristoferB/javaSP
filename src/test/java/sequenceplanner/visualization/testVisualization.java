@@ -88,7 +88,7 @@ public class testVisualization {
         System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
         assertTrue(v.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
-        
+
         //Work with data---------------------------------------------------------
 //        SopNodeWithRelations snwr = v.identifyRelations();
 //        assertTrue(snwr != null);
@@ -117,7 +117,7 @@ public class testVisualization {
         SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
 //        try{
-            v.addOset(allOpSet);
+        v.addOset(allOpSet);
 //    }
 //        catch(Exception e) {
 //            System.out.println(e.toString());
@@ -141,7 +141,7 @@ public class testVisualization {
         subsetIds.add(1033);
         subsetIds.add(1034);
         subsetIds.add(1053);
-        
+
         SopNode subOpSet = getOperations(subsetIds);
         System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
         assertTrue(v.addOsubset(subOpSet));
@@ -164,8 +164,49 @@ public class testVisualization {
         assertTrue(rc != null);
 
         assertTrue(v.hierarchicalPartition(rc));
-//        assertTrue(v.alternativePartition(snwr));
-//        assertTrue(v.arbitraryOrderPartition(snwr));
+        assertTrue(v.alternativePartition(rc));
+        assertTrue(v.arbitraryOrderPartition(rc));
+        assertTrue(v.parallelPartition(rc));
+
+        System.out.println("\n--------------------------------");
+        System.out.println("After partition");
+        System.out.println(rc.getOsubsetSopNode().inDepthToString());
+        System.out.println("--------------------------------");
+    }
+
+//    @Test
+    public void testVisualizationAlgorithmParallel() {
+        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationAlgorithmTestParallel.sopx");
+
+        Visualization v = new Visualization(mSP.getModel());
+
+        //Add operations---------------------------------------------------------
+        //All operations
+        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
+        v.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1006);
+        subsetIds.add(1007);
+        subsetIds.add(1008);
+        SopNode subOpSet = getOperations(subsetIds);
+        System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
+        assertTrue(v.addOsubset(subOpSet));
+
+        //Operations that has to finish
+        //all operations have to finish :)
+        SopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
+        assertTrue(v.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        //Work with data---------------------------------------------------------
+        RelationContainer rc = v.identifyRelations();
+        assertTrue(rc != null);
+
+        assertTrue(v.hierarchicalPartition(rc));
         assertTrue(v.parallelPartition(rc));
 
         System.out.println("\n--------------------------------");

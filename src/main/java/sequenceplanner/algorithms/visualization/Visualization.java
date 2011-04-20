@@ -31,14 +31,14 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public boolean alternativePartition(SopNodeWithRelations ioNode) {
-//        RelationPartition3 rp = new RelationPartition3(ioNode, IRelateTwoOperations.ALTERNATIVE);
+    public boolean alternativePartition(IRelationContainer ioRC) {
+        RelationPartition rp = new RelationPartition(ioRC, IRelateTwoOperations.ALTERNATIVE);
         return true;
     }
 
     @Override
-    public boolean arbitraryOrderPartition(SopNodeWithRelations ioNode) {
-//        RelationPartition3 rp = new RelationPartition3(ioNode, IRelateTwoOperations.ARBITRARY_ORDER);
+    public boolean arbitraryOrderPartition(IRelationContainer ioRC) {
+        RelationPartition rp = new RelationPartition(ioRC, IRelateTwoOperations.ARBITRARY_ORDER);
         return true;
     }
 

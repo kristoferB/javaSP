@@ -54,14 +54,14 @@ public interface IVisualization {
      * @param ioNode contains operations to partition and their relations
      * @returna true if ok else false
      */
-    public boolean alternativePartition(SopNodeWithRelations ioNode);
+    public boolean alternativePartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for arbitrary order partition of operations in {@link ISopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
-    public boolean arbitraryOrderPartition(SopNodeWithRelations ioNode);
+    public boolean arbitraryOrderPartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for parallel partition of operations in {@link ISopNode}.<br/>
