@@ -49,12 +49,18 @@ public class RelationsForOperationSet {
             return 0;
         }
 
+        System.out.println("start synthesis");
+
+        saveFormalModel("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
+
         //synthesis
         Automaton automaton = formalMethods.synthesize(automata);
         if (automaton == null) {
             System.out.println("Problem with synthesis!");
             return 0;
         }
+
+        System.out.println("end synthesis");
 
         //Check if supervisor exists
         if (automaton.nbrOfStates() == 0) {

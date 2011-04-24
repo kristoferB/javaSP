@@ -94,7 +94,8 @@ public class RelationPartition {
 
         //Update Root------------------------------------------------------------
         //Add relation type node to root
-        ISopNode relationTypeNode = mSNToolbox.createNode(mRelationInt.toString(), root);
+        final String relationAsString = RelateTwoOperations.relationIntegerToString(mRelationInt, "", "");
+        ISopNode relationTypeNode = mSNToolbox.createNode(relationAsString, root);
         //Move nodes in master set from root, to relation node
         ISopNode masterSetNode = moveNodeSetToSopNode(masterSet, root, relationTypeNode);
         //Move nodes in relation set from root, to relation node

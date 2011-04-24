@@ -45,7 +45,8 @@ public class ResolveSopNode {
         if (!(iNode.getNodeType() instanceof OperationData)) {
             final String rootNodeType = (String) iNode.getNodeType();
             if (!rootNodeType.equals("SOP")) {
-                for (final ISopNode childNode : iNode.getFirstNodesInSequencesAsSet()) {
+                final Set<ISopNode> nodesToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iNode, false));
+                for (final ISopNode childNode : nodesToLoop) {
                     if (!(childNode.getNodeType() instanceof OperationData)) {
                         final String childNodeType = (String) childNode.getNodeType();
                         if (childNodeType.equals("SOP") && childNode.getFirstNodesInSequencesAsSet().size() == 1) {
@@ -93,7 +94,8 @@ public class ResolveSopNode {
     private void resolveNodesOfTheSameTypeOnSucceededLevels(final ISopNode iNode) {
         if (!(iNode.getNodeType() instanceof OperationData)) {
             final String rootNodeType = (String) iNode.getNodeType();
-            for (final ISopNode childNode : iNode.getFirstNodesInSequencesAsSet()) {
+            final Set<ISopNode> nodesToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iNode, false));
+            for (final ISopNode childNode : nodesToLoop) {
                 if (!(childNode.getNodeType() instanceof OperationData)) {
                     final String childNodeType = (String) childNode.getNodeType();
                     if (rootNodeType.equals(childNodeType)) {

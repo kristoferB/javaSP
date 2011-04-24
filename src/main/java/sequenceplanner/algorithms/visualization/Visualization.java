@@ -21,7 +21,7 @@ public class Visualization implements IVisualization {
 
     RelationContainer mRC;
 
-    public Visualization(Model iModel) {
+    public Visualization() {
         mRC = new RelationContainer();
     }
 
@@ -66,6 +66,7 @@ public class Visualization implements IVisualization {
                 return null;
             case 1:
                 rfos.getmRC().setRootNode(null);
+                System.out.println("No supervisor found!");
                 return rfos.getmRC(); //No supervisor found
             case 2:
                 break;
