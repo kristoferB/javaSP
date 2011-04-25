@@ -16,11 +16,16 @@ public class ResolveSopNode {
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
 
     public ResolveSopNode(final ISopNode iNode) {
-        resolveNodesOfTheSameTypeOnTheSameLevel(iNode);
-        resolveNodesOfTheSameTypeOnSucceededLevels(iNode);
-        resolveNodesOfTheSameTypeOnTheSameLevel(iNode);
-        resolveNodesOfTheSameTypeWithIntermediateSOP(iNode);
-        resolveNodesOfTheSameTypeOnTheSameLevel(iNode);
+        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
+        }
+        while (resolveNodesOfTheSameTypeOnSucceededLevels(iNode)) {
+        }
+        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
+        }
+        while (resolveNodesOfTheSameTypeWithIntermediateSOP(iNode)) {
+        }
+        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
+        }
     }
 
     /**
@@ -41,7 +46,8 @@ public class ResolveSopNode {
      * --------------------<br/>
      * @param iNode root node to resolve
      */
-    private void resolveNodesOfTheSameTypeWithIntermediateSOP(final ISopNode iNode) {
+    private boolean resolveNodesOfTheSameTypeWithIntermediateSOP(final ISopNode iNode) {
+        boolean hasPerformedAChange = false;
         if (!(iNode.getNodeType() instanceof OperationData)) {
             final String rootNodeType = (String) iNode.getNodeType();
             if (!rootNodeType.equals("SOP")) {
@@ -60,6 +66,7 @@ public class ResolveSopNode {
                                     }
                                     //Remove child
                                     mSNToolbox.removeNode(childNode, iNode);
+                                    hasPerformedAChange = true;
                                 }
                             }
                         }
@@ -70,8 +77,11 @@ public class ResolveSopNode {
 
         //Go to level below
         for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-            resolveNodesOfTheSameTypeWithIntermediateSOP(node);
+            while (resolveNodesOfTheSameTypeWithIntermediateSOP(node)) {
+            }
         }
+
+        return hasPerformedAChange;
     }
 
     /**
@@ -91,7 +101,8 @@ public class ResolveSopNode {
      * --------------------<br/>
      * @param iNode root to resolve
      */
-    private void resolveNodesOfTheSameTypeOnSucceededLevels(final ISopNode iNode) {
+    private boolean resolveNodesOfTheSameTypeOnSucceededLevels(final ISopNode iNode) {
+        boolean hasPerformedAChange = false;
         if (!(iNode.getNodeType() instanceof OperationData)) {
             final String rootNodeType = (String) iNode.getNodeType();
             final Set<ISopNode> nodesToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iNode, false));
@@ -105,6 +116,7 @@ public class ResolveSopNode {
                         }
                         //Remove child
                         mSNToolbox.removeNode(childNode, iNode);
+                        hasPerformedAChange = true;
                     }
                 }
             }
@@ -112,8 +124,11 @@ public class ResolveSopNode {
 
         //Go to level below
         for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-            resolveNodesOfTheSameTypeOnSucceededLevels(node);
+            while (resolveNodesOfTheSameTypeOnSucceededLevels(node)) {
+            }
         }
+
+        return hasPerformedAChange;
     }
 
     /**
@@ -127,17 +142,20 @@ public class ResolveSopNode {
      * node2: type alternative, sequence set {node5,node6,node7}<br/>
      * @param iNode root to resolve
      */
-    private void resolveNodesOfTheSameTypeOnTheSameLevel(final ISopNode iNode) {
+    private boolean resolveNodesOfTheSameTypeOnTheSameLevel(final ISopNode iNode) {
+        boolean hasPerformedAChange = false;
         //Collect information
         Map<String, Set<ISopNode>> nodeTypeSetMap = new HashMap<String, Set<ISopNode>>();
         for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-            //All node types except OperationData are of interest
+            //All node types except OperationData and SOP are of interest
             if (!(node.getNodeType() instanceof OperationData)) {
                 final String nodeType = (String) node.getNodeType();
-                if (!nodeTypeSetMap.containsKey(nodeType)) {
-                    nodeTypeSetMap.put(nodeType, new HashSet<ISopNode>());
+                if (!nodeType.equals("SOP")) {
+                    if (!nodeTypeSetMap.containsKey(nodeType)) {
+                        nodeTypeSetMap.put(nodeType, new HashSet<ISopNode>());
+                    }
+                    nodeTypeSetMap.get(nodeType).add(node);
                 }
-                nodeTypeSetMap.get(nodeType).add(node);
             }
         }
 
@@ -154,13 +172,17 @@ public class ResolveSopNode {
                     }
                     //Remove old node
                     mSNToolbox.removeNode(node, iNode);
+                    hasPerformedAChange = true;
                 }
             }
         }
 
         //Go to level below
         for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-            resolveNodesOfTheSameTypeOnTheSameLevel(node);
+            while (resolveNodesOfTheSameTypeOnTheSameLevel(node)) {
+            }
         }
+
+        return hasPerformedAChange;
     }
 }

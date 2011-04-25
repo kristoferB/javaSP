@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.algorithms.visualization.RelationContainer;
+import sequenceplanner.algorithms.visualization.RelationPartition;
 import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
 import sequenceplanner.general.SP;
@@ -31,8 +32,7 @@ public class testVisualization {
     @BeforeClass
     public static void setUpClass() throws Exception {
         mSP = new SP();
-//        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationAlgorithmTestFile.sopx");
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
     }
 
@@ -49,7 +49,7 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-    @Test
+//    @Test
     public void test1() {
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
@@ -71,7 +71,7 @@ public class testVisualization {
         ISopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
-        //Operations that has to finish
+        //Operations that have to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
         subsetIds.add(2006);
         subsetIds.add(2007);
@@ -80,7 +80,7 @@ public class testVisualization {
         assertTrue(mVisualization.addToOfinish(finishSet));
 
         workWithAddedData();
-        
+
     }
 
 //    @Test
@@ -121,11 +121,25 @@ public class testVisualization {
         workWithAddedData();
     }
 
-//    @Test
     /**
      * Test of: Hierarchy
      */
+//    @Test
     public void test2() {
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1006);
+        setIds.add(1007);
+        setIds.add(1008);
+        setIds.add(1009);
+        setIds.add(1010);
+        setIds.add(1017);
+        setIds.add(1025);
+        setIds.add(1033);
+        setIds.add(1034);
+        setIds.add(1053);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
 
         //Operations to view
         Set<Integer> subsetIds = new HashSet<Integer>();
@@ -137,12 +151,94 @@ public class testVisualization {
         subsetIds.add(1033);
         subsetIds.add(1034);
         subsetIds.add(1053);
-
         ISopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
-        //Operations that has to finish, all operations have to finish :)
-        ISopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1006);
+        finishSetIds.add(1007);
+        finishSetIds.add(1008);
+        finishSetIds.add(1009);
+        finishSetIds.add(1010);
+        finishSetIds.add(1017);
+        finishSetIds.add(1025);
+        finishSetIds.add(1033);
+        finishSetIds.add(1034);
+        finishSetIds.add(1053);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: grouping in {@link RelationPartition}
+     */
+//    @Test
+    public void test3() {
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1104);
+        setIds.add(1105);
+        setIds.add(1106);
+        setIds.add(1107);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1104);
+        subsetIds.add(1105);
+        subsetIds.add(1106);
+        subsetIds.add(1107);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1104);
+        finishSetIds.add(1105);
+        finishSetIds.add(1106);
+        finishSetIds.add(1107);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: node resolving after relation partition
+     */
+    @Test
+    public void test4() {
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1108);
+        setIds.add(1109);
+        setIds.add(1110);
+        setIds.add(1111);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1108);
+        subsetIds.add(1109);
+        subsetIds.add(1110);
+        subsetIds.add(1111);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1111);
+        ISopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 

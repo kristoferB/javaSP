@@ -40,7 +40,7 @@ public class RelationPartition {
         //Collect all child operations for each node that are children to root---
         //This is in order to see that a relation is between all operations in different sets
         mNodeOperationSetMap = new HashMap<ISopNode, Set<OperationData>>();
-        Set<ISopNode> sopNodesForThisLevel = mSNToolbox.getNodes(root, false);
+        final Set<ISopNode> sopNodesForThisLevel = mSNToolbox.getNodes(root, false);
         for (final ISopNode node : sopNodesForThisLevel) {
 
             Set<OperationData> set = new HashSet<OperationData>();
@@ -56,18 +56,16 @@ public class RelationPartition {
         }
         //-----------------------------------------------------------------------
 
-        Map<ISopNode, Set<ISopNode>> nodeRelationMap = null;
         //Find node with largest relation set (nbr of other nodes)---------------
-        nodeRelationMap = getLargestRelationSet(mNodeOperationSetMap, mNodeOperationSetMap, iRC);
+        final Map<ISopNode, Set<ISopNode>> nodeRelationMap = getLargestRelationSet(mNodeOperationSetMap, mNodeOperationSetMap, iRC);
         //-----------------------------------------------------------------------
 
         //If no relations have been found----------------------------------------
         if (nodeRelationMap.isEmpty()) {
             //Recursive calls to children
             for (final ISopNode node : mNodeOperationSetMap.keySet()) {
-                IRelationContainer newRC = new RelationContainer();
-                newRC.setRootNode(node);
-                partition(newRC);
+                iRC.setRootNode(node);
+                partition(iRC);
             }
             return;
         }
