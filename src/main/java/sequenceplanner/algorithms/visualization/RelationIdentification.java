@@ -56,8 +56,8 @@ public class RelationIdentification {
     private void initStateName() {
         //Remove Single EFA from automaton name (the name is Single) + extra substrings
         //From sup(oX||oY||Single) -> oX||oY
-        mStateNameExplanation += mAutomaton.getName().replaceAll("sup\\(", "").replaceAll("\\)", "");
-        mStateNameExplanation += mStateNameExplanation.replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME + "\\|\\|", "\\|\\|").
+        mStateNameExplanation = mAutomaton.getName().replaceAll("sup\\(", "").replaceAll("\\)", "");
+        mStateNameExplanation = mStateNameExplanation.replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME + "\\|\\|", "\\|\\|").
                 replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME, "").
                 replaceAll(ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME + "\\|\\|", "");
     }
@@ -102,7 +102,8 @@ public class RelationIdentification {
         Map<Integer, OperationData> serialnrOperationMap = new HashMap<Integer, OperationData>();
         final String[] operationNames = mStateNameExplanation.split("\\|\\|");
         for (int i = 0; i < operationNames.length; ++i) {
-            final String operationId = operationNames[i].replaceAll(ISupremicaInteractionForVisualization.OPERATION_VARIABLE_PREFIX, "");
+            final String operationName = operationNames[i];
+            final String operationId = operationName.replaceAll(ISupremicaInteractionForVisualization.OPERATION_VARIABLE_PREFIX, "");
             final OperationData iOpData = getOperationWithStringId(operationId);
             serialnrOperationMap.put(i, iOpData);
         }

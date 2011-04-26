@@ -88,19 +88,46 @@ public class RelationsForOperationSet {
     }
 
     public void printRelations() {
-        Set<OperationData> setToPrint = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(),false);
-        for (final OperationData opDataExternal :setToPrint) {
+        Set<OperationData> setToPrint = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
+        for (final OperationData opDataExternal : setToPrint) {
             System.out.println("--------------------------------");
-            for (final OperationData  opDataInternal : setToPrint) {
-                final String externalOpName = opDataExternal.getName();
-                final String internalOpName = opDataInternal.getName();
+            for (final OperationData opDataInternal : setToPrint) {
+                if (opDataExternal.getId() != opDataInternal.getId()) {
+                    final String externalOpName = opDataExternal.getName();
+                    final String internalOpName = opDataInternal.getName();
+                    final int relationInt = mRC.getOperationRelationMap(opDataExternal).get(opDataInternal);
 
-                System.out.println(externalOpName + " has relation " +
-                        RelateTwoOperations.relationIntegerToString(mRC.getOperationRelationMap(opDataExternal).get(opDataInternal), " ", " ") +
-                        " to " + internalOpName);
+                    System.out.println(externalOpName + " has relation " +
+                            RelateTwoOperations.relationIntegerToString(relationInt, " ", " ") +
+                            " to " + internalOpName);
+
+                    //Print location sets----------------------------------------
+                    if ((relationInt == IRelateTwoOperations.OTHER) || (relationInt == IRelateTwoOperations.ARBITRARY_ORDER)) {
+                        System.out.print(printLocationSet(externalOpName, "u", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.EVENT_UP).get(opDataInternal)));
+                        System.out.print("| ");
+                        System.out.print(printLocationSet(externalOpName, "d", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(opDataInternal)));
+                        System.out.print("| ");
+                        System.out.print(printLocationSet(internalOpName, "u", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.EVENT_UP).get(opDataExternal)));
+                        System.out.print("| ");
+                        System.out.print(printLocationSet(internalOpName, "d", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(opDataExternal)));
+                        System.out.print("\n");
+                    }
+                    //-----------------------------------------------------------
+                }
             }
         }
         System.out.println("--------------------------------");
+    }
+
+    private String printLocationSet(final String iOpWithEvent, final String iEvent, final String iOpWithLocations, final Set<String> iLocationSet) {
+        String returnString = "";
+        returnString += iOpWithEvent + "" + iEvent;
+        returnString += " " + iOpWithLocations + ":";
+        for (final String s : iLocationSet) {
+            returnString += s;
+        }
+        returnString += " ";
+        return returnString;
     }
 
     public RelationContainer getmRC() {
@@ -110,6 +137,4 @@ public class RelationsForOperationSet {
     public void setmRC(RelationContainer mRC) {
         this.mRC = mRC;
     }
-
-
 }

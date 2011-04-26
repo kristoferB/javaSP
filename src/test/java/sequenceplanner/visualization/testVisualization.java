@@ -32,8 +32,6 @@ public class testVisualization {
     @BeforeClass
     public static void setUpClass() throws Exception {
         mSP = new SP();
-        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
-
     }
 
     @Before
@@ -49,8 +47,10 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-//    @Test
+    @Test
     public void test1() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
         setIds.add(2006);
@@ -83,39 +83,39 @@ public class testVisualization {
 
     }
 
+    /**
+     * The example in the Kristofer's TASE paper.<br/>
+     * Sequence Planning with Multiple and Coordinated Sequences of Operations
+     */
 //    @Test
     public void KristoferPPURivetingTASEExample_selfcontainedoperations() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
-
-        Visualization v = new Visualization();
 
         //Add operations---------------------------------------------------------
         //All operations
         ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
-        v.addOset(allOpSet);
+        mVisualization.addOset(allOpSet);
 
         //Operations to view
         Set<Integer> subsetIds = new HashSet<Integer>();
         subsetIds.add(1007); //op2
-//        subsetIds.add(1022); //op3a
+        subsetIds.add(1022); //op3a
         subsetIds.add(1015); //op10
         subsetIds.add(1017); //op12
         subsetIds.add(1020); //op15
         ISopNode subOpSet = getOperations(subsetIds);
         System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
-        assertTrue(v.addOsubset(subOpSet));
+        assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that has to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
-        finishSetIds.add(1021); //op16
-        finishSetIds.add(1020); //op15
         finishSetIds.add(1010); //op5
+        finishSetIds.add(1015); //op10
+        finishSetIds.add(1020); //op15
         ISopNode finishSet = getOperations(finishSetIds);
-        //all operations have to finish :)
-//        SopNode finishSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
-        assertTrue(v.addToOfinish(finishSet));
+        assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 
         workWithAddedData();
@@ -126,6 +126,8 @@ public class testVisualization {
      */
 //    @Test
     public void test2() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
         setIds.add(1006);
@@ -179,6 +181,8 @@ public class testVisualization {
      */
 //    @Test
     public void test3() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+        
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
         setIds.add(1104);
@@ -214,8 +218,10 @@ public class testVisualization {
     /**
      * Test of: node resolving after relation partition
      */
-    @Test
+//    @Test
     public void test4() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
         setIds.add(1108);
