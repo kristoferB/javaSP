@@ -47,7 +47,7 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-    @Test
+//    @Test
     public void test1() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -218,7 +218,7 @@ public class testVisualization {
     /**
      * Test of: node resolving after relation partition
      */
-//    @Test
+    @Test
     public void test4() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -259,10 +259,11 @@ public class testVisualization {
         assertTrue(mVisualization.alternativePartition(rc));
         assertTrue(mVisualization.arbitraryOrderPartition(rc));
         assertTrue(mVisualization.parallelPartition(rc));
+        assertTrue(mVisualization.sequenceing(rc));
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
-        System.out.println(rc.getOsubsetSopNode().inDepthToString());
+        System.out.println(rc.getOsubsetSopNode().inDepthToString("",rc));
         System.out.println("--------------------------------");
     }
 

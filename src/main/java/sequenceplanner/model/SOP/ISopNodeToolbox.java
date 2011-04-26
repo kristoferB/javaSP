@@ -125,4 +125,11 @@ public interface ISopNodeToolbox {
      * @return the set of nodes found
      */
     Set<ISopNode> getNodes(ISopNode iRootNode, boolean iGoDeep);
+
+    /**
+     * To get the last {@link ISopNode} in a successor sequence.<br/>
+     * @param iNode start node
+     * @return last {@link ISopNode} in the successor sequence, or null if 1) parameter iNode ==null, 2) iNode has no successor
+     */
+    ISopNode getBottomSuccessor(ISopNode iNode);
 }

@@ -2,6 +2,9 @@ package sequenceplanner.model.SOP;
 
 import java.util.HashSet;
 import java.util.Set;
+import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
+import sequenceplanner.algorithms.visualization.IRelationContainer;
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -17,6 +20,7 @@ public abstract class ASopNode implements ISopNode {
     private Set<ISopNode> mSequenceSet = null;
     private ISopNode mPredecessor = null;
     private ISopNode mSuccessor = null;
+    private int mSuccessorRelation = -1;
 
     public ASopNode() {
         mSequenceSet = new HashSet<ISopNode>();
@@ -63,6 +67,21 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
+    public int getSuccessorRelation() {
+        return mSuccessorRelation;
+    }
+
+    @Override
+    public void setSuccessorRelation(int iRelation) {
+        if(iRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 ||
+                iRelation == IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12) {
+            this.mSuccessorRelation = iRelation;
+        }
+    }
+
+    
+
+    @Override
     public String typeToString() {
         String returnString = "";
         if (getNodeType() instanceof OperationData) {
@@ -80,6 +99,7 @@ public abstract class ASopNode implements ISopNode {
     @Override
     public String toString() {
         String returnString = "";
+        returnString += "---\n";
         //-----------------------------------------------------------------------
         returnString += "Node type: ";
         if (getNodeType() != null) {
@@ -89,49 +109,128 @@ public abstract class ASopNode implements ISopNode {
         }
         returnString += "\n";
         //-----------------------------------------------------------------------
-        returnString += "Sequence set: {";
-        for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
-            if (!returnString.endsWith("{")) {
-                returnString += ",";
+        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
+            returnString += "Sequence set: {";
+            for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
+                if (!returnString.endsWith("{")) {
+                    returnString += ",";
+                }
+                if (node != null) {
+                    returnString += node.typeToString();
+                } else {
+                    return returnString + "\n" + typeToString() + " contains null child...";
+                }
             }
-            if(node != null) {
-            returnString += node.typeToString();
-            } else {
-                return returnString + "\n" + typeToString() + " contains null child...";
-            }
+            returnString += "}\n";
         }
-        returnString += "}\n";
         //-----------------------------------------------------------------------
-        returnString += "Predecessor: ";
+//        returnString += "Predecessor: ";
+//        if (getPredecessorNode() != null) {
+//            returnString += getPredecessorNode().typeToString();
+//        } else {
+//            returnString += null;
+//        }
+//        returnString += "\n";
         if (getPredecessorNode() != null) {
+            returnString += "Predecessor: ";
             returnString += getPredecessorNode().typeToString();
+            returnString += "\n";
+        }
+        //-----------------------------------------------------------------------
+//        returnString += "Successor: ";
+//        if (getSuccessorNode() != null) {
+//            returnString += getSuccessorNode().typeToString();
+//        } else {
+//            returnString += null;
+//        }
+//        returnString += "\n";
+        if (getSuccessorNode() != null) {
+            returnString += "Successor: ";
+            returnString += getSuccessorNode().typeToString();
+            returnString += "\n";
+        }
+        //-----------------------------------------------------------------------
+        return returnString;
+    }
+
+    private String toString(final String iNewLinePrefix, final IRelationContainer iRC) {
+        String returnString = "";
+        //-----------------------------------------------------------------------
+        returnString += iNewLinePrefix + "Node type: ";
+        if (getNodeType() != null) {
+            returnString += typeToString();
         } else {
             returnString += null;
         }
         returnString += "\n";
         //-----------------------------------------------------------------------
-        returnString += "Successor: ";
-        if (getSuccessorNode() != null) {
-            returnString += getSuccessorNode().typeToString();
-        } else {
-            returnString += null;
+        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
+            returnString += iNewLinePrefix + "Sequence set: {";
+            for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
+                if (!returnString.endsWith("{")) {
+                    returnString += ",";
+                }
+                if (node != null) {
+                    returnString += node.typeToString();
+                } else {
+                    return returnString + "\n" + typeToString() + " contains null child...";
+                }
+            }
+            returnString += "}\n";
         }
-        returnString += "\n";
+        //-----------------------------------------------------------------------
+//        returnString += "Predecessor: ";
+//        if (getPredecessorNode() != null) {
+//            returnString += getPredecessorNode().typeToString();
+//        } else {
+//            returnString += null;
+//        }
+//        returnString += "\n";
+        if (getPredecessorNode() != null) {
+            returnString += iNewLinePrefix + "Predecessor: ";
+            returnString += getPredecessorNode().typeToString();
+            returnString += "\n";
+        }
+        //-----------------------------------------------------------------------
+//        returnString += "Successor: ";
+//        if (getSuccessorNode() != null) {
+//            returnString += getSuccessorNode().typeToString();
+//        } else {
+//            returnString += null;
+//        }
+//        returnString += "\n";
+        if (getSuccessorNode() != null) {
+            returnString += iNewLinePrefix + "Successor: ";
+            returnString += getSuccessorNode().typeToString();
+            returnString += RelateTwoOperations.relationIntegerToString(getSuccessorRelation(), " ", "");
+            returnString += "\n";
+        }
         //-----------------------------------------------------------------------
         return returnString;
     }
 
     @Override
     public String inDepthToString() {
-
-        if (getFirstNodesInSequencesAsSet().isEmpty()) {
-            return typeToString() + " is sink \n";
-        }
-
         String returnString = "";
         returnString += toString();
         for (ISopNode node : getFirstNodesInSequencesAsSet()) {
-            returnString += node.inDepthToString();
+            while (node != null) {
+                returnString += node.inDepthToString();
+                node = node.getSuccessorNode();
+            }
+        }
+        return returnString;
+    }
+
+    @Override
+    public String inDepthToString(final String iPrefix, final IRelationContainer iRC) {
+        String returnString = "";
+        returnString += toString(iPrefix, iRC);
+        for (ISopNode node : getFirstNodesInSequencesAsSet()) {
+            while (node != null) {
+                returnString += node.inDepthToString(iPrefix + "..", iRC);
+                node = node.getSuccessorNode();
+            }
         }
         return returnString;
     }

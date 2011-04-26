@@ -52,7 +52,7 @@ public interface IVisualization {
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
-     * @returna true if ok else false
+     * @return true if ok else false
      */
     public boolean alternativePartition(IRelationContainer ioRC);
 
@@ -66,16 +66,16 @@ public interface IVisualization {
     /**
      * Algorithm for parallel partition of operations in {@link ISopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
-     * @returna true if ok else false
+     * @return true if ok else false
      */
     public boolean parallelPartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for sequenceing of operations in {@link ISopNode}.<br/>
      * @param iSopNode operations to sequence
-     * @returna {@link ISopNode} where operations are sequenced
+     * @return true if ok else false
      */
-    public ISopNode sequenceing(final ISopNode iSopNode);
+    boolean sequenceing(IRelationContainer ioRC);
 
     /**
      * Show {@link ISopNode} as view to user.<br/>

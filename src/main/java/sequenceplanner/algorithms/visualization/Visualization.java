@@ -1,6 +1,5 @@
 package sequenceplanner.algorithms.visualization;
 
-import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 
 /**
@@ -81,8 +80,9 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public ISopNode sequenceing(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean sequenceing(IRelationContainer ioRC) {
+        Sequencing s = new Sequencing(ioRC);
+        return true;
     }
 
     @Override
