@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import sequenceplanner.algorithms.visualization.UserInteration;
 import sequenceplanner.editor.EditorMouseAdapter;
-
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.ViewData;
@@ -61,6 +61,7 @@ public class GUIController {
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
+        guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
     }
     //Listener classes
 
@@ -168,7 +169,7 @@ public class GUIController {
             guiView.printToConsole("Not supported yet.");
         }
     }
-    
+
     class DefaultListener implements ActionListener {
 
         @Override
@@ -178,7 +179,6 @@ public class GUIController {
     }
 
     //Convert menu listeners
-
     class SaveEFAoListener implements ActionListener {
 
         @Override
@@ -283,6 +283,19 @@ public class GUIController {
         }
     }
 
+    class BruteForceVisualizationListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            guiModel.createNewOpView();
+            final OperationView opView = guiModel.getOperationViews().getLast();
+            opView.setName("Projection" + guiModel.getModel().getCounter());
+//            new UserInteration(opView);
+            addNewOpTab();
+            
+        }
+    }
+
     /**
      * Tells the model to open a new project (and adds a new tab in the view?)
      */
@@ -300,7 +313,8 @@ public class GUIController {
     private void saveModel(boolean saveAs) {
         guiModel.saveModel(saveAs);
     }
-    private void defaultWindows(){
+
+    private void defaultWindows() {
         guiView.setWindowLayout();
 
     }

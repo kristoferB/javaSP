@@ -286,10 +286,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      EFA for MP supervisor
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp, windows;
+    private JMenu fileMenu, edit, project, convert, mp, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -331,6 +331,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
         this.add(mp);
 
+        //Visualization
+        visualization = new JMenu("Visualization");
+        visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
+        this.add(visualization);
+
         windows = new JMenu("Windows");
         windows.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(windows);
@@ -342,6 +347,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(convert);
         mb.add(mp);
         mb.add(windows);
+        mb.add(visualization);
         return mb;
 
 
@@ -435,6 +441,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addSavePropViewL(ActionListener l) {
         saveButton.addActionListener(l);
+    }
+
+    public void addBruteForceVisualizationL(ActionListener l) {
+        bruteForceVisualization.addActionListener(l);
     }
 //End listeners
 
