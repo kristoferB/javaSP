@@ -24,45 +24,73 @@ public class Sequencing {
         sequence(mSNToolbox.getNodes(startNode, false), startNode);
     }
 
+    /**
+     * Main method in class.<br/>
+     * Structures that elements in parameter iNodes sequentially.<br/>
+     * The sequence relations are given in {@link IRelationContainer} object set in constructor.<br/>
+     * It is required that parameter iSop has all nodes in parameter iNodes in it's sequence set.<br/>
+     * @param iNodes nodes to structure sequentially
+     * @param iSop current parent to iNodes. Used for update of pointers.
+     * @return The node in iNodes that occurs first sequentially, or one such node if iNodes contains "subsets" without sequentially relations.
+     */
     private ISopNode sequence(final Set<ISopNode> iNodes, final ISopNode iSop) {
         if (iNodes.isEmpty()) {
             return null;
         }
 
+        //Extract one node as root and create set to loop from remaining nodes
         final ISopNode root = iNodes.iterator().next();
-        final Set<ISopNode> remainingSet = new HashSet<ISopNode>(iNodes);
-        remainingSet.remove(root);
 
+        //Take action if selected root is group
         processGroupNode(root);
 
         final Set<ISopNode> rootPredSet = new HashSet<ISopNode>();
         final Set<ISopNode> rootSuccSet = new HashSet<ISopNode>();
         final Map<ISopNode, Integer> relationMap = new HashMap<ISopNode, Integer>();
-        for (final ISopNode n : remainingSet) {
+        for (final ISopNode n : iNodes) {
             int relation = -1;
 
+            //Check if n is predecessor to root
             relation = checkSequenceRelation(n, root);
             if (relation != -1) {
                 rootPredSet.add(n);
                 relationMap.put(n, relation);
             }
+
+            //Check if root is predecessor to n
             relation = checkSequenceRelation(root, n);
             if (relation != -1) {
                 rootSuccSet.add(n);
                 relationMap.put(n, relation);
             }
-
-            processGroupNode(n);
         }
 
+        //It is possible that current root has no sequential relation to some nodes.
+        //But the nodes can have sequential relations to each other.
+        //-> Test their internal relations later.
+        final Set<ISopNode> remainingSet = new HashSet<ISopNode>(iNodes);
+        remainingSet.remove(root);
+        remainingSet.removeAll(rootPredSet);
+        remainingSet.removeAll(rootSuccSet);
+        sequence(remainingSet, iSop);
+
+        //Sequence predecessor and successor nodes to root
         final ISopNode topPred = sequence(rootPredSet, iSop);
         final ISopNode topSucc = sequence(rootSuccSet, iSop);
 
+        //Possible move of root and topSucc from iSop to successor lists
         updatePointers(root, topPred, topSucc, iSop, relationMap);
 
+        //Return first node in sequence list
         return structure(root, topPred);
     }
 
+    /**
+     * Finds the node that occurs first in a sequence to iSop
+     * @param iRoot
+     * @param iTopPred
+     * @return iTopPred if iTopPred != null else iRoot
+     */
     private ISopNode structure(final ISopNode iRoot, final ISopNode iTopPred) {
         if (iTopPred != null) {
             return iTopPred;
@@ -71,69 +99,113 @@ public class Sequencing {
         }
     }
 
+    /**
+     * Move nodes in node structure.<br/>
+     * @param iRoot
+     * @param iTopPred
+     * @param iTopSucc
+     * @param iSop current parent node
+     * @param iRelationMap
+     */
     private void updatePointers(final ISopNode iRoot, final ISopNode iTopPred, final ISopNode iTopSucc, final ISopNode iSop, final Map<ISopNode, Integer> iRelationMap) {
         final ISopNode bottomPred = mSNToolbox.getBottomSuccessor(iTopPred);
 
         if (bottomPred != null) {
             bottomPred.setSuccessorNode(iRoot);
-            if (iRelationMap.get(bottomPred) == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_21) {
-                bottomPred.setSuccessorRelation(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12);
-            } else {
-                bottomPred.setSuccessorRelation(IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12);
-            }
+            bottomPred.setSuccessorRelation(iRelationMap.get(bottomPred));
             mSNToolbox.removeNode(iRoot, iSop);
         }
 
         if (iTopSucc != null) {
             iRoot.setSuccessorNode(iTopSucc);
             iRoot.setSuccessorRelation(iRelationMap.get(iTopSucc));
+            mSNToolbox.removeNode(iTopSucc, iSop);
         }
-        mSNToolbox.removeNode(iTopSucc, iSop);
-
     }
 
+    /**
+     * Recursive call to sequence method if given parameter is group, i.e. not {@link OperationData}.<br/>
+     * The sequence method is called with the child nodes to iNode
+     * @param iNode Node to check if group
+     */
     private void processGroupNode(final ISopNode iNode) {
         if (!(iNode.getNodeType() instanceof OperationData)) {
-            //Root is group
+            //node is group
             sequence(mSNToolbox.getNodes(iNode, false), iNode);
         }
     }
 
+    /**
+     * Collects operations from parameter nodes and checks if one out of a set of (in method) given sequence relations is fulfilled.<br/>
+     * @param iPossiblePredNode
+     * @param iPossibleSuccNode
+     * @return sequence relation found, or -1 if no relation was found
+     */
     private int checkSequenceRelation(final ISopNode iPossiblePredNode, final ISopNode iPossibleSuccNode) {
-        Set<OperationData> opPredSet = new HashSet<OperationData>();
+        final Set<OperationData> opPredSet = new HashSet<OperationData>();
         addOperationsToSet(iPossiblePredNode, opPredSet);
 
-        Set<OperationData> opSuccSet = new HashSet<OperationData>();
+        final Set<OperationData> opSuccSet = new HashSet<OperationData>();
         addOperationsToSet(iPossibleSuccNode, opSuccSet);
 
-        Set<Integer> relationsToCheckSet = new HashSet<Integer>();
+        //Set what relations to check for
+        final Set<Integer> relationsToCheckSet = new HashSet<Integer>();
         relationsToCheckSet.add(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12);
         relationsToCheckSet.add(IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12);
 
-        //Operations can be related with any of the relations in the relation set.
-//        for (final OperationData opPred : opPredSet) {
-//            for (final OperationData opSucc : opSuccSet) {
-//                boolean inSequence = false;
-//                for (final Integer relationInt : relationsToCheckSet) {
-//                    if (mRC.getOperationRelationMap(opPred).get(opSucc).toString().equals(relationInt.toString())) {
-//                        inSequence = true;
-//                        break;
-//                    }
-//                }
-//                if (!inSequence) {
-//                    return -1;
-//                }
-//            }
-//        }
-//        return true; //hum?
+        //Check sequentially relations between operations.
+//        return strictRelation(relationsToCheckSet, opPredSet, opSuccSet);
+        return semiStrictRelation(opPredSet, opSuccSet);
+    }
 
-        //Operations have to be related with the same relation.
-        //All relations from the relation set are tested.
-        for (final Integer relationInt : relationsToCheckSet) {
+    /**
+     * All operations from pred and succ set have to be related with at least SOMETIMES_IN_SEQUENCE relation.<br/>
+     * @param iOpPredSet
+     * @param iOpSuccSet
+     * @return ALWAYS_IN_SEQUENCE_12 if all operation pairs have an ALWAYS_IN_SEQUENCE_12 relation.<br/>
+     * SOMETIMES_IN_SEQUENCE_12 if all operation paris have an ALWAYS_IN_SEQUENCE_12 or a SOMETIMES_IN_SEQUENCE relation.<br/>
+     * else -1
+     */
+    private int semiStrictRelation(final Set<OperationData> iOpPredSet, final Set<OperationData> iOpSuccSet) {
+        boolean strictSequence = true;
+        for (final OperationData opPred : iOpPredSet) {
+            for (final OperationData opSucc : iOpSuccSet) {
+                final String relationString = mRC.getOperationRelationMap(opPred).get(opSucc).toString();
+                //Check if operation pair is related ALWAYS_IN_SEQUENCE
+                if (!relationString.equals(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12.toString())) {
+                    //No
+                    //Check if operation pair is related SOMETIMES_IN_SEQUENCE
+                    if (!relationString.toString().equals(IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12.toString())) {
+                        //Operation pair is neither related ALWAYS_IN_SEQUENCE nor related SOMETIMES_IN_SEQUENCE
+                        return -1;
+                    }
+                    strictSequence = false; //Operation pair is related SOMETIMES_IN_SEQUENCE
+                }
+            }
+        }
+        if (strictSequence) {
+            return IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12;
+        } else {
+            return IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12;
+        }
+    }
+
+    /**
+     * All operations from pred and succ set have to be related with the same relation.<br/>
+     * All relations from the relation set are tested.<br/>
+     * @param iRelationsToCheckSet
+     * @param iOpPredSet
+     * @param iOpSuccSet
+     * @return the relation all operations agree on, else -1
+     */
+    private int strictRelation(final Set<Integer> iRelationsToCheckSet, final Set<OperationData> iOpPredSet, final Set<OperationData> iOpSuccSet) {
+        for (final Integer relationInt : iRelationsToCheckSet) {
             boolean inSequence = true;
-            for (final OperationData opPred : opPredSet) {
-                for (final OperationData opSucc : opSuccSet) {
+            for (final OperationData opPred : iOpPredSet) {
+                for (final OperationData opSucc : iOpSuccSet) {
                     if (!mRC.getOperationRelationMap(opPred).get(opSucc).toString().equals(relationInt.toString())) {
+                        //The given opPred opSucc pair was the first pair that did not have the relation.
+                        //-> break and test next relation for all pair.
                         inSequence = false;
                         break;
                     }
@@ -142,20 +214,26 @@ public class Sequencing {
                     break;
                 }
             }
-            if (inSequence) {
+            if (inSequence) { //A relation has been found, the method can terminate
                 return relationInt;
             }
         }
-        return -1;
+        return -1; //All relations to check have been checked, the operations can not agree on a relation
     }
 
-    private void addOperationsToSet(final ISopNode iNode, final Set<OperationData> iSet) {
+    /**
+     * If iNode wrapps operation -> operation is added to iSet
+     * Else all child operations to iNode are added to iSet
+     * @param iNode
+     * @param ioSet
+     */
+    private void addOperationsToSet(final ISopNode iNode, final Set<OperationData> ioSet) {
         if (iNode.getNodeType() instanceof OperationData) {
             final OperationData opData = (OperationData) iNode.getNodeType();
-            iSet.add(opData);
+            ioSet.add(opData);
         } else {
             final Set<OperationData> opDataSet = mSNToolbox.getOperations(iNode, true);
-            iSet.addAll(opDataSet);
+            ioSet.addAll(opDataSet);
         }
     }
 }

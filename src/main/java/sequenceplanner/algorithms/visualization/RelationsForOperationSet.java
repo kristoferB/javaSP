@@ -20,9 +20,11 @@ public class RelationsForOperationSet {
 
     private ISupremicaInteractionForVisualization formalMethods;
     private RelationContainer mRC = null;
+    private String mWmodPath = "";
 
-    public RelationsForOperationSet(final RelationContainer iRC) {
+    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath) {
         setmRC(iRC);
+        mWmodPath = iWmodPath;
         formalMethods = new SupremicaInteractionForVisualization();
     }
 
@@ -51,7 +53,7 @@ public class RelationsForOperationSet {
 
         System.out.println("start synthesis");
 
-//        saveFormalModel("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
+        saveFormalModel(mWmodPath);
 
         //synthesis
         Automaton automaton = formalMethods.synthesize(automata);

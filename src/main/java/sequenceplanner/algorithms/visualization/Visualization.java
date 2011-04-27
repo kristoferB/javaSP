@@ -18,10 +18,17 @@ import sequenceplanner.model.SOP.ISopNode;
  */
 public class Visualization implements IVisualization {
 
-    RelationContainer mRC;
+    private RelationContainer mRC = null;
+    private String mWmodPath = "";
 
-    public Visualization() {
+
+    /**
+     *
+     * @param iWmodPath where to store wmod file of operations.
+     */
+    public Visualization(final String iWmodPath) {
         mRC = new RelationContainer();
+        mWmodPath = iWmodPath;
     }
 
     @Override
@@ -59,7 +66,7 @@ public class Visualization implements IVisualization {
 
     @Override
     public RelationContainer identifyRelations() {
-        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC());
+        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath);
         switch (rfos.run()) {
             case 0:
                 return null;

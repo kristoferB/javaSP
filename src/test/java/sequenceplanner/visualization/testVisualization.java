@@ -1,11 +1,13 @@
 package sequenceplanner.visualization;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.algorithms.visualization.RelationContainer;
+import sequenceplanner.algorithms.visualization.RelationIdentification;
 import sequenceplanner.algorithms.visualization.RelationPartition;
 import sequenceplanner.algorithms.visualization.Visualization;
 import static org.junit.Assert.*;
@@ -37,7 +39,7 @@ public class testVisualization {
     @Before
     public void setUpMethod() throws Exception {
         //New Visualization
-        mVisualization = new Visualization();
+        mVisualization = new Visualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
         //Add all operations to Oset
 //        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
@@ -73,9 +75,9 @@ public class testVisualization {
 
         //Operations that have to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
-        subsetIds.add(2006);
-        subsetIds.add(2007);
-        subsetIds.add(2010);
+        finishSetIds.add(2006);
+        finishSetIds.add(2007);
+        finishSetIds.add(2010);
         ISopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
 
@@ -87,7 +89,7 @@ public class testVisualization {
      * The example in the Kristofer's TASE paper.<br/>
      * Sequence Planning with Multiple and Coordinated Sequences of Operations
      */
-//    @Test
+    @Test
     public void KristoferPPURivetingTASEExample_selfcontainedoperations() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
@@ -182,7 +184,7 @@ public class testVisualization {
 //    @Test
     public void test3() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
-        
+
         //Add operations to Oset
         Set<Integer> setIds = new HashSet<Integer>();
         setIds.add(1104);
@@ -218,7 +220,7 @@ public class testVisualization {
     /**
      * Test of: node resolving after relation partition
      */
-    @Test
+//    @Test
     public void test4() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -251,6 +253,46 @@ public class testVisualization {
         workWithAddedData();
     }
 
+    /**
+     * Test of: How many operations can the Visualization methods handle?.<br/>
+     * Either all operations in parallel or all operaitons in straigt sequence.<br/>
+     * For straigt sequence: >200 operations without problem
+     * For parallel: >9 operations
+     * For parallel: 10 operations -> 4e5 transitions to go through in {@link RelationIdentification}...
+     */
+//    @Test
+    public void test5() {
+        int nbrOfOperations = 50;
+        boolean withSequencePrecondition = true; //operations are in parallel if false
+
+        final ISopNode sop = new SopNode();
+
+        //First operation
+        final OperationData firstOp = mSP.insertOperation();
+        new SopNodeToolboxSetOfOperations().createNode(firstOp, sop);
+
+        //Include nbrOfOperations nbr of operations.
+        for (; nbrOfOperations > 0; --nbrOfOperations) {
+            final OperationData opData = mSP.insertOperation();
+            if (withSequencePrecondition) {
+                //Add precondition that operation with id-1 has to be finished
+                final OperationData.SeqCond sq = new OperationData.SeqCond(opData.getId() - 1, 2);
+                final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
+                final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
+                llOR.add(sq);
+                llAND.add(llOR);
+                opData.setSequenceCondition(llAND);
+            }
+            new SopNodeToolboxSetOfOperations().createNode(opData, sop);
+        }
+
+        mVisualization.addOset(sop);
+        assertTrue(mVisualization.addOsubset(sop)); //View all operations
+        assertTrue(mVisualization.addToOfinish(sop)); //All operations have to finish
+
+        workWithAddedData();
+    }
+
     private static void workWithAddedData() {
         RelationContainer rc = mVisualization.identifyRelations();
         assertTrue(rc != null);
@@ -263,7 +305,7 @@ public class testVisualization {
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
-        System.out.println(rc.getOsubsetSopNode().inDepthToString("",rc));
+        System.out.println(rc.getOsubsetSopNode().toString());
         System.out.println("--------------------------------");
     }
 

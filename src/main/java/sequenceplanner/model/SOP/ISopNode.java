@@ -1,7 +1,6 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelationContainer;
 
 /**
  * Interface for a SOP node<br/>
@@ -33,5 +32,5 @@ public interface ISopNode {
 
     String inDepthToString();
 
-    String inDepthToString(String prefix, IRelationContainer iRC);
+    String inDepthToString(String prefix);
 }

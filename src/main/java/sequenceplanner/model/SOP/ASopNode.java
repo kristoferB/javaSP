@@ -3,7 +3,6 @@ package sequenceplanner.model.SOP;
 import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.IRelationContainer;
 import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -98,62 +97,10 @@ public abstract class ASopNode implements ISopNode {
 
     @Override
     public String toString() {
-        String returnString = "";
-        returnString += "---\n";
-        //-----------------------------------------------------------------------
-        returnString += "Node type: ";
-        if (getNodeType() != null) {
-            returnString += typeToString();
-        } else {
-            returnString += null;
-        }
-        returnString += "\n";
-        //-----------------------------------------------------------------------
-        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
-            returnString += "Sequence set: {";
-            for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
-                if (!returnString.endsWith("{")) {
-                    returnString += ",";
-                }
-                if (node != null) {
-                    returnString += node.typeToString();
-                } else {
-                    return returnString + "\n" + typeToString() + " contains null child...";
-                }
-            }
-            returnString += "}\n";
-        }
-        //-----------------------------------------------------------------------
-//        returnString += "Predecessor: ";
-//        if (getPredecessorNode() != null) {
-//            returnString += getPredecessorNode().typeToString();
-//        } else {
-//            returnString += null;
-//        }
-//        returnString += "\n";
-        if (getPredecessorNode() != null) {
-            returnString += "Predecessor: ";
-            returnString += getPredecessorNode().typeToString();
-            returnString += "\n";
-        }
-        //-----------------------------------------------------------------------
-//        returnString += "Successor: ";
-//        if (getSuccessorNode() != null) {
-//            returnString += getSuccessorNode().typeToString();
-//        } else {
-//            returnString += null;
-//        }
-//        returnString += "\n";
-        if (getSuccessorNode() != null) {
-            returnString += "Successor: ";
-            returnString += getSuccessorNode().typeToString();
-            returnString += "\n";
-        }
-        //-----------------------------------------------------------------------
-        return returnString;
+        return inDepthToString("");
     }
 
-    private String toString(final String iNewLinePrefix, final IRelationContainer iRC) {
+    private String toString(final String iNewLinePrefix) {
         String returnString = "";
         //-----------------------------------------------------------------------
         returnString += iNewLinePrefix + "Node type: ";
@@ -179,30 +126,16 @@ public abstract class ASopNode implements ISopNode {
             returnString += "}\n";
         }
         //-----------------------------------------------------------------------
-//        returnString += "Predecessor: ";
-//        if (getPredecessorNode() != null) {
-//            returnString += getPredecessorNode().typeToString();
-//        } else {
-//            returnString += null;
-//        }
-//        returnString += "\n";
         if (getPredecessorNode() != null) {
             returnString += iNewLinePrefix + "Predecessor: ";
             returnString += getPredecessorNode().typeToString();
             returnString += "\n";
         }
         //-----------------------------------------------------------------------
-//        returnString += "Successor: ";
-//        if (getSuccessorNode() != null) {
-//            returnString += getSuccessorNode().typeToString();
-//        } else {
-//            returnString += null;
-//        }
-//        returnString += "\n";
         if (getSuccessorNode() != null) {
             returnString += iNewLinePrefix + "Successor: ";
+            returnString += RelateTwoOperations.relationIntegerToString(getSuccessorRelation(), "", " ");
             returnString += getSuccessorNode().typeToString();
-            returnString += RelateTwoOperations.relationIntegerToString(getSuccessorRelation(), " ", "");
             returnString += "\n";
         }
         //-----------------------------------------------------------------------
@@ -223,12 +156,12 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
-    public String inDepthToString(final String iPrefix, final IRelationContainer iRC) {
+    public String inDepthToString(final String iPrefix) {
         String returnString = "";
-        returnString += toString(iPrefix, iRC);
+        returnString += toString(iPrefix);
         for (ISopNode node : getFirstNodesInSequencesAsSet()) {
             while (node != null) {
-                returnString += node.inDepthToString(iPrefix + "..", iRC);
+                returnString += node.inDepthToString(iPrefix + "..");
                 node = node.getSuccessorNode();
             }
         }
