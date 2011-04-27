@@ -1,6 +1,9 @@
 package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * The methods should be called in the following order:<br/>
@@ -16,7 +19,7 @@ import sequenceplanner.model.SOP.ISopNode;
  * sopNodeToGraphicalView<br/>
  * @author patrik
  */
-public class Visualization implements IVisualization {
+public class PerformVisualization implements IPerformVisualization {
 
     private RelationContainer mRC = null;
     private String mWmodPath = "";
@@ -26,7 +29,7 @@ public class Visualization implements IVisualization {
      *
      * @param iWmodPath where to store wmod file of operations.
      */
-    public Visualization(final String iWmodPath) {
+    public PerformVisualization(final String iWmodPath) {
         mRC = new RelationContainer();
         mWmodPath = iWmodPath;
     }
@@ -93,8 +96,10 @@ public class Visualization implements IVisualization {
     }
 
     @Override
-    public boolean sopNodeToGraphicalView(ISopNode iSopNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView) {
+        ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
+        toolbox.drawNode(iSopNode, iView);
+        return true;
     }
 
     public RelationContainer getmRC() {

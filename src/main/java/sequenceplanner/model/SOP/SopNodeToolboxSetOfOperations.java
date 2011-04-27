@@ -3,6 +3,7 @@ package sequenceplanner.model.SOP;
 import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * DOES NOT FOLLOW DESCRIPTIONS FOR METHODS GIVEN IN INTERFACE!!!<br/>
@@ -32,8 +33,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void drawNode(ISopNode iRootNode, Object iView) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void drawNode(ISopNode iRootNode, OperationView iView) {
+        new DrawSopNode(iRootNode, iView.getGraph());
     }
 
     @Override

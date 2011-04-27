@@ -290,7 +290,7 @@ public class GUIController {
             guiModel.createNewOpView();
             final OperationView opView = guiModel.getOperationViews().getLast();
             opView.setName("Projection" + guiModel.getModel().getCounter());
-            new UserInteractionForVisualization(opView);
+            new UserInteractionForVisualization(opView,guiModel.getModel());
             addNewOpTab();
             
         }

@@ -2,6 +2,7 @@ package sequenceplanner.model.SOP;
 
 import java.util.Set;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * Functions to be performed on a {@link ISopNode}
@@ -45,7 +46,7 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences to be drawn, CHANGE TO FIT WHAT IS BEST
      * @param iView a view already exists or null if a new view should be created.
      */
-    public void drawNode(ISopNode iRootNode, Object iView);
+    public void drawNode(ISopNode iRootNode, OperationView iView);
 
     /**
      * Remove unnecessary nodes recursively in sequences to iRootNode.<br/>

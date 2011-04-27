@@ -9,7 +9,7 @@ import org.junit.Test;
 import sequenceplanner.algorithms.visualization.RelationContainer;
 import sequenceplanner.algorithms.visualization.RelationIdentification;
 import sequenceplanner.algorithms.visualization.RelationPartition;
-import sequenceplanner.algorithms.visualization.Visualization;
+import sequenceplanner.algorithms.visualization.PerformVisualization;
 import static org.junit.Assert.*;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.SOP.ISopNode;
@@ -26,7 +26,7 @@ import sequenceplanner.model.data.OperationData;
 public class testVisualization {
 
     static SP mSP;
-    static Visualization mVisualization;
+    static PerformVisualization mVisualization;
 
     public testVisualization() {
     }
@@ -38,8 +38,8 @@ public class testVisualization {
 
     @Before
     public void setUpMethod() throws Exception {
-        //New Visualization
-        mVisualization = new Visualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
+        //New PerformVisualization
+        mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
         //Add all operations to Oset
 //        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
@@ -254,7 +254,7 @@ public class testVisualization {
     }
 
     /**
-     * Test of: How many operations can the Visualization methods handle?.<br/>
+     * Test of: How many operations can the PerformVisualization methods handle?.<br/>
      * Either all operations in parallel or all operaitons in straigt sequence.<br/>
      * For straigt sequence: >200 operations without problem
      * For parallel: >9 operations

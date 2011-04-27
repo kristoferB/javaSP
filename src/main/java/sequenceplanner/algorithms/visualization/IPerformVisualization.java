@@ -1,6 +1,7 @@
 package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * Interface for how to visualize/project the relations between the operations in a subset with respect to some set.<br/>
@@ -10,7 +11,7 @@ import sequenceplanner.model.SOP.ISopNode;
  * The Ofinish set affects the non-blocking synthesis.<br/>
  * @author patrik
  */
-public interface IVisualization {
+public interface IPerformVisualization {
 
     /**
      * Add operations to Oset.<br/>
@@ -82,5 +83,5 @@ public interface IVisualization {
      * @param iSopNode operations to visualize
      * @return true if possible to create view else false
      */
-    public boolean sopNodeToGraphicalView(ISopNode iSopNode);
+    public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView);
 }
