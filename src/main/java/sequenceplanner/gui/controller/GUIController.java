@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import sequenceplanner.algorithms.visualization.UserInteration;
+import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -290,7 +290,7 @@ public class GUIController {
             guiModel.createNewOpView();
             final OperationView opView = guiModel.getOperationViews().getLast();
             opView.setName("Projection" + guiModel.getModel().getCounter());
-//            new UserInteration(opView);
+            new UserInteractionForVisualization(opView);
             addNewOpTab();
             
         }
