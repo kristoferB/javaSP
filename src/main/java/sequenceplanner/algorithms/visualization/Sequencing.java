@@ -22,6 +22,7 @@ public class Sequencing {
         this.mRC = iRC;
         final ISopNode startNode = mRC.getOsubsetSopNode();
         sequence(mSNToolbox.getNodes(startNode, false), startNode);
+        removeUnnecessarySOPNodes(mRC.getOsubsetSopNode());
     }
 
     /**
@@ -234,6 +235,41 @@ public class Sequencing {
         } else {
             final Set<OperationData> opDataSet = mSNToolbox.getOperations(iNode, true);
             ioSet.addAll(opDataSet);
+        }
+    }
+
+    /**
+     * Remove SOPnode if it only contains single sequence.<br/>
+     * I.e. move child to SOPnode to iRoot.<br/>
+     * @param iRoot
+     */
+    private void removeUnnecessarySOPNodes(final ISopNode iRoot) {
+        //Do remove
+        final Set<ISopNode> setToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iRoot, false));
+        for (final ISopNode child : setToLoop) {
+            if (child.getNodeType() instanceof String) {
+                final String childNodeType = (String) child.getNodeType();
+                if (childNodeType.equals("SOP")) {
+                    if (child.getFirstNodesInSequencesAsSet().size() == 1) {
+                        final ISopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
+                        //Move node one level up
+                        iRoot.addNodeToSequenceSet(childChild);
+                        mSNToolbox.removeNode(child, iRoot);
+                        //Set successor relations
+                        final ISopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
+                        final ISopNode firstNodeAfterChild = child.getSuccessorNode();
+                        lastNodeInChildChildSequence.setSuccessorNode(firstNodeAfterChild);
+                        final int successorRelationType = child.getSuccessorRelation();
+                        lastNodeInChildChildSequence.setSuccessorRelation(successorRelationType);
+                    }
+                }
+            }
+        }
+
+        //Loop children
+        final Set<ISopNode> setToLoop2 = new HashSet<ISopNode>(mSNToolbox.getNodes(iRoot, false));
+        for (final ISopNode child : setToLoop2) {
+            removeUnnecessarySOPNodes(child);
         }
     }
 }

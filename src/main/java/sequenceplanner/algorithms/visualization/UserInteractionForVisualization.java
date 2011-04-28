@@ -1,20 +1,18 @@
 package sequenceplanner.algorithms.visualization;
 
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
@@ -32,7 +30,6 @@ public class UserInteractionForVisualization {
 
     private OperationView mOpView = null;
     private Model mModel = null;
-    private ISopNode mSopNode = new SopNode();
     private IPerformVisualization mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
     public UserInteractionForVisualization(OperationView mOpView, Model iModel) {
@@ -45,18 +42,18 @@ public class UserInteractionForVisualization {
 
         mVisualization.addOset(iAllOperaitons);
 
-        if(!mVisualization.addOsubset(iOperationsToView)) {
+        if (!mVisualization.addOsubset(iOperationsToView)) {
             System.out.println("Operations to view are not a subset of all operations!");
             return false;
         }
 
-        if(!mVisualization.addToOfinish(iHasToFinish)) {
+        if (!mVisualization.addToOfinish(iHasToFinish)) {
             System.out.println("Operations to finish are not a subset of all operations!");
             return false;
         }
 
         RelationContainer rc = mVisualization.identifyRelations();
-        if(rc != null) {
+        if (rc == null) {
             return false;
         }
 
@@ -65,7 +62,7 @@ public class UserInteractionForVisualization {
         mVisualization.arbitraryOrderPartition(rc);
         mVisualization.parallelPartition(rc);
         mVisualization.sequenceing(rc);
-        mVisualization.sopNodeToGraphicalView(mSopNode,mOpView);
+        mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
@@ -75,85 +72,85 @@ public class UserInteractionForVisualization {
         return true;
     }
 
-    public static Set<OperationData> getOperationsInModel(TreeNode iTree) {
-        Set<OperationData> opDataSet = new HashSet<OperationData>();
+    public static List<OperationData> getOperationsInModel(TreeNode iTree) {
+        List<OperationData> opDataList = new LinkedList<OperationData>();
 
         for (int i = 0; i < iTree.getChildCount(); ++i) {
             OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
-            opDataSet.add(opData);
+            opDataList.add(opData);
         }
-        return opDataSet;
+        return opDataList;
     }
 
     private class SelectOperationsDialog extends JFrame implements ActionListener {
 
-        JButton viewButton = new JButton("View!");
-        JButton wmodButton = new JButton("Generate .wmod file");
-        JButton sButton = new JButton("Select all");
-        JButton dsButton = new JButton("Deselect all");
-        JPanel buttonJp = new JPanel();
+        JButton generateButton = new JButton("Generate projection");
+        JButton[] mSButtonArray = new JButton[3];
+        JButton[] mDSButtonArray = new JButton[3];
         JPanel jp = null;
-        JRadioButton check1 = new JRadioButton("yes");
-        JRadioButton check2 = new JRadioButton("yes");
-        Map<JCheckBox, OperationData> checkBoxOpDataMap = new HashMap<JCheckBox, OperationData>();
+        List<OperationData> mOperationList = null;
+        JCheckBox[][] mOpSelectionTable = null;
 
         public SelectOperationsDialog() {
-            setTitle("Product selection");
-            Container c = getContentPane();
-            c.setLayout(new GridLayout(5, 1));
+            //Work with listeners------------------------------------------------
+            generateButton.addActionListener(this);
+            generateButton.setEnabled(false);
 
-            //Text1--------------------------------------------------------------
-            c.add(new JLabel("Set output options:"));
-            //-------------------------------------------------------------------
+            //Collect operations and init variables
+            mOperationList = getOperationsInModel(mModel.getOperationRoot());
+            mOpSelectionTable = new JCheckBox[mOperationList.size()][3];
 
-            //Boolean variables--------------------------------------------------
             jp = new JPanel();
-            c.add(jp);
-            jp.setLayout(new FlowLayout());
+            jp.setLayout(new GridLayout(1+6+mOperationList.size(), 4));
 
-            jp.add(new JLabel("Single EFA:"));
-            check1.setSelected(false);
-            jp.add(check1);
-
-            jp.add(new JLabel("Unique event names:"));
-            check2.setSelected(true);
-            jp.add(check2);
+            //Text---------------------------------------------------------------
+            jp.add(new JLabel(""));
+            jp.add(new JLabel("To include"));
+            jp.add(new JLabel("To finish"));
+            jp.add(new JLabel("To view"));
             //-------------------------------------------------------------------
 
-            //Text2--------------------------------------------------------------
-            c.add(new JLabel("Select products to include in supervisor:"));
-            //-------------------------------------------------------------------
-
-            //Operation selection--------------------------------------------------
-            jp = new JPanel();
-            c.add(jp);
-            jp.setLayout(new FlowLayout());
-
-            for (final OperationData opData : getOperationsInModel(mModel.getOperationRoot())) {
-                final String name = opData.getName();
-                JCheckBox rb = new JCheckBox(name);
-                rb.addActionListener(this);
-                rb.setSelected(true);
-                jp.add(rb);
-                checkBoxOpDataMap.put(rb, opData);
+            //Select and DeSelect------------------------------------------------
+            for (int i = 0; i < 3; ++i) {
+               addButtons(i, "Select all", mSButtonArray);
+               addButtons(i, "Deselect all", mDSButtonArray);
             }//------------------------------------------------------------------
 
-            //Buttons------------------------------------------------------------
-            c.add(buttonJp);
+            //Add operations to JPanel-------------------------------------------
+            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            while (listIterator.hasNext()) {
+                final OperationData opData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(opData);
 
-            //select all
-            sButton.addActionListener(this);
-            sButton.setEnabled(true);
-            buttonJp.add(sButton);
+                jp.add(new JLabel(opData.getName()));
+                JCheckBox cb = null;
 
-            //deselect all
-            dsButton.addActionListener(this);
-            dsButton.setEnabled(true);
-            buttonJp.add(dsButton);
+                cb = new JCheckBox();
+                cb.addActionListener(this);
+                cb.setSelected(true);
+                mOpSelectionTable[operationIndex][0] = cb;
+                jp.add(cb);
 
-            wmodButton.addActionListener(this);
-            wmodButton.setEnabled(true);
-            buttonJp.add(wmodButton);
+                cb = new JCheckBox();
+                cb.addActionListener(this);
+                cb.setSelected(false);
+                mOpSelectionTable[operationIndex][1] = cb;
+                jp.add(cb);
+
+                cb = new JCheckBox();
+                cb.addActionListener(this);
+                cb.setSelected(false);
+                mOpSelectionTable[operationIndex][2] = cb;
+                jp.add(cb);
+            }//------------------------------------------------------------------
+
+            //Layout-------------------------------------------------------------
+            setTitle("Operation selection");
+            Container c = getContentPane();
+            c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+
+            c.add(generateButton);
+            c.add(jp);
             //-------------------------------------------------------------------
 
             setLocationRelativeTo(null);
@@ -163,43 +160,79 @@ public class UserInteractionForVisualization {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (wmodButton == e.getSource()) {
-                for (JCheckBox jcb : checkBoxOpDataMap.keySet()) {
-                    if (jcb.isSelected()) {
-                        ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
-                        toolbox.createNode(checkBoxOpDataMap.get(jcb), mSopNode);
-                    }
-                }
+            if (generateButton == e.getSource()) {
+                final ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
+                final ISopNode allOperationsNode = new SopNode();
+                final ISopNode hasToFinishNode = new SopNode();
+                final ISopNode operationsToViewNode = new SopNode();
+                final Iterator<OperationData> listIterator = mOperationList.iterator();
+                while (listIterator.hasNext()) {
+                    final OperationData opData = listIterator.next();
+                    final int operationIndex = mOperationList.indexOf(opData);
 
-                run(mSopNode, mSopNode, mSopNode);
-                dispose();
-            } else if (sButton == e.getSource()) {
-                for (JCheckBox jcb : checkBoxOpDataMap.keySet()) {
-                    jcb.setSelected(true);
-                }
-                viewButton.setEnabled(true);
-                wmodButton.setEnabled(true);
-            } else if (dsButton == e.getSource()) {
-                for (JCheckBox jcb : checkBoxOpDataMap.keySet()) {
-                    jcb.setSelected(false);
-                }
-                viewButton.setEnabled(false);
-                wmodButton.setEnabled(false);
-            } else {
-                Boolean buttonOK = false;
-                for (JCheckBox jcb : checkBoxOpDataMap.keySet()) {
-                    if (jcb.isSelected()) {
-                        buttonOK = true;
-                        break;
+                    if (mOpSelectionTable[operationIndex][0].isSelected()) {
+                        toolbox.createNode(opData, allOperationsNode);
+                        if (mOpSelectionTable[operationIndex][1].isSelected()) {
+                            toolbox.createNode(opData, hasToFinishNode);
+                        }
+                        if (mOpSelectionTable[operationIndex][2].isSelected()) {
+                            toolbox.createNode(opData, operationsToViewNode);
+                        }
                     }
                 }
-                if (buttonOK) {
-                    viewButton.setEnabled(true);
-                    wmodButton.setEnabled(true);
-                } else {
-                    viewButton.setEnabled(false);
-                    wmodButton.setEnabled(false);
+                run(allOperationsNode, operationsToViewNode, hasToFinishNode);
+                dispose();
+
+            } else if (mSButtonArray[0] == e.getSource()) {
+                changeCheckBoxColumn(0, true);
+            } else if (mSButtonArray[1] == e.getSource()) {
+                changeCheckBoxColumn(1, true);
+            } else if (mSButtonArray[2] == e.getSource()) {
+                changeCheckBoxColumn(2, true);
+            } else if (mDSButtonArray[0] == e.getSource()) {
+                changeCheckBoxColumn(0, false);
+            } else if (mDSButtonArray[1] == e.getSource()) {
+                changeCheckBoxColumn(1, false);
+            } else if (mDSButtonArray[2] == e.getSource()) {
+                changeCheckBoxColumn(2, false);
+            }
+            //Only be possible to press generate button if there is something to work with
+            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            while (listIterator.hasNext()) {
+                final OperationData opData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(opData);
+                if (mOpSelectionTable[operationIndex][0].isSelected() &&
+                        mOpSelectionTable[operationIndex][2].isSelected()) {
+                    generateButton.setEnabled(true);
+                    return;
                 }
+            }
+            generateButton.setEnabled(false);
+        }
+
+        private void changeCheckBoxColumn(final int iColumnIndex, final boolean iBoolean) {
+            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            while (listIterator.hasNext()) {
+                final OperationData opData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(opData);
+                mOpSelectionTable[operationIndex][iColumnIndex].setSelected(iBoolean);
+            }
+        }
+
+        private void addButtons(final int i, final String iButtonText, final JButton[] iButtonArray) {
+            for (int ii = 0; ii < (i + 1); ++ii) {
+                jp.add(new JLabel(""));
+            }
+            JButton button = null;
+            //Select
+            button = new JButton(iButtonText);
+            button.setEnabled(true);
+            button.addActionListener(this);
+//                button.setPreferredSize(new Dimension(5, 5));
+            jp.add(button);
+            iButtonArray[i] = button;
+            for (int ii = (i + 2); ii < 4; ++ii) {
+                jp.add(new JLabel(""));
             }
         }
     }

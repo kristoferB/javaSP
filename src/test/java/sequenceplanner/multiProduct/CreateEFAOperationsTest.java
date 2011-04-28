@@ -39,12 +39,12 @@ public class CreateEFAOperationsTest {
 
     }
 
-//    @Test
+    @Test
     public void test3() {
         for (Integer i = 1; i < 17; ++i) {
             mSP.insertOperation("O" + i);
         }
-        mSP.saveToSOPXFile("C:/Users/patrik/Desktop/TestResult.sopx");
+//        mSP.saveToSOPXFile("C:/Users/patrik/Desktop/TestResult.sopx");
     }
     
 }

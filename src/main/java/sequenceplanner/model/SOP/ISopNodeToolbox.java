@@ -130,7 +130,7 @@ public interface ISopNodeToolbox {
     /**
      * To get the last {@link ISopNode} in a successor sequence.<br/>
      * @param iNode start node
-     * @return last {@link ISopNode} in the successor sequence, or null if 1) parameter iNode ==null, 2) iNode has no successor
+     * @return last {@link ISopNode} in the successor sequence (this can be parameter iNode), or null if 1) parameter iNode ==null
      */
     ISopNode getBottomSuccessor(ISopNode iNode);
 }

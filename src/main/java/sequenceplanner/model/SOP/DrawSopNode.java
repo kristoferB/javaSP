@@ -4,8 +4,9 @@ import com.mxgraph.model.mxCell;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-//import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-//import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
+import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -23,6 +24,10 @@ public class DrawSopNode {
     private ISopNode mRoot = null;
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
 
+    /**
+     * Dummy constructor just for test
+     * @param mGraph
+     */
     public DrawSopNode(final SPGraph mGraph) {
         this.mGraph = mGraph;
         drawExampleSequence();
@@ -34,9 +39,10 @@ public class DrawSopNode {
         addNodesToGraph(iRoot);
     }
 
-    private void draw() {
-    }
-
+    /**
+     * Adds a {@link ISopNode}s in parameter iRoot to {@link SPGraph}.<br/>
+     * @param iRoot container for nodes
+     */
     private void addNodesToGraph(final ISopNode iRoot) {
         //Create Cells and a map between cells and nodes.
         final Map<ISopNode, Cell> nodeCellMap = new HashMap<ISopNode, Cell>();
@@ -45,26 +51,53 @@ public class DrawSopNode {
             nodeCellMap.put(node, getCellForNode(node));
         }
 
-        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
-            //Add node
-            if (iRoot == mRoot) {
-                mGraph.addCell(nodeCellMap.get(node));
-            }
-            //Children
-
-            //Successor(s)
-            while (node.getSuccessorNode() != null) {
-                final Cell cellPred = nodeCellMap.get(node);
-                final Cell cellSucc = nodeCellMap.get(node.getSuccessorNode());
-                mGraph.insertNewCell(cellPred, cellSucc, false);
-                node = node.getSuccessorNode();
-            }
-        }
+        recursiveCallToAllNodes(iRoot, nodeCellMap);
 
         //Get Proper layout
         mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
     }
 
+    /**
+     * Doing the addition of nodes to the graph.<br/>
+     * There are some different methods to add a Cell/Node.<br/>
+     * @param iRoot
+     * @param iNodeCellMap What type of {@link Cell} each {@link ISopNode} is
+     */
+    private void recursiveCallToAllNodes(final ISopNode iRoot, final Map<ISopNode, Cell> iNodeCellMap) {
+        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+            //First node---------------------------------------------------------
+            if (iRoot == mRoot) {
+                mGraph.addCell(iNodeCellMap.get(node));
+            } else {
+                mGraph.insertGroupNode(iNodeCellMap.get(iRoot), null, iNodeCellMap.get(node));
+                if (iNodeCellMap.get(iRoot).getType() == Cell.SOP) {
+                    Object[] oSet = mGraph.getEdges(iNodeCellMap.get(node));
+                    for (Object o : oSet) {
+                        mxCell c = (mxCell) o;
+                        c.removeFromParent();
+                    }
+                }
+            }//------------------------------------------------------------------
+
+            //Children to first node---------------------------------------------
+            recursiveCallToAllNodes(node, iNodeCellMap);
+            //-------------------------------------------------------------------
+
+            //Successor(s)-------------------------------------------------------
+            while (node.getSuccessorNode() != null) {
+                final Cell cellPred = iNodeCellMap.get(node);
+                final Cell cellSucc = iNodeCellMap.get(node.getSuccessorNode());
+                mGraph.insertNewCell(cellPred, cellSucc, false);
+                node = node.getSuccessorNode();
+            }//------------------------------------------------------------------
+        }
+    }
+
+    /**
+     * Get right {@link Cell} for each {@link ISopNode} type.<br/>
+     * @param iNode to translate
+     * @return corresponding Cell
+     */
     private Cell getCellForNode(final ISopNode iNode) {
         final Object nodeType = iNode.getNodeType();
         final boolean sequenceSetIsEmpty = iNode.getFirstNodesInSequencesAsSet().isEmpty();
@@ -78,17 +111,23 @@ public class DrawSopNode {
                 //SOP Operation
                 cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
             }
-            cell.setValue(opData);
+            final Data newOpData = new OperationData(opData.getName(), -1);
+            Model.giveId(newOpData);
+            cell.setValue(newOpData);
             return cell;
         } else if (nodeType instanceof String) {
             final String nodeTypeString = (String) nodeType;
             final String sop = "SOP";
-            final String alternative = "+"; //RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");
-            final String arbitraryOrder = "(+)"; //RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", "");
-            final String parallel = "||"; //RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", "");
+            final String alternative = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");
+            final String arbitraryOrder = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", "");
+            final String parallel = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", "");
 
             if (nodeTypeString.equals(sop)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+                cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+                final Data newOpData = new OperationData("", -1);
+                Model.giveId(newOpData);
+                cell.setValue(newOpData);
+                return cell;
             } else if (nodeTypeString.equals(alternative)) {
                 return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
             } else if (nodeTypeString.equals(arbitraryOrder)) {
@@ -100,6 +139,9 @@ public class DrawSopNode {
         return null;
     }
 
+    /**
+     * Dummy method, just to see how to work with {@link SPGraph}.<br/>
+     */
     private void drawExampleSequence() {
 
 //   final public static String TYPE_OPERATION = "operation";
@@ -143,7 +185,8 @@ public class DrawSopNode {
             c.removeFromParent();
         }
 
-        mGraph.addCell(cell8);
+//        mGraph.addCell(cell8);
+        mGraph.insertNewCell(cell4, cell8, false);
 
         mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
     }
