@@ -1,7 +1,9 @@
 package sequenceplanner.algorithms.visualization;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -62,12 +64,13 @@ public class UserInteractionForVisualization {
         mVisualization.arbitraryOrderPartition(rc);
         mVisualization.parallelPartition(rc);
         mVisualization.sequenceing(rc);
-        mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
 
         System.out.println("\n--------------------------------");
         System.out.println("After partition");
         System.out.println(rc.getOsubsetSopNode().toString());
         System.out.println("--------------------------------");
+
+        mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
 
         return true;
     }
@@ -101,20 +104,26 @@ public class UserInteractionForVisualization {
             mOpSelectionTable = new JCheckBox[mOperationList.size()][3];
 
             jp = new JPanel();
-            jp.setLayout(new GridLayout(1+6+mOperationList.size(), 4));
+            jp.setLayout(new GridLayout(1 + 2 + mOperationList.size(), 4));
 
             //Text---------------------------------------------------------------
             jp.add(new JLabel(""));
-            jp.add(new JLabel("To include"));
-            jp.add(new JLabel("To finish"));
-            jp.add(new JLabel("To view"));
+            JLabel jl = null;
+            jl = new JLabel("To include");
+            jl.setToolTipText("Select operations to include in calculations");
+            jp.add(jl);
+            jl = new JLabel("To finish");
+            jl.setToolTipText("Select operations that has to finish");
+            jp.add(jl);
+            jl = new JLabel("To view");
+            jl.setToolTipText("Select operations to view");
+            jp.add(jl);
             //-------------------------------------------------------------------
 
             //Select and DeSelect------------------------------------------------
-            for (int i = 0; i < 3; ++i) {
-               addButtons(i, "Select all", mSButtonArray);
-               addButtons(i, "Deselect all", mDSButtonArray);
-            }//------------------------------------------------------------------
+            addButtons("Select all", mSButtonArray);
+            addButtons("Deselect all", mDSButtonArray);
+            //-------------------------------------------------------------------
 
             //Add operations to JPanel-------------------------------------------
             final Iterator<OperationData> listIterator = mOperationList.iterator();
@@ -147,9 +156,10 @@ public class UserInteractionForVisualization {
             //Layout-------------------------------------------------------------
             setTitle("Operation selection");
             Container c = getContentPane();
-            c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
-
-            c.add(generateButton);
+            c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
+            JPanel jpButton = new JPanel(new GridLayout(1, 1));
+            jpButton.add(generateButton);
+            c.add(jpButton);
             c.add(jp);
             //-------------------------------------------------------------------
 
@@ -181,7 +191,6 @@ public class UserInteractionForVisualization {
                     }
                 }
                 run(allOperationsNode, operationsToViewNode, hasToFinishNode);
-                dispose();
 
             } else if (mSButtonArray[0] == e.getSource()) {
                 changeCheckBoxColumn(0, true);
@@ -219,20 +228,16 @@ public class UserInteractionForVisualization {
             }
         }
 
-        private void addButtons(final int i, final String iButtonText, final JButton[] iButtonArray) {
-            for (int ii = 0; ii < (i + 1); ++ii) {
-                jp.add(new JLabel(""));
-            }
-            JButton button = null;
-            //Select
-            button = new JButton(iButtonText);
-            button.setEnabled(true);
-            button.addActionListener(this);
-//                button.setPreferredSize(new Dimension(5, 5));
-            jp.add(button);
-            iButtonArray[i] = button;
-            for (int ii = (i + 2); ii < 4; ++ii) {
-                jp.add(new JLabel(""));
+        private void addButtons(final String iButtonText, final JButton[] iButtonArray) {
+            jp.add(new JLabel(iButtonText));
+            for (int iLocal = 0; iLocal < 3; ++iLocal) {
+                JButton button = null;
+                button = new JButton("Do");
+                button.setEnabled(true);
+                button.addActionListener(this);
+                button.setPreferredSize(new Dimension(2, 2));
+                jp.add(button);
+                iButtonArray[iLocal] = button;
             }
         }
     }

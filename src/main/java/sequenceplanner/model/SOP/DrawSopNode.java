@@ -87,6 +87,8 @@ public class DrawSopNode {
             while (node.getSuccessorNode() != null) {
                 final Cell cellPred = iNodeCellMap.get(node);
                 final Cell cellSucc = iNodeCellMap.get(node.getSuccessorNode());
+                System.out.println("cellPred " + cellPred.toString());
+                System.out.println("cellSucc " + cellSucc.toString());
                 mGraph.insertNewCell(cellPred, cellSucc, false);
                 node = node.getSuccessorNode();
             }//------------------------------------------------------------------
