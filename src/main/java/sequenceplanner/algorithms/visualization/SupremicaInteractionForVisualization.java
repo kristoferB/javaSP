@@ -37,7 +37,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA();
+        return (Automata) mModule.getDFA(iModuleSubject);
     }
 
     @Override
@@ -161,6 +161,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mModule.saveToWMODFile(iFilePath);
+        return mModule.saveToWMODFile(iFilePath,mModule.getModuleSubject());
     }
 }

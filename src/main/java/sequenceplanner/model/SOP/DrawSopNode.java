@@ -59,13 +59,14 @@ public class DrawSopNode {
 
     /**
      * Doing the addition of nodes to the graph.<br/>
-     * There are some different methods to add a Cell/Node.<br/>
+     * There are some different methods to add a Cell/Node dependent on where in the graph the cell should be added.<br/>
      * @param iRoot
      * @param iNodeCellMap What type of {@link Cell} each {@link ISopNode} is
      */
     private void recursiveCallToAllNodes(final ISopNode iRoot, final Map<ISopNode, Cell> iNodeCellMap) {
         for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
             //First node---------------------------------------------------------
+            //Especially first nodes are strange...
             if (iRoot == mRoot) {
                 mGraph.addCell(iNodeCellMap.get(node));
             } else {
@@ -85,14 +86,55 @@ public class DrawSopNode {
 
             //Successor(s)-------------------------------------------------------
             while (node.getSuccessorNode() != null) {
-                final Cell cellPred = iNodeCellMap.get(node);
-                final Cell cellSucc = iNodeCellMap.get(node.getSuccessorNode());
-                System.out.println("cellPred " + cellPred.toString());
-                System.out.println("cellSucc " + cellSucc.toString());
-                mGraph.insertNewCell(cellPred, cellSucc, false);
-                node = node.getSuccessorNode();
+                final ISopNode successorNode = node.getSuccessorNode();
+                drawSequenceWithRespectToRelation(node, successorNode, iNodeCellMap);
+                //Children to successor node
+                recursiveCallToAllNodes(successorNode, iNodeCellMap);
+                //Update for next round
+                node = successorNode;
             }//------------------------------------------------------------------
         }
+    }
+
+    /**
+     * RETHINK HOW THIS SHOULD BE!!!!!
+     * Adds two cells in sequence with respect to their successor relation.
+     * @param iCellPred predecessor node as {@link Cell}
+     * @param iCellSucc
+     * @param iSuccessorNode
+     * @param iRelation
+     * @param iNodeCellMap
+     */
+    private void drawSequenceWithRespectToRelation(final ISopNode iPredNode, final ISopNode iSuccNode, final Map<ISopNode, Cell> iNodeCellMap) {
+        final Cell cellPred = iNodeCellMap.get(iPredNode);
+        final Cell cellSucc = iNodeCellMap.get(iSuccNode);
+        final int predSuccRelation = iPredNode.getSuccessorRelation();
+
+        mGraph.insertNewCell(cellPred, cellSucc, false);
+
+
+//        if (predSuccRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12) {
+//            mGraph.insertNewCell(cellPred, cellSucc, false);
+//            return;
+//        } else if (predSuccRelation == IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12) {
+//            //Create alternative as successor
+//            final Cell alternativeCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
+//            mGraph.insertNewCell(cellPred, alternativeCell, false);
+//
+//            //Empty right branch
+//            final Cell emptyCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION);
+//            final Data newOpData = new OperationData("", -1);
+//            Model.giveId(newOpData);
+//            emptyCell.setValue(newOpData);
+//            mGraph.insertGroupNode(alternativeCell, null, emptyCell);
+//
+//            //iCellSucc
+//            mGraph.insertGroupNode(alternativeCell, null, cellSucc);
+//
+//            //Update node cell map to get right mapping for later
+//            iNodeCellMap.put(iSuccNode, alternativeCell);
+//            return;
+//        }
     }
 
     /**

@@ -117,6 +117,7 @@ public class RelationIdentification {
                 String eventToLookFor = ISupremicaInteractionForVisualization.EVENT_PREFIX + id + eventType;
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     System.out.println("Mismatch between events in supervisor and subset!");
+                    System.out.println("The supervisor is so strict that not all operations can finish!");
                     return false;
                 }
                 final Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);

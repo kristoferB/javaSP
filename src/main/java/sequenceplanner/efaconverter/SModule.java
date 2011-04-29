@@ -152,15 +152,16 @@ public class SModule {
 
     /**
      * Translates {@link SModule} (this object) to {@link Project}.</br>
-     * {@link Project} extends {@link Automata}.
+     * * {@link Project} extends {@link Automata}.<br/>
+     * @param iModuleSubject {@link ModuleSubject} to translate
      * @return a {@link Project} that can be used as a {@link Automata}.
      */
-    public Project getDFA() {
+    public Project getDFA(final ModuleSubject iModuleSubject) {
 
         Project project = null;
 //        if (variableInclusionCheck()) {
         try {
-            project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
+            project = new ProjectBuildFromWaters(new DocumentManager()).build(iModuleSubject);
 
             for (Automaton automaton : project) {
 //                System.out.println("Automaton: " + automaton.getName());
@@ -177,6 +178,11 @@ public class SModule {
 //        }
         return project;
     }
+    
+    public Project getDFA() {
+        return getDFA(generateTransitions());
+    }
+
 
     private boolean variableInclusionCheck() {
         Set<String> variables = new HashSet<String>();
@@ -266,7 +272,7 @@ public class SModule {
     public void saveToWMODFile() {
         try {
             String filepath = "";
-            JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+            JFileChooser fc = new JFileChooser("C:/Users/patrik/Desktop");
             int fileResult = fc.showSaveDialog(null);
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
@@ -283,21 +289,26 @@ public class SModule {
             t.printStackTrace();
         }
     }
+    
+    public boolean saveToWMODFile(final String iFilePath) {
+        generateTransitions();
+        return saveToWMODFile(iFilePath, getModuleSubject());
+    }
 
     /**
      * Save to wmod file given as parameter.<br/>
      * @param iFilePath path to file
+     * @param iModuleSubject the {@link ModuleSubject} to save
      * @return true if save was ok else false
      */
-    public boolean saveToWMODFile(final String iFilePath) {
-        generateTransitions();
+    public boolean saveToWMODFile(final String iFilePath, final ModuleSubject iModuleSubject) {
         try {
-            File file = new File(iFilePath);
-            getModuleSubject().setName(file.getName().replaceAll(".wmod", ""));
-            ModuleSubjectFactory factory = new ModuleSubjectFactory();
+            final File file = new File(iFilePath);
+            iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));
+            final ModuleSubjectFactory factory = new ModuleSubjectFactory();
             // Save module to file
             JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
-            marshaller.marshal(getModuleSubject(), file);
+            marshaller.marshal(iModuleSubject, file);
 
             return true;
         } catch (Exception t) {

@@ -82,23 +82,22 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
         Set<ISopNode> returnSet = new HashSet<ISopNode>();
 
         //Go through children
-        for (final ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
-            //Add node to set
-            returnSet.add(node);
+        for (ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
 
-            //Go to successor
-            final ISopNode successor = node.getSuccessorNode();
-            if (successor != null) {
-                //Add successor
-                returnSet.add(successor);
-                returnSet.addAll(getNodes(successor, iGoDeep)); //next successor
+            //Go trough successor (first node included)
+            while (node != null) {
+                returnSet.add(node);
+
+                //Go deep
+                if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
+                    returnSet.addAll(getNodes(node, iGoDeep));
+                }
+
+                node = node.getSuccessorNode(); //Successor to node
             }
 
-            //Go deep
-            if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
-                returnSet.addAll(getNodes(node, iGoDeep));
-            }
         }
+
         return returnSet;
     }
 

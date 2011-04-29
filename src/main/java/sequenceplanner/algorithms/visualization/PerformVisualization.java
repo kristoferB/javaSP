@@ -71,13 +71,11 @@ public class PerformVisualization implements IPerformVisualization {
     public RelationContainer identifyRelations() {
         RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath);
         switch (rfos.run()) {
-            case 0:
+            case 0: //Errors have occured
                 return null;
-            case 1:
-                rfos.getmRC().setRootNode(null);
-                System.out.println("No supervisor found!");
-                return rfos.getmRC(); //No supervisor found
-            case 2:
+            case 1: //No supervisor found -> RelationsForOperationSet.ismSupervisorExists() returns false;
+                return null;
+            case 2: //Normal behaviour!
                 break;
         }
         return rfos.getmRC();
