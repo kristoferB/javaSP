@@ -118,7 +118,7 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
-        final Integer count = mModel.getCounter() + 1;
+        final Integer count = mModel.getCounter();
         return insertOperation("OP" + count);
     }
 

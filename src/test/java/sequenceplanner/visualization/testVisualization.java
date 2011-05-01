@@ -1,17 +1,16 @@
 package sequenceplanner.visualization;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import sequenceplanner.algorithms.visualization.Visualization;
+import sequenceplanner.algorithms.visualization.RelationContainer;
+import sequenceplanner.algorithms.visualization.RelationIdentification;
+import sequenceplanner.algorithms.visualization.RelationPartition;
+import sequenceplanner.algorithms.visualization.PerformVisualization;
 import static org.junit.Assert.*;
-import sequenceplanner.efaconverter.ModelParser;
-import sequenceplanner.efaconverter.OpNode;
-import sequenceplanner.efaconverter.OperationSequencer;
-import sequenceplanner.efaconverter.VisualizationOfOperationSubset;
-import sequenceplanner.efaconverter.convertSeqToEFA;
-import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
@@ -19,8 +18,6 @@ import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData;
-import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
@@ -29,9 +26,7 @@ import sequenceplanner.view.operationView.OperationView;
 public class testVisualization {
 
     static SP mSP;
-//    SP mSP = new SP();
-    ModelParser mModelparser;
-    OperationSequencer mOperationSequencer;
+    static PerformVisualization mVisualization;
 
     public testVisualization() {
     }
@@ -41,92 +36,303 @@ public class testVisualization {
         mSP = new SP();
     }
 
-//    @Test
-    public void test1() {
-        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferTASEexample.sopx");
+    @Before
+    public void setUpMethod() throws Exception {
+        //New PerformVisualization
+        mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
-        this.mModelparser = new ModelParser(mSP.getModel());
-        this.mOperationSequencer = new OperationSequencer(mModelparser);
-        Set<OpNode> tops = mOperationSequencer.sequenceOperations();
-
-        convertSeqToEFA seqToEFA = new convertSeqToEFA(tops, mModelparser);
-        SpEFAutomata automata = seqToEFA.createSpEFA();
-        seqToEFA.createWmodFile(automata);
+        //Add all operations to Oset
+//        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+//        mVisualization.addOset(allOpSet);
     }
 
     /**
-     * Not working with opView.save ...
+     * Test of: Arbitrary order and alternative
+     */
+    @Test
+    public void test1() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(2006);
+        setIds.add(2007);
+        setIds.add(2008);
+        setIds.add(2009);
+        setIds.add(2010);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(2006);
+        subsetIds.add(2007);
+        subsetIds.add(2008);
+        subsetIds.add(2009);
+        subsetIds.add(2010);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(2006);
+        finishSetIds.add(2007);
+        finishSetIds.add(2010);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+
+        workWithAddedData();
+
+    }
+
+    /**
+     * The example in the Kristofer's TASE paper.<br/>
+     * Sequence Planning with Multiple and Coordinated Sequences of Operations
      */
 //    @Test
-    public void testForVisualization() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
-
-        ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
-        mSP.getGUIModel().createNewOpView(vd);
-        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
-
-        VisualizationOfOperationSubset v;
-        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
-
-        assertTrue(v.run());
-
-        opView.save(false, true);
-        mSP.saveToSOPXFile("C:/Users/patrik/Desktop/visualizationTestResult.sopx");
-
-    }
-
-//    @Test
-    public void testForRelations() {
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/visualizationTestHierarchy2.sopx");
-
-        ViewData vd = new ViewData("TestViewingOutput", mSP.getUpdatedIdCount());
-        mSP.getGUIModel().createNewOpView(vd);
-        OperationView opView = mSP.getGUIModel().getOperationViews(vd);
-
-        VisualizationOfOperationSubset v;
-        v = new VisualizationOfOperationSubset(new ModelParser(mSP.getModel()), opView);
-
-        assertTrue(v.run());
-    }
-
-    @Test
-    public void testVisualizationUseingSopNode() {
+    public void KristoferPPURivetingTASEExample_selfcontainedoperations() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
-        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
-        System.out.println(allOpSet.toString());
+        //Add operations---------------------------------------------------------
+        //All operations
+        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
+        mVisualization.addOset(allOpSet);
 
+        //Operations to view
         Set<Integer> subsetIds = new HashSet<Integer>();
-        subsetIds.add(1006); //op1
-        subsetIds.add(1010); //op5
-        subsetIds.add(1012); //op7
+        subsetIds.add(1007); //op2
+        subsetIds.add(1022); //op3a
         subsetIds.add(1015); //op10
-        SopNode subOpSet = getOperations(subsetIds);
-        System.out.println(subOpSet.toString());
+        subsetIds.add(1017); //op12
+        subsetIds.add(1020); //op15
+        ISopNode subOpSet = getOperations(subsetIds);
+        System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
+        assertTrue(mVisualization.addOsubset(subOpSet));
 
-        Visualization v = new Visualization(mSP.getModel());
+        //Operations that has to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1010); //op5
+        finishSetIds.add(1015); //op10
+        finishSetIds.add(1020); //op15
+        ISopNode finishSet = getOperations(finishSetIds);
+        System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
 
-        v.addOset(allOpSet);
-        assertTrue(v.addOsubset(subOpSet));
-
-        v.identifyRelations();
-
-
+        workWithAddedData();
     }
 
-    public SopNode getOperationsInModel(TreeNode iTree) {
-        SopNode node = new SopNode();
+    /**
+     * Test of: Hierarchy
+     */
+//    @Test
+    public void test2() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1006);
+        setIds.add(1007);
+        setIds.add(1008);
+        setIds.add(1009);
+        setIds.add(1010);
+        setIds.add(1017);
+        setIds.add(1025);
+        setIds.add(1033);
+        setIds.add(1034);
+        setIds.add(1053);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1006);
+        subsetIds.add(1007);
+        subsetIds.add(1010);
+        subsetIds.add(1017);
+        subsetIds.add(1025);
+        subsetIds.add(1033);
+        subsetIds.add(1034);
+        subsetIds.add(1053);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1006);
+        finishSetIds.add(1007);
+        finishSetIds.add(1008);
+        finishSetIds.add(1009);
+        finishSetIds.add(1010);
+        finishSetIds.add(1017);
+        finishSetIds.add(1025);
+        finishSetIds.add(1033);
+        finishSetIds.add(1034);
+        finishSetIds.add(1053);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: grouping in {@link RelationPartition}
+     */
+//    @Test
+    public void test3() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1104);
+        setIds.add(1105);
+        setIds.add(1106);
+        setIds.add(1107);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1104);
+        subsetIds.add(1105);
+        subsetIds.add(1106);
+        subsetIds.add(1107);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1104);
+        finishSetIds.add(1105);
+        finishSetIds.add(1106);
+        finishSetIds.add(1107);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: node resolving after relation partition
+     */
+//    @Test
+    public void test4() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(1108);
+        setIds.add(1109);
+        setIds.add(1110);
+        setIds.add(1111);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(1108);
+        subsetIds.add(1109);
+        subsetIds.add(1110);
+        subsetIds.add(1111);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        finishSetIds.add(1111);
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: How many operations can the PerformVisualization methods handle?.<br/>
+     * Either all operations in parallel or all operaitons in straigt sequence.<br/>
+     * For straigt sequence: >200 operations without problem
+     * For parallel: >9 operations
+     * For parallel: 10 operations -> 4e5 transitions to go through in {@link RelationIdentification}...
+     */
+//    @Test
+    public void test5() {
+        int nbrOfOperations = 50;
+        boolean withSequencePrecondition = true; //operations are in parallel if false
+
+        final ISopNode sop = new SopNode();
+
+        //First operation
+        final OperationData firstOp = mSP.insertOperation();
+        new SopNodeToolboxSetOfOperations().createNode(firstOp, sop);
+
+        //Include nbrOfOperations nbr of operations.
+        for (; nbrOfOperations > 0; --nbrOfOperations) {
+            final OperationData opData = mSP.insertOperation();
+            if (withSequencePrecondition) {
+                //Add precondition that operation with id-1 has to be finished
+                final OperationData.SeqCond sq = new OperationData.SeqCond(opData.getId() - 1, 2);
+                final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
+                final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
+                llOR.add(sq);
+                llAND.add(llOR);
+                opData.setSequenceCondition(llAND);
+            }
+            new SopNodeToolboxSetOfOperations().createNode(opData, sop);
+        }
+
+        mVisualization.addOset(sop);
+        assertTrue(mVisualization.addOsubset(sop)); //View all operations
+        assertTrue(mVisualization.addToOfinish(sop)); //All operations have to finish
+
+        workWithAddedData();
+    }
+
+    private static void workWithAddedData() {
+        RelationContainer rc = mVisualization.identifyRelations();
+        assertTrue(rc != null);
+
+        assertTrue(mVisualization.hierarchicalPartition(rc));
+        assertTrue(mVisualization.alternativePartition(rc));
+        assertTrue(mVisualization.arbitraryOrderPartition(rc));
+        assertTrue(mVisualization.parallelPartition(rc));
+        assertTrue(mVisualization.sequenceing(rc));
+
+        System.out.println("\n--------------------------------");
+        System.out.println("After partition");
+        System.out.println(rc.getOsubsetSopNode().toString());
+        System.out.println("--------------------------------");
+    }
+
+    /**
+     * To get all operations that are children to the {@link TreeNode} parameter.<br/>
+     * The operations are given as child nodes to a {@link ISopNode}.<br/>
+     * @param iTree preferably the operation root
+     * @return operations as in {@link ISopNode}
+     */
+    public static ISopNode getOperationsInModel(TreeNode iTree) {
+        final ISopNode returnNode = new SopNode();
         for (int i = 0; i < iTree.getChildCount(); ++i) {
             OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
             ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
-            toolbox.createNode(opData, node);
+            toolbox.createNode(opData, returnNode);
         }
-        return node;
+        return returnNode;
     }
 
-    public SopNode getOperations(Set<Integer> iSet) {
-        SopNode returnSop = new SopNode();
-        SopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
+    /**
+     * Get operations in {@link ISopNode}.<br/>
+     * @param iSet ids of operations
+     * @return operations as in {@link ISopNode}
+     */
+    public static ISopNode getOperations(Set<Integer> iSet) {
+        ISopNode returnSop = new SopNode();
+        ISopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
         for (ISopNode node : sop.getFirstNodesInSequencesAsSet()) {
             if (node.getNodeType() instanceof OperationData) {
                 OperationData opData = (OperationData) node.getNodeType();

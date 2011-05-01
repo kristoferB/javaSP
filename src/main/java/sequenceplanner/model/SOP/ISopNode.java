@@ -24,5 +24,13 @@ public interface ISopNode {
 
     void setSuccessorNode(ISopNode iSuccessor);
 
+    int getSuccessorRelation();
+
+    void setSuccessorRelation(int iRelation);
+
     String typeToString();
+
+    String inDepthToString();
+
+    String inDepthToString(String prefix);
 }

@@ -3,6 +3,7 @@ package sequenceplanner.model.SOP;
 import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * DOES NOT FOLLOW DESCRIPTIONS FOR METHODS GIVEN IN INTERFACE!!!<br/>
@@ -32,16 +33,16 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void drawNode(ISopNode iRootNode, Object iView) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void drawNode(ISopNode iRootNode, OperationView iView) {
+        new DrawSopNode(iRootNode, iView.getGraph());
     }
 
     @Override
-    public Set<Object> getOperations(ISopNode iRootNode) {
-        Set<Object> opSet = new HashSet<Object>();
-        for (final ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
+    public Set<OperationData> getOperations(ISopNode iRootNode, boolean iGoDeep) {
+        Set<OperationData> opSet = new HashSet<OperationData>();
+        for (final ISopNode node : getNodes(iRootNode, iGoDeep)) {
             if (node.getNodeType() instanceof OperationData) {
-                opSet.add(node.getNodeType());
+                opSet.add((OperationData) node.getNodeType());
             }
         }
         return opSet;
@@ -54,8 +55,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
      * @return true if "operations in iSubsetToTest" \subseteq "operations in iSet" else false
      */
     public boolean operationsAreSubset(ISopNode iSubsetToTest, ISopNode iSet) {
-        final Set<Object> opSet = getOperations(iSet);
-        final Set<Object> opSubset = getOperations(iSubsetToTest);
+        final Set<OperationData> opSet = getOperations(iSet, true);
+        final Set<OperationData> opSubset = getOperations(iSubsetToTest, true);
         return opSet.containsAll(opSubset);
     }
 
@@ -66,11 +67,52 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public void removeNode(ISopNode iNodeToRemove, ISopNode iRootNode) {
-        iRootNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+        if (iNodeToRemove != null && iRootNode != null) {
+            iRootNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+        }
     }
 
     @Override
     public void resolve(ISopNode iRootNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        new ResolveSopNode(iRootNode);
+    }
+
+    @Override
+    public Set<ISopNode> getNodes(ISopNode iRootNode, boolean iGoDeep) {
+        Set<ISopNode> returnSet = new HashSet<ISopNode>();
+
+        //Go through children
+        for (ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
+
+            //Go trough successor (first node included)
+            while (node != null) {
+                returnSet.add(node);
+
+                //Go deep
+                if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
+                    returnSet.addAll(getNodes(node, iGoDeep));
+                }
+
+                node = node.getSuccessorNode(); //Successor to node
+            }
+
+        }
+
+        return returnSet;
+    }
+
+    @Override
+    public ISopNode getBottomSuccessor(final ISopNode iNode) {
+        if (iNode == null) {
+            return null;
+        }
+
+        ISopNode succ = iNode;
+
+        while (succ.getSuccessorNode() != null) {
+            succ = succ.getSuccessorNode();
+        }
+
+        return succ;
     }
 }

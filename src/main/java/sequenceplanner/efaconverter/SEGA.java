@@ -4,6 +4,7 @@ import java.util.Set;
 import org.supremica.external.avocades.common.EGA;
 
 /**
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * Help class for creation of transitions with event, guards and actions
  * @author patrik
  */

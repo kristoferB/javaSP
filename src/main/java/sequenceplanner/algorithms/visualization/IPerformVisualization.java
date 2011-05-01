@@ -1,22 +1,24 @@
 package sequenceplanner.algorithms.visualization;
 
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * Interface for how to visualize/project the relations between the operations in a subset with respect to some set.<br/>
  * Set: Oset, in most cases all operations def in SP. The operations that the relations should be based on.<br/>
  * Subset: Osubset s.t. Osubset \subseteq Oset, the subset of operations that should be visualized in a SOP.<br/>
  * HasToFinishSet: Ofinish s.t. Ofinish \subseteq Oset, a user can select what operations that has to finish (gives Mk = {Of} instead of Mk = {Oi,Oe,Of}).<br/>
- * The Ofinish set affects non-blocking synthesis.<br/>
+ * The Ofinish set affects the non-blocking synthesis.<br/>
  * @author patrik
  */
-public interface IVisualization {
+public interface IPerformVisualization {
 
     /**
      * Add operations to Oset.<br/>
      * @param iSopNode operations to base relation on.
+     * @return true if ok else false
      */
-    public void addOset(final ISopNode iSopNode);
+    public boolean addOset(final ISopNode iSopNode);
 
     /**
      * Add Osubset as operations in {@link ISopNode}.<br/>
@@ -39,47 +41,47 @@ public interface IVisualization {
      * -> identify relations for each operation pair in Osubset -> create ARelationsForOperationSet.<br/>
      * @return The relations according to interface ARelationsForOperationSet
      */
-    public RelationsForOperationSet identifyRelations();
+    public RelationContainer identifyRelations();
 
     /**
-     * Algorithm for hierarchical partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @return a {@link ISopNode} where operations are hierarchical partitioned
+     * Algorithm for hierarchical partition of operations in an {@link ISopNode}.<br/>
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode hierarchicalPartition(final ISopNode iSopNode);
+    public boolean hierarchicalPartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are alternative partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode alternativePartition(final ISopNode iSopNode);
+    public boolean alternativePartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for arbitrary order partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are arbitrary order partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode arbitraryOrderPartition(final ISopNode iSopNode);
+    public boolean arbitraryOrderPartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for parallel partition of operations in {@link ISopNode}.<br/>
-     * @param iSopNode operations to partition
-     * @returna {@link ISopNode} where operations are parallel partitioned
+     * @param ioNode contains operations to partition and their relations
+     * @return true if ok else false
      */
-    public ISopNode parallelPartition(final ISopNode iSopNode);
+    public boolean parallelPartition(IRelationContainer ioRC);
 
     /**
      * Algorithm for sequenceing of operations in {@link ISopNode}.<br/>
      * @param iSopNode operations to sequence
-     * @returna {@link ISopNode} where operations are sequenced
+     * @return true if ok else false
      */
-    public ISopNode sequenceing(final ISopNode iSopNode);
+    boolean sequenceing(IRelationContainer ioRC);
 
     /**
      * Show {@link ISopNode} as view to user.<br/>
      * @param iSopNode operations to visualize
      * @return true if possible to create view else false
      */
-    public boolean sopNodeToGraphicalView(ISopNode iSopNode);
+    public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView);
 }

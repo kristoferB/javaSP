@@ -37,7 +37,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA();
+        return (Automata) mModule.getDFA(iModuleSubject);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
             //Add integer variable for operation---------------------------------
             Integer marking = null;
-            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet).contains(node)) {
+            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet,false).contains((OperationData) node.getNodeType())) {
                 marking = 2;
             }
             mModule.addIntVariable(varName, 0, 2, 0, marking);
@@ -157,5 +157,10 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean saveSupervisorAsWmodFile(String iFilePath) {
+        return mModule.saveToWMODFile(iFilePath,mModule.getModuleSubject());
     }
 }

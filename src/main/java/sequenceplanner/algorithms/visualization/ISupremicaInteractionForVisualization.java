@@ -17,7 +17,7 @@ public interface ISupremicaInteractionForVisualization {
     String EVENT_UP = "up";
     String EVENT_DOWN = "down";
     String OPERATION_VARIABLE_PREFIX = "o";
-    String BIG_FLOWER_EFA_NAME = "Big flower";
+    String BIG_FLOWER_EFA_NAME = "Single";
 
     /**
      * DOES NOT HANDLE VARIABLES IN CONDITIONS!!!<br/>
@@ -50,5 +50,12 @@ public interface ISupremicaInteractionForVisualization {
      * @return keyset: event, valueset: states where key is enabled
      */
     Map<String,Set<String>> getStateSpaceForEventSetMap(Automaton iAutomaton);
+
+    /**
+     * To save a Module as wmod file
+     * @param iFilePath wherer the wmod file should be saved
+     * @return true if ok else false
+     */
+    boolean saveSupervisorAsWmodFile(String iFilePath);
 
 }
