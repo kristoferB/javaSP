@@ -10,6 +10,7 @@ import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.treeView.TreeViewController;
 
 /**
@@ -25,13 +26,20 @@ public class GUIController {
     private GUIView guiView;
     //TreeviewListener
     private TreeViewController treeViewController;
+    private OperationViewController opViewController;
 
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
-        //  guiModel.createNewOpView();
+
+        //Set observer on model
+        opViewController = new OperationViewController();
+        guiModel.getModel().addObserver(opViewController);
+        //Add first operation view to opViewController
+        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+
         //  addNewOpTab();
         addListeners();
 

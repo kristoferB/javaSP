@@ -3,6 +3,7 @@ package sequenceplanner.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Stack;
 import java.util.TreeMap;
 import javax.swing.event.TreeModelListener;
@@ -31,7 +32,7 @@ import sequenceplanner.view.operationView.Constansts;
 
 
 
-public class Model implements IModel {
+public class Model extends Observable implements IModel{
 
    public static final String VARIABLE_ROOT_NAME = "Variables";
 
@@ -89,6 +90,7 @@ public class Model implements IModel {
 
       nameCache = new NameCacheMap();
       operationViews = new TreeMap<Integer, ViewData>();
+      
    }
 
    @Override
@@ -222,9 +224,11 @@ public class Model implements IModel {
 
          if (node.getNodeData() instanceof OperationData) {
              OperationData od = (OperationData) node.getNodeData();
-            saveNode(data[i], operationRoot);
+             setChanged();
+             notifyObservers(od);
+             saveNode(data[i], operationRoot);
          } else {
-            logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
+             logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
          }
 
       }
