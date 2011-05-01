@@ -572,42 +572,36 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
 
-//---------------
-
 //------- Docking the undocked windows ---------
 
-//        for (int i = 1; i <= rootViewMap.getViewCount(); i++) {
-//
-//            rootViewMap.getView(i).dock();
-//            rootViewMap.getView(i).restore();
-//        }
+        for (int i = 1; i <= rootViewMap.getViewCount(); i++) {
+
+            rootViewMap.getView(i).dock();
+            rootViewMap.getView(i).restore();
+        }
         for (int i = 1; i <= opViewMap.getViewCount(); i++) {
 
+            if(opViewMap.getView(i) != null){
             opViewMap.getView(i).dock();
             opViewMap.getView(i).restore();
+            }
         }
         for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
-            System.out.println(i);
             editorViewMap.getView(i).dock();
             editorViewMap.getView(i).restore();
         }
         for (int i = 1; i <= treeViewMap.getViewCount(); i++) {
-            System.out.println(i);
             treeViewMap.getView(i).dock();
             treeViewMap.getView(i).restore();
         }
         for (int i = 1; i <= consoleViewMap.getViewCount(); i++) {
-            System.out.println(i);
             consoleViewMap.getView(i).dock();
             consoleViewMap.getView(i).restore();
         }
         for (int i = 1; i <= objectViewMap.getViewCount(); i++) {
-            System.out.println(i);
             objectViewMap.getView(i).dock();
             objectViewMap.getView(i).restore();
         }
-
-
 
         closeAllViews();
         LinkedList<OperationView> modelViews = guiModel.getOperationViews();
@@ -624,16 +618,30 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         if (resourceViewOpen == true) {
             addResourceView();
         }
+
+        //Recreate operation views window and view map
         operationRoot = DockingUtil.createRootWindow(opViewMap, true);
+        operationRootView = new View("Operation Views", null, operationRoot);
+        operationRootView.getViewProperties().setAlwaysShowTitle(false);
+        operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
+        operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
+        rootViewMap.addView(1, operationRootView);
+
+        //Set original rootwindow proportions
         rootWindow.setWindow(
-        new SplitWindow(false, 0.85f, //Console takes up 10% of the frame.
-        new SplitWindow(true, 0.15f, treeRootView,
-        new SplitWindow(true, 0.7f, operationRootView,
-        new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
-        consoleRoot));
+                new SplitWindow(false, 0.85f, //Console takes up 10% of the frame.
+                new SplitWindow(true, 0.15f, treeRootView,
+                new SplitWindow(true, 0.7f, operationRootView,
+                new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
+                consoleRootView));
+
         mainDocks.restore();
     }
 
+    /**
+     * Set focus to the operation view containing the view data sent as parameter.
+     * @param data ViewData
+     */
     public void setFocused(ViewData data) {
         System.out.println("Not yet implemented!");
     }
