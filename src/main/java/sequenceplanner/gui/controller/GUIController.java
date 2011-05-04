@@ -8,7 +8,7 @@ import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
-import sequenceplanner.gui.view.OperationWindowListener;
+//import sequenceplanner.gui.view.OperationWindowListener;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -81,7 +81,7 @@ public class GUIController {
     //private methods
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
-        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
+        //guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
     }
 
     public void printToConsole(String text) {

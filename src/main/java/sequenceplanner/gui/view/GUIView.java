@@ -355,18 +355,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Reduced-order EFA
      *
      */
-<<<<<<< HEAD
-    private JMenu fileMenu, edit, project, convert, mp, em;
-    private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
-            open, save, saveAs, close, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP,
-            opSequences, reduceEFA;
-=======
-    private JMenu fileMenu, edit, project, convert, mp, windows, visualization;
+
+    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization;
->>>>>>> 324847d4470ad24ffd8c75110eca80e0e93a5587
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization,
+            opSequences, reduceEFA;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -408,13 +402,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
         this.add(mp);
 
-<<<<<<< HEAD
         //Efficient Model menu
         em = new JMenu("Efficient Model");
         em.add(opSequences = new JMenuItem("Identify operation sequences"));
         em.add(reduceEFA = new JMenuItem("Reduced-order EFA"));
         this.add(em);
-=======
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
@@ -423,7 +415,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         windows = new JMenu("Windows");
         windows.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(windows);
->>>>>>> 324847d4470ad24ffd8c75110eca80e0e93a5587
 
         //Add menues to menubar
         mb.add(fileMenu);
@@ -431,12 +422,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(project);
         mb.add(convert);
         mb.add(mp);
-<<<<<<< HEAD
         mb.add(em);
-=======
         mb.add(windows);
         mb.add(visualization);
->>>>>>> 324847d4470ad24ffd8c75110eca80e0e93a5587
         return mb;
 
 
