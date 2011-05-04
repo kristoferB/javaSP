@@ -35,7 +35,7 @@ import org.supremica.automata.VariableHelper;
 import org.supremica.external.avocades.common.Module;
 
 /**
- *
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * @author patrik
  */
 public class SModule {
@@ -64,8 +64,12 @@ public class SModule {
         getModuleSubject().setComment(comment);
     }
 
-    public void addComment(String comment) {
-        setComment(getModuleSubject().getComment() + "\n" + comment);
+    public void addComment(String iComment) {
+        if (getModuleSubject().getComment() == null) {
+            setComment(iComment);
+        } else {
+            setComment(getModuleSubject().getComment() + "\n" + iComment);
+        }
     }
 
     /**
@@ -114,36 +118,71 @@ public class SModule {
                 test = test + opNode.getStringId() + "_";
             }
         }
+        for (OpNode opNode : iModelParser.getOperations()) {
+            final String test2 = test.replaceFirst(opNode.getStringId(), "");
+            if (test2.contains(opNode.getStringId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118
+     * @return true if IDs are ok else false
+     */
+    public boolean testIDs(final Set<Integer> iSet) {
+        String test = "";
+
+        for (final Integer id : iSet) {
+            if (test.contains(Integer.toString(id))) {
+                return false;
+            } else {
+                test = test + Integer.toString(id) + "_";
+            }
+        }
+        for (final Integer id : iSet) {
+            final String test2 = test.replaceFirst(Integer.toString(id), "");
+            if (test2.contains(Integer.toString(id))) {
+                return false;
+            }
+        }
         return true;
     }
 
     /**
      * Translates {@link SModule} (this object) to {@link Project}.</br>
-     * {@link Project} extends {@link Automata}.
+     * * {@link Project} extends {@link Automata}.<br/>
+     * @param iModuleSubject {@link ModuleSubject} to translate
      * @return a {@link Project} that can be used as a {@link Automata}.
      */
-    public Project getDFA() {
+    public Project getDFA(final ModuleSubject iModuleSubject) {
 
         Project project = null;
 //        if (variableInclusionCheck()) {
-            try {
-                project = new ProjectBuildFromWaters(new DocumentManager()).build(generateTransitions());
+        try {
+            project = new ProjectBuildFromWaters(new DocumentManager()).build(iModuleSubject);
 
-                for (Automaton automaton : project) {
-                    System.out.println("Automaton: " + automaton.getName());
-                    for (TransitionProxy tp : automaton.getTransitions()) {
-                        System.out.println("Event: " + tp.getEvent().getName());
-                    }
+            for (Automaton automaton : project) {
+//                System.out.println("Automaton: " + automaton.getName());
+                for (TransitionProxy tp : automaton.getTransitions()) {
+//                    System.out.println("Event: " + tp.getEvent().getName());
                 }
-
-            } catch (EvalException e) {
-                System.out.println(e.toString());
             }
+
+        } catch (EvalException e) {
+            System.out.println(e.toString());
+        }
 //        } else {
 //            System.out.println("No variables appears in guards or actions for automata. I will not go on!");
 //        }
         return project;
     }
+    
+    public Project getDFA() {
+        return getDFA(generateTransitions());
+    }
+
 
     private boolean variableInclusionCheck() {
         Set<String> variables = new HashSet<String>();
@@ -227,10 +266,13 @@ public class SModule {
         }
     }
 
+    /**
+     * User is given dialog to select file name and path.<br/>
+     */
     public void saveToWMODFile() {
         try {
             String filepath = "";
-            JFileChooser fc = new JFileChooser("C:\\Documents and Settings\\EXJOBB SOCvision\\Desktop");
+            JFileChooser fc = new JFileChooser("C:/Users/patrik/Desktop");
             int fileResult = fc.showSaveDialog(null);
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
@@ -246,5 +288,32 @@ public class SModule {
         } catch (Exception t) {
             t.printStackTrace();
         }
+    }
+    
+    public boolean saveToWMODFile(final String iFilePath) {
+        generateTransitions();
+        return saveToWMODFile(iFilePath, getModuleSubject());
+    }
+
+    /**
+     * Save to wmod file given as parameter.<br/>
+     * @param iFilePath path to file
+     * @param iModuleSubject the {@link ModuleSubject} to save
+     * @return true if save was ok else false
+     */
+    public boolean saveToWMODFile(final String iFilePath, final ModuleSubject iModuleSubject) {
+        try {
+            final File file = new File(iFilePath);
+            iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));
+            final ModuleSubjectFactory factory = new ModuleSubjectFactory();
+            // Save module to file
+            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+            marshaller.marshal(iModuleSubject, file);
+
+            return true;
+        } catch (Exception t) {
+            t.printStackTrace();
+        }
+        return false;
     }
 }

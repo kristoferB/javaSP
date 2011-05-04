@@ -66,11 +66,14 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     protected mxGraphOutline outline = null;
     JSplitPane pane;
 
+    private boolean isClosed;
+
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
         updateName();
+        isClosed = false;
 
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
@@ -128,7 +131,22 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    /**
+     * Method for checking if the view is closed or not
+     * @return boolean true if closed else false
+     */
+    public boolean isClosed(){
+        return isClosed;
+    }
 
+    /**
+     * Sets the isClosed variable to true or false
+     * @param closed true if closed else false
+     */
+    public void setClosed(boolean closed){
+        isClosed = closed;
+    }
     public boolean isChanged() {
         return changed;
     }
@@ -281,6 +299,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //TODO maby error with id = -1;
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
+            OperationData od = (OperationData) data[0].getNodeData();
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);

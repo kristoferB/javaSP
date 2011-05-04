@@ -7,7 +7,7 @@ import javax.swing.JTextArea;
 import org.supremica.external.avocades.common.EFA;
 
 /**
- *
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * @author patrik
  */
 public class SEFA {
@@ -21,6 +21,7 @@ public class SEFA {
     final static String EVENT = "event";
     final static String GUARD = "guard";
     final static String ACTION = "action";
+    public final static String SINGLE_LOCATION_NAME = "pm";
 
     public SEFA(String name, SModule sm) {
         efa = new EFA(name, sm.getModule());
@@ -63,8 +64,12 @@ public class SEFA {
 
     }
 
+    /**
+     * Requires that there exists a location in this object with label "pm".<br/>
+     * @param ega
+     */
     public void addStandardSelfLoopTransition(SEGA ega) {
-        addTransition("pm", "pm", ega.getEvent(), ega.getGuard(), ega.getAction());
+        addTransition(SINGLE_LOCATION_NAME, SINGLE_LOCATION_NAME, ega.getEvent(), ega.getGuard(), ega.getAction());
     }
 }
 

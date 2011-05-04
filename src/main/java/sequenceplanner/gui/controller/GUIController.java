@@ -4,12 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
-
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.gui.view.OperationWindowListener;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.treeView.TreeViewController;
 
 import sequenceplanner.efficientModel.OperationSequences;
@@ -24,17 +26,23 @@ public class GUIController {
     //Instances of the model and view.
     private GUIModel guiModel;
     private GUIView guiView;
-
     //TreeviewListener
     private TreeViewController treeViewController;
+    private OperationViewController opViewController;
 
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
-      //  guiModel.createNewOpView();
-      //  addNewOpTab();
+
+        //Set observer on model
+        opViewController = new OperationViewController();
+        guiModel.getModel().addObserver(opViewController);
+        //Add first operation view to opViewController
+        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+
+        //  addNewOpTab();
         addListeners();
 
 
@@ -50,6 +58,7 @@ public class GUIController {
         guiView.addSaveL(new SaveListener());
         guiView.addSaveAsL(new SaveAsListener());
         guiView.addCloseL(new CloseListener());
+        guiView.addDefWindL(new DefaultListener());
         guiView.addSaveEFAoL(new SaveEFAoListener());
         guiView.addSaveEFArL(new SaveEFArListener());
         guiView.addSaveCostL(new SaveCostListener());
@@ -65,22 +74,35 @@ public class GUIController {
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
+        guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
     }
     //Listener classes
 
     //private methods
-    private void addNewOpTab(){
-         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+    private void addNewOpTab() {
+        guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
     }
 
-    public void printToConsole(String text){
+    public void printToConsole(String text) {
         guiView.printToConsole(text);
     }
-    public void addNewOpTab(ViewData data){
-        for(OperationView op : guiModel.getOperationViews()){
-            System.out.println(op.getName());
+
+    /**
+     * Creates a new Operations View in the GUIModel using the
+     * ViewData. If an operation with the same name exists,
+     * this method shifts focus to that Operation View instead.
+     *
+     * @param data ViewData on which the operationview is based
+     */
+    public void addNewOpTab(ViewData data) {
+        if (!isOpened(data)) {
+            guiModel.createNewOpView(data);
+            addNewOpTab();
+        } else {
+            guiView.setFocused(data);
+            printToConsole("Already open!");
         }
-        guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
     }
 
     //File menu listenrs
@@ -121,6 +143,7 @@ public class GUIController {
     }
 
     class AddAllListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel.addAllOperations();
@@ -160,8 +183,16 @@ public class GUIController {
             guiView.printToConsole("Not supported yet.");
         }
     }
-    //Convert menu listeners
 
+    class DefaultListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            defaultWindows();
+        }
+    }
+
+    //Convert menu listeners
     class SaveEFAoListener implements ActionListener {
 
         @Override
@@ -252,7 +283,7 @@ public class GUIController {
         }
     }
 
-    class EditorTreeModelListener implements TreeModelListener{
+    class EditorTreeModelListener implements TreeModelListener {
 
         @Override
         public void treeNodesChanged(TreeModelEvent e) {
@@ -273,32 +304,69 @@ public class GUIController {
         public void treeStructureChanged(TreeModelEvent e) {
             guiView.updatePropertyView();
         }
-
     }
 
-    class SavePropViewListener implements ActionListener{
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                guiView.getPropertyView().saveSettings();
+    class SavePropViewListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            guiView.getPropertyView().saveSettings();
+        }
+    }
+
+    class BruteForceVisualizationListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            guiModel.createNewOpView();
+            final OperationView opView = guiModel.getOperationViews().getLast();
+            opView.setName("Projection" + guiModel.getModel().getCounter());
+            new UserInteractionForVisualization(opView,guiModel.getModel());
+            addNewOpTab();
+            
+        }
+    }
+
+    /**
+     * Tells the model to open a new project and adds all open views as tabs.
+     */
+    private void openModel() {
+        if (guiModel.openModel()) {
+            guiView.closeAllViews();
+            guiView.updateEditorView();
+            guiView.updatePropertyView();
+            for(OperationView o:guiModel.getOperationViews()){
+                 guiView.addNewOpTab(o.toString(), o);
+                 if(o.isClosed())
+                     //TODO Q: get guiView do close operationview if closed...
+                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
+                
             }
+
+        }
+        printToConsole("New model opened!");
+    }
+
+    private void saveModel(boolean saveAs) {
+        guiModel.saveModel(saveAs);
+    }
+
+    private void defaultWindows() {
+        guiView.setWindowLayout();
 
     }
 
     /**
-     * Tells the model to open a new project and adds a new tab in the view
+     * Checks if a view with the selected data already is opened.
+     * @param data ViewData to check
+     * @return true if the SOP is already opened else false
      */
-    private void openModel() {
-        if(guiModel.openModel()){
-            guiView.closeAllViews();
-            addNewOpTab();
-
+    public boolean isOpened(ViewData data) {
+        for (OperationView op : guiModel.getOperationViews()) {
+            if (op.getName().equals(data.getName())) {
+                return true;
+            }
         }
-        printToConsole("new model opened!");
+        return false;
     }
-
-
-    private void saveModel(boolean saveAs){
-        guiModel.saveModel(saveAs);
-    }
-
 }

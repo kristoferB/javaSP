@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SequencePlannerProjectFile>
+    <idCounter>1056</idCounter>
+    <GlobalProperties/>
+    <Resources/>
+    <Liasons/>
+    <Operations>
+        <operation name="O10" id="1015">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1017"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1018"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O13" id="1018">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1013"/>
+                        <sequenceCondition status="2" operation="1014"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O9" id="1014">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1012"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1008"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O16" id="1021">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1006"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O8" id="1013">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1012"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1022"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1021"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O3b" id="1008">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1007"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="0" operation="1022"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O3a" id="1022">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1007"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="0" operation="1008"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O2" id="1007">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="1" operation="1006"/>
+                    </or>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O11" id="1016">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+            </operationData>
+        </operation>
+        <operation name="O5" id="1010">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1009"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O12" id="1017">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1016"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O14" id="1019">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1018"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O4" id="1009">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1006"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O15" id="1020">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1011"/>
+                    </or>
+                    <or>
+                        <sequenceCondition status="2" operation="1019"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O7" id="1012">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1007"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O6" id="1011">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1021"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+        <operation name="O1" id="1006">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preSequenceCondtions>
+                    <or>
+                        <sequenceCondition status="2" operation="1016"/>
+                    </or>
+                </preSequenceCondtions>
+                <postSequenceCondtions>
+                    <or/>
+                </postSequenceCondtions>
+            </operationData>
+        </operation>
+    </Operations>
+    <Views>
+        <view root="-1" name="Opereration view 1" id="0">
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1015">
+                <geo>
+                    <geometry h="71.5078125" w="177.0" y="240.0" x="451.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1018">
+                <geo>
+                    <geometry h="71.5078125" w="177.0" y="360.0" x="471.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1014">
+                <geo>
+                    <geometry h="71.5078125" w="171.0" y="160.0" x="534.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1021">
+                <geo>
+                    <geometry h="53.9296875" w="56.0" y="360.0" x="32.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1013">
+                <geo>
+                    <geometry h="71.5078125" w="171.0" y="160.0" x="354.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1008">
+                <geo>
+                    <geometry h="71.5078125" w="165.0" y="120.0" x="97.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="true" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1022">
+                <geo>
+                    <geometry h="71.5078125" w="165.0" y="40.0" x="97.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1007">
+                <geo>
+                    <geometry h="71.5078125" w="59.0" y="20.0" x="490.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1016">
+                <geo>
+                    <geometry h="36.3515625" w="44.0" y="320.0" x="258.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1010">
+                <geo>
+                    <geometry h="53.9296875" w="56.0" y="440.0" x="132.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1017">
+                <geo>
+                    <geometry h="53.9296875" w="62.0" y="360.0" x="309.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1019">
+                <geo>
+                    <geometry h="53.9296875" w="62.0" y="460.0" x="529.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1009">
+                <geo>
+                    <geometry h="53.9296875" w="56.0" y="360.0" x="132.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1020">
+                <geo>
+                    <geometry h="53.9296875" w="112.0" y="520.0" x="504.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1012">
+                <geo>
+                    <geometry h="53.9296875" w="56.0" y="100.0" x="492.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1011">
+                <geo>
+                    <geometry h="53.9296875" w="62.0" y="440.0" x="29.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="false" lastInRelation="false" relation="-1" type="0" previousCell="-1" refId="1006">
+                <geo>
+                    <geometry h="53.9296875" w="62.0" y="80.0" x="29.0"/>
+                </geo>
+            </CellData>
+        </view>
+    </Views>
+</SequencePlannerProjectFile>

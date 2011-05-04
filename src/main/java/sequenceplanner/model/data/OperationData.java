@@ -227,11 +227,16 @@ public class OperationData extends Data {
 
    //TO HANDLE PROPERTY SETTINGS
 
-   public void savePropertySetting(int id, boolean selected){
+   public void setProperty(int id, boolean selected){
        propertySettings.put(id, selected);
    }
 
-   public HashMap<Integer, Boolean> getPropertySettings(){
+   public void setProperties(HashMap<Integer, Boolean> propertySettings){
+       this.propertySettings = propertySettings;
+
+   }
+
+   public HashMap<Integer, Boolean> getProperties(){
         return propertySettings;
    }
 
@@ -243,53 +248,6 @@ public class OperationData extends Data {
         return res;
    }
 
-/*   public int[] getPropertyValues(){
-      int [] valueIds = new int[propertySettings.size()];
-      for(int i = 0; i < propertySettings.size(); i++){
-        valueIds[i] = propertySettings.get(i).getValueId();
-      }
-      return valueIds;
-   }
-
-   public int[] getProperties(){
-      LinkedList<Integer> prop = new LinkedList<Integer>();
-      for(int i = 0; i < propertySettings.size(); i++){
-        if(!prop.contains(new Integer(propertySettings.get(i).getPropertyId()))){
-            prop.add(new Integer(propertySettings.get(i).getPropertyId()));
-        }
-
-      }
-      int[] propertyIds = new int[prop.size()];
-      for(int j = 0; j < prop.size(); j++){
-        propertyIds[j] = prop.get(j).intValue();
-      }
-      return propertyIds;
-
-   }
-
-   public void removePropertyValue(int valueId){
-      for(int i = 0; i < propertySettings.size(); i++){
-        if(propertySettings.get(i).getValueId() == valueId){
-            propertySettings.remove(i);
-            i--;
-        }
-      }
-   }
-
-   public void removeProperty(int propertyId){
-      for(int i = 0; i < propertySettings.size(); i++){
-        if(propertySettings.get(i).getPropertyId() == propertyId){
-            propertySettings.remove(i);
-            i--;
-        }
-      }
-   }
-
-   public void addPropertySetting(int propertyId, int valueId, boolean selected){
-      //Check if the property is already set first
-      propertySettings.add(new PropertySetting(propertyId, valueId, selected));
-   }
-*/
    public boolean isSequence(int id) {
 
       for (LinkedList<SeqCond> linkedList : sequenceCondition) {
@@ -594,6 +552,8 @@ public class OperationData extends Data {
       ret.setPResourceBooking(cloneResources(pResourceBooking));
 
       ret.setActions(cloneActions(actions));
+      ret.setProperties(clonePropertySettings(propertySettings));
+      
       return ret;
    }
 
@@ -626,6 +586,15 @@ public class OperationData extends Data {
 
       for (Action action : act) {
          tempRes.add((Action) action.clone());
+      }
+      return tempRes;
+   }
+
+   protected HashMap<Integer, Boolean> clonePropertySettings(HashMap<Integer, Boolean> properties){
+      HashMap<Integer, Boolean> tempRes = new HashMap<Integer, Boolean>();
+
+      for (Integer id : properties.keySet()) {
+         tempRes.put(id, (Boolean) properties.get(id));
       }
       return tempRes;
    }
@@ -961,30 +930,6 @@ public class OperationData extends Data {
          return new Action(id, state, value);
       }
    }
-/*
-   private class PropertySetting {
-      private int propertyId;
-      private int valueId;
-      private boolean selected;
 
-      public PropertySetting(int pId, int vId, boolean sel){
-        propertyId = pId;
-        valueId = vId;
-        selected = sel;
-      }
-
-      public int getPropertyId(){
-        return propertyId;
-      }
-
-      public int getValueId(){
-        return valueId;
-      }
-
-      public boolean isSelected(){
-        return selected;
-      }
-   }
-*/
 }
 

@@ -10,6 +10,7 @@ import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.xml.Actions;
+import sequenceplanner.xml.Properties;
 import sequenceplanner.xml.Bookings;
 import sequenceplanner.xml.Bookings.ResourceBooking;
 import sequenceplanner.xml.CellData;
@@ -21,9 +22,11 @@ import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
+import sequenceplanner.editor.IGlobalProperty;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
+import java.util.HashMap;
 
 /**
  *
@@ -51,7 +54,7 @@ public class ConvertFromXML {
       //Recreate operations and operationViews
       setOperationRoot(project.getOperations());
 
-
+      setGlobalProperties(project.getGlobalProperties());
 
       return this.model;
    }
@@ -106,6 +109,11 @@ public class ConvertFromXML {
          data.setSeqInvariant(getCondition(dataX.getOperationData().getSequenceInvariants()));
       }
 
+      //Properties
+      if (dataX.getOperationData().getProperties() != null){
+         data.setProperties(getProperties(dataX.getOperationData().getProperties()));
+      }
+      
       //Post
       if (dataX.getOperationData().getPostSequenceCondtions() != null) {
          data.setPSequenceCondition(getCondition(dataX.getOperationData().getPostSequenceCondtions()));
@@ -150,6 +158,15 @@ public class ConvertFromXML {
       }
 
 
+      return output;
+   }
+   
+   private HashMap<Integer, Boolean> getProperties(Properties propX){
+      HashMap<Integer, Boolean> output = new HashMap<Integer, Boolean>();
+      
+      for (Properties.Property p : propX.getProperty()){
+        output.put(p.getId(), p.isValue());
+      }
       return output;
    }
 
@@ -243,5 +260,24 @@ public class ConvertFromXML {
       }
 
       return res;
+   }
+
+   private void setGlobalProperties(SequencePlannerProjectFile.GlobalProperties inputX){
+
+       LinkedList<IGlobalProperty> output = new LinkedList<IGlobalProperty>();
+
+       if(inputX !=null){
+           for(sequenceplanner.xml.GlobalProperty gpX : inputX.getGlobalProperty()){
+                sequenceplanner.editor.GlobalProperty gp = new sequenceplanner.editor.GlobalProperty(gpX.getId(), gpX.getName());
+
+                for(sequenceplanner.xml.Value v : gpX.getValue()){
+                    gp.addValue(new sequenceplanner.editor.Value(v.getId(), v.getName()));
+                }
+                output.add(gp);
+           }
+       }
+
+       model.getGlobalProperties().setProperties(output);
+
    }
 }

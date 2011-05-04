@@ -512,6 +512,8 @@ public class SPGraph extends mxGraph {
             d.setPostcondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
                   d.getPSequenceCondition(), d.getPResourceBooking()));
             updateCellSize(cell, true);
+  
+  
          } finally {
             model.endUpdate();
          }

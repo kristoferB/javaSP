@@ -14,6 +14,7 @@ import com.mxgraph.model.mxGeometry;
  */
 public class ViewData extends Data {
     static Logger logger = Logger.getLogger(ViewData.class);
+    protected boolean isClosed = false;
 
 //    private LinkedList<CellData> cells;
     private final LinkedList<CellData> rows;
@@ -47,6 +48,14 @@ public class ViewData extends Data {
 
     public Iterator<CellData> getIterator() {
        return rows.iterator();
+    }
+
+    /**
+     * Boolean for checking if containing operationview is closed.
+     * @return
+     */
+    public boolean isClosed() {
+        return isClosed;
     }
 
    /**

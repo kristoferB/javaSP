@@ -30,6 +30,11 @@ public class GlobalProperty implements IGlobalProperty{
         }
     }
 
+    public GlobalProperty(int id, String n){
+        name = n;
+        this.id = id;
+    }
+
     public int getId(){
         return id;
     }
@@ -84,6 +89,15 @@ public class GlobalProperty implements IGlobalProperty{
     public int indexOfValue(Value value) {
         for(int i = 0; i < values.size(); i++){
             if(value.equals(values.get(i))){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int indexOfValue(String value){
+        for(int i = 0; i < values.size(); i++){
+            if(value.equals(values.get(i).getName())){
                 return i;
             }
         }

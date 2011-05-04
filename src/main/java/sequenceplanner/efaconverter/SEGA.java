@@ -1,8 +1,10 @@
 package sequenceplanner.efaconverter;
 
+import java.util.Set;
 import org.supremica.external.avocades.common.EGA;
 
 /**
+ * Has to do with EFA. Should be merged with the general EFA conversion classes...
  * Help class for creation of transitions with event, guards and actions
  * @author patrik
  */
@@ -31,7 +33,7 @@ public class SEGA extends EGA {
         }
     }
 
-    private String guardFromSPtoEFASyntaxTranslation(String ioGuard) {
+    public String guardFromSPtoEFASyntaxTranslation(String ioGuard) {
         //Change all _i to ==0
         ioGuard = ioGuard.replaceAll("_i", "==0");
         //Change all _e to ==1
@@ -52,9 +54,26 @@ public class SEGA extends EGA {
         //add precondition to guard
         if (!iCondition.equals("")) {
 
-            //Change all ID to ProductType_ID
+            //Change all ID to iOpVariablePrefix+ID
             for (OpNode opNode : iModelParser.getOperations()) {
                 iCondition = iCondition.replaceAll(opNode.getStringId(), iOpVariablePrefix + opNode.getStringId());
+            }
+
+            iCondition = guardFromSPtoEFASyntaxTranslation(iCondition);
+
+            andGuard(iCondition);
+        }
+    }
+
+    public void addGuardBasedOnSPCondition(String iCondition, final String iOpVariablePrefix, final Set<Integer> iSet) {
+        //Example of raw precondition 18_f A (143_iV19_f)
+
+        //add precondition to guard
+        if (!iCondition.equals("")) {
+
+            //Change all ID to iOpVariablePrefix+ID
+            for (final Integer i : iSet) {
+                iCondition = iCondition.replaceAll(Integer.toString(i), iOpVariablePrefix + Integer.toString(i));
             }
 
             iCondition = guardFromSPtoEFASyntaxTranslation(iCondition);

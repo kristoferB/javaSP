@@ -143,7 +143,6 @@ public class AttributeEditor extends JPanel
 
          LinkedList<OperationEditor> l = editors.get(d.getClass().getName());
 
-
          if (l != null) {
             setCell((Cell) cell, l);
          } else {

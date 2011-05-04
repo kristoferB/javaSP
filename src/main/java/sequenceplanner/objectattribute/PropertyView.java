@@ -140,18 +140,20 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
                     //For each value
                     for(int j = 0; j < property.size(); j++){
                         if(property.get(j) instanceof CheckBoxNode){
-                            CheckBoxNode node = (CheckBoxNode) property.get(j);                        
+                            CheckBoxNode node = (CheckBoxNode) property.get(j);
                             if(node.isSelected()){
                                 valueSelected = true;
                                 if(!propertySelected){
                                     propertySelected = true;
                                 }
+                            }else{
+                                valueSelected = false;
                             }
                             //Save to operation
-                            d.savePropertySetting(node.getId(), valueSelected);
+                            d.setProperty(node.getId(), valueSelected);
                         }
                     }
-                    d.savePropertySetting(property.getId(), propertySelected);
+                    d.setProperty(property.getId(), propertySelected);
                 }
             }
             graph.setValue(currentOperation, d);

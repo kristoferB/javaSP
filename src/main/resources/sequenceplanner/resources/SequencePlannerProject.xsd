@@ -10,6 +10,24 @@
    <xs:attribute name="id" type="xs:int"/>
    <xs:attribute name="name" type="xs:string"/>
 
+   <!-- global property -->
+   <xs:element name="globalProperty">
+      <xs:complexType>
+			<xs:sequence>
+				<xs:element ref="value" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+            <xs:attribute name="id" type="xs:int" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:complexType>
+   </xs:element>   
+   
+   <!-- value for global property -->
+   <xs:element name="value">
+      <xs:complexType>
+            <xs:attribute name="id" type="xs:int" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:complexType>
+   </xs:element>   
 
    <!-- resource data -->
    <xs:element name="resource">
@@ -92,7 +110,18 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
-
+   
+   <!-- used for property settings -->
+   <xs:complexType name="properties">
+      <xs:sequence>
+         <xs:element name="Property" maxOccurs="unbounded" minOccurs="0">
+            <xs:complexType>
+               <xs:attribute name="id" type="xs:int" use="required"/>
+               <xs:attribute name="value" type="xs:boolean" use="required"/>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
 
 
    <!-- and an operationObject, should include a view aswell -->
@@ -120,6 +149,8 @@
             
          <xs:element name="sequenceInvariants" type="conditions"/>
          <xs:element name="actionInvariants" type="actions"/>
+		 
+		 <xs:element name="properties" type="properties"/>
 
          <xs:element name="postSequenceCondtions" type="conditions"/>
          <xs:element name="postResurceBooking" type="bookings"/>
@@ -194,6 +225,15 @@
       <xs:complexType>
          <xs:sequence>
             <xs:element name="idCounter" type="xs:int"/>
+			
+			<xs:element name="GlobalProperties">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element ref="globalProperty" maxOccurs="unbounded" minOccurs="0"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+			
             <xs:element name="Resources">
                <xs:complexType>
                   <xs:sequence>

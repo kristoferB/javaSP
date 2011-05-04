@@ -23,6 +23,13 @@ public class EditorView extends JScrollPane{
         setViewportView(tree);
     }
 
+    public void setEditorTreeModel(EditorTreeModel m){
+        tree = new JTree(m);
+        tree.setEditable(true);
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        tree.setShowsRootHandles(true);
+        setViewportView(tree);
+    }
 
     public JTree getTree(){
         return tree;

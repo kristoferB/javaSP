@@ -16,6 +16,7 @@ import sequenceplanner.xml.Liason;
 import sequenceplanner.xml.ObjectFactory;
 import sequenceplanner.xml.Operation;
 import sequenceplanner.xml.OperationData;
+import sequenceplanner.xml.Properties;
 import sequenceplanner.xml.Rectangle;
 import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
@@ -23,6 +24,10 @@ import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
+import java.util.HashMap;
+import sequenceplanner.editor.IGlobalProperty;
+import sequenceplanner.editor.Value;
+import sequenceplanner.xml.GlobalProperty;
 
 /**
  *
@@ -57,6 +62,9 @@ public class ConvertToXML {
       //Operations
       project.setOperations(getOperationRoot());
 
+      //Global properties
+      project.setGlobalProperties(getGlobalProperties());
+
 
       return project;
    }
@@ -68,6 +76,7 @@ public class ConvertToXML {
 
       for (int i = 0; i < node.getChildCount(); i++) {
          TreeNode child = node.getChildAt(i);
+         sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) child.getNodeData();
          result.getOperation().add(getOperation(child));
       }
 
@@ -137,6 +146,11 @@ public class ConvertToXML {
          dataX.setSequenceInvariants(getConditions(data.getSeqInvariant()));
       }
 
+      //Properties
+      if (!data.getProperties().isEmpty()){
+        dataX.setProperties(getProperties(data.getProperties()));
+      }
+
       //PostConditions
       if (!data.getPSequenceCondition().isEmpty()) {
          dataX.setPostSequenceCondtions(getConditions(data.getPSequenceCondition()));
@@ -146,6 +160,27 @@ public class ConvertToXML {
       }
 
       return dataX;
+   }
+ 
+   private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
+       SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
+       LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();
+       
+       for(IGlobalProperty gp : data){
+            GlobalProperty gpX = new GlobalProperty();
+            gpX.setId(gp.getId());
+            gpX.setName(gp.getName());
+            for(int i = 0; i < gp.getNumberOfValues(); i++){
+                sequenceplanner.xml.Value vX = new sequenceplanner.xml.Value();
+                vX.setId(gp.getValue(i).getId());
+                vX.setName(gp.getValue(i).getName());
+                gpX.getValue().add(vX);
+            }
+            dataX.getGlobalProperty().add(gpX);
+       }
+       
+
+       return dataX;
    }
 
    private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
@@ -164,6 +199,20 @@ public class ConvertToXML {
 
          dataX.getOr().add(inOr);
       }
+      return dataX;
+   }
+
+   private Properties getProperties(HashMap<Integer, Boolean> data){
+
+      Properties dataX = new Properties();
+
+      for(Integer id : data.keySet()){
+        Properties.Property p = new Properties.Property();
+        p.setId(id);
+        p.setValue(data.get(id));
+        dataX.getProperty().add(p);
+      }
+
       return dataX;
    }
 

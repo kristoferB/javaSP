@@ -56,11 +56,10 @@ public class GUIModel {
         operationViews.addLast(new OperationView(this.model, "Opereration view " + (operationViews.size() + 1)));
     }
 
-
     public void createNewOpView(ViewData toOpen) {
         operationViews.addLast(new OperationView(this.model, toOpen));
     }
-    
+
     public void createNewReView() {
         resourceView = new ResourceView(this.model, this.model.getResourceRoot(), "Resource view");
 
@@ -105,19 +104,22 @@ public class GUIModel {
 
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
-                removeAllOpViews();
+        removeAllOpViews();
 
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());
             getModel().reloadNamesCache();
             try {
 
-                ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(0).getNodeData();
-                if (operationViews.size() == 0) {
-                    createNewOpView(toOpen);
-                } else {
-                    createNewOpView(toOpen);
-                }
+                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
+                        ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
+                        createNewOpView(toOpen);
+                        if(toOpen.isClosed())
+                            operationViews.getLast().setClosed(true);
+                    }
+            }
+
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");
             }
@@ -151,8 +153,6 @@ public class GUIModel {
 
         return true;
     }
-
-
 
     public boolean saveModel(boolean saveAs) {
 
@@ -218,6 +218,7 @@ public class GUIModel {
     }
 
     public boolean saveModelToFile(File file) {
+        System.out.println("");
         ConvertToXML converter = new ConvertToXML(getModel());
         SequencePlannerProjectFile project = converter.convert();
 
@@ -247,6 +248,4 @@ public class GUIModel {
         }
         return new OperationView(this.model, data);
     }
-
-
 }

@@ -42,6 +42,11 @@ public class TreeViewController {
             popup(e);
         }
 
+        /**
+         * Double click calls the main controller and opens a new tab
+         * with the SOPview.
+         * @param e the MouseEvent
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() >= 2) {
@@ -50,6 +55,7 @@ public class TreeViewController {
                 if (path != null) {
                     TreeNode t = (TreeNode) path.getLastPathComponent();
                     if (Model.isView(t.getNodeData())) {
+                        //TODO q... fix controller to check for illegal multiple views
                         controller.addNewOpTab((ViewData) t.getNodeData());
                     } else if (Model.isOperation(t.getNodeData())) {
                         OperationData data = (OperationData) t.getNodeData();
