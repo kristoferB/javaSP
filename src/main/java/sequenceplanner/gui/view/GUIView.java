@@ -32,7 +32,6 @@ import net.infonode.docking.View;
 import net.infonode.docking.drop.DropFilter;
 import net.infonode.docking.drop.DropInfo;
 import net.infonode.docking.drop.InteriorDropInfo;
-import net.infonode.docking.properties.ViewTitleBarProperties;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
@@ -59,6 +58,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     //ViewMaps holding all views for the rootwindows
     private ViewMap rootViewMap = new ViewMap();
     private ViewMap opViewMap = new ViewMap();
+
+    public ViewMap getOpViewMap() {
+        return opViewMap;
+    }
     private ViewMap treeViewMap = new ViewMap();
     private ViewMap consoleViewMap = new ViewMap();
     private ViewMap editorViewMap = new ViewMap();
@@ -77,6 +80,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
+
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -89,6 +93,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private PropertyView propertyView;
     private OperationView selectedOperationView;
     private int opViewIndex;
+
+    public int getOpViewIndex() {
+        return opViewIndex;
+    }
     private JTextArea console;
     private JButton saveButton;
 
@@ -149,7 +157,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Create main RootWindow and set it's dragrectangleborderwidth
         //to 0, i.e. invisible.
         rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
-
+        rootWindow.getRootWindowProperties().getDockingWindowProperties().setMaximizeEnabled(true);
+        
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         operationRoot = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(objectViewMap, true);
@@ -160,7 +169,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         treeView = new TreeView(guiModel.getModel());
 
         operationRootView = new View("Operation Views", null, operationRoot);
-        consoleRootView = new View("Operation Views", null, consoleRoot);
+        consoleRootView = new View("Console Views", null, consoleRoot);
         treeRootView = new View("Tree Views", null, treeRoot);
         editorRootView = new View("Editor Views", null, editorRoot);
         objectRootView = new View("Object Views", null, objectRoot);
@@ -177,6 +186,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
+
+
         rootViewMap.addView(1, operationRootView);
 
         guiModel.getOperationViews().getFirst().addmxIEventListener(this);
@@ -223,6 +234,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getMinimizeButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getRestoreButtonProperties().setVisible(true);
+
+       // rootWindow.getRootWindowProperties().getWindowBarProperties().
         rootViewMap.addView(5, treeRootView);
 
         //--------------------
@@ -281,6 +294,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      */
     public void closeAllViews() {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
+            if(opViewMap.getView(i) != null)
+                opViewMap.getView(i).close();
             opViewMap.removeView(i);
         }
 
@@ -526,6 +541,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         opViewIndex++;
         View newView = new View(name, null, opView);
+
         opViewMap.addView(opViewIndex, newView);
 
 

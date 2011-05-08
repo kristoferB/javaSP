@@ -77,6 +77,8 @@ public class GUIController {
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
+//        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
+
     }
 
     public void printToConsole(String text) {
@@ -93,8 +95,8 @@ public class GUIController {
     public void addNewOpTab(ViewData data) {
         if (!isOpened(data)) {
             guiModel.createNewOpView(data);
-            guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
-            opViewController.addOperationView(guiModel.getOperationViews().getLast());
+            addNewOpTab();
+
         } else {
             guiView.setFocused(data);
             printToConsole("Already open!");
@@ -307,15 +309,20 @@ public class GUIController {
     }
 
     /**
-     * Tells the model to open a new project (and adds a new tab in the view?)
+     * Tells the model to open a new project and adds all open views as tabs.
      */
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
             guiView.updateEditorView();
             guiView.updatePropertyView();
-            for(OperationView o:guiModel.getOperationViews())
+            for(OperationView o:guiModel.getOperationViews()){
                  guiView.addNewOpTab(o.toString(), o);
+                 if(o.isClosed())
+                     //TODO Q: get guiView do close operationview if closed...
+                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
+                
+            }
 
         }
         printToConsole("New model opened!");
