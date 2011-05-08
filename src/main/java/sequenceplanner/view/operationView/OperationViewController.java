@@ -42,9 +42,16 @@ public class OperationViewController implements Observer {
                 Hashtable cells = operationView.getGraphModel().getCells();
                 for(int i = 2; i < cells.size(); i++){
                     Cell c = (Cell) cells.get(Integer.toString(i));
+                    System.out.println("a1");
                     if (c.getValue() instanceof OperationData) {
+                        System.out.println("a2");
+
                         OperationData data = (OperationData) c.getValue();
+                        System.out.println("data: "+ data.toString());
+                        System.out.println("c.Get: "+c.getValue());
+                        System.out.println("c:"+ c);
                         if (data.getId() == od.getId()) {
+                            System.out.println("a3");
                             operationView.getGraph().setValue(c, data);
                         }
                     }
