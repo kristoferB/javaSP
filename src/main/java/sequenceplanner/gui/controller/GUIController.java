@@ -76,6 +76,7 @@ public class GUIController {
     //private methods
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
+        opViewController.addOperationView(guiModel.getOperationViews().getLast());
     }
 
     public void printToConsole(String text) {
@@ -93,6 +94,7 @@ public class GUIController {
         if (!isOpened(data)) {
             guiModel.createNewOpView(data);
             guiView.addNewOpTab(guiModel.getOperationViews(data).toString(), guiModel.getOperationViews(data));
+            opViewController.addOperationView(guiModel.getOperationViews().getLast());
         } else {
             guiView.setFocused(data);
             printToConsole("Already open!");
