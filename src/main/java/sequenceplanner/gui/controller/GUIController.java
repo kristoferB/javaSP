@@ -77,7 +77,7 @@ public class GUIController {
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
- //       guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
+        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
 
     }
 

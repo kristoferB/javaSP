@@ -65,7 +65,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private String startName;
     protected mxGraphOutline outline = null;
     JSplitPane pane;
-
+    private boolean isHidden;
     private boolean isClosed;
 
     //TODO refactor name to SOPView
@@ -74,7 +74,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         startName = name;
         updateName();
         isClosed = false;
-
+        isHidden = false;
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
 
@@ -131,12 +131,20 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    /**
+     * Method for checking if the view is hidden or not
+     * @return boolean true if hidden else false
+     */
+    public boolean isHidden() {
+        return isHidden;
+    }
+
     /**
      * Method for checking if the view is closed or not
      * @return boolean true if closed else false
      */
-    public boolean isClosed(){
+    public boolean isClosed() {
         return isClosed;
     }
 
@@ -144,8 +152,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * Sets the isClosed variable to true or false
      * @param closed true if closed else false
      */
-    public void setClosed(boolean closed){
+    public void setClosed(boolean closed) {
         isClosed = closed;
+    }
+
+    /**
+     * Sets the isHidden variable to true or false
+     * @param closed true if hidden closed else false
+     */
+    public void setHidden(boolean hidden) {
+        isClosed = hidden;
     }
     public boolean isChanged() {
         return changed;
@@ -774,7 +790,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return name;
     }
 
-    public void addmxIEventListener(mxIEventListener l){
+    public void addmxIEventListener(mxIEventListener l) {
         graph.getSelectionModel().addListener(mxEvent.CHANGE, l);
     }
 
