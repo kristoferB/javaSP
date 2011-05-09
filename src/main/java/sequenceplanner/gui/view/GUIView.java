@@ -552,6 +552,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             mainDocks.addTab(newView);
             mainDocks.restore();
         }
+        System.out.println("Child count 2: " + mainDocks.getChildWindowCount());
     }
 
     /**
@@ -585,7 +586,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void setWindowLayout() {
-
+        System.out.println("Focus:" + operationRoot.getFocusedView() + " " + rootWindow.getFocusedView()+ " :end");
 //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
 
 //------- Docking the undocked windows ---------
@@ -638,6 +639,15 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Recreate operation views window and view map
         operationRoot = DockingUtil.createRootWindow(opViewMap, true);
         operationRootView = new View("Operation Views", null, operationRoot);
+        operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(1)));
+        int count = 1;
+        while(count <= opViewIndex){
+            
+            mainDocks.addTab(opViewMap.getView(count));
+           count = count+1;
+            System.out.println(count);
+            System.out.println(opViewIndex);
+        }
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
@@ -652,6 +662,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 consoleRootView));
 
         mainDocks.restore();
+        System.out.println("Child count: " + mainDocks.getChildWindowCount());
     }
 
     /**
