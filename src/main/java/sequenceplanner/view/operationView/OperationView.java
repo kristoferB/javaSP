@@ -65,16 +65,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private String startName;
     protected mxGraphOutline outline = null;
     JSplitPane pane;
-    private boolean isHidden;
-    private boolean isClosed;
 
+    private boolean isClosed;
+    private boolean isHidden;
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
         updateName();
-        isClosed = false;
-        isHidden = false;
+        setClosed(false);
+        setHidden(false);
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
 
@@ -161,7 +161,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param closed true if hidden closed else false
      */
     public void setHidden(boolean hidden) {
-        isClosed = hidden;
+        isHidden = hidden;
     }
     public boolean isChanged() {
         return changed;

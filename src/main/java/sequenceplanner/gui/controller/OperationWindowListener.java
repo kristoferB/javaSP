@@ -5,24 +5,28 @@ import net.infonode.docking.DockingWindowListener;
 import net.infonode.docking.OperationAbortedException;
 import net.infonode.docking.View;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.gui.view.GUIView;
 
 /**
  *
  * @author QW4z1
  */
 class OperationWindowListener implements DockingWindowListener{
+    //Private instance of the GUIView object.
+    private GUIView view;
 
-    public OperationWindowListener() {
+    public OperationWindowListener(GUIView view) {
+        this.view = view;
     }
 
     @Override
     public void windowAdded(DockingWindow dw, DockingWindow dw1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowRemoved(DockingWindow dw, DockingWindow dw1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
@@ -47,12 +51,12 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void viewFocusChanged(View view, View view1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowClosing(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+System.out.println("Not supported yet.");
     }
 
     @Override
@@ -67,52 +71,52 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void windowUndocking(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowUndocked(DockingWindow dw) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowDocking(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowDocked(DockingWindow dw) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowMinimizing(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowMinimized(DockingWindow dw) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowMaximizing(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        System.out.println("Not supported yet.");
+   }
 
     @Override
     public void windowMaximized(DockingWindow dw) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowRestoring(DockingWindow dw) throws OperationAbortedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Not supported yet.");
     }
 
     @Override
     public void windowRestored(DockingWindow dw) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       System.out.println("Not supported yet.");
     }
 
 }

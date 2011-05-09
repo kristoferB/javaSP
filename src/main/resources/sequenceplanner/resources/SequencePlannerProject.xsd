@@ -169,6 +169,7 @@
             <xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="operationData" type="operationData" maxOccurs="1" />
          </xs:sequence>
+		 
 
          <xs:attribute ref="id" use="required"/>
          <xs:attribute ref="name"/>
@@ -216,6 +217,7 @@
       <xs:attribute ref="id" use="required"/>
       <xs:attribute ref="name"/>
       <xs:attribute name="root" type="xs:int" use="required"/>
+	  
          
    </xs:complexType>
    
@@ -263,6 +265,9 @@
                <xs:complexType>
                   <xs:sequence>
                      <xs:element name="view" type="viewType" maxOccurs="unbounded" minOccurs="0"/>
+					 
+         <xs:element name="isClosed" type="xs:boolean"/>
+         <xs:element name="isHidden" type="xs:boolean"/>
                   </xs:sequence>
                </xs:complexType>
             </xs:element>
