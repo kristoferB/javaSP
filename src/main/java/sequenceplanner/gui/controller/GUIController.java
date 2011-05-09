@@ -77,7 +77,7 @@ public class GUIController {
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
-//        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
+        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
 
     }
 
@@ -319,7 +319,6 @@ public class GUIController {
             for(OperationView o:guiModel.getOperationViews()){
                  guiView.addNewOpTab(o.toString(), o);
                  if(o.isClosed())
-                     //TODO Q: get guiView do close operationview if closed...
                      guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
                 
             }

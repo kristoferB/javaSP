@@ -567,7 +567,7 @@ class SPMenuBar extends JMenuBar{
 //			try {
 //				ViewData toOpen = (ViewData) model.getViewRoot().getChildAt(0)
 //						.getNodeData();
-//                                //TODO q fix!!!!
+//                               
 //				spc.createOperationView(toOpen);
 //
 //			} catch (ClassCastException e) {
