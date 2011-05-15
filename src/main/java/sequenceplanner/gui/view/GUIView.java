@@ -532,8 +532,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @param opView    operationview to be shown in the TabWindow
      */
     public void addNewOpTab(String name, OperationView opView) {
-        System.out.println(mainDocks.getChildWindowCount());
-//Should not be done here..
+//Should not be done here.. selectedOperationView is only updated when adding new tabs!
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
         propertyView.setOpView(opView);
@@ -587,7 +586,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void setWindowLayout() {
         System.out.println("Focus:" + operationRoot.getFocusedView() + " " + rootWindow.getFocusedView()+ " :end");
-//--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
+        //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
 
 //------- Docking the undocked windows ---------
 
@@ -681,4 +680,5 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public ViewMap getSOPViewMap() {
         return opViewMap;
     }
+    
 }

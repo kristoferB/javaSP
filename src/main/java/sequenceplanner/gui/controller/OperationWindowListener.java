@@ -31,7 +31,7 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void windowShown(DockingWindow dw) {
-        System.out.println("Window shown");
+        System.out.println("Window shown: " + dw);
         if(dw.getComponent(0) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0);
                     op.setHidden(false);
@@ -41,7 +41,7 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void windowHidden(DockingWindow dw) {
-        System.out.println("Window hidden");
+        System.out.println("Window hidden: " + dw);
         if(dw.getComponent(0) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0);
                     op.setHidden(true);
