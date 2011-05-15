@@ -115,8 +115,8 @@ public class GUIModel {
                     if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
                         ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         createNewOpView(toOpen);
-                        if(toOpen.isClosed())
-                            operationViews.getLast().setClosed(true);
+//                        if(toOpen.isClosed())
+//                            operationViews.getLast().setClosed(true);
                     }
             }
 

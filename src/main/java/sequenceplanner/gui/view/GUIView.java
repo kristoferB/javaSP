@@ -354,7 +354,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenu fileMenu, edit, project, convert, mp, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -399,6 +399,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
+        visualization.add(addOperationsFromFile = new JMenuItem("Add Selfcontained operations from file"));
         this.add(visualization);
 
         windows = new JMenu("Windows");
@@ -510,6 +511,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addBruteForceVisualizationL(ActionListener l) {
         bruteForceVisualization.addActionListener(l);
+    }
+
+    public void addAddOperationsFromFileL(ActionListener l) {
+        addOperationsFromFile.addActionListener(l);
     }
 //End listeners
 
