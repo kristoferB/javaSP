@@ -155,6 +155,7 @@
          <xs:element name="postSequenceCondtions" type="conditions"/>
          <xs:element name="postResurceBooking" type="bookings"/>
          <xs:element name="postActions" type="actions"/>
+		 
 
       </xs:sequence>
          
@@ -213,11 +214,13 @@
       
       <xs:sequence>
          <xs:element ref="CellData" maxOccurs="unbounded" minOccurs="0"/>
+		 <xs:element name="isClosed" type="xs:boolean"/>
+		 <xs:element name="isHidden" type="xs:boolean"/>	
       </xs:sequence>
       <xs:attribute ref="id" use="required"/>
       <xs:attribute ref="name"/>
       <xs:attribute name="root" type="xs:int" use="required"/>
-	  
+
          
    </xs:complexType>
    
@@ -257,6 +260,7 @@
                   <xs:sequence>
                      <xs:element ref="operation" maxOccurs="unbounded" minOccurs="0"/>
                      <xs:element name="OperationViews" type="viewType" maxOccurs="unbounded" minOccurs="0"/>
+
                   </xs:sequence>
                </xs:complexType>
             </xs:element>
@@ -265,9 +269,8 @@
                <xs:complexType>
                   <xs:sequence>
                      <xs:element name="view" type="viewType" maxOccurs="unbounded" minOccurs="0"/>
-					 
-         <xs:element name="isClosed" type="xs:boolean"/>
-         <xs:element name="isHidden" type="xs:boolean"/>
+
+
                   </xs:sequence>
                </xs:complexType>
             </xs:element>

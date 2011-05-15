@@ -316,7 +316,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
             OperationData od = (OperationData) data[0].getNodeData();
-
+            
+            
+            
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());

@@ -15,6 +15,24 @@ import com.mxgraph.model.mxGeometry;
 public class ViewData extends Data {
     static Logger logger = Logger.getLogger(ViewData.class);
 
+    private boolean isClosed;
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean isClosed) {
+        this.isClosed = isClosed;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+    private boolean isHidden;
 
 //    private LinkedList<CellData> cells;
     private final LinkedList<CellData> rows;
@@ -23,7 +41,8 @@ public class ViewData extends Data {
 
     public ViewData(String name, int id) {
         super(name, id);
-
+        setHidden(false);
+        setClosed(false);
         rows = new LinkedList<CellData>();
         
     }
