@@ -37,7 +37,9 @@ public class ReadFromVolvoFile extends AWriteReadTextFile {
 
     @Override
     void whatToDoWithLine(String iLine) {
-        mLineSet.add(iLine);
+        if (iLine.length() > 1) {
+            mLineSet.add(iLine);
+        }
     }
 
     @Override
@@ -156,17 +158,27 @@ public class ReadFromVolvoFile extends AWriteReadTextFile {
         final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
         final String[] conjunctionSplit = iCondition.split("AND");
         for (final String disjunction : conjunctionSplit) {
-            final String[] disjunctionSplit = disjunction.split(",");
-            if (disjunctionSplit.length != 2) {
-                return false;
-            }
-
-            final int id = mExternalInternalIdMap.get(disjunctionSplit[0]);
-            final int location = Integer.parseInt(disjunctionSplit[1]);
-            final OperationData.SeqCond sq = new OperationData.SeqCond(id, location);
 
             final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
-            llOR.add(sq);
+            final String[] disjunctionSplit = disjunction.split("OR");
+            for (final String term : disjunctionSplit) {
+
+                final String[] termSplit = term.split(",");
+                if (termSplit.length != 2) {
+                    return false;
+                }
+
+                if (!mExternalInternalIdMap.containsKey(termSplit[0])) {
+                    System.out.println("Syntax error for condition in operation:" + iOpData.getName());
+                    return false;
+                }
+
+                final int id = mExternalInternalIdMap.get(termSplit[0]);
+                final int location = Integer.parseInt(termSplit[1]);
+                final OperationData.SeqCond sq = new OperationData.SeqCond(id, location);
+
+                llOR.add(sq);
+            }
             llAND.add(llOR);
         }
 
