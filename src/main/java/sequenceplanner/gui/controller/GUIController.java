@@ -2,8 +2,10 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFileChooser;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import sequenceplanner.IO.ReadFromVolvoFile;
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
@@ -70,6 +72,7 @@ public class GUIController {
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
         guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
+        guiView.addAddOperationsFromFileL(new AddOperationsFromFileListener());
     }
     //Listener classes
 
@@ -302,9 +305,23 @@ public class GUIController {
             guiModel.createNewOpView();
             final OperationView opView = guiModel.getOperationViews().getLast();
             opView.setName("Projection" + guiModel.getModel().getCounter());
-            new UserInteractionForVisualization(opView,guiModel.getModel());
+            new UserInteractionForVisualization(opView, guiModel.getModel());
             addNewOpTab();
-            
+
+        }
+    }
+
+    class AddOperationsFromFileListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
+
+            if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                final String path = dialog.getSelectedFile().getAbsolutePath();
+                final ReadFromVolvoFile r = new ReadFromVolvoFile(path, null, guiModel.getModel());
+                r.run();
+            }
         }
     }
 
@@ -316,11 +333,12 @@ public class GUIController {
             guiView.closeAllViews();
             guiView.updateEditorView();
             guiView.updatePropertyView();
-            for(OperationView o:guiModel.getOperationViews()){
-                 guiView.addNewOpTab(o.toString(), o);
-                 if(o.isClosed())
-                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
-                
+            for (OperationView o : guiModel.getOperationViews()) {
+                guiView.addNewOpTab(o.toString(), o);
+                if (o.isClosed()) {
+                    guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
+                }
+
             }
 
         }
