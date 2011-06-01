@@ -67,7 +67,5 @@ public class DefaultEFAConverterTest {
     
     @Test
     public void convert(){
-        DefaultEFAConverter converter = new DefaultEFAConverter("Default converter test", automata);
-        converter.saveToFile();
     }
 }

@@ -45,34 +45,43 @@ public class OperationSequences {
     }
 
     public void run(){
+        OperationData nd = (OperationData) model.getOperationRoot().getChildAt(1).getNodeData();
+        System.err.println(nd.getRawPostcondition());
+        System.err.println("*************");
+        System.err.println(nd.getRawPrecondition());
+        System.err.println("*************");
+        System.err.println(nd.getRawSequenceCondition(nd.getSequenceCondition(), nd.getResourceBooking()));
+        System.err.println("*************");
+        System.err.println(nd.getPostCondOperations().toString());
+        System.err.println(nd.getPostcondition());
         
-        SpEFAutomata automata = new SpEFAutomata("Test EFA");
-        SpEFA efa = new SpEFA("Test EFA");
+//        SpEFAutomata automata = new SpEFAutomata("Test EFA");
+//        SpEFA efa = new SpEFA("Test EFA");
+//        
+//        SpLocation iL = new SpLocation("5_i");
+//        iL.setInitialLocation();
+//        iL.setAccepting();
+//        
+//        SpLocation eL = new SpLocation("5_e");
+//        SpLocation fL = new SpLocation("5_f");
+//        fL.setAccepting();
+//        
+//        efa.addLocation(iL);
+//        efa.addLocation(eL);
+//        efa.addLocation(fL);
+//        
+//        SpEvent startE = new SpEvent("start", true);
+//        SpEvent stopE = new SpEvent("stop", true);
+//        
+//        efa.addTransition(iL.getName(), eL.getName(), startE.getName(), "V_Op6==0", "V_Op5=1");
+//        efa.addTransition(eL.getName(), fL.getName(), stopE.getName(), "", "V_Op5=2");
+//        
+//        SpVariable var = new SpVariable("Name", 0, 3, 0);
+//        automata.addVariable(var);
+//        automata.addAutomaton(efa);
         
-        SpLocation iL = new SpLocation("5_i");
-        iL.setInitialLocation();
-        iL.setAccepting();
-        
-        SpLocation eL = new SpLocation("5_e");
-        SpLocation fL = new SpLocation("5_f");
-        fL.setAccepting();
-        
-        efa.addLocation(iL);
-        efa.addLocation(eL);
-        efa.addLocation(fL);
-        
-        SpEvent startE = new SpEvent("start", true);
-        SpEvent stopE = new SpEvent("stop", true);
-        
-        efa.addTransition(iL.getName(), eL.getName(), startE.getName(), "V_Op6==0", "V_Op5=1");
-        efa.addTransition(eL.getName(), fL.getName(), stopE.getName(), "", "V_Op5=2");
-        
-        SpVariable var = new SpVariable("Name", 0, 3, 0);
-        automata.addVariable(var);
-        automata.addAutomaton(efa);
-        
-        DefaultEFAConverter converter = new DefaultEFAConverter("Test", automata);
-        converter.saveToFile();
+        //DefaultEFAConverter converter = new DefaultEFAConverter("Test", automata);
+        //converter.saveToFile();
         
 //        for(TreeNode node : operationList)
 //            printGuards(node);

@@ -5,106 +5,115 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import java.io.File;
-import java.util.Iterator;
-import javax.swing.JFileChooser;
-import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
-import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
-import net.sourceforge.waters.subject.module.ModuleSubject;
-import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
-import org.supremica.automata.ExtendedAutomata;
-import org.supremica.automata.ExtendedAutomaton;
 import org.supremica.external.avocades.common.Module;
 import sequenceplanner.efaconverter.EFAVariables;
+
+
 
 /**
  *
  * @author shoaei
  */
-public class DefaultEFAConverter {
+
+public class DefaultEFAConverter{
 
     private SpEFAutomata sp;
-    private Module module;
+    private DefaultEFAutomata automata;
     
-    public DefaultEFAConverter(String iName, SpEFAutomata iSpEFAutomata){
+    public DefaultEFAConverter(SpEFAutomata iSpEFAutomata){
         this.sp = iSpEFAutomata;
-        this.module = new Module(iName, false);
-        convert();
-    }
-
-    private void convert() {
-        for(SpVariable spv : sp.getVariables()){
-            DefaultEFAutomaton var = new DefaultEFAutomaton(createVariableName(spv.getName()), module);
-            var.addVariable(spv.getMin(), spv.getMax(), spv.getInit());
-        }
-        System.err.println(sp.getVariables().size());
-        
-        for(SpEFA spefa : sp.getAutomatons()){
-            DefaultEFAutomaton efa = new DefaultEFAutomaton(createEFAName(spefa.getName()), module);
-
-            for(SpLocation spl : spefa.getLocations()){
-                efa.addLocation(spl.getName(), spl.isAccepting(), spl.isInitialLocation());
-                System.err.println(spl.isAccepting() + " ===== " + spl.isInitialLocation());
-            }
-            
-            for(SpEvent spe : spefa.getAlphabet())
-                efa.addEvent(spe.getName(), spe.isControllable());
-            
-            for(Iterator<SpTransition> itr = spefa.iterateTransitions(); itr.hasNext();){
-                SpTransition tran = itr.next();
-                efa.addTransition(tran.getFrom().getName(), 
-                                  tran.getTo().getName(), 
-                                  tran.getEvent().getName(), 
-                                  tran.getGuard(), 
-                                  tran.getAction());
-            }
-            module.addAutomaton(efa.getAutomaton());
-        }
+        this.automata = new DefaultEFAutomata(iSpEFAutomata.getName());
     }
     
-    public Module getModule(){
-        return module;
+    private void convert(){
     }
-
-    private String createEFAName(String iOperationName) {
-        return EFAVariables.OPERATION_NAME_PREFIX + iOperationName;
-    }
-
-    private String createVariableName(String iVariableName) {
-        return EFAVariables.VARIABLE_NAME_PREFIX + iVariableName;
-    }
-    
-    public void saveToFile(){
-        try {
-            ModuleSubject moduleSubject = module.getModule();
-            moduleSubject.setName("Sequence Planner to EFA output");
-
-            String filepath = "";
-            JFileChooser fc = new JFileChooser();
-            int fileResult = fc.showSaveDialog(null);
-            if (fileResult == JFileChooser.APPROVE_OPTION) {
-                filepath = fc.getSelectedFile().getAbsolutePath();
-
-                File file = new File(filepath);
-
-                file.createNewFile();
-
-                ModuleSubjectFactory factory = new ModuleSubjectFactory();
-
-                //Save module to file
-
-                JAXBModuleMarshaller marshaller =
-                        new JAXBModuleMarshaller(factory,
-                        CompilerOperatorTable.getInstance());
-
-                marshaller.marshal(moduleSubject, file);
-
-            }
-        } catch (Exception t) {
-            System.err.println(t);
-        }
-    }
-}    
+}
+//***********************************************************************************************************
+//public class DefaultEFAConverter {
+//
+//    private SpEFAutomata sp;
+//    private Module module;
+//    
+//    public DefaultEFAConverter(String iName, SpEFAutomata iSpEFAutomata){
+//        this.sp = iSpEFAutomata;
+//        this.module = new Module(iName, false);
+//        convert();
+//    }
+//
+//    private void convert() {
+//        for(SpVariable spv : sp.getVariables()){
+//            DefaultEFAutomaton var = new DefaultEFAutomaton(createVariableName(spv.getName()), module);
+//            var.addVariable(spv.getMin(), spv.getMax(), spv.getInit());
+//        }
+//        System.err.println(sp.getVariables().size());
+//        
+//        for(SpEFA spefa : sp.getAutomatons()){
+//            DefaultEFAutomaton efa = new DefaultEFAutomaton(createEFAName(spefa.getName()), module);
+//
+//            for(SpLocation spl : spefa.getLocations()){
+//                efa.addLocation(spl.getName(), spl.isAccepting(), spl.isInitialLocation());
+//                System.err.println(spl.isAccepting() + " ===== " + spl.isInitialLocation());
+//            }
+//            
+//            for(SpEvent spe : spefa.getAlphabet())
+//                efa.addEvent(spe.getName(), spe.isControllable());
+//            
+//            for(Iterator<SpTransition> itr = spefa.iterateTransitions(); itr.hasNext();){
+//                SpTransition tran = itr.next();
+//                efa.addTransition(tran.getFrom().getName(), 
+//                                  tran.getTo().getName(), 
+//                                  tran.getEvent().getName(), 
+//                                  tran.getGuard(), 
+//                                  tran.getAction());
+//            }
+//            module.addAutomaton(efa.getAutomaton());
+//        }
+//    }
+//    
+//    public Module getModule(){
+//        return module;
+//    }
+//
+//    private String createEFAName(String iOperationName) {
+//        return EFAVariables.OPERATION_NAME_PREFIX + iOperationName;
+//    }
+//
+//    private String createVariableName(String iVariableName) {
+//        return EFAVariables.VARIABLE_NAME_PREFIX + iVariableName;
+//    }
+//    
+//    public void saveToFile(){
+//        try {
+//            ModuleSubject moduleSubject = module.getModule();
+//            moduleSubject.setName("Sequence Planner to EFA output");
+//
+//            String filepath = "";
+//            JFileChooser fc = new JFileChooser();
+//            int fileResult = fc.showSaveDialog(null);
+//            if (fileResult == JFileChooser.APPROVE_OPTION) {
+//                filepath = fc.getSelectedFile().getAbsolutePath();
+//
+//                File file = new File(filepath);
+//
+//                file.createNewFile();
+//
+//                ModuleSubjectFactory factory = new ModuleSubjectFactory();
+//
+//                //Save module to file
+//
+//                JAXBModuleMarshaller marshaller =
+//                        new JAXBModuleMarshaller(factory,
+//                        CompilerOperatorTable.getInstance());
+//
+//                marshaller.marshal(moduleSubject, file);
+//
+//            }
+//        } catch (Exception t) {
+//            System.err.println(t);
+//        }
+//    }
+//}    
+//******************************************************************************************
 //    private Model model;
 //    private String name;
 //    private DefaultEFAutomata automata;

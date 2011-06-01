@@ -75,6 +75,7 @@ public class OperationGraph {
     }
 
     public void calculate(int mode){
+        this.mode = mode;
         automaton.getAlphabet().add(new LabeledEvent("start"));
         automaton.getAlphabet().add(new LabeledEvent("finish"));
         automaton.getAlphabet().add(new LabeledEvent("temp"));
