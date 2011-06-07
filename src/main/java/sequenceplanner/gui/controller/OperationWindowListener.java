@@ -31,11 +31,12 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void windowShown(DockingWindow dw) {
+
         System.out.println("Window shown");
         if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
+
                     op.setHidden(false);
-                    System.out.println(op.getName() + " is hidden? " +op.isHidden());
         }
     }
 
@@ -44,6 +45,7 @@ class OperationWindowListener implements DockingWindowListener{
         System.out.println("Window hidden");
         if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
+
                     op.setHidden(true);
                     System.out.println(op.getName() + " is hidden? " +op.isHidden());
         }

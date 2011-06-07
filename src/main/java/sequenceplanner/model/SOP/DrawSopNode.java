@@ -2,6 +2,7 @@ package sequenceplanner.model.SOP;
 
 import com.mxgraph.model.mxCell;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
@@ -157,6 +158,7 @@ public class DrawSopNode {
             }
             final Data newOpData = new OperationData(opData.getName(), -1);
             Model.giveId(newOpData);
+            addDescriptionAsCondition(newOpData, opData);
             cell.setValue(newOpData);
             return cell;
         } else if (nodeType instanceof String) {
@@ -181,6 +183,31 @@ public class DrawSopNode {
             }
         }
         return null;
+    }
+
+    private void addDescriptionAsCondition(final Data iOpData, final OperationData iOldOperation) {
+        final OperationData opData = (OperationData) iOpData;
+        opData.setDescription(iOldOperation.getDescription());
+        final String description = opData.getDescription();
+
+        if (description.length() <= 1) {
+            return;
+        }
+
+        final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
+        final String[] conjunctionSplit = description.split("AND");
+
+        for (final String idAsString : conjunctionSplit) {
+            final int idAsInt = Integer.parseInt(idAsString);
+
+            final OperationData.SeqCond sq = new OperationData.SeqCond(idAsInt, 0, 1);
+
+            final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
+            llOR.add(sq);
+            llAND.add(llOR);
+        }
+
+        opData.setSequenceCondition(llAND);
     }
 
     /**

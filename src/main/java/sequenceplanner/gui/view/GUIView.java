@@ -354,7 +354,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenu fileMenu, edit, project, convert, mp, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -399,6 +399,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
+        visualization.add(addOperationsFromFile = new JMenuItem("Add Selfcontained operations from file"));
         this.add(visualization);
 
         windows = new JMenu("Windows");
@@ -511,6 +512,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addBruteForceVisualizationL(ActionListener l) {
         bruteForceVisualization.addActionListener(l);
     }
+
+    public void addAddOperationsFromFileL(ActionListener l) {
+        addOperationsFromFile.addActionListener(l);
+    }
 //End listeners
 
     /**
@@ -532,8 +537,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @param opView    operationview to be shown in the TabWindow
      */
     public void addNewOpTab(String name, OperationView opView) {
-        System.out.println(mainDocks.getChildWindowCount());
-//Should not be done here..
+//Should not be done here.. selectedOperationView is only updated when adding new tabs!
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
         propertyView.setOpView(opView);
@@ -587,7 +591,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void setWindowLayout() {
         System.out.println("Focus:" + operationRoot.getFocusedView() + " " + rootWindow.getFocusedView()+ " :end");
-//--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
+        //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
 
 //------- Docking the undocked windows ---------
 
@@ -681,4 +685,5 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public ViewMap getSOPViewMap() {
         return opViewMap;
     }
+    
 }
