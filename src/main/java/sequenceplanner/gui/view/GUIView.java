@@ -80,7 +80,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
-
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -158,7 +157,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //to 0, i.e. invisible.
         rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
         rootWindow.getRootWindowProperties().getDockingWindowProperties().setMaximizeEnabled(true);
-        
+
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
         operationRoot = DockingUtil.createRootWindow(opViewMap, true);
         objectRoot = DockingUtil.createRootWindow(objectViewMap, true);
@@ -235,7 +234,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getMinimizeButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getRestoreButtonProperties().setVisible(true);
 
-       // rootWindow.getRootWindowProperties().getWindowBarProperties().
+        // rootWindow.getRootWindowProperties().getWindowBarProperties().
         rootViewMap.addView(5, treeRootView);
 
         //--------------------
@@ -294,8 +293,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      */
     public void closeAllViews() {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
-            if(opViewMap.getView(i) != null)
+            if (opViewMap.getView(i) != null) {
                 opViewMap.getView(i).close();
+            }
             opViewMap.removeView(i);
         }
 
@@ -541,7 +541,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         opViewIndex++;
         View newView = new View(name, null, opView);
-
         opViewMap.addView(opViewIndex, newView);
 
 
@@ -586,11 +585,18 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void setWindowLayout() {
-        System.out.println("Focus:" + operationRoot.getFocusedView() + " " + rootWindow.getFocusedView()+ " :end");
+        System.out.println("Focus:" + operationRoot.getLastFocusedChildWindow() + " @ " + " :end");
+        //System.out.println("is closed? " + operationRoot.getChildWindow(1));
 //--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
-
+//+mainDocks.getWindowProperties().getTabProperties().getFocusedProperties().toString()
 //------- Docking the undocked windows ---------
 
+        DockingWindow tempViewMap = new TabWindow();
+        try{
+        tempViewMap = operationRoot.getLastFocusedChildWindow();
+
+
+        }catch(NullPointerException e){ System.out.println("error: " +e);}
         for (int i = 1; i <= rootViewMap.getViewCount(); i++) {
 
             rootViewMap.getView(i).dock();
@@ -598,9 +604,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }
         for (int i = 1; i <= opViewMap.getViewCount(); i++) {
 
-            if(opViewMap.getView(i) != null){
-            opViewMap.getView(i).dock();
-            opViewMap.getView(i).restore();
+            if (opViewMap.getView(i) != null) {
+                opViewMap.getView(i).dock();
+                opViewMap.getView(i).restore();
             }
         }
         for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
@@ -640,14 +646,21 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         operationRoot = DockingUtil.createRootWindow(opViewMap, true);
         operationRootView = new View("Operation Views", null, operationRoot);
         operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(1)));
-        int count = 1;
-        while(count <= opViewIndex){
-            
+        /*int count = 1;
+        while (count <= opViewIndex) {
+
             mainDocks.addTab(opViewMap.getView(count));
-           count = count+1;
+            count = count + 1;
             System.out.println(count);
             System.out.println(opViewIndex);
+        }*/
+        try{
+        for(int i = 0; i < tempViewMap.getChildWindowCount(); i++){
+            System.out.println("TempViewMap: "+tempViewMap.getChildWindow(i));
+            mainDocks.addTab(tempViewMap.getChildWindow(i));
         }
+
+        }catch(NullPointerException e){ System.out.println("error 2: " +e);}
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
@@ -660,7 +673,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(true, 0.7f, operationRootView,
                 new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
                 consoleRootView));
-
+       // mainDocks = new TabWindow(tempViewMap);
         mainDocks.restore();
         System.out.println("Child count: " + mainDocks.getChildWindowCount());
     }
