@@ -185,6 +185,11 @@ public class DrawSopNode {
         return null;
     }
 
+    /**
+     * Ad hoc in order to enable that signlas/variables written in an operation description to appear in precon in the projection.
+     * @param iOpData
+     * @param iOldOperation
+     */
     private void addDescriptionAsCondition(final Data iOpData, final OperationData iOldOperation) {
         final OperationData opData = (OperationData) iOpData;
         opData.setDescription(iOldOperation.getDescription());
@@ -214,12 +219,6 @@ public class DrawSopNode {
      * Dummy method, just to see how to work with {@link SPGraph}.<br/>
      */
     private void drawExampleSequence() {
-
-//   final public static String TYPE_OPERATION = "operation";
-//   final public static String TYPE_SOP = "sop";
-//   final public static String TYPE_PARALLEL = "parallel";
-//   final public static String TYPE_ALTERNATIVE = "alternative";
-//   final public static String TYPE_ARBITRARY = "arbitrary";
 
         Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7;
         Cell cell8;
