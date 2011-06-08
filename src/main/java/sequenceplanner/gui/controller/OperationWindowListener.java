@@ -8,8 +8,8 @@ import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.gui.view.GUIView;
 
 /**
- *
- * @author QW4z1
+ *Listener class for controlling DockingWindowEvents. 
+ * @author Qw4z1
  */
 class OperationWindowListener implements DockingWindowListener{
     //Private instance of the GUIView object.
@@ -31,21 +31,23 @@ class OperationWindowListener implements DockingWindowListener{
 
     @Override
     public void windowShown(DockingWindow dw) {
+
         System.out.println("Window shown");
-        if(dw.getComponent(0) instanceof OperationView){
-            OperationView op = (OperationView) dw.getComponent(0);
+        if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
+            OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
+
                     op.setHidden(false);
-                    System.out.println(op.isClosed());
         }
     }
 
     @Override
     public void windowHidden(DockingWindow dw) {
         System.out.println("Window hidden");
-        if(dw.getComponent(0) instanceof OperationView){
-            OperationView op = (OperationView) dw.getComponent(0);
+        if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
+            OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
+
                     op.setHidden(true);
-                    System.out.println(op.isClosed());
+                    System.out.println(op.getName() + " is hidden? " +op.isHidden());
         }
     }
 
@@ -62,10 +64,10 @@ System.out.println("Not supported yet.4");
     @Override
     public void windowClosed(DockingWindow dw) {
         System.out.println("Window closed");
-        if(dw.getComponent(0) instanceof OperationView){
-            OperationView op = (OperationView) dw.getComponent(0);
+        if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
+            OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
                     op.setClosed(true);
-                    System.out.println(op.isClosed());
+                    System.out.println(op.getName() + " is closed? " +op.isClosed());
         }
     }
 
