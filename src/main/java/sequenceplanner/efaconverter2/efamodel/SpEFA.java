@@ -147,6 +147,10 @@ public class SpEFA {
         return this.alphabet;
     }
 
+    public HashSet<SpTransition> getTransitions(){
+        return transitions;
+    }
+    
     public Iterator<SpLocation> iterateLocations(){
         return locations.values().iterator();
     }

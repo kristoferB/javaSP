@@ -40,7 +40,9 @@ public class ModelParser {
     
     private void init() {
         this.operations = new HashMap<Integer, TreeNode>();
-        this.variables = new HashMap<Integer, TreeNode>();        
+        this.variables = new HashMap<Integer, TreeNode>();
+        this.spOps = new HashMap<Integer, SpEFA>();
+        this.spVars = new HashMap<Integer, SpVariable>();
         recursiveVarFinder(model.getResourceRoot());
         recursiveOpFinder(model.getOperationRoot());
     }
@@ -76,9 +78,8 @@ public class ModelParser {
     }
     
     private void createSpVariables(SpEFAutomata automata) {
-        this.spVars = new HashMap<Integer, SpVariable>();
         for(TreeNode node : variables.values()){
-            SpVariable newvar = createSpVariable(node);
+            SpVariable newvar = getSpVariable(node);
             if(newvar != null){
                 spVars.put(node.getId(), newvar);
                 automata.addVariable(newvar);
@@ -86,7 +87,7 @@ public class ModelParser {
         }
     }
     
-    public SpVariable createSpVariable(TreeNode variable){
+    public SpVariable getSpVariable(TreeNode variable){
         if(Model.isVariable(variable.getNodeData())){
             ResourceVariableData varData = (ResourceVariableData) variable.getNodeData();
             return new SpVariable(createName(varData), varData.getMin(), varData.getMax(), varData.getInitialValue());
@@ -95,9 +96,8 @@ public class ModelParser {
     }
 
     private void createSpEFAs(SpEFAutomata automata) {
-        this.spOps = new HashMap<Integer, SpEFA>();
         for(TreeNode op : operations.values()){
-            SpEFAutomata temp = createSpEFA(op);
+            SpEFAutomata temp = getSpEFA(op);
             for(SpEFA efa : temp.getAutomatons())
                 automata.addAutomaton(efa);
             for(SpVariable var : temp.getVariables())
@@ -105,7 +105,7 @@ public class ModelParser {
         }
     }
     
-    public SpEFAutomata createSpEFA(TreeNode operation){
+    public SpEFAutomata getSpEFA(TreeNode operation){
         OperationData opData = (OperationData)operation.getNodeData();
 
         SpEFAutomata output = new SpEFAutomata("Operation " + operation.getId() + " Automata");
@@ -129,7 +129,10 @@ public class ModelParser {
         SpTransition startT = new SpTransition(startE, iL, eL, createPreCondition(operation)); 
         SpTransition stopT = new SpTransition(stopE, eL, fL, createPostCondition(operation)); 
         
-        SpVariable var = new SpVariable(opName, new Integer(0), new Integer(2), new Integer(0));
+        efa.addTransition(startT);
+        efa.addTransition(stopT);
+        
+        SpVariable var = new SpVariable("Var_" + opName, new Integer(0), new Integer(2), new Integer(0));
 
         output.addVariable(var);
         output.addAutomaton(efa);
@@ -199,7 +202,7 @@ public class ModelParser {
 
 
      private ConditionStatment createConditionStatment(OperationData.SeqCond cond){
-         return new ConditionStatment(createName(cond.id), getConditionOperator(cond), Integer.toString(cond.value));
+         return new ConditionStatment("Var_" + createName(cond.id), getConditionOperator(cond), Integer.toString(cond.state));
      }
 
      private ConditionStatment createGuardConditionStatment(Integer[] resourceAlloc){
