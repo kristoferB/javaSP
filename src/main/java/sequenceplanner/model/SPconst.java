@@ -1,5 +1,7 @@
 package sequenceplanner.model;
 
+
+
 /**
  *
  * @author erik

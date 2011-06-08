@@ -746,7 +746,7 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             AndNode node = (AndNode) model.elementAt(i);
             updateAnd(node);
-            label = label.isEmpty() ? "" : label + " " + Constansts.AND;
+            label = label.isEmpty() ? "" : label + " " + Constants.AND;
             label += " ( " + node.representation + " ) ";
      //       System.out.println(label);
             model.set(i, node);
@@ -757,7 +757,7 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             ResNode node = (ResNode) model.elementAt(i);
 
-            label = label.isEmpty() ? "" : label + " " + Constansts.AND + " ";
+            label = label.isEmpty() ? "" : label + " " + Constants.AND + " ";
             label += node.representation;
 
             model.set(i, node);
@@ -777,7 +777,7 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             OrNode orNode = (OrNode) model.elementAt(i);
             updateOr(orNode);
-            rep = rep.isEmpty() ? rep : rep + " " + Constansts.OR + " ";
+            rep = rep.isEmpty() ? rep : rep + " " + Constants.OR + " ";
             rep += orNode.representation;
          }
          node.representation = rep;
@@ -805,7 +805,7 @@ public class Editors {
             OrNode n = new OrNode((SeqCond) seqCond.clone(), t[0] + "." + t[1]);
             model.addElement(n);
 
-            rep = rep.isEmpty() ? rep : rep + " " + Constansts.OR + " ";
+            rep = rep.isEmpty() ? rep : rep + " " + Constants.OR + " ";
             rep += n.representation;
          }
 

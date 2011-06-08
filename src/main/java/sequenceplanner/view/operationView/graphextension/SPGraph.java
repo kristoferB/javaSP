@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.autoSOP.SequenceCreator;
 import sequenceplanner.view.operationView.autoSOP.SopNode;
 
@@ -912,9 +912,9 @@ public class SPGraph extends mxGraph {
             Object[] cells = new Object[2];
 
             if (before) {
-               p.setY(oldGeo.getY() - Constansts.BEFORE_CELL - newCell.getGeometry().getHeight());
+               p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
             } else {
-               p.setY(oldGeo.getY() + oldGeo.getHeight() + Constansts.AFTER_CELL);
+               p.setY(oldGeo.getY() + oldGeo.getHeight() + Constants.AFTER_CELL);
             }
 
             if (p.getY() < 0) {
@@ -1046,13 +1046,13 @@ public class SPGraph extends mxGraph {
 
                Insets group = new Insets(0, 0, 0, 0);
                if (cell.isAlternative()) {
-                  group = Constansts.ALTERNATIVE_INSET;
+                  group = Constants.ALTERNATIVE_INSET;
                } else if (cell.isArbitrary()) {
-                  group = Constansts.ARBITRARY_INSET;
+                  group = Constants.ARBITRARY_INSET;
                } else if (cell.isSOP()) {
-                  group = Constansts.SOP_INSET;
+                  group = Constants.SOP_INSET;
                } else if (cell.isParallel()) {
-                  group = Constansts.PARALLEL_INSET;
+                  group = Constants.PARALLEL_INSET;
                }
 
                te.setX(te.getX() - group.left);
@@ -1151,7 +1151,7 @@ public class SPGraph extends mxGraph {
          double seqX = 0;
 
          while (!out.isEmpty()) {
-            seqX += Constansts.SEQUENCE_DISTANCE;
+            seqX += Constants.SEQUENCE_DISTANCE;
 
 
             //Find out what of the sequences is farthest to the right.
@@ -1179,13 +1179,13 @@ public class SPGraph extends mxGraph {
             double height = 0;
 
             if (parent == getDefaultParent()) {
-               height = Constansts.ROOTBORDER_DISTANCE.top;
+               height = Constants.ROOTBORDER_DISTANCE.top;
             }
 
             for (mxCell cell : l) {
                mxGeometry geo = (mxGeometry) cell.getGeometry().clone();
                geo.setY(height);
-               height += geo.getHeight() + Constansts.AFTER_CELL;
+               height += geo.getHeight() + Constants.AFTER_CELL;
                geo.setX(center - geo.getWidth() / 2);
                ((SPGraphModel) model).setGeometry(cell, geo);
             }
