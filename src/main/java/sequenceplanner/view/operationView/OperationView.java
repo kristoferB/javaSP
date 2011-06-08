@@ -207,7 +207,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             cell = new Cell(node.getNodeData());
             cell.setCollapsed(true);
             cell.setVertex(true);
-            cell.setStyle("perimeter=custom.operationPerimeter;fillColor=#FFFF00");
+            cell.setStyle("perimeter=custom.operationPerimeter;fillColor=red");
             cell.setConnectable(false);
             mxGeometry geo = new mxGeometry();
 
@@ -682,6 +682,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         showPath.setSelected(getGraph().isShowPath());
         showPath.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
 
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -742,7 +743,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     protected void validateResources() {
         //Validate preconditions.
-        //Validate precondtions.
+
     }
 
     public String getCellName(String name, Cell node) {
