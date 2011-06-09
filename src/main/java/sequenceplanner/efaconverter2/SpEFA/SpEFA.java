@@ -87,7 +87,7 @@ public class SpEFA {
     // These addTransition should be handled in a better way! Fix later!
 
     public SpTransition addTransition(SpLocation from, SpLocation to, String event){
-        SpTransition trans = new SpTransition(event, from.getName(), to.getName());
+        SpTransition trans = new SpTransition(event, from.getName(), to.getName(), "" , "");
         this.alphabet.add(trans.getEvent());
         from.addOutTransition(trans);
         to.addInTransition(trans);
@@ -100,12 +100,10 @@ public class SpEFA {
     public SpTransition addTransition(String from, String to, String event, String guard, String action){
         SpLocation fromL = addLocation(from);
         SpLocation toL = addLocation(to);
-        SpTransition trans = new SpTransition(event, from, to);
+        SpTransition trans = new SpTransition(event, from, to, guard, action);
         this.alphabet.add(trans.getEvent());
         fromL.addOutTransition(trans);
         toL.addInTransition(trans);
-        trans.setGuard(guard);
-        trans.setAction(action);
         transitions.add(trans);
         return trans;
     }

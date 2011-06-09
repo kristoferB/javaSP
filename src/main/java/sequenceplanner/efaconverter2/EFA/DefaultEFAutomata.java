@@ -18,10 +18,12 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
 
     private Module module;
     private HashMap<String, DefaultEFAutomaton> automatons;
-
+    private String name;
+    
     public DefaultEFAutomata(String iName){
         module = new Module(iName, false);
         automatons = new HashMap<String, DefaultEFAutomaton>();
+        this.name = iName;
     }
 
     public void addEvent(String iEvent){
@@ -45,7 +47,7 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
         boolean check = false;
         if(!automatons.containsKey(iAutomaton.getName())){
             automatons.put(iAutomaton.getName(), iAutomaton);
-            //module.addAutomaton(iAutomaton);
+            module.addAutomaton(iAutomaton.getAutomaton());
             check = true;
         }
         return check;
@@ -75,8 +77,8 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
     public boolean addIntegralVariable(String iName, int iMin, int iMax, int iInitialValue) {
         boolean check = false;
         if(!automatons.containsKey(iName)){
-        DefaultEFAutomaton var = new DefaultEFAutomaton(iName, module);
-        //var.addIntegerVariable(iName, iMin, iMin, iInitialValue, null);
+        DefaultEFAutomaton var = new DefaultEFAutomaton(iName, this);
+        var.addVariable(iMin, iMin, iInitialValue);
         automatons.put(iName, var);
         //module.addAutomaton(var);
             check = true;
@@ -86,5 +88,9 @@ public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
 
     public boolean containsAutomaton(DefaultEFAutomaton iAutomaton){
         return automatons.containsKey(iAutomaton.getName());
+    }
+    
+    public Collection<DefaultEFAutomaton> getEFAutomatons(){
+        return automatons.values();
     }
 }

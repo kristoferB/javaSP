@@ -14,35 +14,34 @@ import sequenceplanner.efaconverter2.condition.*;
  *
  * @author shoaei
  */
-public class DefaultEFAConverter {
+public class DefaultEFAConverter implements IEFAConverter{
     
     private SpEFAutomata sp;
     private DefaultEFAutomata automata;
-    private Module module;
     
     public DefaultEFAConverter(SpEFAutomata sp){
         this.sp = sp;
         automata = new DefaultEFAutomata(sp.getName());
-        module = new Module("Model for " + sp.getName(), false);
+        convert();
     }
     
-    public boolean convert(){
+    private boolean convert(){
         boolean result = false;
         for(SpVariable spv : sp.getVariables()){
-            DefaultEFAutomaton var = new DefaultEFAutomaton(createVariableName(spv.getName()), module);
+            DefaultEFAutomaton var = new DefaultEFAutomaton(spv.getName(), automata);
             var.addVariable(spv.getMin(), spv.getMax(), spv.getInit());
         }
         
         for(SpEFA spefa : sp.getAutomatons()){
-            String efaName = createEFAName(spefa.getName());
+            String efaName = spefa.getName();
             String varName = createVariableName(efaName);
-            DefaultEFAutomaton efa = new DefaultEFAutomaton(efaName, module);
-            DefaultEFAutomaton var = new DefaultEFAutomaton(varName, module);
+            DefaultEFAutomaton efa = new DefaultEFAutomaton(efaName, automata);
+            DefaultEFAutomaton var = new DefaultEFAutomaton(varName, automata);
             var.addVariable(0, spefa.getLocations().size() - 1, 0);
             
-//            for(SpLocation spl : spefa.getLocations()){
-//                efa.addLocation(spl.getName(), spl.isAccepting(), spl.isInitialLocation());
-//            }
+            for(SpLocation spl : spefa.getLocations()){
+                efa.addLocation(spl.getName(), spl.isAccepting(), spl.isInitialLocation());
+            }
             
             for(SpEvent spe : spefa.getAlphabet())
                 efa.addEvent(spe.getName(), spe.isControllable());
@@ -50,14 +49,10 @@ public class DefaultEFAConverter {
             int count = 0;
             for(Iterator<SpTransition> itr = spefa.iterateSequenceTransitions(); itr.hasNext();){
                 SpTransition tran = itr.next();
-                efa.addLocation(tran.getFrom().getName(), tran.getFrom().isAccepting(), tran.getFrom().isInitialLocation());
-                
-                if(!itr.hasNext())
-                    efa.addLocation(tran.getTo().getName(), tran.getTo().isAccepting(), tran.getTo().isInitialLocation());
                 
                 String guard = parsGuards(tran.getConditionGuard());
                 String action = parsActions(tran.getConditionAction());
-                String actionLocation = varName + ConditionStatment.Operator.Equal + Integer.toString(count++) + EFAVariables.EFA_ACTION_DIVIDER;
+                String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(++count) + EFAVariables.EFA_ACTION_DIVIDER;
                 action += actionLocation;
 
                 efa.addTransition(tran.getFrom().getName(), 
@@ -66,17 +61,27 @@ public class DefaultEFAConverter {
                                   guard, 
                                   action);
             }
-            module.addAutomaton(efa.getAutomaton());
+            automata.addEFAutomaton(efa);
+            
+            if(((sp.getAutomatons().size() * 2) + sp.getVariables().size()) == automata.getEFAutomatons().size())
+                result = true;
         }
         return result;
     }
 
     private String parsGuards(ConditionExpression cex){
+        if (cex.isEmpty())
+            return "";
+        
         String result = "(";
         for (ConditionElement e : cex){
+
             if(e.isExpression())
                result += parsGuards((ConditionExpression)e);
-            result += e;
+
+            if(e.isStatment())
+                result += e;
+
             if(e.hasNextOperator())
                 result += e.getNextOperator();
         }
@@ -101,4 +106,13 @@ public class DefaultEFAConverter {
         return EFAVariables.VARIABLE_NAME_PREFIX + iVariableName;
     }
     
+    @Override
+    public DefaultEFAutomata getEFAutomata(){
+        return automata;
+    }
+    
+    @Override
+    public Module getModule(){
+        return automata.getThisModule();
+    }
 }

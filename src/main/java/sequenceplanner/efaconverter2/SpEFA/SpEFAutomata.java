@@ -21,9 +21,11 @@ public class SpEFAutomata {
         this.variables = new HashMap<String, SpVariable>();
         this.name = iName;
     }
+    
     public SpEFAutomata() {
         this("SequencePlanner Model");
     }
+    
     public Collection<SpEvent> getAlphabet() {
         return alphabet.values();
     }
@@ -59,6 +61,15 @@ public class SpEFAutomata {
         this.name = iName;
     }
 
-
-
+    public void removeAutomaton(String iAutomatonName){
+        automatons.remove(iAutomatonName);
+        alphabet.clear();
+        for(SpEFA efa : automatons.values())
+            for(SpEvent e : efa.getAlphabet())
+                alphabet.put(e.getName(), e);
+    }
+    
+    public void removeVariable(String iVariableName){
+        variables.remove(iVariableName);
+    }
 }

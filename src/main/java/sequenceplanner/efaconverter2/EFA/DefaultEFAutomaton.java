@@ -33,6 +33,16 @@ public class DefaultEFAutomaton {
         events = new LinkedList<String>();
         transitions = new LinkedList<LinkedList<String>>();
     }
+    
+    public DefaultEFAutomaton(String iName, DefaultEFAutomata iAutomata){
+        automaton = new ExtendedAutomaton(iName, iAutomata.getThisModule(), true);
+        this.module = iAutomata.getThisModule();
+        this.name = iName;
+        locations = new LinkedList<String>();
+        events = new LinkedList<String>();
+        transitions = new LinkedList<LinkedList<String>>();
+        
+    }
 
     public void addLocation(String iName){
         this.addLocation(iName, false, false);

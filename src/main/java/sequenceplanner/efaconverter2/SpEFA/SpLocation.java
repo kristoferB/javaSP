@@ -14,11 +14,13 @@ public class SpLocation {
     private Set<SpTransition> outTransitions;
     private boolean isInitialLocation = false;
     private boolean isAccepting = false;
+    private int value;
 
     public SpLocation(String locationName) {
         this.locationName = locationName;
         inTransitions = new HashSet<SpTransition>();
         outTransitions = new HashSet<SpTransition>();
+        value = -1;
     }
 
     public Set<SpTransition> getInTransitions() {
@@ -75,6 +77,14 @@ public class SpLocation {
     
     public boolean isInitialLocation(){
         return isInitialLocation;
+    }
+    
+    public void setValue(int value){
+        this.value = value;
+    }
+    
+    public int getValue(){
+        return value;
     }
     
     @Override

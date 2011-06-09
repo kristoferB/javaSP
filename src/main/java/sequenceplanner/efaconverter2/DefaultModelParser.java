@@ -19,7 +19,7 @@ import sequenceplanner.model.data.ResourceVariableData;
  *
  * @author shoaei
  */
-public class DefaultModelParser {
+public class DefaultModelParser implements IModelParser{
     private final Model model;
     private HashMap<Integer, TreeNode> variables;
     private HashMap<Integer, TreeNode> operations;
@@ -60,17 +60,17 @@ public class DefaultModelParser {
         for (int i = 0; i < op.getChildCount(); i++) {
             TreeNode child = (TreeNode) op.getChildAt(i);
             if (Model.isOperation(child.getNodeData())){
-                this.operations.put(child.getNodeData().getId(), child);
+                operations.put(child.getNodeData().getId(), child);
                 recursiveOpFinder(child);
             }
         }        
     }
 
+    @Override
     public SpEFAutomata getSpEFAutomata(){
         this.automata = new SpEFAutomata();
         createSpVariables();
         createSpEFAs();
-        createSpProject();
         return automata;
     }
 
@@ -83,6 +83,7 @@ public class DefaultModelParser {
         }
     }
     
+    @Override
     public SpVariable getSpVariable(TreeNode variable){
         if(Model.isVariable(variable.getNodeData())){
             ResourceVariableData varData = (ResourceVariableData) variable.getNodeData();
@@ -99,8 +100,10 @@ public class DefaultModelParser {
             for(SpVariable var : temp.getVariables())
                 automata.addVariable(var);
         }
+        createSpProject();
     }
     
+    @Override
     public SpEFAutomata getSpEFA(TreeNode operation){
         OperationData opData = (OperationData)operation.getNodeData();
 
@@ -111,9 +114,14 @@ public class DefaultModelParser {
         SpLocation iL = new SpLocation(opName + EFAVariables.STATE_INITIAL_POSTFIX);
         iL.setInitialLocation();
         iL.setAccepting();
+        iL.setValue(0);
+        
         SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
+        eL.setValue(1);
+        
         SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
         fL.setAccepting();
+        fL.setValue(2);
         
         efa.addLocation(iL);
         efa.addLocation(eL);
@@ -141,6 +149,9 @@ public class DefaultModelParser {
     }
 
     private Condition createPreCondition(TreeNode operation){
+         if (operation.getNodeData() == null)
+             return new Condition();
+
         OperationData od = (OperationData) operation.getNodeData();
         Condition c = createCondition(od.getSequenceCondition(),od.getResourceBooking(),od.getActions());
         if (hasParent(operation)){
@@ -151,12 +162,14 @@ public class DefaultModelParser {
         return c;
      }
 
-     private Condition createPostCondition(TreeNode operation){
-         OperationData od = (OperationData) operation.getNodeData();
+     private Condition createPostCondition(TreeNode opData){
+         if (opData.getNodeData() == null)
+             return new Condition();
+         
+         OperationData od = (OperationData) opData.getNodeData();
          Condition c = createCondition(od.getPSequenceCondition(),od.getPResourceBooking(),new LinkedList<OperationData.Action>());
          return c;
      }
-     
      
     private Condition createCondition(LinkedList<LinkedList<OperationData.SeqCond>> seqCond,
                                        LinkedList<Integer[]> rAlloc,
@@ -293,12 +306,13 @@ public class DefaultModelParser {
     }
     
     private void createSpProject() {
+        
         String opName = getProjectName();
         SpEFA efa = new SpEFA(opName);
         
         SpLocation iL = new SpLocation(opName + EFAVariables.STATE_INITIAL_POSTFIX);
         iL.setInitialLocation();
-        iL.setAccepting();
+        //iL.setAccepting();
         SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
         SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
         fL.setAccepting();
@@ -321,9 +335,9 @@ public class DefaultModelParser {
         efa.addTransition(startT);
         efa.addTransition(stopT);
         
-        SpVariable var = new SpVariable(EFAVariables.VARIABLE_NAME_PREFIX + opName, new Integer(0), new Integer(2), new Integer(0));
+        //SpVariable var = new SpVariable(EFAVariables.VARIABLE_NAME_PREFIX + opName, new Integer(0), new Integer(2), new Integer(0));
 
-        automata.addVariable(var);
+        //automata.addVariable(var);
         automata.addAutomaton(efa);
     }
         
