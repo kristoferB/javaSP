@@ -65,18 +65,18 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private String startName;
     protected mxGraphOutline outline = null;
     JSplitPane pane;
-
     private boolean isClosed;
     private boolean isHidden;
     //TODO refactor name to SOPView
+
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
-        updateName();
-        setClosed(false);
-        setHidden(false);
+        initVariables();
+        
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
+
 
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
@@ -89,8 +89,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                 setChanged(true);
             }
         });
-
-
 
         initPanels();
         registerKeystrokes(graphComponent.getInputMap(), graphComponent.getActionMap());
@@ -128,6 +126,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return pane;
     }
 
+    @Override
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -163,6 +162,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     public void setHidden(boolean hidden) {
         isHidden = hidden;
     }
+
     public boolean isChanged() {
         return changed;
     }
@@ -227,7 +227,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return cell;
     }
 
-    public void open(ViewData view) {
+    private void open(ViewData view) {
         OperationData in = null;
         if (view.getRoot() != -1) {
             TreeNode d = model.getOperation(view.getRoot());
@@ -316,9 +316,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
             OperationData od = (OperationData) data[0].getNodeData();
-            
-            
-            
+
+
+
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());
@@ -660,6 +660,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         showGrid.setSelected(getGraphComponent().isGridVisible());
         showGrid.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
 
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -743,7 +744,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     protected void validateResources() {
         //Validate preconditions.
-
     }
 
     public String getCellName(String name, Cell node) {
@@ -841,5 +841,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         iMap.put(KeyStroke.getKeyStroke("control X"), "cut");
         aMap.put("cut",
                 createAction("cut", TransferHandler.getCutAction(), "", true));
+    }
+
+    private void initVariables() {
+        setClosed(false);
+        setHidden(false);
+        updateName();
     }
 }

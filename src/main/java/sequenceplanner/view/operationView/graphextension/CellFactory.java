@@ -19,8 +19,8 @@ public class CellFactory {
 
 	private static CellFactory factoryInstance = new CellFactory();
 
+        // Private constructor prevents instantiation from other classes
 	private CellFactory() {
-		// Make sure no more instances of this class can be created
 	}
 
 	public static CellFactory getInstance() {
