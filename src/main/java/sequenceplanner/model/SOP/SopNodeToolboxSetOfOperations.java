@@ -62,7 +62,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public void relationsToSelfContainedOperations(ISopNode iRootNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        new ConditionsFromSopNode(iRootNode);
     }
 
     @Override
@@ -137,6 +137,18 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
             returnSet.add(localSet);
         }
 
+        return returnSet;
+    }
+
+    public Set<OperationData> getOperationsAsSetFromSopNodeSet(final Set<ISopNode> iSopNodeSet) {
+        final Set<OperationData> returnSet = new HashSet<OperationData>();
+        for (final ISopNode node : iSopNodeSet) {
+            final Object nodeType = node.getNodeType();
+            if (nodeType instanceof OperationData) {
+                final OperationData opData = (OperationData) nodeType;
+                returnSet.add(opData);
+            }
+        }
         return returnSet;
     }
 

@@ -49,19 +49,19 @@ public class ConditionsFromSopNode {
                 if (successorNode != null) {
 
                     //Add condition from node to successor node------------------
-                    String condition = "";
+                    LocalCondition condition = new LocalCondition();
                     if (!getFinishConditionForNode(node, condition)) {
                         return false;
                     }
 
                     final Set<OperationData> operationSet = new HashSet<OperationData>();
-                    if(!findFirstOperationsForNode(successorNode, operationSet)) {
+                    if (!findFirstOperationsForNode(successorNode, operationSet)) {
                         return false;
                     }
 
                     for (final OperationData opData : operationSet) {
                         //Add condition to opData
-                        System.out.println(opData.getName() + " precon: " + condition);
+                        System.out.println(opData.getName() + " precon: " + condition.getmCondition());
                     }
                     //-----------------------------------------------------------
                 }
@@ -114,13 +114,14 @@ public class ConditionsFromSopNode {
                 //add condition
                 for (final ISopNode altNode : iNode.getFirstNodesInSequencesAsSet()) {
                     final Set<ISopNode> nodesInAlternativeSet = iNode.getFirstNodesInSequencesAsSet();
-                    nodesInAlternativeSet.remove(altNode);
 
                     for (final ISopNode otherNode : nodesInAlternativeSet) {
                         for (final OperationData altOperation : nodeOperationSetMap.get(altNode)) {
                             for (final OperationData otherOperation : nodeOperationSetMap.get(otherNode)) {
                                 //add precondition to altOperation that otherOperation has to be _i
-                                System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + " _i");
+                                if (!otherNode.equals(altNode)) {
+                                    System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + " _i");
+                                }
                             }
                         }
                     }
@@ -128,23 +129,32 @@ public class ConditionsFromSopNode {
                 //---------------------------------------------------------------
             } else if (nodeTypeString.equals(arbitraryOrder)) {//----------------
                 //find operations in each sequence -> Set<Set<OperationData>> externalSet
+                final Set<Set<ISopNode>> sequenceNodesSet = new SopNodeToolboxSetOfOperations().getNodesInEachSequence(iNode, true);
+                final Set<Set<OperationData>> sequenceOperationSet = new HashSet<Set<OperationData>>();
+                for (final Set<ISopNode> nodeSet : sequenceNodesSet) {
+                    sequenceOperationSet.add(new SopNodeToolboxSetOfOperations().getOperationsAsSetFromSopNodeSet(nodeSet));
+                }
                 //add condition
-                //for each operation in a set
-                //for (final Set<OperationData> internalSet : externalSet)
-                //Set<Set<OperationData>> localSet = new HashSet<Set<OperationData>>(externalSet)
-                //localSet.remove(internalSet)
-                //for (final OperationData opData : internalSet)
-                //for (final Set<OperationData> localLocalSet : localSet)
-                //for (final OperationData localOpData : localLocalSet)
-                //add precondition to opData that localOpData has to be _i or _f
-                //add postcondition to opData that localOpData has to be _i or _f
-                System.out.println("arbitraryOrder");
+                for (final Set<OperationData> internalSet : sequenceOperationSet) {
+                    Set<Set<OperationData>> localSet = new HashSet<Set<OperationData>>(sequenceOperationSet);
+                    localSet.remove(internalSet);
+                    for (final OperationData opData : internalSet) {
+                        for (final Set<OperationData> localLocalSet : localSet) {
+                            for (final OperationData localOpData : localLocalSet) {
+                                //add precondition to opData that localOpData has to be _i or _f
+                                //add postcondition to opData that localOpData has to be _i or _f
+                                System.out.println(opData.getName() + " precon: " + localOpData.getName() + " _i OR _f");
+                                System.out.println(opData.getName() + " postcon: " + localOpData.getName() + " _i OR _f");
+                            }
+                        }
+                    }
+                }
                 //---------------------------------------------------------------
             } else if (nodeTypeString.equals(parallel)) {
                 //do nothing
             } else {
-                System.out.println("error in  nodeTypeToCondition");
-                return false;
+                System.out.println("nodeTypeToCondition SOP node found is that good?");
+                //return false;
             }
         }
 
@@ -171,12 +181,12 @@ public class ConditionsFromSopNode {
         return true;
     }
 
-    private boolean getFinishConditionForNode(final ISopNode iNode, String returnCondition) {
+    private boolean getFinishConditionForNode(final ISopNode iNode, final LocalCondition returnCondition) {
         final Object nodeType = iNode.getNodeType();
 
         if (nodeType instanceof OperationData) {
             final OperationData opData = (OperationData) nodeType;
-            returnCondition = opData.getName() + "_f";
+            returnCondition.setmCondition(opData.getName() + "_f");
         } else if (nodeType instanceof String) {
             final String nodeTypeString = (String) nodeType;
             final String alternative = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");
@@ -185,25 +195,56 @@ public class ConditionsFromSopNode {
 
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
                 ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
-                String localReturnCondition = "";
+                LocalCondition localReturnCondition = new LocalCondition();
                 getFinishConditionForNode(lastNode, localReturnCondition);
 
-                if (returnCondition.length() > 1) {
+                if (!returnCondition.isEmpty()) {
                     if (nodeTypeString.equals(parallel) || nodeTypeString.equals(arbitraryOrder)) {
-                        returnCondition += "AND";
+                        returnCondition.addCondition(" AND ");
                     } else if (nodeTypeString.equals(alternative)) {
-                        returnCondition += "OR";
+                        returnCondition.addCondition(" OR ");
                     } else {
                         System.out.println("getFinishConditionForNode String Node type in not known");
                         return false;
                     }
                 }
-                returnCondition += localReturnCondition;
+                returnCondition.addCondition(localReturnCondition.getmCondition());
             }
         } else {
             System.out.println("getFinishConditionForNode Node type in not known");
             return false;
         }
         return true;
+    }
+
+    public class LocalCondition {
+
+        private String mCondition = "";
+
+        public LocalCondition() {
+        }
+
+        public LocalCondition(final String iS) {
+            setmCondition(iS);
+        }
+
+        public String getmCondition() {
+            return mCondition;
+        }
+
+        public void setmCondition(String mCondition) {
+            this.mCondition = mCondition;
+        }
+
+        public void addCondition(String iConditionToAdd) {
+            setmCondition(getmCondition() + iConditionToAdd);
+        }
+
+        public boolean isEmpty() {
+            if (getmCondition().length() > 1) {
+                return false;
+            }
+            return true;
+        }
     }
 }
