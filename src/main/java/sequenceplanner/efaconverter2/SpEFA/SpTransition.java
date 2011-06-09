@@ -1,5 +1,5 @@
 
-package sequenceplanner.efaconverter2.efamodel;
+package sequenceplanner.efaconverter2.SpEFA;
 
 import sequenceplanner.efaconverter2.condition.Condition;
 import sequenceplanner.efaconverter2.condition.ConditionExpression;
@@ -19,11 +19,13 @@ public class SpTransition {
     SpLocation to;
 
 
-    public SpTransition(String eventLabel, String from, String to) {
+    public SpTransition(String eventLabel, String from, String to, String guard, String action) {
         this.event = new SpEvent(eventLabel);
         this.from = new SpLocation(from);
         this.to = new SpLocation(to);
         condition = new Condition();
+        this.action = action;
+        this.guard = guard;
     }
 
     public SpTransition(SpEvent eventLabel,SpLocation from, SpLocation to, Condition transitionCondition) {

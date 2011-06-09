@@ -1,5 +1,5 @@
 
-package sequenceplanner.efaconverter2.efamodel;
+package sequenceplanner.efaconverter2.SpEFA;
 
 /**
  *

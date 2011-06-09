@@ -1,4 +1,4 @@
-package sequenceplanner.efaconverter2.efamodel;
+package sequenceplanner.efaconverter2.SpEFA;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package sequenceplanner.efaconverter2.condition;
 
+import sequenceplanner.efaconverter2.EFAVariables;
+
 /**
  *
  * @author kbe
@@ -65,8 +67,9 @@ public class ConditionOperator {
         prevElement = null;
     }
 
-
-
-
+    @Override
+    public String toString(){
+        return this.operatotType.equals(Type.AND)?EFAVariables.EFA_AND:EFAVariables.EFA_OR;
+    }
 
 }

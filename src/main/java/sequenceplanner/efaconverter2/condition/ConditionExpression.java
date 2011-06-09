@@ -204,16 +204,13 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         String result = "(";
         for (ConditionElement e : this){
             result += e;
+            if(e.hasNextOperator())
+                result += e.getNextOperator();
         }
         return result + ")";
     }
 
-
-
-
-
-
-
+    
     class ConditionElementIterator implements Iterator<ConditionElement>{
         ConditionElement next = null;
 
@@ -221,10 +218,12 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
             this.next = rootElement;
         }
 
+        @Override
         public boolean hasNext() {
             return next != null;
         }
 
+        @Override
         public ConditionElement next() {
             if (hasNext()){
                 ConditionElement ce = next;
@@ -235,6 +234,7 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         }
 
         // This method is a little bit scarry. Maybe we should do nothing?
+        @Override
         public void remove() {
             ConditionElement current = next;
             if (current != null){
