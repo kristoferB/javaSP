@@ -6,8 +6,20 @@ package sequenceplanner.condition;
  */
 public class ConditionOperator {
 
-    public enum Type {AND,OR};
+    public enum Type {
 
+        AND("and"), OR("or");
+        private final String opSign;
+
+        Type(String sign) {
+            opSign = sign;
+        }
+
+        @Override
+        public String toString() {
+            return opSign;
+        }
+    };
     private ConditionElement nextElement;
     private ConditionElement prevElement;
     private Type operatotType;
@@ -18,21 +30,21 @@ public class ConditionOperator {
         this.operatotType = operatorType;
     }
 
-    public ConditionOperator(Type operatorType){
+    public ConditionOperator(Type operatorType) {
         this.nextElement = null;
         this.prevElement = null;
         this.operatotType = operatorType;
     }
 
-    public Type getOperatorType(){
+    public Type getOperatorType() {
         return this.operatotType;
     }
 
-    public boolean isOperationType(Type operationType){
+    public boolean isOperationType(Type operationType) {
         return this.operatotType.equals(operationType);
     }
 
-    public void setOperatorType(Type operatorType){
+    public void setOperatorType(Type operatorType) {
         this.operatotType = operatorType;
     }
 
@@ -44,7 +56,7 @@ public class ConditionOperator {
         this.nextElement = nextElement;
     }
 
-    public boolean hasNextElement(){
+    public boolean hasNextElement() {
         return this.nextElement != null;
     }
 
@@ -56,17 +68,12 @@ public class ConditionOperator {
         this.prevElement = prevElemnt;
     }
 
-    public boolean hasPreviousElement(){
+    public boolean hasPreviousElement() {
         return this.prevElement != null;
     }
 
-    public void clear(){
+    public void clear() {
         nextElement = null;
         prevElement = null;
     }
-
-
-
-
-
 }

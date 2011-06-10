@@ -19,8 +19,8 @@ public class CellFactory {
 
 	private static CellFactory factoryInstance = new CellFactory();
 
+        // Private constructor prevents instantiation from other classes
 	private CellFactory() {
-		// Make sure no more instances of this class can be created
 	}
 
 	public static CellFactory getInstance() {
@@ -28,9 +28,10 @@ public class CellFactory {
 	}
 
 	public mxCell getEdge(boolean regular) {
-		String style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=;"
-				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1"
-				: "strokeColor=#000000;strokeWidth=2;endArrow=";
+            
+		String style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_CLASSIC;"
+				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;endArrow=mxConstants.ARROW_CLASSIC;"
+				: ";strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_CLASSIC";
 		mxCell edge = new Cell("edge", new mxGeometry(), style);
 		edge.setEdge(true);
 		edge.setConnectable(false);
@@ -53,7 +54,7 @@ public class CellFactory {
 		d.setName("OP" + d.getId());
 
 		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 40,
-				20), "perimeter=custom.operationPerimeter;fillColor=#FFFF00");
+				20), "perimeter=custom.operationPerimeter;fillColor=red");
 
 		cell.setType(Cell.OP);
 		cell.setId(null);
@@ -137,7 +138,7 @@ public class CellFactory {
 		Model.giveId(d);
 		d.setName("OP" + d.getId());
 		Cell cell = new Cell(d, geo,
-				"perimeter=custom.operationPerimeter;fillColor=#FFFF00");
+				"perimeter=custom.operationPerimeter;fillColor=yellow");
 		cell.setType(Cell.SOP);
 		cell.setId(null);
 		cell.setVertex(true);

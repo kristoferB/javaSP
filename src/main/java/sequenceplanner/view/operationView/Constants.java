@@ -1,18 +1,22 @@
 package sequenceplanner.view.operationView;
 
+import java.awt.Color;
 import java.awt.Insets;
 
 /**
  *
  * @author Erik
  */
-public class Constansts {
+public class Constants {
 
-   public static Insets SOP_INSET = new Insets(20, 20, 20, 20);
-   public static Insets ALTERNATIVE_INSET = SOP_INSET;
-   public static Insets PARALLEL_INSET = new Insets(30, 10, 30, 10);
-   public static Insets ARBITRARY_INSET = SOP_INSET;
 
+   public static final Insets SOP_INSET = new Insets(20, 20, 20, 20);
+   public static final Insets ALTERNATIVE_INSET = SOP_INSET;
+   public static final Insets PARALLEL_INSET = new Insets(30, 10, 30, 10);
+   public static final Insets ARBITRARY_INSET = SOP_INSET;
+
+   //Colors
+   public static final Color DEFAULT_OPERATION_COLOR = new Color(206, 229, 164);
 
 
    //Determine distance before and after inserted / autoarranged cell

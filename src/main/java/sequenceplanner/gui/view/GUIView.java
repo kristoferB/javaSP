@@ -242,7 +242,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Set window starting layout. Should perhaps be moved to a default layout object.
         rootWindow.setWindow(new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
                 new SplitWindow(true, 0.15f, treeRootView,
-                new SplitWindow(true, 0.7f, operationRootView,
+                new SplitWindow(true, 0.75f, operationRootView,
                 new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
                 consoleRootView));
         this.getContentPane().add(rootWindow);
@@ -672,9 +672,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         //Set original rootwindow proportions
         rootWindow.setWindow(
-                new SplitWindow(false, 0.85f, //Console takes up 10% of the frame.
+                new SplitWindow(false, 0.85f, //Console takes up 15% of the frame.
                 new SplitWindow(true, 0.15f, treeRootView,
-                new SplitWindow(true, 0.7f, operationRootView,
+                new SplitWindow(true, 0.75f, operationRootView,
                 new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
                 consoleRootView));
        // mainDocks = new TabWindow(tempViewMap);

@@ -13,7 +13,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxICell;
@@ -23,8 +23,13 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 
+/**
+ * Class for drawing stuf in OperationViews.
+ * @author Erik
+ */
 public class custom2DCanvas extends mxInteractiveCanvas {
 
+        private Color operationColor = Constants.DEFAULT_OPERATION_COLOR;
 	// TODO Show number of operations in collapsed group cell.
 
 	// Fonts used to draw the cell
@@ -37,22 +42,32 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 	protected Stroke prePostOperation = new BasicStroke((float) (2 * scale),
 			BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 10.0f, new float[] {
 					3.0f, 3.0f }, 0.0f);
-	static Hashtable<TextAttribute, Object> label = new Hashtable<TextAttribute, Object>();
+	private static Hashtable<TextAttribute, Object> label = new Hashtable<TextAttribute, Object>();
 
 	static {
 
-		label.put(TextAttribute.FAMILY, "Helvetica");
-		label.put(TextAttribute.SIZE, 10);
-		label.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
-		label.put(TextAttribute.FOREGROUND, Color.BLACK);
+
 	}
 
 	public custom2DCanvas() {
+            setLabel();
 	}
 
 	public custom2DCanvas(Graphics2D g) {
+                setLabel();
 		this.g = g;
 	}
+        
+        /**
+         * Private mathod for setting the static variable label.
+         */
+        private void setLabel(){
+                label.put(TextAttribute.FAMILY, "Helvetica");
+		label.put(TextAttribute.SIZE, 10);
+		label.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+		label.put(TextAttribute.FOREGROUND, Color.BLACK);
+            
+        }
 
 	@Override
 	public Object drawEdge(List pts, Hashtable style) {
@@ -174,7 +189,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
                 g.setColor(Color.gray);
 		g.fillRoundRect(x + 3, y + 3, w, h, 5, 5);
 
-		g.setColor(new Color(206, 229, 164));
+		g.setColor(operationColor);
 		g.fillRoundRect(x, y, w, h, 5, 5);
 
 		Stroke old = g.getStroke();
@@ -187,7 +202,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 
 		g.setColor(Color.BLACK);
 
-		Insets inset = graph.opInset;
+		Insets inset = SPGraph.opInset;
 
 		Font big = new Font(labelFont.getFamily(), labelFont.getStyle(),
 				(int) Math.round(labelFont.getSize2D() * scale));
@@ -202,8 +217,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 				(int) Math.round(syncFont.getSize2D() * scale));
 
 		String v = value.getPrecondition();
-		if (v.length() > graph.cutOff) {
-			v = v.substring(0, graph.cutOff) + "...";
+		if (v.length() > SPGraph.cutOff) {
+			v = v.substring(0, SPGraph.cutOff) + "...";
 		}
 
 		// THIS IS A REAL SLOW SOLUTION, REMOVE IS EXPERIENCE PERFORMANCE
@@ -214,8 +229,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 		}
 
 		for (int i = 0; i < v.length(); i++) {
-			if (Character.toString(v.charAt(i)).equals(Constansts.AND)
-					|| Character.toString(v.charAt(i)).equals(Constansts.OR)) {
+			if (Character.toString(v.charAt(i)).equals(Constants.AND)
+					|| Character.toString(v.charAt(i)).equals(Constants.OR)) {
 				if (v.charAt(i - 1) == ' ' && v.charAt(i + 1) == ' ') {
 					attText.addAttribute(TextAttribute.FOREGROUND, Color.BLUE,
 							i, i + 1);
@@ -252,8 +267,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			g.setColor(Color.BLACK);
 			g.setFont(big);
 			v = value.getName();
-			if (v.length() > graph.cutOff) {
-				v = v.substring(0, graph.cutOff) + "...";
+			if (v.length() > SPGraph.cutOff) {
+				v = v.substring(0, SPGraph.cutOff) + "...";
 			}
 
 			bounds = (g.getFontMetrics().getStringBounds(v, g));
@@ -268,8 +283,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 					(y + start));
 			g.setFont(small);
 			v = value.getPostcondition();
-			if (v.length() > graph.cutOff) {
-				v = v.substring(0, graph.cutOff) + "...";
+			if (v.length() > SPGraph.cutOff) {
+				v = v.substring(0, SPGraph.cutOff) + "...";
 			}
 
 			bounds = g.getFontMetrics().getStringBounds(v, g).getBounds();
@@ -280,9 +295,9 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			attText = new AttributedString(v, label);
 
 			for (int i = 0; i < v.length(); i++) {
-				if (Character.toString(v.charAt(i)).equals(Constansts.AND)
+				if (Character.toString(v.charAt(i)).equals(Constants.AND)
 						|| Character.toString(v.charAt(i))
-								.equals(Constansts.OR)) {
+								.equals(Constants.OR)) {
 					if (v.charAt(i - 1) == ' ' && v.charAt(i + 1) == ' ') {
 						attText.addAttribute(TextAttribute.FOREGROUND,
 								Color.BLUE, i, i + 1);

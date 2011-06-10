@@ -24,6 +24,7 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
+
 /**
  * To manage the user interaction for {@link PerformVisualization}.<br/>
  * @author patrik
@@ -156,6 +157,7 @@ public class UserInteractionForVisualization {
             //Layout-------------------------------------------------------------
             setTitle("Operation selection");
             Container c = getContentPane();
+            
             c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
             JPanel jpButton = new JPanel(new GridLayout(1, 1));
             jpButton.add(generateButton);

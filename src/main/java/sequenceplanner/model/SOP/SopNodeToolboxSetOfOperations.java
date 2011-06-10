@@ -62,7 +62,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public void relationsToSelfContainedOperations(ISopNode iRootNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        new ConditionsFromSopNode(iRootNode);
     }
 
     @Override
@@ -98,6 +98,57 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
         }
 
+        return returnSet;
+    }
+
+    public Set<ISopNode> getNodes2(ISopNode iRootNode, boolean iGoDeep) {
+
+        Set<Set<ISopNode>> sets = getNodesInEachSequence(iRootNode, iGoDeep);
+
+        Set<ISopNode> returnSet = new HashSet<ISopNode>();
+
+        for (final Set<ISopNode> set : sets) {
+            returnSet.addAll(set);
+        }
+
+        return returnSet;
+    }
+
+    public Set<Set<ISopNode>> getNodesInEachSequence(ISopNode iRootNode, boolean iGoDeep) {
+        Set<Set<ISopNode>> returnSet = new HashSet<Set<ISopNode>>();
+
+        //Go through children
+        for (ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
+
+            Set<ISopNode> localSet = new HashSet<ISopNode>();
+
+            //Go trough successor (first node included)
+            while (node != null) {
+                localSet.add(node);
+
+                //Go deep
+                if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
+                    localSet.addAll(getNodes(node, iGoDeep));
+                }
+
+                node = node.getSuccessorNode(); //Successor to node
+            }
+
+            returnSet.add(localSet);
+        }
+
+        return returnSet;
+    }
+
+    public Set<OperationData> getOperationsAsSetFromSopNodeSet(final Set<ISopNode> iSopNodeSet) {
+        final Set<OperationData> returnSet = new HashSet<OperationData>();
+        for (final ISopNode node : iSopNodeSet) {
+            final Object nodeType = node.getNodeType();
+            if (nodeType instanceof OperationData) {
+                final OperationData opData = (OperationData) nodeType;
+                returnSet.add(opData);
+            }
+        }
         return returnSet;
     }
 

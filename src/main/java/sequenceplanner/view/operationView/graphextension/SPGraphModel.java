@@ -11,7 +11,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.NameCacheMap;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
@@ -55,7 +55,7 @@ public class SPGraphModel extends mxGraphModel {
 
    public void reloadNamesCache() {
       Cell c = getGraphRoot();
-      reloadNameChache(c, Constansts.VIEW);
+      reloadNameChache(c, Constants.VIEW);
    }
 
    protected void reloadNameChache(Cell node, String path) {

@@ -11,6 +11,7 @@ import java.util.EventObject;
 import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
+
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
@@ -45,9 +46,13 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
     OperationView currentOpView;
     CheckBoxNodeEditor nodeEditor;
 
+
+
     public PropertyView(EditorTreeModel m){
         model = m;
         operationIsChosen = false;
+        PropertyPanel pp = new PropertyPanel();
+        pp.setVisible(true);
         updateTree();
     }
 

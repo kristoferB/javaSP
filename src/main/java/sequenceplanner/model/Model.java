@@ -19,7 +19,7 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 
 /**
  *
@@ -529,7 +529,7 @@ public class Model extends Observable implements IModel{
 
       for (LinkedList<SeqCond> linkedList : sequenceCondition) {
          if (linkedList.size() == 1) {
-            s = s.isEmpty() ? s : s + " " + Constansts.AND + " ";
+            s = s.isEmpty() ? s : s + " " + Constants.AND + " ";
 
             String[] out = cache.get(linkedList.getFirst().id);
 
@@ -547,7 +547,7 @@ public class Model extends Observable implements IModel{
             
 
          } else if (linkedList.size() > 1) {
-            s += s.isEmpty() ? s : " " + Constansts.AND + " ";
+            s += s.isEmpty() ? s : " " + Constants.AND + " ";
 
             boolean is = s.isEmpty();
 
@@ -572,7 +572,7 @@ public class Model extends Observable implements IModel{
                
 
                if (it.hasNext()) {
-                  s = s + " " + Constansts.OR + " ";
+                  s = s + " " + Constants.OR + " ";
                }
             }
             s = is ? s : s + ") ";
@@ -582,7 +582,7 @@ public class Model extends Observable implements IModel{
       }
 
 
-      s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constansts.AND + " ";
+      s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constants.AND + " ";
 
       for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
          Integer[] integers = it.next();
@@ -591,7 +591,7 @@ public class Model extends Observable implements IModel{
                s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
 
          if (it.hasNext()) {
-            s = s + " " + Constansts.AND + " ";
+            s = s + " " + Constants.AND + " ";
          }
 
       }
@@ -627,7 +627,7 @@ public class Model extends Observable implements IModel{
    }
 
    public static String getOperationEnding(int state) {
-      String s = Constansts.ENDING;
+      String s = Constants.ENDING;
 
       if (state == 0) {
          s = s + "i";

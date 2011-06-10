@@ -33,7 +33,7 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
-
+        
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
         //Set observer on model
