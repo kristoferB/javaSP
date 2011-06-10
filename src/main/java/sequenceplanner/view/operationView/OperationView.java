@@ -126,6 +126,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return pane;
     }
 
+    private void saveGraphToSOP(){
+    }
     @Override
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -719,7 +721,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         if (outline == null) {
             outline = new mxGraphOutline(graphComponent);
-            outline.setPreferredSize(new Dimension(30, 100));
+            outline.setPreferredSize(new Dimension(500, 100));
         }
 
         return outline;
