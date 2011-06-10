@@ -31,7 +31,7 @@ public class OperationViewController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-/*
+
         if (arg instanceof OperationData) {
             OperationData od = (OperationData) arg;
 
@@ -52,6 +52,6 @@ public class OperationViewController implements Observer {
                     }
                 }
             }
-        }*/
+        }
     }
 }
