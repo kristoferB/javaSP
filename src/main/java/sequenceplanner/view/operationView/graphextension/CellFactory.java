@@ -32,11 +32,9 @@ public class CellFactory {
 				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1"
 				: "strokeColor=#000000;strokeWidth=2;endArrow=";
 		mxCell edge = new Cell("edge", new mxGeometry(), style);
-
 		edge.setEdge(true);
 		edge.setConnectable(false);
 		edge.getGeometry().setRelative(true);
-
 		return edge;
 
 	}

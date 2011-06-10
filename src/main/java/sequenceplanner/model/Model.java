@@ -502,7 +502,8 @@ public class Model extends Observable implements IModel{
       return result;
    }
 
-   protected void updatePreconditions(TreeNode node) {
+   /* Is not used, therefor removed *
+    protected void updatePreconditions(TreeNode node) {
 
       for (int i = 0; i < node.getChildCount(); i++) {
          OperationData d = ((OperationData) node.getChildAt(i).getNodeData());
@@ -512,7 +513,7 @@ public class Model extends Observable implements IModel{
 
          updatePreconditions(node.getChildAt(i));
       }
-   }
+   }*/
 
    public static String updateCondition(NameCacheMap cache,
          LinkedList<LinkedList<SeqCond>> sequenceCondition,
