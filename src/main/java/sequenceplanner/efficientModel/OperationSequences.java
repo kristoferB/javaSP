@@ -133,10 +133,11 @@ public class OperationSequences {
     }
     
     private SpEFA appendSpEFA(SpEFA firstSpEFA, SpEFA secondSpEFA){
-        String efa1 = firstSpEFA.getName().replace("Seq_", "");
-        String efa2 = secondSpEFA.getName().replace("Seq_", "");
-        SpEFA result = new SpEFA("Seq_" + efa1 + efa2);
-        
+        SpEFA result = new SpEFA(firstSpEFA.getName()+secondSpEFA.getName());
+        for(Iterator<SpTransition> itr = firstSpEFA.iterateSequenceTransitions(); itr.hasNext();){
+            SpTransition tran = itr.next();
+            
+        }
         return result;
     }
     

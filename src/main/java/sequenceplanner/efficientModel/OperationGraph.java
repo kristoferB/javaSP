@@ -7,6 +7,7 @@ package sequenceplanner.efficientModel;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ import org.supremica.automata.LabeledEvent;
 import org.supremica.automata.State;
 import org.supremica.external.avocades.common.EFA;
 import org.supremica.external.avocades.common.Module;
+import sequenceplanner.model.TreeNode;
 
 /**
  *

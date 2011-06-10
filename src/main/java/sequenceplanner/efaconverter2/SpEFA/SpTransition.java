@@ -9,7 +9,7 @@ import sequenceplanner.efaconverter2.condition.ConditionExpression;
  *
  * @author kbe
  */
-public class SpTransition {
+public class SpTransition implements Cloneable{
 
     SpEvent event;
     String guard = new String();
@@ -105,6 +105,9 @@ public class SpTransition {
         return '<' + this.from.toString() + ',' + this.getEventLabel() + ',' + this.to.toString() + '>';
     }
 
-
+    @Override
+    public SpTransition clone(){
+        return new SpTransition(this.event, this.from, this.to, this.condition);
+    }
 
 }

@@ -155,9 +155,9 @@ public class DefaultModelParser implements IModelParser{
         OperationData od = (OperationData) operation.getNodeData();
         Condition c = createCondition(od.getSequenceCondition(),od.getResourceBooking(),od.getActions());
         if (hasParent(operation)){
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(EFAVariables.VARIABLE_NAME_PREFIX + createName(operation.getParent().getId()),Operator.Equal,"1"));
+            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,"1"));
         } else {
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(EFAVariables.VARIABLE_NAME_PREFIX + getProjectName(),Operator.Equal,"1"));
+            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(getProjectName(),Operator.Equal,"1"));
         }
         return c;
      }
@@ -211,7 +211,7 @@ public class DefaultModelParser implements IModelParser{
 
 
      private ConditionStatment createConditionStatment(OperationData.SeqCond cond){
-         return new ConditionStatment(EFAVariables.VARIABLE_NAME_PREFIX + createName(cond.id), getConditionOperator(cond), Integer.toString(cond.state));
+         return new ConditionStatment(createName(cond.id), getConditionOperator(cond), Integer.toString(cond.state));
      }
 
      private ConditionStatment createGuardConditionStatment(Integer[] resourceAlloc){
@@ -274,35 +274,43 @@ public class DefaultModelParser implements IModelParser{
     private boolean hasParent(TreeNode op){
         return !op.getParent().equals(model.getOperationRoot());
     }
-    
+
     private String createName(int id){
-        TreeNode n = model.getNode(Integer.valueOf(id).intValue());
-        if (n != null){
-            return createName(n.getNodeData());
-        }
-        return "";
+        return Integer.toString(id);
     }
     
     private String createName(Data d){
-        if (Model.isOperation(d)){
-            return createOpName((OperationData) d);
-        }
-        if (Model.isVariable(d)){
-            return createVarName((ResourceVariableData) d);
-        }
-        return "";
+        return Integer.toString(d.getId());
     }
-
-    private String createOpName(OperationData od){
-        return EFAVariables.OPERATION_NAME_PREFIX + Integer.toString(od.getId());
-   }
-
-    private String createVarName(ResourceVariableData var){
-        return EFAVariables.VARIABLE_NAME_PREFIX + Integer.toString(var.getId());
-    }
-
+    
+//    private String createName(int id){
+//        TreeNode n = model.getNode(Integer.valueOf(id).intValue());
+//        if (n != null){
+//            return createName(n.getNodeData());
+//        }
+//        return "";
+//    }
+//    
+//    private String createName(Data d){
+//        if (Model.isOperation(d)){
+//            return createOpName((OperationData) d);
+//        }
+//        if (Model.isVariable(d)){
+//            return createVarName((ResourceVariableData) d);
+//        }
+//        return "";
+//    }
+//
+//    private String createOpName(OperationData od){
+//        return EFAVariables.OPERATION_NAME_PREFIX + Integer.toString(od.getId());
+//   }
+//
+//    private String createVarName(ResourceVariableData var){
+//        return EFAVariables.VARIABLE_NAME_PREFIX + Integer.toString(var.getId());
+//    }
+//
     private String getProjectName() {
-        return "Project";
+        return createName(model.getOperationRoot().getId());
     }
     
     private void createSpProject() {

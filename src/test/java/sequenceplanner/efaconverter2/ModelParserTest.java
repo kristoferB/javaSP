@@ -95,14 +95,16 @@ public class ModelParserTest {
         DefaultExport export = new DefaultExport(converter.getModule());
         export.save();
         assertEquals(true,true);
-        
+
+//        DefaultModelParser instance = new DefaultModelParser(model);
+//        SpEFAutomata result = instance.getSpEFAutomata();
 //        for(SpEFA a : result.getAutomatons()){
 //            System.out.println(a.getName());
-//            if(a.getName().equals("Op1030")){
+//            if(a.getName().equals("6")){
 //                for(Iterator<SpTransition> itr = a.iterateSequenceTransitions(); itr.hasNext();){
 //                    System.out.println("-----------------");
 //                    SpTransition tran = itr.next();
-//                    System.out.println(tran.toString() + ": " + tran.getCondition().getGuard().toString());
+//                    System.out.println(tran.toString() + ": " + tran.getCondition().toString());
 //                }
 //            }
 //        }
