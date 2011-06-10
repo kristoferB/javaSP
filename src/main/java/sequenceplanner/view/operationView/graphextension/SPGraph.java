@@ -213,6 +213,12 @@ public class SPGraph extends mxGraph {
       return showPath;
    }
 
+   
+
+    @Override
+    public mxIGraphModel getModel() {
+        return super.getModel();
+    }
 
 
    public void majorUpdate() {
@@ -902,8 +908,6 @@ public class SPGraph extends mxGraph {
 
 
             mxPoint p = new mxPoint();
-
-
 
             p.setX(oldGeo.getCenterX() - newCell.getGeometry().getWidth() / 2);
 
