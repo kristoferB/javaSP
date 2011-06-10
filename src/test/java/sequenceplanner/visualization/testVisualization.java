@@ -49,7 +49,7 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-    @Test
+//    @Test
     public void test1() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -291,6 +291,61 @@ public class testVisualization {
         mVisualization.addOset(sop);
         assertTrue(mVisualization.addOsubset(sop)); //View all operations
         assertTrue(mVisualization.addToOfinish(sop)); //All operations have to finish
+
+        workWithAddedData();
+    }
+
+    /**
+     * Test of: complex operation conditions
+     */
+    @Test
+    public void test6() {
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
+
+        //Add operations to Oset
+        Set<Integer> setIds = new HashSet<Integer>();
+        setIds.add(2106);
+        setIds.add(2107);
+        setIds.add(2108);
+        setIds.add(2109);
+        setIds.add(2110);
+        setIds.add(2111);
+        setIds.add(2112);
+        setIds.add(2113);
+        setIds.add(2114);
+        setIds.add(2115);
+        setIds.add(2116);
+        setIds.add(2117);
+        setIds.add(2118);
+        setIds.add(2119);
+        ISopNode allOpSet = getOperations(setIds);
+        mVisualization.addOset(allOpSet);
+
+        //Operations to view
+        Set<Integer> subsetIds = new HashSet<Integer>();
+        subsetIds.add(2106);
+        subsetIds.add(2107);
+        subsetIds.add(2108);
+        subsetIds.add(2109);
+        subsetIds.add(2110);
+        subsetIds.add(2111);
+        subsetIds.add(2112);
+        subsetIds.add(2113);
+        subsetIds.add(2114);
+        subsetIds.add(2115);
+        subsetIds.add(2116);
+        subsetIds.add(2117);
+        subsetIds.add(2118);
+        subsetIds.add(2119);
+        ISopNode subOpSet = getOperations(subsetIds);
+        assertTrue(mVisualization.addOsubset(subOpSet));
+
+        //Operations that have to finish, all operations have to finish :)
+        //Operations that have to finish
+        Set<Integer> finishSetIds = new HashSet<Integer>();
+        ISopNode finishSet = getOperations(finishSetIds);
+        assertTrue(mVisualization.addToOfinish(finishSet));
+        //-----------------------------------------------------------------------
 
         workWithAddedData();
     }

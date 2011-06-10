@@ -75,7 +75,7 @@ public class ConditionsFromSopNode {
 
                     //Add condition to operation in set
                     for (final OperationData opData : operationSet) {
-                        System.out.println(opData.getName() + " precon: " + condition.getmCondition());
+                        System.out.println(opData.getName() + " precon: " + condition.getmCondition() + " seq");
                     }
                     //-----------------------------------------------------------
                 }
@@ -112,10 +112,10 @@ public class ConditionsFromSopNode {
                     if (childNodeType instanceof OperationData) {
                         final OperationData childOperation = (OperationData) childNodeType;
                         //set relation between parent and child operations
-                        System.out.println(parentOperation.getName() + " precon: " + childOperation.getName() + "_i");
-                        System.out.println(parentOperation.getName() + " postcon: " + childOperation.getName() + "_f");
-                        System.out.println(childOperation.getName() + " precon: " + parentOperation.getName() + "_e");
-                        System.out.println(childOperation.getName() + " postcon: " + parentOperation.getName() + "_e");
+                        System.out.println(parentOperation.getName() + " precon: " + childOperation.getName() + "_i" + " parent to child");
+                        System.out.println(parentOperation.getName() + " postcon: " + childOperation.getName() + "_f" + " parent to child");
+                        System.out.println(childOperation.getName() + " precon: " + parentOperation.getName() + "_e" + " child to parent");
+                        System.out.println(childOperation.getName() + " postcon: " + parentOperation.getName() + "_e" + " child to parent");
                     }
                 }
             }
@@ -142,7 +142,7 @@ public class ConditionsFromSopNode {
                             for (final OperationData otherOperation : nodeOperationSetMap.get(otherNode)) {
                                 //add precondition to altOperation that otherOperation has to be _i
                                 if (!otherNode.equals(altNode)) {
-                                    System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + "_i");
+                                    System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + "_i" + " node is alt");
                                 }
                             }
                         }
@@ -150,25 +150,45 @@ public class ConditionsFromSopNode {
                 }
                 //---------------------------------------------------------------
             } else if (nodeTypeString.equals(arbitraryOrder)) {//----------------
-                //find operations in each sequence -> Set<Set<OperationData>> externalSet
-                final Set<Set<ISopNode>> sequenceNodesSet = new SopNodeToolboxSetOfOperations().getNodesInEachSequence(iNode, true);
-                final Set<Set<OperationData>> sequenceOperationSet = new HashSet<Set<OperationData>>();
-                for (final Set<ISopNode> nodeSet : sequenceNodesSet) {
-                    sequenceOperationSet.add(new SopNodeToolboxSetOfOperations().getOperationsAsSetFromSopNodeSet(nodeSet));
+                //find conditions for each sequence in iNode when it is initial or finished
+                final Map<ISopNode, LocalCondition> sequenceConditionMap = new HashMap<ISopNode, LocalCondition>();
+
+                for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+                    final LocalCondition startCondition = new LocalCondition();
+
+                    //Get startCondition for sequence that starts with node to be in it's initial location.
+                    final Set<OperationData> firstOperationSet = new HashSet<OperationData>();
+                    findFirstOperationsForNode(node, firstOperationSet);
+                    for (final OperationData opData : firstOperationSet) {
+                        if (!startCondition.isEmpty()) {
+                            startCondition.addCondition(" AND ");
+                        }
+                        startCondition.addCondition(opData.getName() + "_i");
+                    }
+
+                    //Get condition for when sequence that starts with node is finished
+                    final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+                    final LocalCondition finishCondition = new LocalCondition();
+                    getFinishConditionForNode(lastNode, finishCondition);
+
+                    //Merge the two conditions
+                    final LocalCondition mergedCondition = new LocalCondition(startCondition.getmCondition() + " OR " + finishCondition.getmCondition());
+
+                    //Store for later use
+                    sequenceConditionMap.put(node, mergedCondition);
+
                 }
                 //add condition
-                for (final Set<OperationData> internalSet : sequenceOperationSet) {
-                    Set<Set<OperationData>> localSet = new HashSet<Set<OperationData>>(sequenceOperationSet);
-                    localSet.remove(internalSet);
-                    for (final OperationData opData : internalSet) {
-                        for (final Set<OperationData> localLocalSet : localSet) {
-                            for (final OperationData localOpData : localLocalSet) {
-                                //add precondition to opData that localOpData has to be _i or _f
-                                //add postcondition to opData that localOpData has to be _i or _f
-                                System.out.println(opData.getName() + " precon: " + localOpData.getName() + "_i OR " + localOpData.getName() + "_f");
-                                System.out.println(opData.getName() + " postcon: " + localOpData.getName() + "_i OR " + localOpData.getName() + "_f");
-                            }
-                        }
+                for (final ISopNode thisSequenceNode : iNode.getFirstNodesInSequencesAsSet()) {
+
+                    final Set<OperationData> firstOperationSet = new HashSet<OperationData>();
+                    findFirstOperationsForNode(thisSequenceNode, firstOperationSet);
+                    for (final OperationData opData : firstOperationSet) {
+                       for (final ISopNode otherSequenceNode : sequenceConditionMap.keySet()) {
+                           if(otherSequenceNode != thisSequenceNode) {
+                               System.out.println(opData.getName() + " precon: " + sequenceConditionMap.get(otherSequenceNode).getmCondition());
+                           }
+                       }
                     }
                 }
                 //---------------------------------------------------------------
@@ -226,7 +246,7 @@ public class ConditionsFromSopNode {
 
         if (nodeType instanceof OperationData) {
             final OperationData opData = (OperationData) nodeType;
-            returnCondition.setmCondition(opData.getName() + "_f");
+            returnCondition.setmCondition(opData.getName() + "_f" + " node to finish");
         } else if (nodeType instanceof String) {
             final String nodeTypeString = (String) nodeType;
             final String alternative = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");

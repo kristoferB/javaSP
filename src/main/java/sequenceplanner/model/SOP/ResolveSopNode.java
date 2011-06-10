@@ -16,16 +16,16 @@ public class ResolveSopNode {
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
 
     public ResolveSopNode(final ISopNode iNode) {
-        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
-        }
+//        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) { //This method is not needed. The visualization algorithms produces not this type of situations.
+//        }
         while (resolveNodesOfTheSameTypeOnSucceededLevels(iNode)) {
         }
-        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
-        }
+//        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
+//        }
         while (resolveNodesOfTheSameTypeWithIntermediateSOP(iNode)) {
         }
-        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
-        }
+//        while (resolveNodesOfTheSameTypeOnTheSameLevel(iNode)) {
+//        }
     }
 
     /**
