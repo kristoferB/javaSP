@@ -82,9 +82,9 @@ public class OperationData extends Data {
 
    private void setValue(String key, String value) {
       if (key != null && value != null) {
-          System.out.println(key + " "+ value);
-          System.out.println("^^");
+          System.out.println("Hejhopp: "+key + " hopp: "+ value +"\n");
          preference.put(key, value);
+          System.out.println("Apa: "+preference.get(key));
       } else {
          System.out.println("Error in UserFile: Can not pass null values for key " + key);
       }
