@@ -49,7 +49,7 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-    @Test
+//    @Test
     public void test1() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -89,7 +89,7 @@ public class testVisualization {
      * The example in the Kristofer's TASE paper.<br/>
      * Sequence Planning with Multiple and Coordinated Sequences of Operations
      */
-//    @Test
+    @Test
     public void KristoferPPURivetingTASEExample_selfcontainedoperations() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
@@ -150,6 +150,8 @@ public class testVisualization {
         subsetIds.add(1006);
         subsetIds.add(1007);
         subsetIds.add(1010);
+        subsetIds.add(1008);
+        subsetIds.add(1009);
         subsetIds.add(1017);
         subsetIds.add(1025);
         subsetIds.add(1033);
@@ -307,6 +309,12 @@ public class testVisualization {
         System.out.println("After partition");
         System.out.println(rc.getOsubsetSopNode().toString());
         System.out.println("--------------------------------");
+
+        System.out.println("\n--------------------------------");
+        System.out.println("Get conditions");
+        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());
+        System.out.println("--------------------------------");
+
     }
 
     /**

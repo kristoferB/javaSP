@@ -9,12 +9,15 @@ import java.awt.Insets;
  */
 public class Constants {
 
+
    public static final Insets SOP_INSET = new Insets(20, 20, 20, 20);
-   public static Insets ALTERNATIVE_INSET = SOP_INSET;
-   public static Insets PARALLEL_INSET = new Insets(30, 10, 30, 10);
+   public static final Insets ALTERNATIVE_INSET = SOP_INSET;
+   public static final Insets PARALLEL_INSET = new Insets(30, 10, 30, 10);
    public static final Insets ARBITRARY_INSET = SOP_INSET;
 
-   public final static Color DEFAULT_OPERATION_COLOR = new Color(206, 229, 164);
+   //Colors
+   public static final Color DEFAULT_OPERATION_COLOR = new Color(206, 229, 164);
+
 
    //Determine distance before and after inserted / autoarranged cell
    public static double BEFORE_CELL = 25;
