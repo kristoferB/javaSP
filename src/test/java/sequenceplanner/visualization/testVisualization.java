@@ -49,7 +49,7 @@ public class testVisualization {
     /**
      * Test of: Arbitrary order and alternative
      */
-//    @Test
+    @Test
     public void test1() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 
@@ -89,7 +89,7 @@ public class testVisualization {
      * The example in the Kristofer's TASE paper.<br/>
      * Sequence Planning with Multiple and Coordinated Sequences of Operations
      */
-    @Test
+//    @Test
     public void KristoferPPURivetingTASEExample_selfcontainedoperations() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 

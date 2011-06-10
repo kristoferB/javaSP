@@ -27,6 +27,14 @@ public class ConditionsFromSopNode {
         return true;
     }
 
+    /**
+     * Each {@link ISopNode} in each sequence in the iRoot parameter is examined.<br/>
+     * Conditions are added based on node type.<br/>
+     * Children to each node are called recursively.<br/>
+     * Conditions to possible successor node is added.<br/>
+     * @param iRoot node whos child nodes should be examined
+     * @return true if ok else false
+     */
     private boolean loopNode(final ISopNode iRoot) {
         for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
 
@@ -49,18 +57,24 @@ public class ConditionsFromSopNode {
                 if (successorNode != null) {
 
                     //Add condition from node to successor node------------------
+                    //Get condition for when node is finished.
+                    //E.g. operation case: node has type operation -> condition == operations has to be finished.
+                    //E.g. alternative case: node has type alternative -> condition == disjuction between last operation in each sequence for node.
                     LocalCondition condition = new LocalCondition();
                     if (!getFinishConditionForNode(node, condition)) {
                         return false;
                     }
 
+                    //Get the set of operations that occur first in successor node.
+                    //E.g. operation case: successor node has type operation -> operation set == the operation itself.
+                    //E.g. alternative case: successor node has type alternative -> operation set == the first operation in each sequence for successor node.
                     final Set<OperationData> operationSet = new HashSet<OperationData>();
                     if (!findFirstOperationsForNode(successorNode, operationSet)) {
                         return false;
                     }
 
+                    //Add condition to operation in set
                     for (final OperationData opData : operationSet) {
-                        //Add condition to opData
                         System.out.println(opData.getName() + " precon: " + condition.getmCondition());
                     }
                     //-----------------------------------------------------------
@@ -73,6 +87,14 @@ public class ConditionsFromSopNode {
         return true;
     }
 
+    /**
+     * Add conditions to operations if parameter iNode has node type:<br/>
+     * operation SOP, alternative, or arbitrary order.<br/>
+     * No conditions are added if any operation is parameter iNode has node type:<br/>
+     * operation, parallel, or SOP.<br/>
+     * @param iNode to look at
+     * @return true if ok else false
+     */
     private boolean nodeTypeToCondition(final ISopNode iNode) {
 
         final Object nodeType = iNode.getNodeType();
@@ -90,10 +112,10 @@ public class ConditionsFromSopNode {
                     if (childNodeType instanceof OperationData) {
                         final OperationData childOperation = (OperationData) childNodeType;
                         //set relation between parent and child operations
-                        System.out.println(parentOperation.getName() + " precon: " + childOperation.getName() + " _i");
-                        System.out.println(parentOperation.getName() + " postcon: " + childOperation.getName() + " _f");
-                        System.out.println(childOperation.getName() + " precon: " + parentOperation.getName() + " _e");
-                        System.out.println(childOperation.getName() + " postcon: " + parentOperation.getName() + " _e");
+                        System.out.println(parentOperation.getName() + " precon: " + childOperation.getName() + "_i");
+                        System.out.println(parentOperation.getName() + " postcon: " + childOperation.getName() + "_f");
+                        System.out.println(childOperation.getName() + " precon: " + parentOperation.getName() + "_e");
+                        System.out.println(childOperation.getName() + " postcon: " + parentOperation.getName() + "_e");
                     }
                 }
             }
@@ -120,7 +142,7 @@ public class ConditionsFromSopNode {
                             for (final OperationData otherOperation : nodeOperationSetMap.get(otherNode)) {
                                 //add precondition to altOperation that otherOperation has to be _i
                                 if (!otherNode.equals(altNode)) {
-                                    System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + " _i");
+                                    System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + "_i");
                                 }
                             }
                         }
@@ -143,8 +165,8 @@ public class ConditionsFromSopNode {
                             for (final OperationData localOpData : localLocalSet) {
                                 //add precondition to opData that localOpData has to be _i or _f
                                 //add postcondition to opData that localOpData has to be _i or _f
-                                System.out.println(opData.getName() + " precon: " + localOpData.getName() + " _i OR _f");
-                                System.out.println(opData.getName() + " postcon: " + localOpData.getName() + " _i OR _f");
+                                System.out.println(opData.getName() + " precon: " + localOpData.getName() + "_i OR " + localOpData.getName() + "_f");
+                                System.out.println(opData.getName() + " postcon: " + localOpData.getName() + "_i OR " + localOpData.getName() + "_f");
                             }
                         }
                     }
@@ -161,6 +183,15 @@ public class ConditionsFromSopNode {
         return true;
     }
 
+    /**
+     * Adds first operations in parameter iNode to parameter returnSet.<br/>
+     * If iNode has node type operation this single operation is added to returnSet.<br/>
+     * Else if iNode has node type parallel, alternative, or arbitrary order,<br/>
+     * then this method is called recursively for all first nodes in the sequence set.<br/>
+     * @param iNode
+     * @param returnSet
+     * @return true if ok else false
+     */
     private boolean findFirstOperationsForNode(final ISopNode iNode, Set<OperationData> returnSet) {
         final Object nodeType = iNode.getNodeType();
 
@@ -175,12 +206,21 @@ public class ConditionsFromSopNode {
                 }
             }
         } else {
-            System.out.println("findFirstOperationsForNode Node type in not known");
+            System.out.println("findFirstOperationsForNode Node type is not known");
             return false;
         }
         return true;
     }
 
+    /**
+     * If iNode has node type operation then parameter returnCondition == the iNode operation has to finish.<br/>
+     * Else returnCondition == X of recursive calls to this method with the first node in sequence set for iNode as parameter.<br/>
+     * Where X == conjunction if iNode has node type parallel or arbitrary order.<br/>
+     * Where X == disjunction if iNode has node type alternative.<br/>
+     * @param iNode
+     * @param returnCondition
+     * @return true if ok else false
+     */
     private boolean getFinishConditionForNode(final ISopNode iNode, final LocalCondition returnCondition) {
         final Object nodeType = iNode.getNodeType();
 
@@ -204,19 +244,22 @@ public class ConditionsFromSopNode {
                     } else if (nodeTypeString.equals(alternative)) {
                         returnCondition.addCondition(" OR ");
                     } else {
-                        System.out.println("getFinishConditionForNode String Node type in not known");
+                        System.out.println("getFinishConditionForNode String Node type is not known");
                         return false;
                     }
                 }
                 returnCondition.addCondition(localReturnCondition.getmCondition());
             }
         } else {
-            System.out.println("getFinishConditionForNode Node type in not known");
+            System.out.println("getFinishConditionForNode Node type is not known");
             return false;
         }
         return true;
     }
 
+    /**
+     * Ad hoc to work with conditions. Uses String as of know.
+     */
     public class LocalCondition {
 
         private String mCondition = "";
