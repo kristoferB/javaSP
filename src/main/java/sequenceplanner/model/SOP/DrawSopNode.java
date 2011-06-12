@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
@@ -109,7 +107,6 @@ public class DrawSopNode {
     private void drawSequenceWithRespectToRelation(final ISopNode iPredNode, final ISopNode iSuccNode, final Map<ISopNode, Cell> iNodeCellMap) {
         final Cell cellPred = iNodeCellMap.get(iPredNode);
         final Cell cellSucc = iNodeCellMap.get(iSuccNode);
-        final int predSuccRelation = iPredNode.getSuccessorRelation();
 
         mGraph.insertNewCell(cellPred, cellSucc, false);
 
@@ -144,12 +141,11 @@ public class DrawSopNode {
      * @return corresponding Cell
      */
     private Cell getCellForNode(final ISopNode iNode) {
-        final Object nodeType = iNode.getNodeType();
-        final boolean sequenceSetIsEmpty = iNode.getFirstNodesInSequencesAsSet().isEmpty();
+
         Cell cell;
-        if (nodeType instanceof OperationData) {
-            final OperationData opData = (OperationData) nodeType;
-            if (sequenceSetIsEmpty) {
+        if (iNode instanceof SopNodeOperation) {
+            final OperationData opData = iNode.getOperation();
+            if (iNode.sequenceSetIsEmpty()) {
                 //Operation
                 cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION);
             } else {
@@ -161,27 +157,20 @@ public class DrawSopNode {
             addDescriptionAsCondition(newOpData, opData);
             cell.setValue(newOpData);
             return cell;
-        } else if (nodeType instanceof String) {
-            final String nodeTypeString = (String) nodeType;
-            final String sop = "SOP";
-            final String alternative = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");
-            final String arbitraryOrder = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", "");
-            final String parallel = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", "");
-
-            if (nodeTypeString.equals(sop)) {
-                cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
-                final Data newOpData = new OperationData("", -1);
-                Model.giveId(newOpData);
-                cell.setValue(newOpData);
-                return cell;
-            } else if (nodeTypeString.equals(alternative)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
-            } else if (nodeTypeString.equals(arbitraryOrder)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
-            } else if (nodeTypeString.equals(parallel)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
-            }
+        } else if (iNode instanceof SopNode) {
+            cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+            final Data newOpData = new OperationData("", -1);
+            Model.giveId(newOpData);
+            cell.setValue(newOpData);
+            return cell;
+        } else if (iNode instanceof SopNodeAlternative) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
+        } else if (iNode instanceof SopNodeArbitrary) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
+        } else if (iNode instanceof SopNodeParallel) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
         }
+        
         return null;
     }
 

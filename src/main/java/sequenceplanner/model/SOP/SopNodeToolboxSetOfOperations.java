@@ -6,31 +6,12 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
- * DOES NOT FOLLOW DESCRIPTIONS FOR METHODS GIVEN IN INTERFACE!!!<br/>
+ * DOES NOT FOLLOW DESCRIPTIONS FOR METHOD "REMOVE NODE" GIVEN IN INTERFACE!!!<br/>
  * To store operation sets with a SOP.<br/>
  * Each operation is added as first node in sequence set.<br/>
  * @author patrik
  */
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
-
-    /**
-     * Can only add to sequence for iWhere node;
-     * @param iNodeType
-     * @param iWhere
-     * @return the created node or null if problem
-     */
-    @Override
-    public ISopNode createNode(Object iNodeType, Object iWhere) {
-
-        if (iWhere instanceof ISopNode) {
-            ISopNode rootNode = (ISopNode) iWhere;
-            ISopNode node = new SopNode();
-            node.setNodeType(iNodeType);
-            rootNode.addNodeToSequenceSet(node);
-            return node;
-        }
-        return null;
-    }
 
     @Override
     public void drawNode(ISopNode iRootNode, OperationView iView) {
@@ -39,10 +20,10 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
     public Set<OperationData> getOperations(ISopNode iRootNode, boolean iGoDeep) {
-        Set<OperationData> opSet = new HashSet<OperationData>();
+        final Set<OperationData> opSet = new HashSet<OperationData>();
         for (final ISopNode node : getNodes(iRootNode, iGoDeep)) {
-            if (node.getNodeType() instanceof OperationData) {
-                opSet.add((OperationData) node.getNodeType());
+            if (node instanceof SopNodeOperation) {
+                opSet.add(node.getOperation());
             }
         }
         return opSet;
@@ -89,7 +70,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
                 returnSet.add(node);
 
                 //Go deep
-                if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
+                if (iGoDeep && !node.sequenceSetIsEmpty()) {
                     returnSet.addAll(getNodes(node, iGoDeep));
                 }
 
@@ -98,57 +79,6 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
         }
 
-        return returnSet;
-    }
-
-    public Set<ISopNode> getNodes2(ISopNode iRootNode, boolean iGoDeep) {
-
-        Set<Set<ISopNode>> sets = getNodesInEachSequence(iRootNode, iGoDeep);
-
-        Set<ISopNode> returnSet = new HashSet<ISopNode>();
-
-        for (final Set<ISopNode> set : sets) {
-            returnSet.addAll(set);
-        }
-
-        return returnSet;
-    }
-
-    public Set<Set<ISopNode>> getNodesInEachSequence(ISopNode iRootNode, boolean iGoDeep) {
-        Set<Set<ISopNode>> returnSet = new HashSet<Set<ISopNode>>();
-
-        //Go through children
-        for (ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
-
-            Set<ISopNode> localSet = new HashSet<ISopNode>();
-
-            //Go trough successor (first node included)
-            while (node != null) {
-                localSet.add(node);
-
-                //Go deep
-                if (iGoDeep && !node.getFirstNodesInSequencesAsSet().isEmpty()) {
-                    localSet.addAll(getNodes(node, iGoDeep));
-                }
-
-                node = node.getSuccessorNode(); //Successor to node
-            }
-
-            returnSet.add(localSet);
-        }
-
-        return returnSet;
-    }
-
-    public Set<OperationData> getOperationsAsSetFromSopNodeSet(final Set<ISopNode> iSopNodeSet) {
-        final Set<OperationData> returnSet = new HashSet<OperationData>();
-        for (final ISopNode node : iSopNodeSet) {
-            final Object nodeType = node.getNodeType();
-            if (nodeType instanceof OperationData) {
-                final OperationData opData = (OperationData) nodeType;
-                returnSet.add(opData);
-            }
-        }
         return returnSet;
     }
 

@@ -19,6 +19,7 @@ import sequenceplanner.efaconverter.SEFA;
 import sequenceplanner.efaconverter.SEGA;
 import sequenceplanner.efaconverter.SModule;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -53,9 +54,8 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
         //Create set for ids
         for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
-            if (node.getNodeType() instanceof OperationData) {
-                final OperationData opData = (OperationData) node.getNodeType();
-                mAllOperationSet.add(opData.getId());
+            if (node instanceof SopNodeOperation) {
+                mAllOperationSet.add(node.getOperation().getId());
             } else {
                 System.out.println("Node: " + node.typeToString() + " not an operation!");
                 return null;
@@ -72,17 +72,17 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
         for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
-            if (!(node.getNodeType() instanceof OperationData)) {
+            if (!(node instanceof SopNodeOperation)) {
                 System.out.println("Node: " + node.typeToString() + " not an operation!");
                 return null;
             }
-            OperationData opData = (OperationData) node.getNodeType();
+            OperationData opData = node.getOperation();
             final int id = opData.getId();
             final String varName = OPERATION_VARIABLE_PREFIX + id;
 
             //Add integer variable for operation---------------------------------
             Integer marking = null;
-            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet,false).contains((OperationData) node.getNodeType())) {
+            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet,false).contains(opData)) {
                 marking = 2;
             }
             mModule.addIntVariable(varName, 0, 2, 0, marking);
