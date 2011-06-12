@@ -55,7 +55,7 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 
 //TODO Change name to SOPView
-public class OperationView extends AbstractView implements IView, AsyncModelListener {
+public class OperationView extends AbstractView implements IView, AsyncModelListener{
 
     // Logging for this class
     private static Logger logger = Logger.getLogger(OperationView.class);
@@ -74,7 +74,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         super(model, name);
         startName = name;
         initVariables();
-        
+
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
 
@@ -100,11 +100,19 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             @Override
             public void mousePressed(MouseEvent e) {
                 createPopup(e);
+
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 createPopup(e);
+                if (e.getClickCount() == 2) {
+                    //If operation is clicked
+                    Cell clickedCell = (Cell) OperationView.this.getGraphComponent().getCellAt(e.getX(), e.getY());
+                    if (OperationView.this.getGraph().isOperation(clickedCell)) {
+                        OperationView.this.showOperation(clickedCell.getId());
+                    }
+                }
             }
 
             protected void createPopup(MouseEvent e) {
@@ -127,8 +135,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return pane;
     }
 
-    private void saveGraphToSOP(){
+    private void saveGraphToSOP() {
     }
+
     @Override
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -851,7 +860,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         setHidden(false);
         updateName();
     }
-    
+
     /**
      * Insert a SOPnode into the SOPstructure containing the Data object in 
      * the insertedCell. SOPNode is inserted before or after reference cell.
@@ -861,10 +870,10 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param before boolean stating before reference cell or not
      */
     void addSOPNode(Cell cell, mxCell insertedCell, boolean before) {
-         throw new UnsupportedOperationException("Not yet implemented");
-         // TODO mxgraph --> SOP
-         //check element and pass on to SOPStructure. SOPStructure should create the 
-         //correct type of SOPNode and place it correctly
+        throw new UnsupportedOperationException("Not yet implemented");
+        // TODO mxgraph --> SOP
+        //check element and pass on to SOPStructure. SOPStructure should create the 
+        //correct type of SOPNode and place it correctly
     }
 
     /**
@@ -875,6 +884,15 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         throw new UnsupportedOperationException("Not yet implemented");
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
-         //correct type of SOPNode and place it as a leaf under the root.
+        //correct type of SOPNode and place it as a leaf under the root.
+    }
+    private int clickCounter = 0;
+
+    private void showOperation(String id) {
+        clickCounter++;
+        System.out.println("Operation " + id);
+        
+        
+        
     }
 }
