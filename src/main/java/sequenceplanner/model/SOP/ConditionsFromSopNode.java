@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.ConditionOperator;
+import sequenceplanner.condition.ConditionStatment;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -12,10 +16,27 @@ import sequenceplanner.model.data.OperationData;
  */
 public class ConditionsFromSopNode {
 
+    public enum ConditionType {
+
+        PRE("pre"),
+        POST("post");
+        private final String mType;
+
+        ConditionType(String iType) {
+            this.mType = iType;
+        }
+
+        @Override
+        public String toString() {
+            return mType;
+        }
+    };
     private final ISopNodeToolbox mSopNodeToolbox = new SopNodeToolboxSetOfOperations();
+    private final Map<OperationData, Map<ConditionType, Condition>> mOperationConditionMap = new HashMap<OperationData, Map<ConditionType, Condition>>(); //{pre,post}
 
     public ConditionsFromSopNode(final ISopNode iRoot) {
         run(iRoot);
+        printOperationsWithConditions();
     }
 
     public boolean run(final ISopNode iRoot) {
@@ -58,7 +79,7 @@ public class ConditionsFromSopNode {
                     //Get condition for when node is finished.
                     //E.g. operation case: node has type operation -> condition == operations has to be finished.
                     //E.g. alternative case: node has type alternative -> condition == disjuction between last operation in each sequence for node.
-                    LocalCondition condition = new LocalCondition();
+                    final ConditionExpression condition = new ConditionExpression();
                     if (!getFinishConditionForNode(node, condition)) {
                         return false;
                     }
@@ -73,7 +94,7 @@ public class ConditionsFromSopNode {
 
                     //Add condition to operation in set
                     for (final OperationData opData : operationSet) {
-                        System.out.println(opData.getName() + " precon: " + condition.getmCondition() + " seq");
+                        andToOperationConditionMap(opData, ConditionType.PRE, condition);
                     }
                     //-----------------------------------------------------------
                 }
@@ -105,10 +126,10 @@ public class ConditionsFromSopNode {
                     if (childNode instanceof SopNodeOperation) {
                         final OperationData childOperation = childNode.getOperation();
                         //set relation between parent and child operations
-                        System.out.println(parentOperation.getName() + " precon: " + childOperation.getName() + "_i" + " parent to child");
-                        System.out.println(parentOperation.getName() + " postcon: " + childOperation.getName() + "_f" + " parent to child");
-                        System.out.println(childOperation.getName() + " precon: " + parentOperation.getName() + "_e" + " child to parent");
-                        System.out.println(childOperation.getName() + " postcon: " + parentOperation.getName() + "_e" + " child to parent");
+                        andToOperationConditionMap(parentOperation, ConditionType.PRE, childOperation, "0");
+                        andToOperationConditionMap(parentOperation, ConditionType.POST, childOperation, "2");
+                        andToOperationConditionMap(childOperation, ConditionType.PRE, parentOperation, "1");
+                        andToOperationConditionMap(childOperation, ConditionType.POST, parentOperation, "1");
                     }
                 }
             }
@@ -129,7 +150,7 @@ public class ConditionsFromSopNode {
                         for (final OperationData otherOperation : nodeOperationSetMap.get(otherNode)) {
                             //add precondition to altOperation that otherOperation has to be _i
                             if (!otherNode.equals(altNode)) {
-                                System.out.println(altOperation.getName() + " precon: " + otherOperation.getName() + "_i" + " node is alt");
+                                andToOperationConditionMap(altOperation, ConditionType.PRE, otherOperation, "0");
                             }
                         }
                     }
@@ -137,28 +158,33 @@ public class ConditionsFromSopNode {
             }
         } else if (iNode instanceof SopNodeArbitrary) {
             //find conditions for each sequence in iNode when it is initial or finished
-            final Map<ISopNode, LocalCondition> sequenceConditionMap = new HashMap<ISopNode, LocalCondition>();
+            final Map<ISopNode, ConditionExpression> sequenceConditionMap = new HashMap<ISopNode, ConditionExpression>();
 
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-                final LocalCondition startCondition = new LocalCondition();
+                final ConditionExpression startCondition = new ConditionExpression();
 
                 //Get startCondition for sequence that starts with node to be in it's initial location.
                 final Set<OperationData> firstOperationSet = new HashSet<OperationData>();
                 findFirstOperationsForNode(node, firstOperationSet);
                 for (final OperationData opData : firstOperationSet) {
-                    if (!startCondition.isEmpty()) {
-                        startCondition.addCondition(" AND ");
+
+                    ConditionStatment cs = createConditionStatment(opData, "0");
+                    if (startCondition.isEmpty()) {
+                        startCondition.changeExpressionRoot(cs);
+                    } else {
+                        startCondition.appendElement(ConditionOperator.Type.AND, cs);
                     }
-                    startCondition.addCondition(opData.getName() + "_i");
+
                 }
 
                 //Get condition for when sequence that starts with node is finished
                 final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
-                final LocalCondition finishCondition = new LocalCondition();
+                final ConditionExpression finishCondition = new ConditionExpression();
                 getFinishConditionForNode(lastNode, finishCondition);
 
                 //Merge the two conditions
-                final LocalCondition mergedCondition = new LocalCondition(startCondition.getmCondition() + " OR " + finishCondition.getmCondition());
+                final ConditionExpression mergedCondition = new ConditionExpression(startCondition);
+                mergedCondition.appendElement(ConditionOperator.Type.OR, finishCondition);
 
                 //Store for later use
                 sequenceConditionMap.put(node, mergedCondition);
@@ -172,15 +198,20 @@ public class ConditionsFromSopNode {
                 for (final OperationData opData : firstOperationSet) {
                     for (final ISopNode otherSequenceNode : sequenceConditionMap.keySet()) {
                         if (otherSequenceNode != thisSequenceNode) {
-                            System.out.println(opData.getName() + " precon: " + sequenceConditionMap.get(otherSequenceNode).getmCondition());
+                            System.out.println(opData.getName() + " precon: " + sequenceConditionMap.get(otherSequenceNode).toString());
+                            System.out.println(thisSequenceNode.typeToString() + " precon: " + sequenceConditionMap.get(otherSequenceNode).toString());
+                            andToOperationConditionMap(opData, ConditionType.PRE, sequenceConditionMap.get(otherSequenceNode));
+
                         }
                     }
                 }
             }
         } else if (iNode instanceof SopNodeParallel) {
             //do nothing
+        } else if (iNode instanceof SopNode) {
+            //do nothing
         } else {
-            System.out.println("nodeTypeToCondition SOP node found is that good?");
+            System.out.println("nodeTypeToCondition node type found is that known");
             //return false;
         }
 
@@ -202,7 +233,6 @@ public class ConditionsFromSopNode {
         if (iNode instanceof SopNodeOperation) {
             returnSet.add(iNode.getOperation());
         } else if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
-
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
                 if (!findFirstOperationsForNode(node, returnSet)) {
                     return false;
@@ -224,29 +254,29 @@ public class ConditionsFromSopNode {
      * @param returnCondition
      * @return true if ok else false
      */
-    private boolean getFinishConditionForNode(final ISopNode iNode, final LocalCondition returnCondition) {
+    private boolean getFinishConditionForNode(final ISopNode iNode, final ConditionExpression returnCondition) {
 
         if (iNode instanceof SopNodeOperation) {
             final OperationData opData = iNode.getOperation();
-            returnCondition.setmCondition(opData.getName() + "_f" + " node to finish");
-        } else if (iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
+            final ConditionStatment cs = createConditionStatment(opData, "2");
+            returnCondition.changeExpressionRoot(cs);
+
+        } else if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
 
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-                ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
-                LocalCondition localReturnCondition = new LocalCondition();
+                final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+                final ConditionExpression localReturnCondition = new ConditionExpression();
                 getFinishConditionForNode(lastNode, localReturnCondition);
 
-                if (!returnCondition.isEmpty()) {
-                    if (iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
-                        returnCondition.addCondition(" AND ");
-                    } else if (iNode instanceof SopNodeAlternative) {
-                        returnCondition.addCondition(" OR ");
-                    } else {
-                        System.out.println("getFinishConditionForNode String Node type is not known");
-                        return false;
+                if (returnCondition.isEmpty()) {
+                    returnCondition.changeExpressionRoot(localReturnCondition);
+                } else {
+                    if (iNode instanceof SopNode || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
+                        returnCondition.appendElement(ConditionOperator.Type.AND, localReturnCondition);
+                    } else {// iNode instanceof SopNodeAlternative
+                        returnCondition.appendElement(ConditionOperator.Type.OR, localReturnCondition);
                     }
                 }
-                returnCondition.addCondition(localReturnCondition.getmCondition());
             }
         } else {
             System.out.println("getFinishConditionForNode Node type is not known");
@@ -255,37 +285,87 @@ public class ConditionsFromSopNode {
         return true;
     }
 
-    /**
-     * Ad hoc to work with conditions. Uses String as of know.
-     */
-    public class LocalCondition {
+    private ConditionStatment createConditionStatment(final OperationData iOperation, final String iValue) {
+        return new ConditionStatment(Integer.toString(iOperation.getId()), ConditionStatment.Operator.Equal, iValue);
+    }
 
-        private String mCondition = "";
+    private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final OperationData iOperationAsElement, final String iValue) {
+        final ConditionStatment cs = createConditionStatment(iOperationAsElement, iValue);
+        final ConditionExpression ce = new ConditionExpression(cs);
+        andToOperationConditionMap(iAddToOperation, iConditionType, ce);
+    }
 
-        public LocalCondition() {
+    private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final ConditionExpression iConditionExpression) {
+        Condition condition = null;
+        Map<ConditionType, Condition> typeConditionMap = null;
+
+        //First time for operation?
+        if (!mOperationConditionMap.containsKey(iAddToOperation)) {
+            mOperationConditionMap.put(iAddToOperation, new HashMap<ConditionType, Condition>());
+        }
+        typeConditionMap = mOperationConditionMap.get(iAddToOperation);
+
+        //First time for condition type?
+        if (!typeConditionMap.containsKey(iConditionType)) {
+            typeConditionMap.put(iConditionType, new Condition());
         }
 
-        public LocalCondition(final String iS) {
-            setmCondition(iS);
-        }
+        condition = typeConditionMap.get(iConditionType);
 
-        public String getmCondition() {
-            return mCondition;
-        }
-
-        public void setmCondition(String mCondition) {
-            this.mCondition = mCondition;
-        }
-
-        public void addCondition(String iConditionToAdd) {
-            setmCondition(getmCondition() + iConditionToAdd);
-        }
-
-        public boolean isEmpty() {
-            if (getmCondition().length() > 1) {
-                return false;
+        if (iAddToOperation.getName().equals("OP2115") || iAddToOperation.getName().equals("OP2114")) {
+            System.out.println("new" + iAddToOperation.getName() + " " + iConditionExpression.toString());
+            for (final OperationData opData : mOperationConditionMap.keySet()) {
+                if (opData.getName().equals("OP2115") || opData.getName().equals("OP2114")) {
+                    Map<ConditionType, Condition> conMap = mOperationConditionMap.get(opData);
+                    for (Condition c : conMap.values()) {
+                        System.out.println("old" + opData.getName() + " " + c.getGuard().toString());
+                    }
+                }
             }
-            return true;
+        }
+
+        final ConditionExpression ce = condition.getGuard();
+        if (ce.isEmpty()) {
+            ce.changeExpressionRoot(iConditionExpression);
+        } else {
+            ce.appendElement(ConditionOperator.Type.AND, iConditionExpression);
+        }
+
+        if (iAddToOperation.getName().equals("OP2115") || iAddToOperation.getName().equals("OP2114")) {
+            System.out.println("new" + iAddToOperation.getName() + " " + iConditionExpression.toString());
+            for (final OperationData opData : mOperationConditionMap.keySet()) {
+                if (opData.getName().equals("OP2115") || opData.getName().equals("OP2114")) {
+                    Map<ConditionType, Condition> conMap = mOperationConditionMap.get(opData);
+                        System.out.println("old" + opData.getName() + " " + conMap);
+                }
+            }
+        }
+
+    }
+
+    private void printOperationsWithConditions() {
+        for (final OperationData opData : mOperationConditionMap.keySet()) {
+            final Map<ConditionType, Condition> typeConditionMap = mOperationConditionMap.get(opData);
+
+            String s = "";
+            s += opData.getName() + " ";
+            int length = s.length();
+
+            s += String.format("%1$#" + 6 + "s", "pre: ");
+            if (typeConditionMap.containsKey(ConditionType.PRE)) {
+                final String preCond = typeConditionMap.get(ConditionType.PRE).getGuard().toString();
+                s += preCond;
+            }
+
+            if (typeConditionMap.containsKey(ConditionType.POST)) {
+                s += "\n";
+                length += 6;
+                s += String.format("%1$#" + length + "s", "post: ");
+                final String postCond = typeConditionMap.get(ConditionType.POST).getGuard().toString();
+                s += postCond;
+            }
+
+            System.out.println(s);
         }
     }
 }

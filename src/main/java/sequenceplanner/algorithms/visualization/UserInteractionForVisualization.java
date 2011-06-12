@@ -18,6 +18,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
@@ -70,6 +71,11 @@ public class UserInteractionForVisualization {
         System.out.println("--------------------------------");
 
         mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
+
+        System.out.println("\n--------------------------------");
+        System.out.println("Get conditions");
+        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());
+        System.out.println("--------------------------------");
 
         return true;
     }
