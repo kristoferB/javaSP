@@ -19,22 +19,20 @@ public class SpTransition implements Cloneable{
     SpLocation to;
 
 
-    public SpTransition(String eventLabel, String from, String to, String guard, String action) {
-        this.event = new SpEvent(eventLabel);
-        this.from = new SpLocation(from);
-        this.to = new SpLocation(to);
-        condition = new Condition();
-        this.action = action;
-        this.guard = guard;
-    }
-
     public SpTransition(SpEvent eventLabel,SpLocation from, SpLocation to, Condition transitionCondition) {
         this.event = eventLabel;
         this.from = from;
         this.to = to;
         condition = transitionCondition;
-    }
+        this.guard = condition.getGuard().toString();
+        this.action = condition.getAction().toString();
+    }   
 
+    public SpTransition(String eventLabel, String from, String to, String guard, String action) {
+        this(new SpEvent(eventLabel),new SpLocation(from), new SpLocation(to), new Condition());
+        this.action = action;
+        this.guard = guard;
+    }
    
     public String getAction() {
         return action;

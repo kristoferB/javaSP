@@ -97,8 +97,8 @@ public class DefaultModelParser implements IModelParser{
             SpEFAutomata temp = getSpEFA(op);
             for(SpEFA efa : temp.getAutomatons())
                 automata.addAutomaton(efa);
-            for(SpVariable var : temp.getVariables())
-                automata.addVariable(var);
+//            for(SpVariable var : temp.getVariables())
+//                automata.addVariable(var);
         }
         createSpProject();
     }
@@ -133,10 +133,10 @@ public class DefaultModelParser implements IModelParser{
         SpTransition startT = new SpTransition(startE, iL, eL, createPreCondition(operation)); 
         SpTransition stopT = new SpTransition(stopE, eL, fL, createPostCondition(operation)); 
         
-        iL.addOutTransition(startT);
-        eL.addInTransition(startT);
-        eL.addOutTransition(stopT);
-        fL.addInTransition(stopT);
+//        iL.addOutTransition(startT);
+//        eL.addInTransition(startT);
+//        eL.addOutTransition(stopT);
+//        fL.addInTransition(stopT);
         
         efa.addTransition(startT);
         efa.addTransition(stopT);

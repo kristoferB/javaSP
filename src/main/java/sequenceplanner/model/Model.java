@@ -1090,4 +1090,21 @@ public class Model extends Observable implements IModel{
          getRoot().getChildAt(i).removeAllChildren();
       }
    }
+   
+   public LinkedList<TreeNode> getAllOperations(){
+       
+        LinkedList<TreeNode> operations = new LinkedList<TreeNode>();
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        
+        for (int i = 0; i < operationRoot.getChildCount(); i++) 
+            children.push(operationRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            operations.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++) 
+                children.push(temp.getChildAt(i));
+        }
+        return operations;
+   }
 }

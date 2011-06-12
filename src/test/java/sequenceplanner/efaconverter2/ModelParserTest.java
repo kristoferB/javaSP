@@ -4,8 +4,10 @@
  */
 package sequenceplanner.efaconverter2;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Stack;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,8 +16,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import sequenceplanner.efaconverter2.SpEFA.SpEFA;
 import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
+import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
 import sequenceplanner.efaconverter2.SpEFA.SpVariable;
+import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -87,29 +91,31 @@ public class ModelParserTest {
      */
     @Test
     public void testGetSpEFAutomata() {
-        System.out.println("ModelParse");
-        DefaultModelParser instance = new DefaultModelParser(model);
-        System.out.println("Converter");
-        DefaultEFAConverter converter = new DefaultEFAConverter(instance.getSpEFAutomata());
-        System.out.println("Export");
-        DefaultExport export = new DefaultExport(converter.getModule());
-        export.save();
-        assertEquals(true,true);
-
-//        DefaultModelParser instance = new DefaultModelParser(model);
-//        SpEFAutomata result = instance.getSpEFAutomata();
-//        for(SpEFA a : result.getAutomatons()){
-//            System.out.println(a.getName());
-//            if(a.getName().equals("6")){
-//                for(Iterator<SpTransition> itr = a.iterateSequenceTransitions(); itr.hasNext();){
-//                    System.out.println("-----------------");
-//                    SpTransition tran = itr.next();
-//                    System.out.println(tran.toString() + ": " + tran.getCondition().toString());
-//                }
-//            }
-//        }
-//        
-//        assertEquals(21, result.getAutomatons().size());
-//        assertEquals(4, result.getVariables().size());
+        
+        //        System.out.println("ModelParse");
+        //        DefaultModelParser instance = new DefaultModelParser(model);
+        //        System.out.println("Converter");
+        //        DefaultEFAConverter converter = new DefaultEFAConverter(instance.getSpEFAutomata());
+        //        System.out.println("Export");
+        //        DefaultExport export = new DefaultExport(converter.getModule());
+        //        export.save();
+        //        assertEquals(true,true);
+        //        DefaultModelParser instance = new DefaultModelParser(model);
+        //        SpEFAutomata result = instance.getSpEFAutomata();
+        //        for(SpEFA a : result.getAutomatons()){
+        //            System.out.println(a.getName());
+        //            for(SpLocation l : a.getLocations())
+        //                System.out.println(l.getInTransitions().size() + " <> " + l.getOutTransitions().size());
+        //            if(a.getName().equals("6")){
+        //                for(Iterator<SpTransition> itr = a.iterateSequenceTransitions(); itr.hasNext();){
+        //                    System.out.println("-----------------");
+        //                    SpTransition tran = itr.next();
+        //                    System.out.println(tran.toString() + ": " + tran.getCondition().toString());
+        //                }
+        //            }
+        //        }
+        //
+        //        assertEquals(21, result.getAutomatons().size());
+        //        assertEquals(4, result.getVariables().size());
     }
 }

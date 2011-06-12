@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import sequenceplanner.efaconverter2.condition.Condition;
 
 /**
  * This class is a Extended Finite Automaton model. It consist of a set
@@ -86,31 +87,19 @@ public class SpEFA {
     
     // These addTransition should be handled in a better way! Fix later!
 
-    public SpTransition addTransition(SpLocation from, SpLocation to, String event){
-        SpTransition trans = new SpTransition(event, from.getName(), to.getName(), "" , "");
-        this.alphabet.add(trans.getEvent());
-        from.addOutTransition(trans);
-        to.addInTransition(trans);
-        addLocation(from);
-        addLocation(to);
-        transitions.add(trans);
-        return trans;
+    public void addTransition(String event, SpLocation from, SpLocation to){
+        addTransition(new SpTransition(new SpEvent(event), from, to, new Condition()));
     }
 
-    public SpTransition addTransition(String from, String to, String event, String guard, String action){
-        SpLocation fromL = addLocation(from);
-        SpLocation toL = addLocation(to);
-        SpTransition trans = new SpTransition(event, from, to, guard, action);
-        this.alphabet.add(trans.getEvent());
-        fromL.addOutTransition(trans);
-        toL.addInTransition(trans);
-        transitions.add(trans);
-        return trans;
+    public void addTransition(String event, String from, String to, String guard, String action){
+        addTransition(new SpTransition(event, from, to, guard, action));
     }
     
     public void addTransition(SpTransition transition){
         transition = validateTransition(transition);
         this.alphabet.add(transition.getEvent());
+        transition.getFrom().addOutTransition(transition);
+        transition.getTo().addInTransition(transition);
         addLocation(transition.getFrom());
         addLocation(transition.getTo());
         transitions.add(transition);
@@ -125,15 +114,7 @@ public class SpEFA {
             transition.setFrom(locations.get(transition.getFrom().getName()));
         if (locations.containsKey(transition.getTo().getName()))
             transition.setTo(locations.get(transition.getTo().getName()));
-         // skipp this test for now, fix later if problems are found.
-//         for (SpTransition t : transition.getFrom().getOutTransitions()){
-//             if (t.getEventLabel().equals(transition.getEventLabel())){
-//                 if (t != transition){
-//                     
-//                 }
-//             }
-//         }
-         
+
          return transition;
     }
 
@@ -160,21 +141,34 @@ public class SpEFA {
     }
 
     public Iterator<SpTransition> iterateSequenceTransitions(){
-        return new TransitionIterator(initialLocation);
+        return new SequenceTransitionIterator(initialLocation);
     }
     
     public Collection<SpLocation> getLocations(){
         return locations.values();
     }
+    
+    public boolean removeTransition(SpTransition transition){
+        return transitions.remove(transition);
+    }
+    
+    public void removeLocation(SpLocation location){
+        transitions.removeAll(location.getInTransitions());
+        transitions.removeAll(location.getOutTransitions());
+        locations.remove(location.getName());
+    }
+    
     @Override
     public String toString(){
         return this.getName();
     }
 
-    class TransitionIterator implements Iterator<SpTransition>{
+    
+    
+    class SequenceTransitionIterator implements Iterator<SpTransition>{
         SpTransition next = null;
 
-        public TransitionIterator(SpLocation initialLocation){
+        public SequenceTransitionIterator(SpLocation initialLocation){
             if (initialLocation.getOutTransitions().size() > 1)
                 throw new UnsupportedOperationException("Multiple outgoing transition");
             

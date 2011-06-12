@@ -8,6 +8,7 @@ package sequenceplanner.efficientModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFA;
 import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
+import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -31,12 +33,12 @@ public class OperationSequences {
     static Logger log = Logger.getLogger(OperationSequences.class);
     private Model model;
     private List<TreeNode> operationList;
-    private List<List<String>> paths;
+    //private List<List<String>> paths;
 
     public OperationSequences(Model model){
         this.model = model;
         operationList = new ArrayList<TreeNode>();
-        paths = new ArrayList<List<String>>();
+        //paths = new ArrayList<List<String>>();
         init();
     }
 
@@ -48,28 +50,40 @@ public class OperationSequences {
     }
 
     public void run(){
-        model.getOperationRoot().setNodeData(new OperationData("Project", 1000));
+        
+        //RelationGraph graph = new RelationGraph(model.getAllOperations());
+        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
         DefaultModelParser parser = new DefaultModelParser(model);
-
-        OperationGraph graph = buildGraph();
-
-        /*
-         * mode 0: Save no graph
-         * mode 1: Save system graph (iteration zero)
-         * mode 2: Saved each iteration graph
-         */
-        
-        int mode = 0;
-        graph.calculate(mode);
-        paths = graph.getPaths();
-        
-        synchronize(paths, parser.getSpEFAutomata().getAutomatons());
-        DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
-        DefaultExport export = new DefaultExport(converter.getModule());
-        export.save();
-
-//        DialogEM dialogem = new DialogEM();
-//        dialogem.createAndShow();
+        RelationGraph graph = new RelationGraph(parser.getSpEFAutomata());
+        LinkedList<LinkedList<Integer>> paths = graph.getSequentialPaths();
+        print("###########");
+        for(LinkedList<Integer> path : paths){
+            print("==========");
+            for(Integer p : path)
+                print(p);
+        }
+        print("###########");
+        //        model.getOperationRoot().setNodeData(new OperationData("Project", 1000));
+        //        DefaultModelParser parser = new DefaultModelParser(model);
+        //
+        //        OperationGraph graph = buildGraph();
+        //
+        //        /*
+        //         * mode 0: Save no graph
+        //         * mode 1: Save system graph (iteration zero)
+        //         * mode 2: Saved each iteration graph
+        //         */
+        //
+        //        int mode = 0;
+        //        graph.calculate(mode);
+        //        paths = graph.getPaths();
+        //
+        //        synchronize(paths, parser.getSpEFAutomata().getAutomatons());
+        //        DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
+        //        DefaultExport export = new DefaultExport(converter.getModule());
+        //        export.save();
+        //        DialogEM dialogem = new DialogEM();
+        //        dialogem.createAndShow();
         //OperationGraph graph = new OperationGraph();
         //buildGraph(graph);
         // mode 0: Save no graph
@@ -85,9 +99,9 @@ public class OperationSequences {
         return operationList.size();
     }
 
-    public int nbrOfPaths(){
-        return paths.size();
-    }
+//    public int nbrOfPaths(){
+//        return paths.size();
+//    }
 
     private void print(Object o){
         System.err.println(o);

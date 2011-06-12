@@ -88,6 +88,21 @@ public class SpLocation {
     }
     
     @Override
+    public boolean equals(Object obj){
+        if(obj != null && this.getClass() == obj.getClass())
+            if(this.locationName.equals(((SpLocation)obj).getName()))
+                return true;
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.locationName != null ? this.locationName.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public String toString(){
         return this.locationName;
     }
