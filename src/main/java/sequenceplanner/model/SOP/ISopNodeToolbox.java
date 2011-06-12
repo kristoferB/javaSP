@@ -11,22 +11,6 @@ import sequenceplanner.view.operationView.OperationView;
 public interface ISopNodeToolbox {
 
     /**
-     * To create a new node<br/>
-     * Not sure on parameter iWhere, modify for better solution.<br/>
-     * No node should be created if some other node in the sequence where this node should be added already points to parameter iOperation.<br/>
-     * E.g.:---------------<br/>
-     * node1->node2. node3 should be created after node2.<br/>
-     * node1 points to some operation op1 and node3 also points to operation op1.<br/>
-     * This gives: the sequence should NOT be extended to node1->node2->node3.<br/>
-     * null is returned.<br/>
-     * --------------------<br/>
-     * @param iNodeType see {@link ISopNodeType}
-     * @param iWhere Before or after som other node, or as the first node in a sequence, CHANGE TO FIT WHAT IS BEST
-     * @return the created {@link ISopNode} or null if no node was created
-     */
-    public ISopNode createNode(Object iNodeType, Object iWhere);
-
-    /**
      * Removes a node and all sequence nodes to this node.<br/>
      * E.g.:---------------<br/>
      * node1 has sequence set {node2,node3} and node6 as predecessor.<br/>

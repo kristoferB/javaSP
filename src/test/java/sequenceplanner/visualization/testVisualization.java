@@ -13,8 +13,8 @@ import sequenceplanner.algorithms.visualization.PerformVisualization;
 import static org.junit.Assert.*;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -271,7 +271,8 @@ public class testVisualization {
 
         //First operation
         final OperationData firstOp = mSP.insertOperation();
-        new SopNodeToolboxSetOfOperations().createNode(firstOp, sop);
+        final ISopNode firstOpNode = new SopNodeOperation(firstOp);
+        sop.addNodeToSequenceSet(firstOpNode);
 
         //Include nbrOfOperations nbr of operations.
         for (; nbrOfOperations > 0; --nbrOfOperations) {
@@ -285,7 +286,8 @@ public class testVisualization {
                 llAND.add(llOR);
                 opData.setSequenceCondition(llAND);
             }
-            new SopNodeToolboxSetOfOperations().createNode(opData, sop);
+            final ISopNode opDataNode = new SopNodeOperation(opData);
+            sop.addNodeToSequenceSet(opDataNode);
         }
 
         mVisualization.addOset(sop);
@@ -381,9 +383,10 @@ public class testVisualization {
     public static ISopNode getOperationsInModel(TreeNode iTree) {
         final ISopNode returnNode = new SopNode();
         for (int i = 0; i < iTree.getChildCount(); ++i) {
-            OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
-            ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
-            toolbox.createNode(opData, returnNode);
+            final OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
+
+            final ISopNode opDataNode = new SopNodeOperation(opData);
+            returnNode.addNodeToSequenceSet(opDataNode);
         }
         return returnNode;
     }
@@ -397,8 +400,8 @@ public class testVisualization {
         ISopNode returnSop = new SopNode();
         ISopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
         for (ISopNode node : sop.getFirstNodesInSequencesAsSet()) {
-            if (node.getNodeType() instanceof OperationData) {
-                OperationData opData = (OperationData) node.getNodeType();
+            if (node instanceof SopNodeOperation) {
+                OperationData opData = node.getOperation();
                 if (iSet.contains(opData.getId())) {
                     returnSop.addNodeToSequenceSet(node);
                 }
