@@ -1,6 +1,7 @@
 package sequenceplanner.view.operationView;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxCell;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -10,7 +11,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -41,7 +41,6 @@ import sequenceplanner.view.operationView.OperationActions.Delete;
 import sequenceplanner.view.operationView.OperationActions.Redo;
 import sequenceplanner.view.operationView.OperationActions.Select;
 import sequenceplanner.view.operationView.OperationActions.Undo;
-import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphComponent;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
@@ -53,6 +52,9 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import java.util.Iterator;
+import java.util.ListIterator;
+import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
 public class OperationView extends AbstractView implements IView, AsyncModelListener {
@@ -68,13 +70,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     JSplitPane pane;
     private boolean isClosed;
     private boolean isHidden;
+    private LinkedList<Object> SOPStructure = new LinkedList<Object>();
+    private LinkedList<Object> li;
+
     //TODO refactor name to SOPView
 
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
         initVariables();
-        
+
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
 
@@ -127,8 +132,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return pane;
     }
 
-    private void saveGraphToSOP(){
+    private void saveGraphToSOP() {
     }
+
     @Override
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -851,20 +857,70 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         setHidden(false);
         updateName();
     }
-    
+
     /**
      * Insert a SOPnode into the SOPstructure containing the Data object in 
      * the insertedCell. SOPNode is inserted before or after reference cell.
+     * If the cell is neither after or before, it's within an other cell, which
+     * means a new list has to be placed within the list.
      * 
      * @param cell Cell used as reference.
      * @param insertedCell new cell
      * @param before boolean stating before reference cell or not
+     * @param after boolean stating after reference ell or not
      */
-    void addSOPNode(Cell cell, mxCell insertedCell, boolean before) {
-         throw new UnsupportedOperationException("Not yet implemented");
-         // TODO mxgraph --> SOP
-         //check element and pass on to SOPStructure. SOPStructure should create the 
-         //correct type of SOPNode and place it correctly
+    void addSOPNode(Cell cell, mxCell insertedCell, boolean before, boolean after) {
+        // TODO mxgraph --> SOP
+        //check element and pass on to SOPStructure. SOPStructure should create the
+        //correct type of SOPNode and place it correctly
+
+        /* if the cell is either before or after, theres no need to check the
+        type of "cell". But if its not, the type of "cell" is important for
+        how the cells   */
+
+        //If the cell is inserted before an other cell
+        if (before == true && after == false) {
+            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
+                if (it.next() == cell) {
+                    it.add(insertedCell);
+                    break;
+                }
+                it.next();
+            }
+            //If the cell is inserted after an other cell
+        } else if (before == false && after == true) {
+            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
+                if (it.next().equals(cell)) {
+                    it.next();
+                    it.add(insertedCell);
+                    break;
+                }
+                it.next();
+
+            }
+        } //If the cell is inserted within an other cell
+        //TODO: Eventually check this first and use the other conditions in an
+        //other class to be able to have one list for each sequence
+        else {
+            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
+                if (it.next().equals(cell)) {
+                    // Funkar detta?
+                    if (it.next().getClass().getName().equals(cell.getClass().getName())) {
+                        it.next();
+                        it.set(new LinkedList<Object>().add(it));
+                    }
+                    //Om det redan är en lista där måste man först ta vara på
+                    //elementen där i..
+                    else{
+                        li = new LinkedList<Object>();
+                        li= (LinkedList) it.next();
+                        li.add(cell);
+                        it.set(li);
+                    }
+                }
+
+            }
+        }
     }
 
     /**
@@ -875,6 +931,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         throw new UnsupportedOperationException("Not yet implemented");
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
-         //correct type of SOPNode and place it as a leaf under the root.
+        //correct type of SOPNode and place it as a leaf under the root.
     }
 }
