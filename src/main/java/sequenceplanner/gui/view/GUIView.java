@@ -80,6 +80,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
+    
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -344,6 +345,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Save cost automata as file
      *      Save optimal automaton as file
      *      Identify relations
+     *  Visualization
+     *      Brute Force
+     *      Add Selfcontained operations from file
      *  MP
      *      Print product types and op in model
      *      EFA for transport planning
@@ -573,6 +577,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     @Override
     public void invoke(Object source, mxEventObject evt) {
         propertyView.setOperation();
+        
+        System.out.println(source.getClass());
+        
+        System.out.println("invoke");
 
     }
 
@@ -697,6 +705,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      */
     public ViewMap getSOPViewMap() {
         return opViewMap;
+    }
+    
+    public void addOperationAttributeView(){
+        
     }
     
 }

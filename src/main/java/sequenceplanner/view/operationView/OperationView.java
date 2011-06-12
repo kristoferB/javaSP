@@ -57,7 +57,7 @@ import java.util.ListIterator;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
-public class OperationView extends AbstractView implements IView, AsyncModelListener {
+public class OperationView extends AbstractView implements IView, AsyncModelListener{
 
     // Logging for this class
     private static Logger logger = Logger.getLogger(OperationView.class);
@@ -105,11 +105,19 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             @Override
             public void mousePressed(MouseEvent e) {
                 createPopup(e);
+
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 createPopup(e);
+                if (e.getClickCount() == 2) {
+                    //If operation is clicked
+                    Cell clickedCell = (Cell) OperationView.this.getGraphComponent().getCellAt(e.getX(), e.getY());
+                    if (OperationView.this.getGraph().isOperation(clickedCell)) {
+                        OperationView.this.showOperation(clickedCell.getId());
+                    }
+                }
             }
 
             protected void createPopup(MouseEvent e) {
@@ -932,5 +940,14 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.
+    }
+    private int clickCounter = 0;
+
+    private void showOperation(String id) {
+        clickCounter++;
+        System.out.println("Operation " + id);
+        
+        
+        
     }
 }

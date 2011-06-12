@@ -51,8 +51,6 @@ public class PropertyView extends JScrollPane implements CellEditorListener {
     public PropertyView(EditorTreeModel m){
         model = m;
         operationIsChosen = false;
-        PropertyPanel pp = new PropertyPanel();
-        pp.setVisible(true);
         updateTree();
     }
 
