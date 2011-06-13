@@ -12,7 +12,7 @@ public class PropertyPanel extends JPanel{
     private OperationData data;
     private String precondString;
     private String idString;
-    private JLabel operationIdLabel = new JLabel("Operation ID : %i");
+    private JLabel operationIdLabel = new JLabel("Operation ID : ");
     private JLabel preconditionLabel = new JLabel("Preconditions : /n");
     private JLabel preactionLabel = new JLabel("Preactions :/n");
     private JLabel postconditionLabel = new JLabel("Postcondition :/n");
@@ -24,12 +24,9 @@ public class PropertyPanel extends JPanel{
     public PropertyPanel(OperationData data){
         this.data = data;
         setIdString(data.getName());
+        
+        operationIdLabel.setText(idString);
         add(operationIdLabel);
-        add(preconditionLabel);
-        add(preactionLabel);
-        add(postconditionLabel);
-        add(postactionLabel);
-        add(propertyLabel);
         operationIdLabel.setOpaque(true);
         propertyLabel.setOpaque(true);
         postconditionLabel.setOpaque(true);
