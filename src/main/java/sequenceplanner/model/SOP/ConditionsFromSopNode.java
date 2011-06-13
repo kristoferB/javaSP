@@ -7,7 +7,7 @@ import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
-import sequenceplanner.condition.ConditionStatment;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -168,7 +168,7 @@ public class ConditionsFromSopNode {
                 findFirstOperationsForNode(node, firstOperationSet);
                 for (final OperationData opData : firstOperationSet) {
 
-                    ConditionStatment cs = createConditionStatment(opData, "0");
+                    ConditionStatement cs = createConditionStatment(opData, "0");
                     if (startCondition.isEmpty()) {
                         startCondition.changeExpressionRoot(cs);
                     } else {
@@ -258,7 +258,7 @@ public class ConditionsFromSopNode {
 
         if (iNode instanceof SopNodeOperation) {
             final OperationData opData = iNode.getOperation();
-            final ConditionStatment cs = createConditionStatment(opData, "2");
+            final ConditionStatement cs = createConditionStatment(opData, "2");
             returnCondition.changeExpressionRoot(cs);
 
         } else if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
@@ -285,12 +285,12 @@ public class ConditionsFromSopNode {
         return true;
     }
 
-    private ConditionStatment createConditionStatment(final OperationData iOperation, final String iValue) {
-        return new ConditionStatment(Integer.toString(iOperation.getId()), ConditionStatment.Operator.Equal, iValue);
+    private ConditionStatement createConditionStatment(final OperationData iOperation, final String iValue) {
+        return new ConditionStatement(Integer.toString(iOperation.getId()), ConditionStatement.Operator.Equal, iValue);
     }
 
     private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final OperationData iOperationAsElement, final String iValue) {
-        final ConditionStatment cs = createConditionStatment(iOperationAsElement, iValue);
+        final ConditionStatement cs = createConditionStatment(iOperationAsElement, iValue);
         final ConditionExpression ce = new ConditionExpression(cs);
         andToOperationConditionMap(iAddToOperation, iConditionType, ce);
     }

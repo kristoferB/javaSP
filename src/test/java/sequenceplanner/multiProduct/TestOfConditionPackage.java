@@ -6,7 +6,7 @@ import org.junit.Test;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
-import sequenceplanner.condition.ConditionStatment;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
@@ -39,20 +39,20 @@ public class TestOfConditionPackage {
 
         //Left clause------------------------------------------------------------
         ConditionExpression left = new ConditionExpression();
-        ConditionStatment cs1 = new ConditionStatment(Integer.toString(op1.getId()), ConditionStatment.Operator.Equal, "2");
-        ConditionStatment cs2 = new ConditionStatment(Integer.toString(op2.getId()), ConditionStatment.Operator.Equal, "2");
+        ConditionStatement cs1 = new ConditionStatement(Integer.toString(op1.getId()), ConditionStatement.Operator.Equal, "2");
+        ConditionStatement cs2 = new ConditionStatement(Integer.toString(op2.getId()), ConditionStatement.Operator.Equal, "2");
         left.changeExpressionRoot(cs1);
         left.appendElement(ConditionOperator.Type.AND, cs2);
         //-----------------------------------------------------------------------
 
         //Right clause------------------------------------------------------------
-        ConditionStatment cs4 = new ConditionStatment(Integer.toString(op4.getId()), ConditionStatment.Operator.Equal, "2");
+        ConditionStatement cs4 = new ConditionStatement(Integer.toString(op4.getId()), ConditionStatement.Operator.Equal, "2");
         ConditionExpression subRight = new ConditionExpression(cs4);
-        ConditionStatment cs5 = new ConditionStatment(Integer.toString(op5.getId()), ConditionStatment.Operator.Equal, "2");
+        ConditionStatement cs5 = new ConditionStatement(Integer.toString(op5.getId()), ConditionStatement.Operator.Equal, "2");
         subRight.appendElement(ConditionOperator.Type.OR, cs5);
 
         ConditionExpression right = new ConditionExpression();
-        ConditionStatment cs3 = new ConditionStatment(Integer.toString(op3.getId()), ConditionStatment.Operator.Equal, "2");
+        ConditionStatement cs3 = new ConditionStatement(Integer.toString(op3.getId()), ConditionStatement.Operator.Equal, "2");
 
         right.changeExpressionRoot(cs3);
         right.appendElement(ConditionOperator.Type.AND, subRight);

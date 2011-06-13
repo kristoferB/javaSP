@@ -4,7 +4,7 @@ package sequenceplanner.condition;
  *
  * @author kbe
  */
-public class ConditionStatment extends ConditionElement {
+public class ConditionStatement extends ConditionElement {
 
     public enum Operator {Equal("=="),
                           NotEqual("!="),
@@ -38,7 +38,7 @@ public class ConditionStatment extends ConditionElement {
 
 
 
-    public ConditionStatment(String variable, Operator op, String value) {
+    public ConditionStatement(String variable, Operator op, String value) {
         super();
         this.variable = variable;
         this.op = op;
@@ -46,7 +46,7 @@ public class ConditionStatment extends ConditionElement {
         this.isAction = isOperatorAction(op);
     }
     
-    public ConditionStatment(String variable, 
+    public ConditionStatement(String variable,
                              Operator op, 
                              String value, 
                              ConditionOperator previousOperator, 
@@ -117,10 +117,10 @@ public class ConditionStatment extends ConditionElement {
         if (obj == null) {
             return false;
         }
-        if (!( obj instanceof ConditionStatment)) {
+        if (!( obj instanceof ConditionStatement)) {
             return false;
         }
-        final ConditionStatment other = (ConditionStatment) obj;
+        final ConditionStatement other = (ConditionStatement) obj;
         if ((this.variable == null) ? (other.variable != null) : !this.variable.equals(other.variable)) {
             return false;
         }
