@@ -99,39 +99,12 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         registerKeystrokes(graphComponent.getInputMap(), graphComponent.getActionMap());
 
 
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                createPopup(e);
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                createPopup(e);
-                
-                //If double click
-                if (e.getClickCount() == 2) {
-                    //If operation is clicked
-                    Cell clickedCell = (Cell) OperationView.this.getGraphComponent().getCellAt(e.getX(), e.getY());
-                    if (OperationView.this.getGraph().isOperation(clickedCell)) {
-                        OperationView.this.showOperation(clickedCell.getId());
-                    }
-                }
-            }
-
-            protected void createPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-
-                    ClickMenu c = new ClickMenu();
-                    c.show(OperationView.this, e);
-
-                }
-            }
-        });
+        
     }
 
+    public void addGraphComponentListener(MouseAdapter ma){
+        graphComponent.getGraphControl().addMouseListener(ma);
+    }
     public OperationView(Model model, ViewData view) {
         this(model, view.getName());
         open(view);
@@ -926,14 +899,5 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.
-    }
-    private int clickCounter = 0;
-
-    private void showOperation(String id) {
-        clickCounter++;
-        System.out.println("Operation " + id);
-        
-        
-        
     }
 }

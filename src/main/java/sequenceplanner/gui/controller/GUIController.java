@@ -2,6 +2,8 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -13,8 +15,10 @@ import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyPanel;
+import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
+import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.treeView.TreeViewController;
 
 /**
@@ -35,7 +39,7 @@ public class GUIController {
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
         guiView = v;
-        
+
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
         //Set observer on model
@@ -43,6 +47,7 @@ public class GUIController {
         guiModel.getModel().addObserver(opViewController);
         //Add first operation view to opViewController
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
+        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
         //  addNewOpTab();
         addListeners();
@@ -83,6 +88,8 @@ public class GUIController {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
+        
+        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
     }
 
@@ -327,6 +334,45 @@ public class GUIController {
         }
     }
 
+    private class OperationViewGraphicsListener extends MouseAdapter {
+
+        private OperationView oV;
+
+        public OperationViewGraphicsListener(OperationView oV) {
+            super();
+            this.oV = oV;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            createPopup(e);
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            createPopup(e);
+            OperationView v = oV;
+            //If double click
+            if (e.getClickCount() == 2 ) {
+                //If operation is clicked
+                Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
+                if (clickedCell != null && v.getGraph().isOperation(clickedCell)) {
+                    addPropertyPanelView((OperationData) clickedCell.getValue());
+                }
+            }
+        }
+
+        public void createPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+
+                ClickMenu c = new ClickMenu();
+                c.show(oV, e);
+
+            }
+        }
+    }
+
     /**
      * Tells the model to open a new project and adds all open views as tabs.
      */
@@ -369,11 +415,11 @@ public class GUIController {
         }
         return false;
     }
-    
-    
-    public void addPropertyPanelView(OperationData data){
-        if(guiView.addPropertyPanelView(new PropertyPanel(data)))
-            printToConsole("Operation "+ data.getName()+" opened.");
-        
+
+    public void addPropertyPanelView(OperationData data) {
+        if (guiView.addPropertyPanelView(new PropertyPanel(data))) {
+            printToConsole("Operation " + data.getName() + " opened.");
+        }
+
     }
 }

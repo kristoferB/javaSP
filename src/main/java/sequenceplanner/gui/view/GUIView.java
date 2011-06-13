@@ -81,7 +81,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
-    
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -114,8 +113,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         setStartingWindowsProperties();
         setRootDropDisabled();
     }
-    
-        
+
     public ViewMap getOpViewMap() {
         return opViewMap;
     }
@@ -225,23 +223,20 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootViewMap.addView(4, treeRootView);
 
         //Test (adding save button to object attribute window) should be cleaned up!!!!
-
         JPanel objectView = new JPanel();
         saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
-
         objectView.add(saveButton);
+
         objectMenu = new View("Object attribute view", null, objectView);
         objectViewMap.addView(1, objectMenu);
         objectViewMap.addView(2, new View("Property view", null, propertyView));
+
         objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
+
         objectRootView.getViewProperties().setAlwaysShowTitle(false);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
-        objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().setVisible(true);
-        objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getMinimizeButtonProperties().setVisible(true);
-        objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getRestoreButtonProperties().setVisible(true);
 
-        // rootWindow.getRootWindowProperties().getWindowBarProperties().
         rootViewMap.addView(5, treeRootView);
 
         //--------------------
@@ -557,7 +552,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         View newView = new View(name, null, opView);
         opViewMap.addView(opViewIndex, newView);
 
-
         if (mainDocks.getChildWindowCount() == 0) {
 
             operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
@@ -565,7 +559,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             mainDocks.addTab(newView);
             mainDocks.restore();
         }
-        System.out.println("Child count 2: " + mainDocks.getChildWindowCount());
     }
 
     /**
@@ -583,11 +576,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     @Override
     public void invoke(Object source, mxEventObject evt) {
         propertyView.setOperation();
-        
-        System.out.println(source.getClass());
-        
-        System.out.println("invoke");
-
     }
 
     public void printToConsole(String text) {
@@ -610,11 +598,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 //------- Docking the undocked windows ---------
 
         DockingWindow tempViewMap = new TabWindow();
-        try{
-        tempViewMap = operationRoot.getLastFocusedChildWindow();
+        try {
+            tempViewMap = operationRoot.getLastFocusedChildWindow();
 
 
-        }catch(NullPointerException e){ System.out.println("error: " +e);}
+        } catch (NullPointerException e) {
+            System.out.println("error: " + e);
+        }
         for (int i = 1; i <= rootViewMap.getViewCount(); i++) {
 
             rootViewMap.getView(i).dock();
@@ -666,19 +656,21 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(1)));
         /*int count = 1;
         while (count <= opViewIndex) {
-
-            mainDocks.addTab(opViewMap.getView(count));
-            count = count + 1;
-            System.out.println(count);
-            System.out.println(opViewIndex);
+        
+        mainDocks.addTab(opViewMap.getView(count));
+        count = count + 1;
+        System.out.println(count);
+        System.out.println(opViewIndex);
         }*/
-        try{
-        for(int i = 0; i < tempViewMap.getChildWindowCount(); i++){
-            System.out.println("TempViewMap: "+tempViewMap.getChildWindow(i));
-            mainDocks.addTab(tempViewMap.getChildWindow(i));
-        }
+        try {
+            for (int i = 0; i < tempViewMap.getChildWindowCount(); i++) {
+                System.out.println("TempViewMap: " + tempViewMap.getChildWindow(i));
+                mainDocks.addTab(tempViewMap.getChildWindow(i));
+            }
 
-        }catch(NullPointerException e){ System.out.println("error 2: " +e);}
+        } catch (NullPointerException e) {
+            System.out.println("error 2: " + e);
+        }
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
@@ -691,7 +683,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(true, 0.75f, operationRootView,
                 new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
                 consoleRootView));
-       // mainDocks = new TabWindow(tempViewMap);
+        // mainDocks = new TabWindow(tempViewMap);
         mainDocks.restore();
         System.out.println("Child count: " + mainDocks.getChildWindowCount());
     }
@@ -712,24 +704,33 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public ViewMap getSOPViewMap() {
         return opViewMap;
     }
-    
+
     /**
      * Adds a new View with a PropertPanel to the objectViewMap.
      * Duplicate views are not allowed.
      * @param toInsert PropertyPanel to insert
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
-    public boolean addPropertyPanelView(PropertyPanel toInsert){
-        
+    public boolean addPropertyPanelView(PropertyPanel toInsert) {
         //Check if view exists.
-        for(int i = 1; objectViewMap.getViewCount() != 0; i++){
-            if(toInsert.getDataName().equals(objectViewMap.getView(i).getComponent().getName())){
-                return false;
+        for (int i = 1; objectViewMap.getViewCount() <= i; i++) {
+            if (objectViewMap.getView(i).getComponent() != null && objectViewMap.getView(i).getComponent() instanceof PropertyPanel) {
+
+                System.out.println("no retur");
+                if (toInsert.getDataName().equals(objectViewMap.getView(i).getComponent().getName())) {
+
+                    System.out.println("retur");
+                    return false;
+                }
             }
         }
-        objectViewMap.addView(objectViewMap.getViewCount(),new View(toInsert.getDataName(),null,toInsert));
-        objectDocks.add(objectViewMap.getView(objectViewMap.getViewCount()));
+
+        View newView = new View(toInsert.getDataName(), null, toInsert);
+        objectViewMap.addView(objectViewMap.getViewCount() + 1, newView);
+        objectDocks.add(newView);
+        objectDocks.restore();
+
+
         return true;
     }
-    
 }
