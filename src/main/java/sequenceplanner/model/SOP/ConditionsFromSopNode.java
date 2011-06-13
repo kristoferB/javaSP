@@ -5,13 +5,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
 import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Creates conditions for {@link OperationData}s based on {@link ISopNode}.
+ * Creates conditions for {@link OperationData}s based on {@link ISopNode} parameter used at constructor call.<br/>
+ * The result is to be found with method getmOperationConditionMap().<br/>
  * @author patrik
  */
 public class ConditionsFromSopNode {
@@ -37,6 +39,17 @@ public class ConditionsFromSopNode {
     public ConditionsFromSopNode(final ISopNode iRoot) {
         run(iRoot);
         printOperationsWithConditions();
+    }
+
+    /**
+     * External key: operation object<br/>
+     * External value: internal map<br/>
+     * Internal key: {@link ConditionsFromSopNode}.ConditionType.PRE/POST<br/>
+     * Internal value: {@link Condition}
+     * @return
+     */
+    public Map<OperationData, Map<ConditionType, Condition>> getmOperationConditionMap() {
+        return mOperationConditionMap;
     }
 
     public boolean run(final ISopNode iRoot) {
@@ -94,7 +107,8 @@ public class ConditionsFromSopNode {
 
                     //Add condition to operation in set
                     for (final OperationData opData : operationSet) {
-                        andToOperationConditionMap(opData, ConditionType.PRE, condition);
+                        final ConditionExpression ce = (ConditionExpression) condition.clone();
+                        andToOperationConditionMap(opData, ConditionType.PRE, ce);
                     }
                     //-----------------------------------------------------------
                 }
@@ -161,6 +175,7 @@ public class ConditionsFromSopNode {
             final Map<ISopNode, ConditionExpression> sequenceConditionMap = new HashMap<ISopNode, ConditionExpression>();
 
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+
                 final ConditionExpression startCondition = new ConditionExpression();
 
                 //Get startCondition for sequence that starts with node to be in it's initial location.
@@ -188,7 +203,6 @@ public class ConditionsFromSopNode {
 
                 //Store for later use
                 sequenceConditionMap.put(node, mergedCondition);
-
             }
             //add condition
             for (final ISopNode thisSequenceNode : iNode.getFirstNodesInSequencesAsSet()) {
@@ -198,10 +212,7 @@ public class ConditionsFromSopNode {
                 for (final OperationData opData : firstOperationSet) {
                     for (final ISopNode otherSequenceNode : sequenceConditionMap.keySet()) {
                         if (otherSequenceNode != thisSequenceNode) {
-                            System.out.println(opData.getName() + " precon: " + sequenceConditionMap.get(otherSequenceNode).toString());
-                            System.out.println(thisSequenceNode.typeToString() + " precon: " + sequenceConditionMap.get(otherSequenceNode).toString());
                             andToOperationConditionMap(opData, ConditionType.PRE, sequenceConditionMap.get(otherSequenceNode));
-
                         }
                     }
                 }
@@ -291,54 +302,30 @@ public class ConditionsFromSopNode {
 
     private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final OperationData iOperationAsElement, final String iValue) {
         final ConditionStatement cs = createConditionStatment(iOperationAsElement, iValue);
-        final ConditionExpression ce = new ConditionExpression(cs);
-        andToOperationConditionMap(iAddToOperation, iConditionType, ce);
+        andToOperationConditionMap(iAddToOperation, iConditionType, cs);
     }
 
-    private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final ConditionExpression iConditionExpression) {
-        Condition condition = null;
-        Map<ConditionType, Condition> typeConditionMap = null;
+    private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final ConditionElement iConditionExpression) {
 
         //First time for operation?
         if (!mOperationConditionMap.containsKey(iAddToOperation)) {
             mOperationConditionMap.put(iAddToOperation, new HashMap<ConditionType, Condition>());
         }
-        typeConditionMap = mOperationConditionMap.get(iAddToOperation);
+        Map<ConditionType, Condition> typeConditionMap = mOperationConditionMap.get(iAddToOperation);
 
         //First time for condition type?
         if (!typeConditionMap.containsKey(iConditionType)) {
             typeConditionMap.put(iConditionType, new Condition());
         }
 
-        condition = typeConditionMap.get(iConditionType);
-
-        if (iAddToOperation.getName().equals("OP2115") || iAddToOperation.getName().equals("OP2114")) {
-            System.out.println("new" + iAddToOperation.getName() + " " + iConditionExpression.toString());
-            for (final OperationData opData : mOperationConditionMap.keySet()) {
-                if (opData.getName().equals("OP2115") || opData.getName().equals("OP2114")) {
-                    Map<ConditionType, Condition> conMap = mOperationConditionMap.get(opData);
-                    for (Condition c : conMap.values()) {
-                        System.out.println("old" + opData.getName() + " " + c.getGuard().toString());
-                    }
-                }
-            }
-        }
+        Condition condition = typeConditionMap.get(iConditionType);
 
         final ConditionExpression ce = condition.getGuard();
+
         if (ce.isEmpty()) {
             ce.changeExpressionRoot(iConditionExpression);
         } else {
             ce.appendElement(ConditionOperator.Type.AND, iConditionExpression);
-        }
-
-        if (iAddToOperation.getName().equals("OP2115") || iAddToOperation.getName().equals("OP2114")) {
-            System.out.println("new" + iAddToOperation.getName() + " " + iConditionExpression.toString());
-            for (final OperationData opData : mOperationConditionMap.keySet()) {
-                if (opData.getName().equals("OP2115") || opData.getName().equals("OP2114")) {
-                    Map<ConditionType, Condition> conMap = mOperationConditionMap.get(opData);
-                        System.out.println("old" + opData.getName() + " " + conMap);
-                }
-            }
         }
 
     }

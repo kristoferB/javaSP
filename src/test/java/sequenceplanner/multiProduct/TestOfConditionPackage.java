@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
 import sequenceplanner.condition.ConditionStatement;
@@ -67,5 +68,15 @@ public class TestOfConditionPackage {
         //-----------------------------------------------------------------------
         
         System.out.println(c.toString());
+
+        //Testing----------------------------------------------------------------
+        ConditionExpression ceT = c.getGuard();
+
+        ConditionStatement cs6 = new ConditionStatement(Integer.toString(op3.getId()), ConditionStatement.Operator.Equal, "2");
+        ConditionExpression cee = new ConditionExpression(cs6);
+        System.out.println(cee.clone());
+        ConditionElement ceT2 = ceT.getExpressionRoot().getNextElement();
+        System.out.println(((ConditionExpression) ceT2).getExpressionRoot());
+        //-----------------------------------------------------------------------
     }
 }
