@@ -10,7 +10,9 @@ import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.objectattribute.PropertyPanel;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.treeView.TreeViewController;
@@ -368,4 +370,10 @@ public class GUIController {
         return false;
     }
     
+    
+    public void addPropertyPanelView(OperationData data){
+        if(guiView.addPropertyPanelView(new PropertyPanel(data)))
+            printToConsole("Operation "+ data.getName()+" opened.");
+        
+    }
 }

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -41,6 +42,8 @@ import sequenceplanner.editor.EditorView;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
+import sequenceplanner.model.data.OperationData;
+import sequenceplanner.objectattribute.PropertyPanel;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -55,21 +58,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     private JMenuBar menuBar;
     private GUIModel guiModel;
-    //ViewMaps holding all views for the rootwindows
+    //ViewMaps holding all views for the RootWindows
     private ViewMap rootViewMap = new ViewMap();
     private ViewMap opViewMap = new ViewMap();
-
-    public ViewMap getOpViewMap() {
-        return opViewMap;
-    }
     private ViewMap treeViewMap = new ViewMap();
     private ViewMap consoleViewMap = new ViewMap();
     private ViewMap editorViewMap = new ViewMap();
     private ViewMap objectViewMap = new ViewMap();
-    private TabWindow mainDocks;// = new TabWindow(new DockingWindow[]{});
+    //TabWindows
+    private TabWindow objectDocks;
+    private TabWindow mainDocks;
     //RootWindows
     private RootWindow rootWindow;
-    private RootWindow operationRoot;// = DockingUtil.createRootWindow(opViewMap, rootPaneCheckingEnabled);
+    private RootWindow operationRoot;
     private RootWindow treeRoot;
     private RootWindow editorRoot;
     private RootWindow objectRoot;
@@ -112,6 +113,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         createRootWindow();
         setStartingWindowsProperties();
         setRootDropDisabled();
+    }
+    
+        
+    public ViewMap getOpViewMap() {
+        return opViewMap;
     }
 
     /**
@@ -227,7 +233,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectMenu = new View("Object attribute view", null, objectView);
         objectViewMap.addView(1, objectMenu);
         objectViewMap.addView(2, new View("Property view", null, propertyView));
-        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), new TabWindow(objectViewMap.getView(2))));
+        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
         objectRootView.getViewProperties().setAlwaysShowTitle(false);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
@@ -707,8 +713,23 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         return opViewMap;
     }
     
-    public void addOperationAttributeView(){
+    /**
+     * Adds a new View with a PropertPanel to the objectViewMap.
+     * Duplicate views are not allowed.
+     * @param toInsert PropertyPanel to insert
+     * @return false if a PropertyPanelView for the same operation already exists else true
+     */
+    public boolean addPropertyPanelView(PropertyPanel toInsert){
         
+        //Check if view exists.
+        for(int i = 1; objectViewMap.getViewCount() != 0; i++){
+            if(toInsert.getDataName().equals(objectViewMap.getView(i).getComponent().getName())){
+                return false;
+            }
+        }
+        objectViewMap.addView(objectViewMap.getViewCount(),new View(toInsert.getDataName(),null,toInsert));
+        objectDocks.add(objectViewMap.getView(objectViewMap.getViewCount()));
+        return true;
     }
     
 }

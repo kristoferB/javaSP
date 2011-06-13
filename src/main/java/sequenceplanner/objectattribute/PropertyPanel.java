@@ -23,7 +23,7 @@ public class PropertyPanel extends JPanel{
     
     public PropertyPanel(OperationData data){
         this.data = data;
-        setIdString(data.getId());
+        setIdString(data.getName());
         add(operationIdLabel);
         add(preconditionLabel);
         add(preactionLabel);
@@ -38,8 +38,12 @@ public class PropertyPanel extends JPanel{
         
     }
     
-    private void setIdString(int id){
+    private void setIdString(String id){
         idString = "Operation ID : " + id;
+    }
+
+    public String getDataName() {
+        return idString;
     }
     
     
