@@ -112,7 +112,7 @@ public class OperationActions {
         public void actionPerformed(ActionEvent e) {
             SPGraph graph = getGraph(e);
 
-            mxCell insertedCell = null;
+            Cell insertedCell = null;
 
             Object c = getView(e).getGraphComponent().getCellAt(clickPoint.getPoint().x, clickPoint.getPoint().y);
 

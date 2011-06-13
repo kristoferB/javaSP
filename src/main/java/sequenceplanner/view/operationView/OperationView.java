@@ -111,6 +111,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             @Override
             public void mouseReleased(MouseEvent e) {
                 createPopup(e);
+                
+                //If double click
                 if (e.getClickCount() == 2) {
                     //If operation is clicked
                     Cell clickedCell = (Cell) OperationView.this.getGraphComponent().getCellAt(e.getX(), e.getY());
@@ -877,7 +879,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param before boolean stating before reference cell or not
      * @param after boolean stating after reference ell or not
      */
-    void addSOPNode(Cell cell, mxCell insertedCell, boolean before) {
+    void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
         // TODO mxgraph --> SOP
         //check element and pass on to SOPStructure. SOPStructure should create the
         //correct type of SOPNode and place it correctly
