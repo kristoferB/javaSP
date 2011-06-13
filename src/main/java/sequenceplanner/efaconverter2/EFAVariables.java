@@ -24,6 +24,7 @@ public class EFAVariables {
     public static String CYCLE_TIME_STRING = "makespan = ";
     public static String COST_AUTOMATA_POSTFIX = "_TDFA";
     public static String EFA_NAME_POSTFIX = "_EFA";
+    public static String EFA_NAME_DIVIDER = ".";
     // Postfixes for state names
     public static String STATE_INITIAL_POSTFIX = "_i";
     public static String STATE_EXECUTION_POSTFIX = "_e";

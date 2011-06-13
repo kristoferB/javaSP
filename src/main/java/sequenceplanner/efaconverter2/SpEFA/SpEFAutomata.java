@@ -57,19 +57,28 @@ public class SpEFAutomata {
         return name;
     }
 
-    public void setName(String iName){
-        this.name = iName;
+    public void setName(String name){
+        this.name = name;
     }
 
-    public void removeAutomaton(String iAutomatonName){
-        automatons.remove(iAutomatonName);
+    public void removeAutomaton(String name){
+        automatons.remove(name);
         alphabet.clear();
         for(SpEFA efa : automatons.values())
             for(SpEvent e : efa.getAlphabet())
                 alphabet.put(e.getName(), e);
     }
     
-    public void removeVariable(String iVariableName){
-        variables.remove(iVariableName);
+    public void removeVariable(String name){
+        variables.remove(name);
     }
+    
+    public SpEFA getSpEFA(String name){
+        return automatons.get(name);
+    }
+    
+    public SpVariable getSpVariable(String name){
+        return variables.get(name);
+    }
+    
 }

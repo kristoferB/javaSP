@@ -37,7 +37,6 @@ public class ConditionStatment extends ConditionElement {
     private boolean isAction;
 
 
-
     public ConditionStatment(String variable, Operator op, String value) {
         super();
         this.variable = variable;
@@ -223,6 +222,11 @@ public class ConditionStatment extends ConditionElement {
     public String toString(){
         return this.variable + this.op + this.value;
               
+    }
+    
+@Override
+    public ConditionElement clone() {
+        return new ConditionStatment(variable, op, value, super.getPreviousOperator(), super.getNextOperator());
     }
 
 }

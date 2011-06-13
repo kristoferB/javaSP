@@ -29,6 +29,7 @@ public class RelationGraph {
     private LinkedList<TreeNode> operations;
     private DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge> graph;
     private SpEFAutomata automata;
+    private LinkedList<String> map;
     private static int VERTEX_SOURCE = 0;
     private static int VERTEX_SINK = 1;
     private static double EDGE_WEIGHT = 1.0;
@@ -37,16 +38,22 @@ public class RelationGraph {
     public RelationGraph(LinkedList<TreeNode> operations){
         this.operations = operations;
         this.graph = new DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+        this.map = new LinkedList<String>();
+        map.add(VERTEX_SOURCE,"ReservedForSource");
+        map.add(VERTEX_SINK,"ReservedForSink");                
         automata = null;
     }
     
     public RelationGraph(SpEFAutomata automata){
         this.automata = automata;
         this.graph = new DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+        this.map = new LinkedList<String>();
+        map.add(VERTEX_SOURCE,"ReservedForSource");
+        map.add(VERTEX_SINK,"ReservedForSink");                        
         operations = null;
     }
     
-    public LinkedList<LinkedList<Integer>> getSequentialPaths(){
+    public LinkedList<LinkedList<String>> getSequentialPaths(){
         LinkedList<LinkedList<Integer>> allPaths = new LinkedList<LinkedList<Integer>>();
         if(operations != null)
             buildOperationGraph();
@@ -61,15 +68,17 @@ public class RelationGraph {
                 allPaths.add(path);
             cleanGraph(paths);
         }
-        return allPaths;        
+        
+        return unmap(allPaths);        
     }
-    
+
     private void buildOperationGraph(){
         for(TreeNode op : operations){
-            Integer id = op.getId();
-            graph.addVertex(id);
-            graph.addVertex(-id);
-            DefaultWeightedEdge e = graph.addEdge(id, -id);
+            map.add(Integer.toString(op.getId()));
+            Integer v = map.indexOf(Integer.toString(op.getId()));
+            graph.addVertex(v);
+            graph.addVertex(-v);
+            DefaultWeightedEdge e = graph.addEdge(v, -v);
             graph.setEdgeWeight(e, EDGE_WEIGHT);
         }
 
@@ -77,8 +86,10 @@ public class RelationGraph {
             OperationData opData = (OperationData)op.getNodeData();
             LinkedList<LinkedList<Integer>> predecessors = opData.getPredecessors();
             for(LinkedList<Integer> predecessor : predecessors){
-                if(predecessor.size() == 1){
-                    DefaultWeightedEdge e = graph.addEdge(-predecessor.getFirst(), op.getId());
+                if(predecessor.size() == 1 
+                        && map.contains(Integer.toString(predecessor.getFirst())) 
+                        && map.contains(Integer.toString(op.getId()))){
+                    DefaultWeightedEdge e = graph.addEdge(-map.indexOf(Integer.toString(predecessor.getFirst())), map.indexOf(Integer.toString(op.getId())));
                     graph.setEdgeWeight(e, EDGE_WEIGHT);
                 }
             }
@@ -133,12 +144,6 @@ public class RelationGraph {
         return paths;
     }
 
-    private int abs(int current) {
-        if(current < 0)
-            return -current;
-        return current;
-    }
-
     private void cleanGraph(LinkedList<LinkedList<Integer>> paths) {
         graph.removeVertex(VERTEX_SINK);
         graph.removeVertex(VERTEX_SOURCE);
@@ -153,27 +158,30 @@ public class RelationGraph {
             graph.setEdgeWeight(e, EDGE_WEIGHT);
     }
 
-    private LinkedList<String> buildAutomataGraph() {
-        LinkedList<String> map = new LinkedList<String>();
-        map.add(VERTEX_SOURCE,"ReservedForSource");
-        map.add(VERTEX_SINK,"ReservedForSink");
+    private void buildAutomataGraph() {
         for(SpEFA efa : automata.getAutomatons()){
             String efaName = efa.getName();
-            if(!efaName.equals(PROJECT_NAME)){
-                map.add(efaName);
-                System.out.println(efaName);
-                graph.addVertex(map.indexOf(efaName));
-                graph.addVertex(-map.indexOf(efaName));
-                DefaultWeightedEdge e = graph.addEdge(map.indexOf(efaName), -map.indexOf(efaName));
-                graph.setEdgeWeight(e, EDGE_WEIGHT);
-            }
+            
+            if(efaName.equals(PROJECT_NAME))
+                continue;
+            
+            map.add(efaName);
+            Integer v = map.indexOf(efaName);
+            graph.addVertex(v);
+            graph.addVertex(-v);
+            DefaultWeightedEdge e = graph.addEdge(v, -v);
+            graph.setEdgeWeight(e, EDGE_WEIGHT);
         }
         
         for(SpEFA efa : automata.getAutomatons()){
             if (efa.getInitialLocation().getOutTransitions().isEmpty())
-                return null;
+                continue;
             
             ConditionExpression c = efa.getInitialLocation().getOutTransitions().iterator().next().getConditionGuard();
+            
+            if(c.isEmpty())
+                continue;
+            
             for(Iterator<ConditionElement> itr = c.iterator(); itr.hasNext();){
                 ConditionElement e = itr.next();
                 if(e.isStatment()){
@@ -188,8 +196,6 @@ public class RelationGraph {
                 }
             }
         }
-        
-        return map;
     }
 
     private boolean isVariable(String variable) {
@@ -198,4 +204,23 @@ public class RelationGraph {
                 return true;
         return false;
     }
+
+    private int abs(int current) {
+        if(current < 0)
+            return -current;
+        return current;
+    }
+
+    private LinkedList<LinkedList<String>> unmap(LinkedList<LinkedList<Integer>> allPaths) {
+        LinkedList<LinkedList<String>> result = new LinkedList<LinkedList<String>>();
+        for(LinkedList<Integer> path : allPaths){
+            LinkedList<String> p = new LinkedList<String>();
+            for(Integer v : path){
+                p.add(map.get(v));
+            }
+            result.add(p);
+        }
+        return result;
+    }
+  
 }

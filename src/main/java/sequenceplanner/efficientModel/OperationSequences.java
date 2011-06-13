@@ -51,15 +51,15 @@ public class OperationSequences {
 
     public void run(){
         
-        //RelationGraph graph = new RelationGraph(model.getAllOperations());
-        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
-        DefaultModelParser parser = new DefaultModelParser(model);
-        RelationGraph graph = new RelationGraph(parser.getSpEFAutomata());
-        LinkedList<LinkedList<Integer>> paths = graph.getSequentialPaths();
+        RelationGraph graph = new RelationGraph(model.getAllOperations());
+//        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
+//        DefaultModelParser parser = new DefaultModelParser(model);
+//        RelationGraph graph = new RelationGraph(parser.getSpEFAutomata());
+        LinkedList<LinkedList<String>> paths = graph.getSequentialPaths();
         print("###########");
-        for(LinkedList<Integer> path : paths){
+        for(LinkedList<String> path : paths){
             print("==========");
-            for(Integer p : path)
+            for(String p : path)
                 print(p);
         }
         print("###########");

@@ -210,6 +210,10 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         return result + ")";
     }
 
+    @Override
+    public ConditionElement clone() {
+        return new ConditionExpression(expressionRoot, super.getPreviousOperator(), super.getNextOperator());
+    }
     
     class ConditionElementIterator implements Iterator<ConditionElement>{
         ConditionElement next = null;

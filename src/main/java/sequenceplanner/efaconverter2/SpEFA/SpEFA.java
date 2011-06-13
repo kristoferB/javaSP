@@ -76,8 +76,10 @@ public class SpEFA {
 
     public void addLocation(SpLocation location){
         if (location == null) return;
-        if (!locations.containsKey(location.getName())) locations.put(location.getName(), location);
-        if (location.isInitialLocation()) initialLocation = location;
+        if (!locations.containsKey(location.getName())) 
+            locations.put(location.getName(), location);
+        if (location.isInitialLocation()) 
+            initialLocation = location;
     }
 
     public void addLocation(SpLocation location, boolean initial){
