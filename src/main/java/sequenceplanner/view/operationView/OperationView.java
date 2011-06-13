@@ -877,7 +877,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param before boolean stating before reference cell or not
      * @param after boolean stating after reference ell or not
      */
-    void addSOPNode(Cell cell, mxCell insertedCell, boolean before, boolean after) {
+    void addSOPNode(Cell cell, mxCell insertedCell, boolean before) {
         // TODO mxgraph --> SOP
         //check element and pass on to SOPStructure. SOPStructure should create the
         //correct type of SOPNode and place it correctly
@@ -887,7 +887,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         how the cells   */
 
         //If the cell is inserted before an other cell
-        if (before == true && after == false) {
+        if (before == true) {
             for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
                 if (it.next() == cell) {
                     it.add(insertedCell);
@@ -896,7 +896,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                 it.next();
             }
             //If the cell is inserted after an other cell
-        } else if (before == false && after == true) {
+        } else if (before == false) {
             for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
                 if (it.next().equals(cell)) {
                     it.next();
