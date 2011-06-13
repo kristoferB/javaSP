@@ -1,7 +1,6 @@
 package sequenceplanner.view.operationView;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxCell;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -53,7 +52,10 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
-import java.util.ListIterator;
+import sequenceplanner.model.SOP.ASopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
+import sequenceplanner.model.SOP.SopSequence;
+import sequenceplanner.model.SOP.SopStructure;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
@@ -70,8 +72,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     JSplitPane pane;
     private boolean isClosed;
     private boolean isHidden;
-    private LinkedList<Object> SOPStructure = new LinkedList<Object>();
-    private LinkedList<Object> li;
+    private ASopNode sopNode;
+    private SopStructure sopStruct;
 
     //TODO refactor name to SOPView
 
@@ -79,15 +81,12 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         super(model, name);
         startName = name;
         initVariables();
-
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
-
-
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-
+        sopStruct = new SopStructure();
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -887,50 +886,35 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         /* if the cell is either before or after, theres no need to check the
         type of "cell". But if its not, the type of "cell" is important for
         how the cells   */
-
-        //If the cell is inserted before an other cell
-        if (before == true) {
-            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
-                if (it.next() == cell) {
-                    it.add(insertedCell);
-                    break;
-                }
-                it.next();
-            }
-            //If the cell is inserted after an other cell
-        } else if (before == false) {
-            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
-                if (it.next().equals(cell)) {
-                    it.next();
-                    it.add(insertedCell);
-                    break;
-                }
-                it.next();
-
-            }
-        } //If the cell is inserted within an other cell
-        //TODO: Eventually check this first and use the other conditions in an
-        //other class to be able to have one list for each sequence
-        else {
-            for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
-                if (it.next().equals(cell)) {
-                    // Funkar detta?
-                    if (it.next().getClass().getName().equals(cell.getClass().getName())) {
-                        it.next();
-                        it.set(new LinkedList<Object>().add(it));
-                    }
-                    //Om det redan är en lista där måste man först ta vara på
-                    //elementen där i..
-                    else{
-                        li = new LinkedList<Object>();
-                        li= (LinkedList) it.next();
-                        li.add(cell);
-                        it.set(li);
-                    }
-                }
-
-            }
+        //Operation
+        if (insertedCell.getValue() instanceof OperationData) {
+             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
         }
+        //Parallel
+        else if(insertedCell.getType() == 2){
+            //For when SopNodeParallel is finished
+            //sopNode = new SopNodeParallel((OperationData) insertedCell.getValue());
+        }
+        else if(insertedCell.getType() == 3){
+            //For when SopNodeAlternative is finished
+            //sopNode = new SopNodeAlternative((OperationData) insertedCell.getValue());
+        }
+        else{
+            //For when SopNodeArbitrary is finished
+            //sopNode = new SopNodeArbitrary((OperationData) insertedCell.getValue());
+        }
+        
+        //If the cell exists in the sequence, the new cell should be added
+        //*This is not really true, since the cell can exists within two 
+        //sequences in the same OpView. So have to rethink this structure*
+       /* if(sopStruct.getSopSequence().Contrains(cell)){
+            sopStruct.getSopSequence().addSopNode(sopNode);
+        }
+        else{
+            //*******Fixa till Lista!*******
+            SopSequence sopSeq = new SopSequence (sopNode, cell, before);
+
+        }*/
     }
 
     /**

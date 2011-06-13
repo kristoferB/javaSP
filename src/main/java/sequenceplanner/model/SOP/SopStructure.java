@@ -12,7 +12,7 @@ package sequenceplanner.model.SOP;
  */
 public class SopStructure implements ISopStructure{
     private ISopNode node;
-
+    private SopSequence sopSeq;
     @Override
     public void addNode(ISopNode node) {
         
@@ -26,6 +26,13 @@ public class SopStructure implements ISopStructure{
     @Override
     public void addNodeToSequence(ISopNode node) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    public void setSopSequence(SopSequence sopSeq){
+        this.sopSeq = sopSeq;
+    }
+    //Should be a list that is returned
+    public SopSequence getSopSequence(){
+        return sopSeq;
     }
     
 }
