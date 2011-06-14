@@ -17,8 +17,8 @@ import sequenceplanner.model.data.ViewData;
  */
 public class TreeViewController {
     //Main guiControlller
-
     private GUIController controller;
+    
     private TreeView view;
 
     public TreeViewController(GUIController controller, TreeView view) {

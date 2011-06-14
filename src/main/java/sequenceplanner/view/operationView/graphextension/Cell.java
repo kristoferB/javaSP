@@ -5,17 +5,11 @@ import sequenceplanner.model.data.OperationData;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import sequenceplanner.view.operationView.Constants;
 
 
 
 public class Cell extends mxCell {
-	
-   public final static int OP = 0;
-   public final static int SOP = 1;
-   public final static int PARALLEL = 2;
-   public final static int ALTERNATIVE = 3;
-   public final static int ARBITRARY = 4;
-
    // To know if cell is moved or copied.
    
 
@@ -46,23 +40,23 @@ public class Cell extends mxCell {
    }
 
    public boolean isOperation() {
-      return type == OP;
+      return type == Constants.OP;
    }
 
    public boolean isSOP() {
-      return this.type == SOP;
+      return this.type == Constants.SOP;
    }
 
    public boolean isParallel() {
-      return this.type == PARALLEL;
+      return this.type == Constants.PARALLEL;
    }
 
    public boolean isAlternative() {
-      return this.type == ALTERNATIVE;
+      return this.type == Constants.ALTERNATIVE;
    }
    
    public boolean isArbitrary() {
-      return type == ARBITRARY;
+      return type == Constants.ARBITRARY;
    }
 
    public boolean isGroup() {

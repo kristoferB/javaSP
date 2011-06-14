@@ -8,6 +8,7 @@ import java.util.Set;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
@@ -70,7 +71,7 @@ public class DrawSopNode {
                 mGraph.addCell(iNodeCellMap.get(node));
             } else {
                 mGraph.insertGroupNode(iNodeCellMap.get(iRoot), null, iNodeCellMap.get(node));
-                if (iNodeCellMap.get(iRoot).getType() == Cell.SOP) {
+                if (iNodeCellMap.get(iRoot).getType() == Constants.SOP) {
                     Object[] oSet = mGraph.getEdges(iNodeCellMap.get(node));
                     for (Object o : oSet) {
                         mxCell c = (mxCell) o;

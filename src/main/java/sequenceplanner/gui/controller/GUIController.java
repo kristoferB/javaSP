@@ -83,18 +83,18 @@ public class GUIController {
     }
     //Listener classes
 
+    public void printToConsole(String text) {
+        guiView.printToConsole(text);
+    }
+
     //private methods
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
-        
+      
         guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
-    }
-
-    public void printToConsole(String text) {
-        guiView.printToConsole(text);
     }
 
     /**

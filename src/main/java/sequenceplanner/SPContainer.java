@@ -25,7 +25,7 @@
 //import sequenceplanner.view.resourceView.ResourceView;
 //import sequenceplanner.view.treeView.TreeView;
 //
-///* TODO
+///*
 // *  - Placement when inserting into groupCell
 // *  - Save alternative in a correct way
 // *  - Make correct edges when inserting cell in cell.

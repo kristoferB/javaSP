@@ -817,7 +817,6 @@ public class SPGraph extends mxGraph {
       if (edge != null) {
          Cell term = (Cell) edge.getTerminal(before);
 
-         //TODO should maby be ==
          boolean next = term.equals(cell.getParent());
          next = parentNext ? next : !next;
 
@@ -1626,25 +1625,25 @@ public class SPGraph extends mxGraph {
       Cell target = ((Cell) cell);
 
       if (target.isSOP()) {
-         allowedDrops.add(Cell.OP);
-         allowedDrops.add(Cell.SOP);
-         allowedDrops.add(Cell.ALTERNATIVE);
-         allowedDrops.add(Cell.ARBITRARY);
-         allowedDrops.add(Cell.PARALLEL);
+         allowedDrops.add(Constants.OP);
+         allowedDrops.add(Constants.SOP);
+         allowedDrops.add(Constants.ALTERNATIVE);
+         allowedDrops.add(Constants.ARBITRARY);
+         allowedDrops.add(Constants.PARALLEL);
 
       } else if (target.isAlternative()) {
-         allowedDrops.add(Cell.OP);
-         allowedDrops.add(Cell.SOP);
+         allowedDrops.add(Constants.OP);
+         allowedDrops.add(Constants.SOP);
       } else if (target.isParallel()) {
-         allowedDrops.add(Cell.OP);
-         allowedDrops.add(Cell.SOP);
-         allowedDrops.add(Cell.PARALLEL);
+         allowedDrops.add(Constants.OP);
+         allowedDrops.add(Constants.SOP);
+         allowedDrops.add(Constants.PARALLEL);
       } else if (target.isOperation()) {
-         allowedDrops.add(Cell.OP);
-         allowedDrops.add(Cell.SOP);
-         allowedDrops.add(Cell.ALTERNATIVE);
-         allowedDrops.add(Cell.ARBITRARY);
-         allowedDrops.add(Cell.PARALLEL);
+         allowedDrops.add(Constants.OP);
+         allowedDrops.add(Constants.SOP);
+         allowedDrops.add(Constants.ALTERNATIVE);
+         allowedDrops.add(Constants.ARBITRARY);
+         allowedDrops.add(Constants.PARALLEL);
       } else {
          return false;
       }

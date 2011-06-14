@@ -9,6 +9,7 @@ import sequenceplanner.model.data.OperationData;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
+import sequenceplanner.view.operationView.Constants;
 
 /**
  * 
@@ -56,7 +57,7 @@ public class CellFactory {
 		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 40,
 				20), "perimeter=custom.operationPerimeter;fillColor=red");
 
-		cell.setType(Cell.OP);
+		cell.setType(Constants.OP);
 		cell.setId(null);
 		cell.setVertex(true);
 		cell.setConnectable(false);
@@ -79,7 +80,7 @@ public class CellFactory {
 
 		Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
 
-		cell.setType(Cell.PARALLEL);
+		cell.setType(Constants.PARALLEL);
 		cell.setId(null);
 		cell.setVertex(true);
 		cell.setConnectable(false);
@@ -97,7 +98,7 @@ public class CellFactory {
 
 		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
 				40), "perimeter=custom.alternativePerimeter;");
-		cell.setType(Cell.ALTERNATIVE);
+		cell.setType(Constants.ALTERNATIVE);
 		cell.getGeometry().setAlternateBounds(
 				new mxRectangle(place.getX(), place.getY(), 50, 40));
 		cell.setId(null);
@@ -117,7 +118,7 @@ public class CellFactory {
 
 		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
 				40), "perimeter=custom.operationPerimeter;");
-		cell.setType(Cell.ARBITRARY);
+		cell.setType(Constants.ARBITRARY);
 		cell.getGeometry().setAlternateBounds(
 				new mxRectangle(place.getX(), place.getY(), 50, 40));
 		cell.setId(null);
@@ -139,7 +140,7 @@ public class CellFactory {
 		d.setName("OP" + d.getId());
 		Cell cell = new Cell(d, geo,
 				"perimeter=custom.operationPerimeter;fillColor=yellow");
-		cell.setType(Cell.SOP);
+		cell.setType(Constants.SOP);
 		cell.setId(null);
 		cell.setVertex(true);
 		cell.setConnectable(false);

@@ -86,7 +86,7 @@ public class ConvertToCell {
 
 
 
-        if (cellType == Cell.PARALLEL) {
+        if (cellType == Constants.PARALLEL) {
 
             // Draw a parallel cell with transition from previousCell to this cell.
             thisCell = drawParallel(tableIndex, previousCell, parentCell);
@@ -104,7 +104,7 @@ public class ConvertToCell {
             }
 
 
-        } else if (cellType == Cell.ALTERNATIVE) {
+        } else if (cellType == Constants.ALTERNATIVE) {
             // Draw an alternative cell with transition from previousCell to this cell.
             thisCell = drawAlternative(tableIndex, previousCell, parentCell);
 
@@ -122,11 +122,11 @@ public class ConvertToCell {
 
 
 
-        } else if (cellType == Cell.OP || cellType == Cell.SOP) {
+        } else if (cellType == Constants.OP || cellType == Constants.SOP) {
 
             if (isExisting(cellID)) {
                 // An existing operation
-                if (previousCellType == Cell.PARALLEL) {
+                if (previousCellType == Constants.PARALLEL) {
 
                     if (relationID == previousCellID) {
 
@@ -134,7 +134,7 @@ public class ConvertToCell {
                         int type = previousCellType;
                         int name = previousCellID;
 
-                        while (type != Cell.OP) {
+                        while (type != Constants.OP) {
                             CellData o = cellTable.get(getIndexOfCell(name));
 
                             if(o.previousCell == -1){
@@ -173,7 +173,7 @@ public class ConvertToCell {
 
                     }
 
-                } else if (previousCellType == Cell.OP || previousCellType == Cell.SOP) {
+                } else if (previousCellType == Constants.OP || previousCellType == Constants.SOP) {
 
                     if (seqPreconditionOK(previousCellID, cellID)) {
                         // Draw an operation in its relation with transition from previousCell to this cell.
@@ -185,7 +185,7 @@ public class ConvertToCell {
                     }
 
 
-                } else if (previousCellType == Cell.ALTERNATIVE) {
+                } else if (previousCellType == Constants.ALTERNATIVE) {
 
                     if (relationID == previousCellID) {
 
@@ -193,7 +193,7 @@ public class ConvertToCell {
                         int type = previousCellType;
                         int name = previousCellID;
 
-                        while (type != Cell.OP) {
+                        while (type != Constants.OP) {
                             CellData o = cellTable.get(getIndexOfCell(name));
 
                             if(o.previousCell == -1){
@@ -238,11 +238,11 @@ public class ConvertToCell {
 
 
                 } else { // No previous cell
-                    if (cellType == Cell.OP || cellType == Cell.SOP) {
+                    if (cellType == Constants.OP || cellType == Constants.SOP) {
                         thisCell = drawOperation(tableIndex, null, parentCell);
-                    } else if (cellType == Cell.PARALLEL) {
+                    } else if (cellType == Constants.PARALLEL) {
                         thisCell = drawParallel(tableIndex, null, parentCell);
-                    } else if (cellType == Cell.ALTERNATIVE) {
+                    } else if (cellType == Constants.ALTERNATIVE) {
                         thisCell = drawAlternative(tableIndex, null, parentCell);
                     } else {
                         // Unknown type.
@@ -256,7 +256,7 @@ public class ConvertToCell {
                     // followingOp is the op that should have this cell as sequence condition.
 
                     int relationIndex = getIndexOfCell(relationID);
-                    if (cellTable.get(relationIndex).type == Cell.ALTERNATIVE) {
+                    if (cellTable.get(relationIndex).type == Constants.ALTERNATIVE) {
                         // This operation is last in an alternative cell with followingOp as first cell after the alternative.
             
                         if (followingOp == -1) {
@@ -346,7 +346,7 @@ public class ConvertToCell {
         CellData data = cellTable.get(tableIndex);
         Cell thisCell;
         
-        if(model.getOperation(data.id).getChildCount() > 0 || data.type == Cell.SOP){
+        if(model.getOperation(data.id).getChildCount() > 0 || data.type == Constants.SOP){
             thisCell = drawCell(tableIndex, previousCell, parent, SPGraphModel.TYPE_SOP, data);
 
 
