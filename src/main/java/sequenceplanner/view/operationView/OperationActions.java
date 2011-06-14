@@ -75,12 +75,12 @@ public class OperationActions {
             try {
 
                 if (cell.isSOP()) {
-                    getGraph(e).cellTypeChanged(cell, Cell.OP);
+                    getGraph(e).cellTypeChanged(cell, Constants.OP);
                     graph.foldCells(true, false, cells);
                     graph.updateCellSize(cell);
 
                 } else {
-                    getGraph(e).cellTypeChanged(cell, Cell.SOP);
+                    getGraph(e).cellTypeChanged(cell, Constants.SOP);
                     graph.foldCells(false, false, cells);
                 }
 

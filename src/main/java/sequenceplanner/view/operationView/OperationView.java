@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -54,7 +53,6 @@ import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import sequenceplanner.model.SOP.ASopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopSequence;
 import sequenceplanner.model.SOP.SopStructure;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
@@ -203,9 +201,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             mxGeometry geo = new mxGeometry();
 
             if (node.getChildCount() > 0) {
-                cell.setType(Cell.SOP);
+                cell.setType(Constants.SOP);
             } else {
-                cell.setType(Cell.OP);
+                cell.setType(Constants.OP);
             }
 
             mxRectangle rect = SPGraph.getSizeForOperation(cell);
@@ -852,10 +850,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param after boolean stating after reference ell or not
      */
     void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
-        // TODO mxgraph --> SOP
-        //check element and pass on to SOPStructure. SOPStructure should create the
-        //correct type of SOPNode and place it correctly
-
         /* if the cell is either before or after, theres no need to check the
         type of "cell". But if its not, the type of "cell" is important for
         how the cells   */
@@ -864,11 +858,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
              sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
         }
         //Parallel
-        else if(insertedCell.getType() == 2){
+        else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
             //sopNode = new SopNodeParallel((OperationData) insertedCell.getValue());
         }
-        else if(insertedCell.getType() == 3){
+        else if(insertedCell.getType() == Constants.ALTERNATIVE){
             //For when SopNodeAlternative is finished
             //sopNode = new SopNodeAlternative((OperationData) insertedCell.getValue());
         }
