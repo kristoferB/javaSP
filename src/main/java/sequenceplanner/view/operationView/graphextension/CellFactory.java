@@ -28,14 +28,22 @@ public class CellFactory {
 		return factoryInstance;
 	}
 
+        /**
+         * Creates a mxCell as an edge.
+         * @param regular
+         * @return 
+         */
 	public mxCell getEdge(boolean regular) {
             
-		String style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_CLASSIC;"
-				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;endArrow=mxConstants.ARROW_CLASSIC;"
-				: ";strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_CLASSIC";
+            
+		String style = regular ? "strokeColor=#000000;strokeWidth=2;arrow;"
+				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
+				: ";strokeColor=#000000;strokeWidth=2;";
+                        
 		mxCell edge = new Cell("edge", new mxGeometry(), style);
+
 		edge.setEdge(true);
-		edge.setConnectable(false);
+		edge.setConnectable(true);
 		edge.getGeometry().setRelative(true);
 		return edge;
 

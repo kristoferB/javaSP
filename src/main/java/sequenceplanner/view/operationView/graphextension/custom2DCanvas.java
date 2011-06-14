@@ -263,7 +263,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			start += 4 * scale;
 		}
 
-		{
+		{       //Color of the name of the operation
 			g.setColor(Color.BLACK);
 			g.setFont(big);
 			v = value.getName();
