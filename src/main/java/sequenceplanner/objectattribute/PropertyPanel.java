@@ -11,6 +11,7 @@ import sequenceplanner.model.data.OperationData;
 public class PropertyPanel extends JPanel{
     private OperationData data;
     private String precondString;
+    private String name;
     private String idString;
     private JLabel operationIdLabel = new JLabel("Operation ID : ");
     private JLabel preconditionLabel = new JLabel("Preconditions : /n");
@@ -23,8 +24,8 @@ public class PropertyPanel extends JPanel{
     
     public PropertyPanel(OperationData data){
         this.data = data;
+        name = data.getName();
         setIdString(data.getName());
-        
         operationIdLabel.setText(idString);
         add(operationIdLabel);
         operationIdLabel.setOpaque(true);
@@ -39,8 +40,11 @@ public class PropertyPanel extends JPanel{
         idString = "Operation ID : " + id;
     }
 
-    public String getDataName() {
+    public String getIdString(){
         return idString;
+    }
+    public String getName() {
+        return name;
     }
     
     

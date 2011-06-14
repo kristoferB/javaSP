@@ -712,22 +712,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
     public boolean addPropertyPanelView(PropertyPanel toInsert) {
-        //Check if view exists.
-        for (int i = 1; objectViewMap.getViewCount() <= i; i++) {
+       // Check if view exists. Story 111
+        for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
             if (objectViewMap.getView(i).getComponent() != null && objectViewMap.getView(i).getComponent() instanceof PropertyPanel) {
-
-                System.out.println("no retur");
-                if (toInsert.getDataName().equals(objectViewMap.getView(i).getComponent().getName())) {
-
-                    System.out.println("retur");
+                if (toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
+                    printToConsole("Operation already opened.");
                     return false;
                 }
             }
         }
 
-        View newView = new View(toInsert.getDataName(), null, toInsert);
+        View newView = new View(toInsert.getName(), null, toInsert);
         objectViewMap.addView(objectViewMap.getViewCount() + 1, newView);
-        objectDocks.add(newView);
+        objectDocks.addTab(newView);
         objectDocks.restore();
 
 
