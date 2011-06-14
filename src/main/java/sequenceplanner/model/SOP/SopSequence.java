@@ -17,13 +17,18 @@ public class SopSequence{
     private LinkedList<Object> SOPStructure = new LinkedList<Object>();
     private LinkedList<Object> li;
 
-    public SopSequence(ASopNode sopOp, Cell cell, boolean before) {
+    //A new Operation is created -> new SopSequence
+    public SopSequence (ASopNode sopOp){
+        //Create new SOPList
+    }
+
+    public LinkedList addSopToSequence(ASopNode sopOp, Cell cell, boolean before) {
 
         //If the cell is inserted before an other cell
         if (before == true) {
             for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
                 if (it.next() == cell) {
-                    it.add(sopOp.getOperation());
+                    it.add(sopOp);
                     break;
                 }
                 it.next();
@@ -33,19 +38,21 @@ public class SopSequence{
             for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
                 if (it.next().equals(cell)) {
                     it.next();
-                    it.add(sopOp.getOperation());
+                    it.add(sopOp);
                     break;
                 }
                 it.next();
 
             }
-        } //If the cell is inserted within an other cell
+        }
+        return SOPStructure;
+        //If the cell is inserted within an other cell
         //TODO: Eventually check this first and use the other conditions in an
         //other class to be able to have one list for each sequence
 
     }
     //If theres neither before or after
-    public SopSequence(ASopNode sopOp, Cell cell) {
+    public LinkedList addSopToSequence(ASopNode sopOp, Cell cell) {
 
         for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
             if (it.next().equals(cell)) {
@@ -65,7 +72,7 @@ public class SopSequence{
 
         }
         //Should return as a list
-       //return li;
+       return li;
     }
     public void addSopNode(){
         //To be implemented

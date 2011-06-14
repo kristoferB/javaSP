@@ -84,7 +84,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-        sopStruct = new SopStructure();
+        //sopStruct = new SopStructure();
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -866,22 +866,12 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //For when SopNodeAlternative is finished
             //sopNode = new SopNodeAlternative((OperationData) insertedCell.getValue());
         }
-        else{
+        else if(insertedCell.getType() == Constants.ARBITRARY){
             //For when SopNodeArbitrary is finished
             //sopNode = new SopNodeArbitrary((OperationData) insertedCell.getValue());
         }
+        SopStructure newStructure = new SopStructure (cell, sopNode, before);
         
-        //If the cell exists in the sequence, the new cell should be added
-        //*This is not really true, since the cell can exists within two 
-        //sequences in the same OpView. So have to rethink this structure*
-       /* if(sopStruct.getSopSequence().Contrains(cell)){
-            sopStruct.getSopSequence().addSopNode(sopNode);
-        }
-        else{
-            //*******Fixa till Lista!*******
-            SopSequence sopSeq = new SopSequence (sopNode, cell, before);
-
-        }*/
     }
 
     /**
