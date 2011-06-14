@@ -4,6 +4,7 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -11,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,7 +42,6 @@ import sequenceplanner.editor.EditorView;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
-import sequenceplanner.model.data.OperationData;
 import sequenceplanner.objectattribute.PropertyPanel;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
@@ -81,6 +80,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
+    
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -715,9 +715,16 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
        // Check if view exists. Story 111
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
             if (objectViewMap.getView(i).getComponent() != null && objectViewMap.getView(i).getComponent() instanceof PropertyPanel) {
+            
                 if (toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
                     printToConsole("Operation already opened.");
+                    
+                    objectDocks.requestFocusInWindow();
+                    objectDocks.setSelectedTab(objectDocks.getChildWindowIndex(objectViewMap.getView(i)));
+                    //
+
                     return false;
+                    
                 }
             }
         }
