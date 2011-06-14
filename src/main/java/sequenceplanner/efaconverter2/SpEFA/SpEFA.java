@@ -159,6 +159,10 @@ public class SpEFA {
         transitions.removeAll(location.getOutTransitions());
         locations.remove(location.getName());
     }
+
+    public void setName(String newName){
+        this.efaName = newName;
+    }
     
     @Override
     public String toString(){
@@ -200,43 +204,8 @@ public class SpEFA {
             throw new NoSuchElementException("No more SpTransition");
         }
 
-        // This method is a little bit scarry. Maybe we should do nothing?
         @Override
         public void remove() {
-//            ConditionElement current = next;
-//            if (current != null){
-//                if (current.hasNextElement() && current.hasPreviousElement()) {
-//                    ConditionElement p = current.getPreviousElement();
-//                    ConditionElement n = current.getNextElement();
-//                    ConditionOperator co;
-//                    // Not sure about this but here OR is used if any of the operatores are or.
-//                    if (current.getNextOperator().isOperationType(ConditionOperator.Type.OR)
-//                            || current.getPreviousOperator().isOperationType(ConditionOperator.Type.OR))
-//                    {
-//                        co = new ConditionOperator(p, n, ConditionOperator.Type.OR);
-//                    } else {
-//                        co = new ConditionOperator(p, n, ConditionOperator.Type.AND);
-//                    }
-//                    p.setNextOperator(co);
-//                    n.setPreviousOperator(co);
-//                    next = p;
-//                } else if (current.hasNextElement()) {
-//                    ConditionElement n = current.getNextElement();
-//                    n.setPreviousOperator(null);
-//                    current.getNextOperator().clear();
-//                    current.clear();
-//                    next = n;
-//                } else if (current.hasPreviousElement()) {
-//                    ConditionElement prev = current.getPreviousElement();
-//                    prev.setNextOperator(null);
-//                    current.getPreviousOperator().clear();
-//                    current.clear();
-//                    next = prev;
-//                } else {
-//                    current.clear();
-//                    next = null;
-//                }
-//            }
         }
 
     }    

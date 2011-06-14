@@ -74,7 +74,7 @@ public class ConditionStatment extends ConditionElement {
         return this.value;
     }
 
-    public void setOp(Operator op) {
+    public void setOperator(Operator op) {
         this.op = op;
         this.isAction = isOperatorAction(op);
     }

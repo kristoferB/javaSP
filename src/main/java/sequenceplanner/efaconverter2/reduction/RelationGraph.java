@@ -186,7 +186,7 @@ public class RelationGraph {
                 ConditionElement e = itr.next();
                 if(e.isStatment()){
                     ConditionStatment s = (ConditionStatment)e;
-                    if(s.getOperator().equals(ConditionStatment.Operator.Equal)
+                    if((s.getOperator().equals(ConditionStatment.Operator.Equal) || s.getOperator().equals(ConditionStatment.Operator.GreaterEq))
                             && s.getValue().equals(EFAVariables.VARIABLE_FINAL_STATE) 
                             && !isVariable(s.getVariable())
                             && map.contains(s.getVariable())){

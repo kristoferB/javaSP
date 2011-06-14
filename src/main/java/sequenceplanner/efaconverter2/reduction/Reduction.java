@@ -59,61 +59,116 @@ public class Reduction {
         if(efa2 == null)
             return efa1;
         
-        SpEFA efa = new SpEFA(efa1.getName() + EFAVariables.EFA_NAME_DIVIDER + efa2.getName());
+//        SpEFA efa = new SpEFA(efa1.getName() + EFAVariables.EFA_NAME_DIVIDER + efa2.getName());
         int state = 0;
-        SpLocation lastLocInEFA1 = null;
-        SpLocation firstInEFA2 = null;
+        SpLocation last = null;
+        SpLocation first = null;
         Iterator<SpTransition> itr = null;
-        HashMap<String,Integer> map = new HashMap<String, Integer>();
-        
+        Integer lastValue = null;
         itr = efa1.iterateSequenceTransitions();
         while(itr.hasNext()){
             SpTransition current = itr.next();
-            current.getFrom().setValue(state++);
+//            Integer oldFromValue = new Integer(current.getFrom().getValue());
+//            current.getFrom().setValue(state++);
+//            Integer newFromValue = new Integer(current.getFrom().getValue());
+//            if(oldFromValue != newFromValue)
+//                updateGlobalGuards(efa1.getName(), oldFromValue, newFromValue);
+//            
             if(!itr.hasNext()){
-                lastLocInEFA1 = current.getTo();
-                lastLocInEFA1.setValue(state);
+                last = current.getTo();
+                lastValue = new Integer(last.getValue());
+                state = last.getValue();
+                Integer newToValue = new Integer(last.getValue());
+                if(lastValue != newToValue)
+                    updateGlobalGuards(efa1.getName(), lastValue, newToValue);
             }
-            efa.addTransition(current);
+//            efa.addTransition(current);
         }
         
         itr = efa2.iterateSequenceTransitions();
         while(itr.hasNext()){
             SpTransition current = itr.next();
             if(current.getFrom().isInitialLocation()){
-                firstInEFA2 = current.getFrom();
-                removeGuard(efa1.getName(), ConditionStatment.Operator.Equal, Integer.toString(state), current.getConditionGuard());
-                lastLocInEFA1.setName(lastLocInEFA1.getName() + EFAVariables.EFA_NAME_DIVIDER + firstInEFA2.getName());
-                if(!firstInEFA2.isAccepting())
-                    lastLocInEFA1.setNotAccepting();
-                current.setFrom(lastLocInEFA1);
-                efa.addTransition(current);
+                first = current.getFrom();
+                Integer oldFirstValue = new Integer(first.getValue());
+                Integer newFirstValue = new Integer(last.getValue());
+                if(!first.isAccepting()){
+                    last.setNotAccepting();
+                }
+                last.setName(last + EFAVariables.EFA_NAME_DIVIDER + first);
+                removeGuard(efa1.getName(), Integer.toString(lastValue), current.getConditionGuard());
+                updateGlobalGuards(efa2.getName(), oldFirstValue, newFirstValue);
+                current.setFrom(last);
+                efa1.addTransition(current);
             } else {
+                Integer oldFromValue = new Integer(current.getFrom().getValue());
                 current.getFrom().setValue(state++);
-                efa.addTransition(current);
-            }
-            if(!itr.hasNext()){
-                current.getTo().setValue(state);
+                Integer newFromValue = new Integer(current.getFrom().getValue());
+                if(oldFromValue != newFromValue)
+                    updateGlobalGuards(efa1.getName(), oldFromValue, newFromValue);
+
+                if(!itr.hasNext()){
+                    last = current.getTo();
+                    lastValue = new Integer(last.getValue());
+                    last.setValue(state);
+                    Integer newToValue = new Integer(last.getValue());
+                    if(lastValue != newToValue)
+                        updateGlobalGuards(efa1.getName(), lastValue, newToValue);
+                }
+                efa1.addTransition(current);
             }
         }
-        
-        updateGlobalGuards();
-        
-        return efa;
+        automata.removeAutomaton(efa2.getName());
+        return efa1;
     }
     
-    private void removeGuard(String variable, ConditionStatment.Operator operator, String value, ConditionExpression ex){
-        if(ex.isEmpty())
+    private void removeGuard(String variable, String value, ConditionExpression ex){
+        if(ex.isEmpty() || value == null || variable == null)
              return;
         
         for(Iterator<ConditionElement> itr = ex.iterator(); itr.hasNext();){
             ConditionElement e = itr.next();
             if(e.isExpression()){
-                removeGuard(variable, operator, value, (ConditionExpression)e);
+                removeGuard(variable, value, (ConditionExpression)e);
             } else {
                 ConditionStatment st = (ConditionStatment)e;
-                if(st.getVariable().equals(variable) && st.getOperator() == operator && st.getValue().equals(value))
+                if(st.getVariable().equals(variable) 
+                        && (st.getOperator() == ConditionStatment.Operator.Equal || st.getOperator() == ConditionStatment.Operator.GreaterEq) 
+                        && st.getValue().equals(value)){
                     itr.remove();
+                }
+            }
+        }
+    }
+
+    private void updateGlobalGuards(String variable, Integer oldValue, Integer newValue) {
+        for(SpEFA efa : automata.getAutomatons()){
+            for(SpTransition tran : efa.getTransitions()){
+                ConditionExpression c = tran.getConditionGuard();
+                updateGuard(variable, oldValue, newValue, c);
+            }
+        }
+    }
+
+    private void updateGuard(String variable, Integer oldValue, Integer newValue, ConditionExpression condition) {
+        if(condition.isEmpty())
+             return;
+        
+        for(Iterator<ConditionElement> itr = condition.iterator(); itr.hasNext();){
+            ConditionElement e = itr.next();
+            if(e.isExpression()){
+                updateGuard(variable, oldValue, newValue, (ConditionExpression)e);
+            } else {
+                ConditionStatment st = (ConditionStatment)e;
+                if(st.getVariable().equals(variable) && st.getValue().equals(Integer.toString(oldValue))){
+                    switch(st.getOperator()){
+                        case Equal:
+                            st.setOperator(ConditionStatment.Operator.GreaterEq);
+                            st.setValue(Integer.toString(newValue));
+                        default:
+                            st.setValue(Integer.toString(newValue));
+                    }
+                }
             }
         }
     }
