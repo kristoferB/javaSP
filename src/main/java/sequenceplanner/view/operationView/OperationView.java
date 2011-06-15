@@ -879,7 +879,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param insertedCell cell containing Data
      */
     void addSOPNode(mxCell insertedCell) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        //throw new UnsupportedOperationException("Not yet implemented");
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.

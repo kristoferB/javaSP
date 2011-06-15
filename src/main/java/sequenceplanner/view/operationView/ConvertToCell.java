@@ -320,6 +320,7 @@ public class ConvertToCell {
 
     public void drawTransition(Cell theCell, Cell theParent) {
         boolean arrow = theCell.isParallel() ? false : true;
+        System.out.println("DrawTransition!");
         mxCell edge = CellFactory.getInstance().getEdge(false, arrow);
         theParent.insertEdge(edge, false);
         theCell.insertEdge(edge, true);
@@ -457,7 +458,7 @@ public class ConvertToCell {
         if (previousCell != null) {
             boolean typus = !(previousCell.isGroup() && previousCell == parent);
             boolean arrow = thisCell.isParallel() ? false : true;
-
+            System.out.println("DrawCell!");
             mxCell edge = CellFactory.getInstance().getEdge(typus,arrow);
             thisCell.insertEdge(edge, false);
             previousCell.insertEdge(edge, true);
