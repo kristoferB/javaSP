@@ -178,6 +178,7 @@ public class OperationActions {
                     insertedCell.getGeometry().setX(clickPoint.getX());
                     insertedCell.getGeometry().setY(clickPoint.getY());
                     graph.addCell(insertedCell);
+                    System.out.println("Why error?");
                     getView(e).addSOPNode(insertedCell);
                 }
             } finally {

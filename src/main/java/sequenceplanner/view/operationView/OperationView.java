@@ -84,7 +84,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-        //sopStruct = new SopStructure();
+        sopStruct = new SopStructure();
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -849,12 +849,13 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param before boolean stating before reference cell or not
      * @param after boolean stating after reference ell or not
      */
-    void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
+    public void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
         /* if the cell is either before or after, theres no need to check the
         type of "cell". But if its not, the type of "cell" is important for
         how the cells   */
         //Operation
         if (insertedCell.getValue() instanceof OperationData) {
+            System.out.println("Mu");
              sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
         }
         //Parallel
@@ -870,7 +871,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //For when SopNodeArbitrary is finished
             //sopNode = new SopNodeArbitrary((OperationData) insertedCell.getValue());
         }
-        SopStructure newStructure = new SopStructure (cell, sopNode, before);
+        System.out.println("MuMu");
+        sopStruct.setSopSequence(cell, sopNode, before);
         
     }
 
@@ -878,10 +880,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * Insert a cell as a leaf of the SOPStructure root
      * @param insertedCell cell containing Data
      */
-    void addSOPNode(mxCell insertedCell) {
-        //throw new UnsupportedOperationException("Not yet implemented");
+    public void addSOPNode(Cell insertedCell) {
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.
+        if (insertedCell.getValue() instanceof OperationData) {
+             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        }
+        else{
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+        sopStruct.setSopSequence(sopNode);
     }
 }

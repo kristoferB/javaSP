@@ -18,7 +18,7 @@ public class SopSequence{
     private LinkedList<Object> li;
 
     //A new Operation is created -> new SopSequence
-    public SopSequence (ASopNode sopOp){
+    public SopSequence (ASopNode sopNode){
         //Create new SOPList
     }
 
