@@ -13,7 +13,6 @@ import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constants;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 
@@ -48,7 +47,7 @@ public class SPGraphModel extends mxGraphModel {
 
    @Override
    public Object createRoot() {
-      mxCell root = new Cell("Process");
+      Cell root = new Cell("Process");
       root.insert(new Cell(new Data("root", -1)));
       return root;
    }

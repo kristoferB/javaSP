@@ -1,6 +1,5 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxCell;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -878,7 +877,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * Insert a cell as a leaf of the SOPStructure root
      * @param insertedCell cell containing Data
      */
-    void addSOPNode(mxCell insertedCell) {
+    void addSOPNode(Cell insertedCell) {
         //throw new UnsupportedOperationException("Not yet implemented");
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 

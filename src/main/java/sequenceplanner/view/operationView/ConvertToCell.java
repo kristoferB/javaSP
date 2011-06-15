@@ -14,7 +14,6 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 
 /**
@@ -79,10 +78,6 @@ public class ConvertToCell {
         }
 
         Cell thisCell = new Cell();
-
-
-
-
 
         if (cellType == Constants.PARALLEL) {
 
@@ -321,7 +316,7 @@ public class ConvertToCell {
     public void drawTransition(Cell theCell, Cell theParent) {
         boolean arrow = theCell.isParallel() ? false : true;
         System.out.println("DrawTransition!");
-        mxCell edge = CellFactory.getInstance().getEdge(false, arrow);
+        Cell edge = CellFactory.getInstance().getEdge(false, arrow);
         theParent.insertEdge(edge, false);
         theCell.insertEdge(edge, true);
         theParent.insert(edge);
@@ -459,7 +454,7 @@ public class ConvertToCell {
             boolean typus = !(previousCell.isGroup() && previousCell == parent);
             boolean arrow = thisCell.isParallel() ? false : true;
             System.out.println("DrawCell!");
-            mxCell edge = CellFactory.getInstance().getEdge(typus,arrow);
+            Cell edge = CellFactory.getInstance().getEdge(typus,arrow);
             thisCell.insertEdge(edge, false);
             previousCell.insertEdge(edge, true);
             parent.insert(edge);

@@ -13,7 +13,6 @@ import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxCellState;
 
@@ -46,7 +45,7 @@ public class OperationActions {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object parent = (mxCell) getView(e).getGraphComponent().getCellAt(p.x, p.y);
+            Object parent = (Cell) getView(e).getGraphComponent().getCellAt(p.x, p.y);
 
             getGraph(e).insertOperation(parent, p, Model.newId());
         }
@@ -272,12 +271,12 @@ public class OperationActions {
 
     public static class Delete implements ActionListener {
 
-        mxCell toRemove;
+        Cell toRemove;
 
         public Delete() {
         }
 
-        public Delete(mxCell cell) {
+        public Delete(Cell cell) {
             toRemove = cell;
         }
 

@@ -18,8 +18,6 @@ import sequenceplanner.view.operationView.OperationActions.AutoarrangeGroup;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
-import com.mxgraph.model.mxCell;
-
 /**
  *
  * @author Erik Ohlson
@@ -40,9 +38,9 @@ public class ClickMenu extends JPopupMenu {
       boolean into = false;
       add(sub);
 
-      if (c != null && c instanceof mxCell && ((mxCell) c).isEdge()) {
+      if (c != null && c instanceof Cell && ((Cell) c).isEdge()) {
          this.add(av.createAction("Remove edge",
-               new OperationActions.Delete((mxCell) c), "resources/icons/sop.png"));
+               new OperationActions.Delete((Cell) c), "resources/icons/sop.png"));
       }
 
       if (c != null && c instanceof Cell) {

@@ -1,7 +1,6 @@
 package sequenceplanner.model.SOP;
 
 import java.util.LinkedList;
-import java.util.Map;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**

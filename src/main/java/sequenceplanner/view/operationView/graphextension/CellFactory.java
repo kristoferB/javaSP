@@ -28,7 +28,7 @@ public class CellFactory {
     }
 
     /**
-     * Creates a mxCell as an edge.
+     * Creates a Cell as an edge.
      * @param regular
      * @return 
      */

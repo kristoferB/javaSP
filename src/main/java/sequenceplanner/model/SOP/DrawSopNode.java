@@ -1,6 +1,5 @@
 package sequenceplanner.model.SOP;
 
-import com.mxgraph.model.mxCell;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class DrawSopNode {
                 if (iNodeCellMap.get(iRoot).getType() == Constants.SOP) {
                     Object[] oSet = mGraph.getEdges(iNodeCellMap.get(node));
                     for (Object o : oSet) {
-                        mxCell c = (mxCell) o;
+                        Cell c = (Cell) o;
                         c.removeFromParent();
                     }
                 }
@@ -241,7 +240,7 @@ public class DrawSopNode {
         mGraph.insertGroupNode(cell6, null, cell7);
         Object[] oSet = mGraph.getEdges(cell7);
         for (Object o : oSet) {
-            mxCell c = (mxCell) o;
+            Cell c = (Cell) o;
             c.removeFromParent();
         }
 

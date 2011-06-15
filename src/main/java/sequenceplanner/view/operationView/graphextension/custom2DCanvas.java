@@ -15,7 +15,6 @@ import java.util.List;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constants;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
@@ -92,7 +91,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 
 			if (c.isSOP()) {
 
-				if (((mxCell) state.getCell()).isCollapsed()) {
+				if (((Cell) state.getCell()).isCollapsed()) {
 					drawOperation(x, y, w, h, state);
 
 				} else {
@@ -120,7 +119,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			} else if (c.isAlternative()) {
 
 				Stroke s = new BasicStroke((int) (2 * scale));
-				mxCell cell = (mxCell) state.getCell();
+				Cell cell = (Cell) state.getCell();
 
 				double topLeft = 99999, botLeft = 99999;
 				double topRight = 0, botRight = 0;
@@ -177,7 +176,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 
 	private void drawOperation(int x, int y, int w, int h, mxCellState state) {
 
-		OperationData value = (OperationData) ((mxCell) state.getCell())
+		OperationData value = (OperationData) ((Cell) state.getCell())
 				.getValue();
 		SPGraph graph = ((SPGraph) state.getView().getGraph());
 
@@ -370,7 +369,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 				mxConstants.STYLE_FILLCOLOR);
 		g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 60));
 
-		OperationData data = (OperationData) ((mxCell) state.getCell())
+		OperationData data = (OperationData) ((Cell) state.getCell())
 				.getValue();
 
 		g.fillRoundRect(x, y, w, h, 20, 20);
