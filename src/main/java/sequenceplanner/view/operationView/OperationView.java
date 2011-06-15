@@ -1,6 +1,5 @@
 package sequenceplanner.view.operationView;
 
-import com.mxgraph.model.mxCell;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;

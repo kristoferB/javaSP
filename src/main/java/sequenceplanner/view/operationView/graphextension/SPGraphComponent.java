@@ -13,7 +13,6 @@ import java.util.List;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxGraphHandler;
 import com.mxgraph.swing.handler.mxGraphTransferHandler;
@@ -242,13 +241,13 @@ public class SPGraphComponent extends mxGraphComponent {
 
       } else if (e.isShiftDown() && graph.getSelectionCount() == 1) {
 
-         mxCell selectedCell = (mxCell) graph.getSelectionCell();
+         Cell selectedCell = (Cell) graph.getSelectionCell();
 
-         List<mxCell> cells = ((SPGraph) graph).getCellsHereTo((mxCell) cell, true);
+         List<Cell> cells = ((SPGraph) graph).getCellsHereTo((Cell) cell, true);
          int i = cells.indexOf(selectedCell);
 
          if (i == -1) {
-            cells = ((SPGraph) graph).getCellsHereTo((mxCell) cell, false);
+            cells = ((SPGraph) graph).getCellsHereTo((Cell) cell, false);
             i = cells.indexOf(selectedCell);
 
          }

@@ -6,7 +6,6 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import sequenceplanner.view.operationView.Constants;
@@ -29,11 +28,11 @@ public class CellFactory {
     }
 
     /**
-     * Creates a mxCell as an edge.
+     * Creates a Cell as an edge.
      * @param regular
      * @return 
      */
-    public mxCell getEdge(boolean regular,boolean arrow) {
+    public Cell getEdge(boolean regular,boolean arrow) {
         String style = "";
         if (arrow) {
             style = regular ? "strokeColor=#000000;strokeWidth=2;"
@@ -53,7 +52,7 @@ public class CellFactory {
 
     }
 
-    public mxCell getOperationCell() {
+    public Cell getOperationCell() {
         return getOperationCell(null);
     }
 

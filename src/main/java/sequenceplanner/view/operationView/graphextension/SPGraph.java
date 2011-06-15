@@ -27,7 +27,6 @@ import sequenceplanner.view.operationView.autoSOP.SopNode;
 
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.canvas.mxImageCanvas;
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
@@ -132,19 +131,19 @@ public class SPGraph extends mxGraph {
                 ArrayList<Object> tCells = new ArrayList<Object>();
 
                 for (int i = 0; i < cells.length; i++) {
-                    mxCell object = (mxCell) cells[i];
+                    Cell object = (Cell) cells[i];
                     if (object != null && !object.isEdge()) {
                         tCells.add(object);
                     }
                 }
 
-                LinkedList<LinkedList<mxCell>> input = getSortedSequences(tCells, false);
+                LinkedList<LinkedList<Cell>> input = getSortedSequences(tCells, false);
 
                 tCells = new ArrayList<Object>();
 
 
-                for (Iterator<LinkedList<mxCell>> iterator = input.iterator(); iterator.hasNext();) {
-                    LinkedList<mxCell> linkedList = iterator.next();
+                for (Iterator<LinkedList<Cell>> iterator = input.iterator(); iterator.hasNext();) {
+                    LinkedList<Cell> linkedList = iterator.next();
 
                     if (linkedList.getFirst().isEdge()) {
                         linkedList.removeFirst();
@@ -191,7 +190,7 @@ public class SPGraph extends mxGraph {
                 for (int i = 0; i < cells.length; i++) {
 
 
-                    mxCell cell = ((mxCell) cells[i]);
+                    Cell cell = ((Cell) cells[i]);
 
                     for (int j = 0; j < cell.getEdgeCount(); j++) {
                         if (isSelected(cell.getEdgeAt(j))) {
@@ -245,10 +244,10 @@ public class SPGraph extends mxGraph {
 
             @Override
             public mxEdgeStyleFunction getEdgeStyle(mxCellState edgeState, List points, Object source, Object target) {
-                if (source instanceof mxCell && target instanceof mxCell) {
-                    mxCell s = (mxCell) source;
-                    mxCell t = (mxCell) target;
-                    mxCell e = (mxCell) edgeState.getCell();
+                if (source instanceof Cell && target instanceof Cell) {
+                    Cell s = (Cell) source;
+                    Cell t = (Cell) target;
+                    Cell e = (Cell) edgeState.getCell();
 
                     if ((((Cell) s).isGroup() && e.getParent() == s) || ((Cell) t).isGroup() && e.getParent() == t) {
                         return super.getEdgeStyle(edgeState, points, source, target);
@@ -561,7 +560,7 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertOperation(Object parent, Point insertPoint, int id) {
-        mxCell c = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION, insertPoint);
+        Cell c = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION, insertPoint);
 
         mxRectangle ps = getPreferredSizeForCell(c);
         mxGeometry geo = c.getGeometry();
@@ -585,8 +584,8 @@ public class SPGraph extends mxGraph {
     }
 
     public static String getShapefromString(Object input) {
-        if (input instanceof mxCell) {
-            mxCell cell = (mxCell) input;
+        if (input instanceof Cell) {
+            Cell cell = (Cell) input;
 
             String style = cell.getStyle();
             String[] pairs = style.split(";");
@@ -606,7 +605,7 @@ public class SPGraph extends mxGraph {
     public boolean acceptDrop(Object parent, Object child) {
 
 
-//      if(parent instanceof mxCell && child instanceof mxCell) {
+//      if(parent instanceof Cell && child instanceof Cell) {
 //         return isSOP(parent);
 //      }
 
@@ -639,8 +638,8 @@ public class SPGraph extends mxGraph {
      * @return All cells that is in sequence with the inputed parent and
      * 			in the same parent.
      */
-    public List<mxCell> getSequence(mxCell cell) {
-        ArrayList<mxCell> ar = new ArrayList<mxCell>();
+    public List<Cell> getSequence(Cell cell) {
+        ArrayList<Cell> ar = new ArrayList<Cell>();
         ar.addAll(getCellsHereTo(cell, true));
         ar.addAll(getCellsHereTo(cell, false));
         return ar;
@@ -652,12 +651,12 @@ public class SPGraph extends mxGraph {
      * @param first
      * @return The last or the first parent in the sequence where the input is included
      */
-    public mxCell getTerminalCell(mxCell start, boolean first) {
-        List<mxCell> c = getCellsHereTo(start, first);
+    public Cell getTerminalCell(Cell start, boolean first) {
+        List<Cell> c = getCellsHereTo(start, first);
         return c.get(c.size() - 1);
     }
 
-    public List<mxCell> getCellsHereTo(mxCell start, boolean first) {
+    public List<Cell> getCellsHereTo(Cell start, boolean first) {
         return getCellsHereTo(start, null, first);
     }
 
@@ -669,11 +668,11 @@ public class SPGraph extends mxGraph {
      *
      * @return List of all cells and vertices from start parent to start/end of sequence
      */
-    public List<mxCell> getCellsHereTo(mxCell start, mxCell stop, boolean first) {
+    public List<Cell> getCellsHereTo(Cell start, Cell stop, boolean first) {
 
-        ArrayList<mxCell> cells = new ArrayList<mxCell>();
+        ArrayList<Cell> cells = new ArrayList<Cell>();
 
-        mxCell tempCell = start;
+        Cell tempCell = start;
 
         while (tempCell != stop) {
             cells.add(tempCell);
@@ -682,10 +681,10 @@ public class SPGraph extends mxGraph {
         return cells;
     }
 
-    public mxCell getEdge(mxICell cell, Object parent, boolean incomming) {
+    public Cell getEdge(mxICell cell, Object parent, boolean incomming) {
 
         for (int i = 0; i < cell.getEdgeCount(); i++) {
-            mxCell edge = (mxCell) cell.getEdgeAt(i);
+            Cell edge = (Cell) cell.getEdgeAt(i);
 
             if (edge.getTerminal(!incomming) == cell && edge.getParent() == parent) {
                 return edge;
@@ -695,7 +694,7 @@ public class SPGraph extends mxGraph {
         return null;
     }
 
-    public LinkedList<mxCell> getSortedSequence(Object[] cells) {
+    public LinkedList<Cell> getSortedSequence(Object[] cells) {
 
         ArrayList<Object> c = new ArrayList<Object>();
 
@@ -705,7 +704,7 @@ public class SPGraph extends mxGraph {
             c.add(cells[i]);
         }
 
-        LinkedList<LinkedList<mxCell>> output = getSortedSequences(c, false);
+        LinkedList<LinkedList<Cell>> output = getSortedSequences(c, false);
 
         if (output.size() > 1) {
             return null;
@@ -714,7 +713,7 @@ public class SPGraph extends mxGraph {
         }
     }
 
-   public LinkedList<LinkedList<mxCell>> getSortedSequences(Object[] cells) {
+   public LinkedList<LinkedList<Cell>> getSortedSequences(Object[] cells) {
       ArrayList list = new ArrayList();
       for (int i = 0; i < cells.length; i++) {
          list.add(cells[i]);
@@ -729,32 +728,32 @@ public class SPGraph extends mxGraph {
      * @param straightSequence
      * @return a list of ordered sequences.
      */
-    public LinkedList<LinkedList<mxCell>> getSortedSequences(ArrayList<Object> cells,
+    public LinkedList<LinkedList<Cell>> getSortedSequences(ArrayList<Object> cells,
             boolean straightSequence) {
 
       if (cells.isEmpty()) {
-         return new LinkedList<LinkedList<mxCell>>();
+         return new LinkedList<LinkedList<Cell>>();
       }
 
-        LinkedList<LinkedList<mxCell>> output = new LinkedList<LinkedList<mxCell>>();
+        LinkedList<LinkedList<Cell>> output = new LinkedList<LinkedList<Cell>>();
 
-        LinkedList<mxCell> list = new LinkedList<mxCell>();
+        LinkedList<Cell> list = new LinkedList<Cell>();
 
-        mxCell cell = null;
+        Cell cell = null;
 
 
-        cell = (mxCell) cells.get(0);
+        cell = (Cell) cells.get(0);
 
-        mxCell c2 = null;
+        Cell c2 = null;
 
         while (cells.contains(cell)) {
             list.addFirst(cell);
             c2 = getNextCell(cell, true);
 
             if (c2 != null) {
-                list.addFirst((mxCell) getEdgesBetween(c2, cell)[0]);
+                list.addFirst((Cell) getEdgesBetween(c2, cell)[0]);
             } else {
-                mxCell ed = getEdge(cell, cell.getParent(), true);
+                Cell ed = getEdge(cell, cell.getParent(), true);
 
                 if (ed != null) {
                     list.addFirst(ed);
@@ -766,7 +765,7 @@ public class SPGraph extends mxGraph {
         }
 
         cell = list.getLast();
-        mxCell tempCell = cell;
+        Cell tempCell = cell;
         cells.add(cell);
 
         while (cells.contains(cell)) {
@@ -778,9 +777,9 @@ public class SPGraph extends mxGraph {
             c2 = getNextCell(cell, false);
 
             if (c2 != null) {
-                list.addLast((mxCell) getEdgesBetween(cell, c2)[0]);
+                list.addLast((Cell) getEdgesBetween(cell, c2)[0]);
             } else {
-                mxCell ed = getEdge(cell, cell.getParent(), false);
+                Cell ed = getEdge(cell, cell.getParent(), false);
 
                 if (ed != null) {
                     list.addLast(ed);
@@ -792,7 +791,7 @@ public class SPGraph extends mxGraph {
         }
         list.remove(tempCell);
 
-        HashSet<mxCell> set = new HashSet<mxCell>();
+        HashSet<Cell> set = new HashSet<Cell>();
         set.addAll(list);
 
         output.addLast(list);
@@ -804,12 +803,12 @@ public class SPGraph extends mxGraph {
         return output;
     }
 
-    public Cell getNextCell(mxCell cell, boolean before) {
+    public Cell getNextCell(Cell cell, boolean before) {
         return getNextCell((Cell) cell, before, false);
     }
 
     public Cell getNextCell(Cell cell, boolean before, boolean parentNext) {
-        mxCell edge = getEdge(cell, cell.getParent(), before);
+        Cell edge = getEdge(cell, cell.getParent(), before);
 
         if (edge != null) {
             Cell term = (Cell) edge.getTerminal(before);
@@ -825,8 +824,8 @@ public class SPGraph extends mxGraph {
         return null;
     }
 
-    public Cell getAlwaysNextCell(mxCell cell, boolean before) {
-        mxCell edge = getEdge(cell, cell.getParent(), before);
+    public Cell getAlwaysNextCell(Cell cell, boolean before) {
+        Cell edge = getEdge(cell, cell.getParent(), before);
 
         if (edge != null) {
             return (Cell) edge.getTerminal(before);
@@ -864,8 +863,8 @@ public class SPGraph extends mxGraph {
 
 
         for (int i = 0; i < edges.length; i++) {
-            if (edges[i] instanceof mxCell && ((mxCell) edges[i]).getParent() == operation) {
-                mxCell edge = (mxCell) edges[i];
+            if (edges[i] instanceof Cell && ((Cell) edges[i]).getParent() == operation) {
+                Cell edge = (Cell) edges[i];
 
                 Cell tempCell = (Cell) edge.getSource();
 
@@ -927,7 +926,7 @@ public class SPGraph extends mxGraph {
                 newCell.getGeometry().setX(p.getX());
                 newCell.getGeometry().setY(p.getY());
                 
-                mxCell edge;
+                Cell edge;
                 if(newCell.getType() == 0){
                     edge = CellFactory.getInstance().getEdge(true, true);
                 }
@@ -957,9 +956,9 @@ public class SPGraph extends mxGraph {
 
     }
 
-   public void insertGroupNode(mxCell parent, mxPoint clickPoint, mxCell insertCell) {
-      mxCell edge1 = CellFactory.getInstance().getEdge(false,false);
-      mxCell edge2 = CellFactory.getInstance().getEdge(false,false);
+   public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
+      Cell edge1 = CellFactory.getInstance().getEdge(false,false);
+      Cell edge2 = CellFactory.getInstance().getEdge(false,false);
 
 //      Object[] cells = new Object[3];
 
@@ -989,8 +988,8 @@ public class SPGraph extends mxGraph {
 
     @Override
     public void extendParent(Object cell) {
-        if (cell instanceof mxCell) {
-            updateParentSize(((mxCell) cell).getParent());
+        if (cell instanceof Cell) {
+            updateParentSize(((Cell) cell).getParent());
         }
     }
 
@@ -1000,8 +999,8 @@ public class SPGraph extends mxGraph {
         if (input != null) {
 
             for (int i = 0; i < input.length; i++) {
-                if (input[i] instanceof mxCell) {
-                    parents.add(((mxCell) input[i]).getParent());
+                if (input[i] instanceof Cell) {
+                    parents.add(((Cell) input[i]).getParent());
                 }
             }
 
@@ -1024,18 +1023,18 @@ public class SPGraph extends mxGraph {
         model.beginUpdate();
         try {
 
-            if (input instanceof mxCell && !input.equals(getDefaultParent()) && !getModel().isCollapsed(input)) {
+            if (input instanceof Cell && !input.equals(getDefaultParent()) && !getModel().isCollapsed(input)) {
                 Cell cell = (Cell) input;
 
                 Object[] children = getChildVertices(cell);
 
                 Rectangle re = null;
                 if (children.length > 0) {
-                    re = new Rectangle(((mxCell) children[0]).getGeometry().getRectangle());
+                    re = new Rectangle(((Cell) children[0]).getGeometry().getRectangle());
                 }
 
                 for (int j = 1; j < children.length; j++) {
-                    mxCell child = (mxCell) children[j];
+                    Cell child = (Cell) children[j];
 
                     if (child.isVertex()) {
                         re = re.union(child.getGeometry().getRectangle());
@@ -1078,7 +1077,7 @@ public class SPGraph extends mxGraph {
                     }
 
                     for (int j = 0; j < children.length; j++) {
-                        mxCell child = (mxCell) children[j];
+                        Cell child = (Cell) children[j];
 
                         if (child.isVertex()) {
 
@@ -1148,7 +1147,7 @@ public class SPGraph extends mxGraph {
 
             Object[] vert = SPGraphModel.getChildVertices(model, parent);
 
-            LinkedList<LinkedList<mxCell>> out = filterVertices(getSortedSequences(vert));
+            LinkedList<LinkedList<Cell>> out = filterVertices(getSortedSequences(vert));
 
 
             double seqX = 0;
@@ -1162,17 +1161,17 @@ public class SPGraph extends mxGraph {
                 double minX = 9999999;
 
                 for (int i = 0; i < out.size(); i++) {
-                    LinkedList<mxCell> l = out.get(i);
+                    LinkedList<Cell> l = out.get(i);
                     if (l.getFirst().getGeometry().getX() < minX) {
                         minX = l.getFirst().getGeometry().getX();
                         selected = i;
                     }
                 }
 
-                LinkedList<mxCell> l = out.get(selected);
+                LinkedList<Cell> l = out.get(selected);
 
                 double width = 0;
-                for (mxCell child : l) {
+                for (Cell child : l) {
                     if (child.isVertex() && child.getGeometry().getWidth() > width) {
                         width = child.getGeometry().getWidth();
                     }
@@ -1185,7 +1184,7 @@ public class SPGraph extends mxGraph {
                     height = Constants.ROOTBORDER_DISTANCE.top;
                 }
 
-                for (mxCell cell : l) {
+                for (Cell cell : l) {
                     mxGeometry geo = (mxGeometry) cell.getGeometry().clone();
                     geo.setY(height);
                     height += geo.getHeight() + Constants.AFTER_CELL;
@@ -1213,12 +1212,12 @@ public class SPGraph extends mxGraph {
         HashSet<Object> selecedCells = new HashSet<Object>();
 
         for (int i = 0; i < cells.length; i++) {
-            mxCell cell = (mxCell) cells[i];
+            Cell cell = (Cell) cells[i];
 
             if (!cell.isEdge() && !selecedCells.contains(cell)) {
-                List<mxCell> t = getSequence(cell);
+                List<Cell> t = getSequence(cell);
 
-                for (Iterator<mxCell> iterator = t.iterator(); iterator.hasNext();) {
+                for (Iterator<Cell> iterator = t.iterator(); iterator.hasNext();) {
                     Object object = (Object) iterator.next();
                     selecedCells.add(object);
                 }
@@ -1243,12 +1242,12 @@ public class SPGraph extends mxGraph {
 
         if (cells.length > 0) {
 
-            ArrayList<LinkedList<mxCell>> tempCells = this.getSortedSequences(cells, false);
+            ArrayList<LinkedList<Cell>> tempCells = this.getSortedSequences(cells, false);
 
             model.beginUpdate();
             try {
-                for (Iterator<LinkedList<mxCell>> iterator = tempCells.iterator(); iterator.hasNext();) {
-                    LinkedList<mxCell> list = iterator.next();
+                for (Iterator<LinkedList<Cell>> iterator = tempCells.iterator(); iterator.hasNext();) {
+                    LinkedList<Cell> list = iterator.next();
 
                     disconnectSequence(list);
 
@@ -1261,7 +1260,7 @@ public class SPGraph extends mxGraph {
         }
     }
 
-    protected LinkedList<mxCell> disconnectSequence(LinkedList<mxCell> seq) {
+    protected LinkedList<Cell> disconnectSequence(LinkedList<Cell> seq) {
         if (seq.getFirst().isEdge() && seq.getLast().isEdge()) {
             Object tar = seq.getLast().getTarget();
             Object src = seq.getFirst().getSource();
@@ -1290,7 +1289,7 @@ public class SPGraph extends mxGraph {
         return seq;
     }
 
-    //TODO Implement hashCode for mxCell for more consistent solution.
+    //TODO Implement hashCode for Cell for more consistent solution.
     /**
      * if not in sequcen it returns null.
      *
@@ -1298,39 +1297,39 @@ public class SPGraph extends mxGraph {
      * @param haltOnMultilayer
      * @return
      */
-    public ArrayList<LinkedList<mxCell>> getSortedSequences(Object[] cells, boolean haltOnMultilayer) {
-        HashMap<mxCell, LinkedList<mxCell>> seq = new HashMap<mxCell, LinkedList<mxCell>>();
+    public ArrayList<LinkedList<Cell>> getSortedSequences(Object[] cells, boolean haltOnMultilayer) {
+        HashMap<Cell, LinkedList<Cell>> seq = new HashMap<Cell, LinkedList<Cell>>();
 
         cells = filterVertices(cells);
 
-        mxCell parent = null;
+        Cell parent = null;
 
         if (cells.length > 0) {
-            parent = (mxCell) cells[0];
+            parent = (Cell) cells[0];
         }
 
         for (int i = 0; i < cells.length; i++) {
-            mxCell cell = (mxCell) cells[i];
+            Cell cell = (Cell) cells[i];
 
             if (haltOnMultilayer && parent.equals(getModel().getParent(cell))) {
                 // The marked cells does not have the same parent
                 return null;
             }
 
-            mxCell terminal = getTerminalCell(cell, true);
+            Cell terminal = getTerminalCell(cell, true);
             if (!seq.containsKey(terminal)) {
-                seq.put(terminal, new LinkedList<mxCell>());
+                seq.put(terminal, new LinkedList<Cell>());
             }
 
             seq.get(terminal).add(cell);
         }
 
-        Set<mxCell> keys = seq.keySet();
+        Set<Cell> keys = seq.keySet();
 
-        ArrayList<LinkedList<mxCell>> output = new ArrayList<LinkedList<mxCell>>(seq.size());
+        ArrayList<LinkedList<Cell>> output = new ArrayList<LinkedList<Cell>>(seq.size());
 
-        for (Iterator<mxCell> iterator = keys.iterator(); iterator.hasNext();) {
-            LinkedList<mxCell> temp = seq.get(iterator.next());
+        for (Iterator<Cell> iterator = keys.iterator(); iterator.hasNext();) {
+            LinkedList<Cell> temp = seq.get(iterator.next());
 
             temp = getSortedSequence(temp.toArray());
 
@@ -1433,12 +1432,12 @@ public class SPGraph extends mxGraph {
     public void cellsAdded(Object[] cells, Object parent, Integer index, Point location) {
 
         if (cells != null && parent != null && index != null) {
-            ArrayList<LinkedList<mxCell>> sequences = getSortedSequences(cells, false);
+            ArrayList<LinkedList<Cell>> sequences = getSortedSequences(cells, false);
 
             model.beginUpdate();
             try {
                 if (model.isEdge(parent)) {
-                    LinkedList<mxCell> seq = null;
+                    LinkedList<Cell> seq = null;
                     if (sequences != null && sequences.size() == 1) {
                         seq = sequences.get(0);
                         disconnectSequence(seq);
@@ -1474,9 +1473,9 @@ public class SPGraph extends mxGraph {
                         boolean par = pare.isParallel() || pare.isAlternative();
 
 
-                        for (Iterator<LinkedList<mxCell>> iterator = sequences.iterator(); iterator.hasNext();) {
+                        for (Iterator<LinkedList<Cell>> iterator = sequences.iterator(); iterator.hasNext();) {
 
-                            LinkedList<mxCell> seq = iterator.next();
+                            LinkedList<Cell> seq = iterator.next();
                             Cell oldParent = (Cell) seq.getFirst().getParent();
                             insertSequence(seq, pare, type, par);
 
@@ -1520,7 +1519,7 @@ public class SPGraph extends mxGraph {
         }
     }
 
-    public void insertSequence(LinkedList<mxCell> seq, mxCell target, int placement, boolean parType) {
+    public void insertSequence(LinkedList<Cell> seq, Cell target, int placement, boolean parType) {
 
         seq = disconnectSequence(seq);
 
@@ -1529,13 +1528,13 @@ public class SPGraph extends mxGraph {
 
         if (placement == TOP || placement == GRP_TOP) {
             targetParent = getModel().getParent(target);
-            mxCell inEdge = getEdge(target, targetParent, true);
+            Cell inEdge = getEdge(target, targetParent, true);
 
             if (inEdge != null) {
                 connectCell(inEdge, seq.getFirst(), false);
             }
 
-            mxCell outEdge = CellFactory.getInstance().getEdge(true, true);
+            Cell outEdge = CellFactory.getInstance().getEdge(true, true);
 
             addEdge(outEdge, targetParent, seq.getLast(), target, null);
 
@@ -1544,12 +1543,12 @@ public class SPGraph extends mxGraph {
       } else if (placement == BOTTOM || placement == GRP_BOT) {
          targetParent = getModel().getParent(target);
 
-            mxCell outEdge = getEdge(target, targetParent, false);
+            Cell outEdge = getEdge(target, targetParent, false);
 
             if (outEdge != null) {
                 connectCell(outEdge, seq.getLast(), true);
             }
-            mxCell inEdge = CellFactory.getInstance().getEdge(true, false);
+            Cell inEdge = CellFactory.getInstance().getEdge(true, false);
 
             addEdge(inEdge, targetParent, target, seq.getFirst(), null);
 
@@ -1557,7 +1556,7 @@ public class SPGraph extends mxGraph {
 
         } else if (placement == GRP_INSIDE && parType) {
             targetParent = target;
-            mxCell parEdge = CellFactory.getInstance().getEdge(false, false);
+            Cell parEdge = CellFactory.getInstance().getEdge(false, false);
             addEdge(parEdge, targetParent, target, seq.getFirst(), null);
             parEdge =
                     CellFactory.getInstance().getEdge(false, false);
@@ -1614,7 +1613,7 @@ public class SPGraph extends mxGraph {
         }
 
 
-        LinkedList<LinkedList<mxCell>> sorted = getSortedSequences(filterVertices(cells));
+        LinkedList<LinkedList<Cell>> sorted = getSortedSequences(filterVertices(cells));
 
         //What kind of cells can be last and first in dropped sequences
         List<Integer> allowedDrops = new LinkedList<Integer>();
@@ -1646,7 +1645,7 @@ public class SPGraph extends mxGraph {
 
 
 
-        for (LinkedList<mxCell> sequence : sorted) {
+        for (LinkedList<Cell> sequence : sorted) {
 
 
             if (sequence.getFirst().isEdge()) {
@@ -1680,12 +1679,12 @@ public class SPGraph extends mxGraph {
     }
 
     // TOOD Fix the fix. This can be done by never putting the edges in the sequences in sorted sequences.
-    public LinkedList<LinkedList<mxCell>> filterVertices(LinkedList<LinkedList<mxCell>> cells) {
+    public LinkedList<LinkedList<Cell>> filterVertices(LinkedList<LinkedList<Cell>> cells) {
 
-        for (LinkedList<mxCell> list : cells) {
-            List<mxCell> edges = new LinkedList<mxCell>();
+        for (LinkedList<Cell> list : cells) {
+            List<Cell> edges = new LinkedList<Cell>();
 
-            for (mxCell cell : list) {
+            for (Cell cell : list) {
                 if (cell.isEdge()) {
                     edges.add(cell);
                 }
@@ -1871,8 +1870,8 @@ public class SPGraph extends mxGraph {
         if (result != null) {
             for (SopNode connectNode : n.getBranches()) {
                 System.out.println("CreateBranch!");
-                mxCell edge1 = CellFactory.getInstance().getEdge(false, true);
-                mxCell edge2 = CellFactory.getInstance().getEdge(false, true);
+                Cell edge1 = CellFactory.getInstance().getEdge(false, true);
+                Cell edge2 = CellFactory.getInstance().getEdge(false, true);
 
                 SopNode top = connectNode;
                 while (top.getPred() != null) {
@@ -1895,7 +1894,7 @@ public class SPGraph extends mxGraph {
 
 
             }
-            //mxCell edge1 = CellFactory.getInstance().getEdge(false);
+            //Cell edge1 = CellFactory.getInstance().getEdge(false);
             //this.addEdge(edge1, result, getCell(n.getBranches().get(0), sops), result,0);
         }
 
@@ -1976,8 +1975,8 @@ public class SPGraph extends mxGraph {
      * @return boolean
      */
     private boolean noCircularSeq(Cell c, Cell prevOP) {
-        List<mxCell> seqCells = this.getSequence(c);
-        for (mxCell n : seqCells) {
+        List<Cell> seqCells = this.getSequence(c);
+        for (Cell n : seqCells) {
             if (prevOP.equals(n)) {
                 return false;
             }
