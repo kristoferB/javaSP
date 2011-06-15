@@ -928,11 +928,11 @@ public class SPGraph extends mxGraph {
                 newCell.getGeometry().setY(p.getY());
                 
                 mxCell edge;
-                if(newCell.getType() == 2){
-                    edge = CellFactory.getInstance().getEdge(true, false);
+                if(newCell.getType() == 0){
+                    edge = CellFactory.getInstance().getEdge(true, true);
                 }
                 else{
-                    edge = CellFactory.getInstance().getEdge(true, true);
+                    edge = CellFactory.getInstance().getEdge(true, false);
                 }
                 getModel().add(oldCell.getParent(), edge, 0);
 
