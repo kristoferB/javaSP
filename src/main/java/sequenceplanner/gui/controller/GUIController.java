@@ -92,7 +92,7 @@ public class GUIController {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
-      
+
         guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
     }
@@ -110,7 +110,7 @@ public class GUIController {
             addNewOpTab();
 
         } else {
-            guiView.setFocused(data);
+            guiView.setFocusedOperationView(data);
             printToConsole("Already open!");
         }
     }
@@ -334,6 +334,9 @@ public class GUIController {
         }
     }
 
+    /**
+     * Class for listening on clicks in an OperationView.
+     */
     private class OperationViewGraphicsListener extends MouseAdapter {
 
         private OperationView oV;
@@ -354,7 +357,7 @@ public class GUIController {
             createPopup(e);
             OperationView v = oV;
             //If double click
-            if (e.getClickCount() == 2 ) {
+            if (e.getClickCount() == 2) {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell)) {
@@ -419,6 +422,9 @@ public class GUIController {
     public void addPropertyPanelView(OperationData data) {
         if (guiView.addPropertyPanelView(new PropertyPanel(data))) {
             printToConsole("Operation " + data.getName() + " opened.");
+        } else {
+            printToConsole("Operation already opened.");
+
         }
 
     }

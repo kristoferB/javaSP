@@ -80,7 +80,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View treeRootView;
     private View editorRootView;
     private View objectRootView;
-    
     private EventListenerList listeners;
     private View objectMenu;
     private EditorView editorView;
@@ -692,7 +691,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * Set focus to the operation view containing the view data sent as parameter.
      * @param data ViewData
      */
-    public void setFocused(ViewData data) {
+    public void setFocusedOperationView(ViewData data) {
         System.out.println("Not yet implemented!");
     }
 
@@ -712,28 +711,25 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
     public boolean addPropertyPanelView(PropertyPanel toInsert) {
-       // Check if view exists. Story 111
+        // Check if view exists. Story 111
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
-            if (objectViewMap.getView(i).getComponent() != null &&
-                    objectViewMap.getView(i).getComponent() instanceof PropertyPanel &&
-                        toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
-            
-                
-                    printToConsole("Operation already opened.");
-                    
-                    //Uncomment the line below if the focus should shift to the OjbectRootView
-                    //objectViewMap.getView(i).requestFocusInWindow();
-                    
-                    //Get the TabWindow containing the view
-                    TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
-                    
-                    //Set the tab containing the View selected
-                    parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
-                    
-                    
-                    return false;
-                    
-                
+            if (objectViewMap.getView(i).getComponent() != null
+                    && objectViewMap.getView(i).getComponent() instanceof PropertyPanel
+                    && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
+
+                //Uncomment the line below if the focus should shift to the OjbectRootView
+                //objectViewMap.getView(i).requestFocusInWindow();
+
+                //Get the TabWindow containing the view
+                TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
+
+                //Set the tab containing the View selected
+                parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
+
+
+                return false;
+
+
             }
         }
 
