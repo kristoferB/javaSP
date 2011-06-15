@@ -118,8 +118,8 @@ public class OperationActions {
 
 
             //TODO :UGLY fix to always insert after edge
-            if (c == null || ((mxCell) c).isEdge()) {
-                c = graph.getSelectionCell();
+            if (c == null || ((Cell) c).isEdge()) {
+                c = (Cell)graph.getSelectionCell();
             }
 
             graph.getModel().beginUpdate();

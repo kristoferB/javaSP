@@ -61,6 +61,7 @@ public class SPGraph extends mxGraph {
    private final static int GRP_BOT = 4;
    private final static int GRP_INSIDE = 5;
    private final static int GRP_MARK = 10;
+   
    /**
     * fontGraphics used to calculate fontsizes for autosizeing.
     */
@@ -718,7 +719,6 @@ public class SPGraph extends mxGraph {
 
    public LinkedList<LinkedList<mxCell>> getSortedSequences(Object[] cells) {
       ArrayList list = new ArrayList();
-
       for (int i = 0; i < cells.length; i++) {
          list.add(cells[i]);
       }
@@ -735,7 +735,7 @@ public class SPGraph extends mxGraph {
    public LinkedList<LinkedList<mxCell>> getSortedSequences(ArrayList<Object> cells,
          boolean straightSequence) {
 
-      if (cells.size() == 0) {
+      if (cells.isEmpty()) {
          return new LinkedList<LinkedList<mxCell>>();
       }
 
@@ -895,7 +895,7 @@ public class SPGraph extends mxGraph {
       return output.toArray();
    }
 
-   public void insertNewCell(mxCell oldCell, mxCell newCell, boolean before) {
+   public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
       getModel().beginUpdate();
       try {
          getModel().beginUpdate();
@@ -911,7 +911,7 @@ public class SPGraph extends mxGraph {
             p.setX(oldGeo.getCenterX() - newCell.getGeometry().getWidth() / 2);
 
             Object[] cells = new Object[2];
-
+            
             if (before) {
                p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
             } else {
@@ -931,11 +931,13 @@ public class SPGraph extends mxGraph {
             newCell.getGeometry().setY(p.getY());
 
             
-            mxCell edge = CellFactory.getInstance().getEdge(true,true);
+            mxCell edge = CellFactory.getInstance().getEdge(true,false);
             getModel().add(oldCell.getParent(), edge, 0);
 
             getModel().setTerminal(edge, oldCell, !before);
             getModel().setTerminal(edge, newCell, before);
+             System.out.println(newCell.getType());
+                                 System.out.println(oldCell.getType());
 
             if (arch != null) {
                getModel().setTerminal(arch, newCell, !before);
@@ -956,8 +958,8 @@ public class SPGraph extends mxGraph {
    }
 
    public void insertGroupNode(mxCell parent, mxPoint clickPoint, mxCell insertCell) {
-      mxCell edge1 = CellFactory.getInstance().getEdge(false,true);
-      mxCell edge2 = CellFactory.getInstance().getEdge(false,true);
+      mxCell edge1 = CellFactory.getInstance().getEdge(false,false);
+      mxCell edge2 = CellFactory.getInstance().getEdge(false,false);
 
 //      Object[] cells = new Object[3];
 
@@ -1535,7 +1537,7 @@ public class SPGraph extends mxGraph {
             connectCell(inEdge, seq.getFirst(), false);
          }
 
-         mxCell outEdge = CellFactory.getInstance().getEdge(true,true);
+         mxCell outEdge = CellFactory.getInstance().getEdge(true,false);
 
          addEdge(outEdge, targetParent, seq.getLast(), target, null);
 
@@ -1871,7 +1873,7 @@ public class SPGraph extends mxGraph {
 
        if (result != null){
            for (SopNode connectNode : n.getBranches()){
-               mxCell edge1 = CellFactory.getInstance().getEdge(false,true);
+               mxCell edge1 = CellFactory.getInstance().getEdge(false,false);
                mxCell edge2 = CellFactory.getInstance().getEdge(false,true);               
 
                SopNode top = connectNode;
