@@ -926,15 +926,12 @@ public class SPGraph extends mxGraph {
 
                 newCell.getGeometry().setX(p.getX());
                 newCell.getGeometry().setY(p.getY());
-                String type = "parallel";
+                
                 mxCell edge;
-                //System.out.println("wagaga:" +newCell.getType());
-                if(type.equals(SPGraphModel.TYPE_PARALLEL)){
-                    System.out.println("11111111111");
+                if(newCell.getType() == 2){
                     edge = CellFactory.getInstance().getEdge(true, false);
                 }
                 else{
-                    System.out.println("222222222222");
                     edge = CellFactory.getInstance().getEdge(true, true);
                 }
                 getModel().add(oldCell.getParent(), edge, 0);
@@ -1532,13 +1529,12 @@ public class SPGraph extends mxGraph {
 
         if (placement == TOP || placement == GRP_TOP) {
             targetParent = getModel().getParent(target);
-            System.out.println("InsertSequence!1");
             mxCell inEdge = getEdge(target, targetParent, true);
 
             if (inEdge != null) {
                 connectCell(inEdge, seq.getFirst(), false);
             }
-            System.out.println("InsertSequence!2");
+
             mxCell outEdge = CellFactory.getInstance().getEdge(true, true);
 
             addEdge(outEdge, targetParent, seq.getLast(), target, null);
@@ -1548,13 +1544,11 @@ public class SPGraph extends mxGraph {
       } else if (placement == BOTTOM || placement == GRP_BOT) {
          targetParent = getModel().getParent(target);
 
-            System.out.println("InsertSequence!3");
             mxCell outEdge = getEdge(target, targetParent, false);
 
             if (outEdge != null) {
                 connectCell(outEdge, seq.getLast(), true);
             }
-            System.out.println("InsertSequence!4");
             mxCell inEdge = CellFactory.getInstance().getEdge(true, false);
 
             addEdge(inEdge, targetParent, target, seq.getFirst(), null);
@@ -1563,10 +1557,8 @@ public class SPGraph extends mxGraph {
 
         } else if (placement == GRP_INSIDE && parType) {
             targetParent = target;
-            System.out.println("InsertSequence!5");
             mxCell parEdge = CellFactory.getInstance().getEdge(false, false);
             addEdge(parEdge, targetParent, target, seq.getFirst(), null);
-            System.out.println("InsertSequence!6");
             parEdge =
                     CellFactory.getInstance().getEdge(false, false);
             addEdge(parEdge, targetParent, seq.getLast(), target, null);
@@ -1676,7 +1668,6 @@ public class SPGraph extends mxGraph {
     }
 
     public boolean hasGroupCellConnectingEdges(boolean top, Cell groupCell) {
-        System.out.println("hasGroupCellConnectingEdges!");
         for (int i = 0; i < groupCell.getEdgeCount(); i++) {
             mxICell edge = groupCell.getEdgeAt(i);
 
