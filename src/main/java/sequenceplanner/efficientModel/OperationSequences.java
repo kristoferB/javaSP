@@ -20,6 +20,7 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFA;
 import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
+import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -50,19 +51,36 @@ public class OperationSequences {
     }
 
     public void run(){
+        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
+        Reduction reduce = new Reduction(model);
+        SpEFAutomata reducedModel = reduce.getReducedModel();
+        DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);
+        DefaultExport export = new DefaultExport(converter.getModule());
+        export.save();
         
-        RelationGraph graph = new RelationGraph(model.getAllOperations());
-//        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
-//        DefaultModelParser parser = new DefaultModelParser(model);
-//        RelationGraph graph = new RelationGraph(parser.getSpEFAutomata());
-        LinkedList<LinkedList<String>> paths = graph.getSequentialPaths();
-        print("###########");
-        for(LinkedList<String> path : paths){
-            print("==========");
-            for(String p : path)
-                print(p);
-        }
-        print("###########");
+//        for(SpEFA e : reducedModel.getAutomatons()){
+//            print("************");
+//            print(e.getName());
+//            for(SpLocation l : e.getLocations())
+//                print("L: " + l.getName());
+//            for(SpTransition t : e.getTransitions()){
+//                print("T: "+ t + " --- " + t.getConditionGuard());
+//            }
+//        }
+        
+        
+        //        RelationGraph graph = new RelationGraph(model.getAllOperations());
+        //        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
+        //        DefaultModelParser parser = new DefaultModelParser(model);
+        //        RelationGraph graph = new RelationGraph(parser.getSpEFAutomata());
+        //        LinkedList<LinkedList<String>> paths = graph.getSequentialPaths();
+        //        print("###########");
+        //        for(LinkedList<String> path : paths){
+        //            print("==========");
+        //            for(String p : path)
+        //                print(p);
+        //        }
+        //        print("###########");
         //        model.getOperationRoot().setNodeData(new OperationData("Project", 1000));
         //        DefaultModelParser parser = new DefaultModelParser(model);
         //

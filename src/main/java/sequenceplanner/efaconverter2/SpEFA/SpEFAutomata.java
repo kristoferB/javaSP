@@ -63,12 +63,15 @@ public class SpEFAutomata {
 
     public void removeAutomaton(String name){
         automatons.remove(name);
+        updateAlphabet();
+    }
+    
+    public void updateAlphabet(){
         alphabet.clear();
         for(SpEFA efa : automatons.values())
             for(SpEvent e : efa.getAlphabet())
-                alphabet.put(e.getName(), e);
+                alphabet.put(e.getName(), e);        
     }
-    
     public void removeVariable(String name){
         variables.remove(name);
     }
