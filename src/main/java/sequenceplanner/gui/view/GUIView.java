@@ -714,18 +714,26 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public boolean addPropertyPanelView(PropertyPanel toInsert) {
        // Check if view exists. Story 111
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
-            if (objectViewMap.getView(i).getComponent() != null && objectViewMap.getView(i).getComponent() instanceof PropertyPanel) {
+            if (objectViewMap.getView(i).getComponent() != null &&
+                    objectViewMap.getView(i).getComponent() instanceof PropertyPanel &&
+                        toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
             
-                if (toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
+                
                     printToConsole("Operation already opened.");
                     
-                    objectDocks.requestFocusInWindow();
-                    objectDocks.setSelectedTab(objectDocks.getChildWindowIndex(objectViewMap.getView(i)));
-                    //
-
+                    //Uncomment the line below if the focus should shift to the OjbectRootView
+                    //objectViewMap.getView(i).requestFocusInWindow();
+                    
+                    //Get the TabWindow containing the view
+                    TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
+                    
+                    //Set the tab containing the View selected
+                    parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
+                    
+                    
                     return false;
                     
-                }
+                
             }
         }
 
