@@ -50,35 +50,38 @@ import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
  */
 public class SPGraph extends mxGraph {
 
-    /**
-     * Global graph options
-     */
-    protected boolean OPTION_SHOW_STARTCONDITION = true;
-    protected boolean OPTION_SHOW_STOPCONDITION = true;
-    private final static int TOP = 0;
-    private final static int BOTTOM = 1;
-    private final static int GRP_TOP = 3;
-    private final static int GRP_BOT = 4;
-    private final static int GRP_INSIDE = 5;
-    private final static int GRP_MARK = 10;
-    /**
-     * fontGraphics used to calculate fontsizes for autosizeing.
-     */
-    protected transient static Graphics fontGraphics;
-    // Logging for this class
-    private static Logger logger = Logger.getLogger(SPGraph.class);
+   /**
+    * Global graph options
+    */
+   protected boolean OPTION_SHOW_STARTCONDITION = true;
+   protected boolean OPTION_SHOW_STOPCONDITION = true;
+   private final static int TOP = 0;
+   private final static int BOTTOM = 1;
+   private final static int GRP_TOP = 3;
+   private final static int GRP_BOT = 4;
+   private final static int GRP_INSIDE = 5;
+   private final static int GRP_MARK = 10;
+   
+   /**
+    * fontGraphics used to calculate fontsizes for autosizeing.
+    */
+   protected transient static Graphics fontGraphics;
+   // Logging for this class
+   private static Logger logger = Logger.getLogger(SPGraph.class);
 
-    static {
-        try {
-            fontGraphics = new BufferedImage(30, 20, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
-        } catch (Exception e) {
-        }
-    }
-    //Global options for drawing of operations
-    public static final Insets opInset = new Insets(7, 10, 10, 7);
-    // How many signs should be displayed for stop and start condition
-    public static final int cutOff = 100;
-    private boolean showPath = true;
+
+   static {
+      try {
+         fontGraphics = new BufferedImage(30, 20, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
+      } catch (Exception e) {
+      }
+   }
+   //Global options for drawing of operations
+   public static final Insets opInset = new Insets(7, 10, 10, 7);
+   // How many signs should be displayed for stop and start condition
+   public static final int cutOff = 100;
+
+   private boolean showPath = true;
 
     public SPGraph(mxIGraphModel model) {
         super(model);
@@ -711,12 +714,11 @@ public class SPGraph extends mxGraph {
         }
     }
 
-    public LinkedList<LinkedList<mxCell>> getSortedSequences(Object[] cells) {
-        ArrayList list = new ArrayList();
-
-        for (int i = 0; i < cells.length; i++) {
-            list.add(cells[i]);
-        }
+   public LinkedList<LinkedList<mxCell>> getSortedSequences(Object[] cells) {
+      ArrayList list = new ArrayList();
+      for (int i = 0; i < cells.length; i++) {
+         list.add(cells[i]);
+      }
 
         return getSortedSequences(list, false);
     }
@@ -730,9 +732,9 @@ public class SPGraph extends mxGraph {
     public LinkedList<LinkedList<mxCell>> getSortedSequences(ArrayList<Object> cells,
             boolean straightSequence) {
 
-        if (cells.size() == 0) {
-            return new LinkedList<LinkedList<mxCell>>();
-        }
+      if (cells.isEmpty()) {
+         return new LinkedList<LinkedList<mxCell>>();
+      }
 
         LinkedList<LinkedList<mxCell>> output = new LinkedList<LinkedList<mxCell>>();
 
@@ -890,14 +892,13 @@ public class SPGraph extends mxGraph {
         return output.toArray();
     }
 
-    public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
-        getModel().beginUpdate();
-        try {
-            getModel().beginUpdate();
-            try {
-                Object arch = null;
-                System.out.println("+++++++++++++++++++++++++++++++");
-                arch = getEdge(oldCell, oldCell.getParent(), before);
+   public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
+      getModel().beginUpdate();
+      try {
+         getModel().beginUpdate();
+         try {
+            Object arch = null;
+            arch = getEdge(oldCell, oldCell.getParent(), before);
 
                 mxGeometry oldGeo = oldCell.getGeometry();
 
@@ -906,13 +907,13 @@ public class SPGraph extends mxGraph {
 
                 p.setX(oldGeo.getCenterX() - newCell.getGeometry().getWidth() / 2);
 
-                Object[] cells = new Object[2];
-
-                if (before) {
-                    p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
-                } else {
-                    p.setY(oldGeo.getY() + oldGeo.getHeight() + Constants.AFTER_CELL);
-                }
+            Object[] cells = new Object[2];
+            
+            if (before) {
+               p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
+            } else {
+               p.setY(oldGeo.getY() + oldGeo.getHeight() + Constants.AFTER_CELL);
+            }
 
                 if (p.getY() < 0) {
                     p.setY(0);
@@ -959,10 +960,9 @@ public class SPGraph extends mxGraph {
 
     }
 
-    public void insertGroupNode(mxCell parent, mxPoint clickPoint, mxCell insertCell) {
-        System.out.println("insertGroupNode!");
-        mxCell edge1 = CellFactory.getInstance().getEdge(false, true);
-        mxCell edge2 = CellFactory.getInstance().getEdge(false, true);
+   public void insertGroupNode(mxCell parent, mxPoint clickPoint, mxCell insertCell) {
+      mxCell edge1 = CellFactory.getInstance().getEdge(false,false);
+      mxCell edge2 = CellFactory.getInstance().getEdge(false,false);
 
 //      Object[] cells = new Object[3];
 
@@ -1545,8 +1545,8 @@ public class SPGraph extends mxGraph {
 
 
 
-        } else if (placement == BOTTOM || placement == GRP_BOT) {
-            targetParent = getModel().getParent(target);
+      } else if (placement == BOTTOM || placement == GRP_BOT) {
+         targetParent = getModel().getParent(target);
 
             System.out.println("InsertSequence!3");
             mxCell outEdge = getEdge(target, targetParent, false);
@@ -1874,9 +1874,7 @@ public class SPGraph extends mxGraph {
             }
 
 
-        } else {
-            result = null;
-        }
+       } else result = null;
 
 
         if (result != null) {
