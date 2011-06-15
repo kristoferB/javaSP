@@ -72,6 +72,7 @@ public class SopStructure implements ISopStructure {
         sopStructure = new LinkedList<Object>();
         sopStructure.add(sopNode);
         sopSeqs.add(sopStructure);
+        System.out.println("Sequence initiated");
     }
 
     @Override
@@ -81,15 +82,20 @@ public class SopStructure implements ISopStructure {
         for (LinkedList sopSeq : sopSeqs) {
             System.out.println("First: "+sopSeq.getFirst().toString());
             System.out.println("Second:"+sopNode.toString());
-            if (sopSeq.contains(sopNode)) {
+            //Need to figure out how to compare
+            //if (sopSeq.contains(sopNode)) {
                 //If the cell is inserted before an other cell
                 if (before == true) {
                     for (ListIterator<Object> it = sopSeq.listIterator(); it.hasNext();) {
+
+                        //Need to figure out how to compare cell with SopNode
                         if (it.next() == cell) {
+                            System.out.println("Adding Sop to list");
                             it.add(sopNode);
                             break;
                         }
-                        it.next();
+                        System.out.println("Going deeper");
+                        //it.next();
                     }
                     //If the cell is inserted after an other cell
                 } else if (before == false) {
@@ -99,16 +105,16 @@ public class SopStructure implements ISopStructure {
                             it.add(sopNode);
                             break;
                         }
-                        it.next();
+                        //it.next();
 
                     }
                 }
 
 
 
-            } else {
-                System.out.println("Something went wrong!");
-            }
+            //} else {
+             //   System.out.println("Something went wrong!");
+            //}
         }
     }
 }
