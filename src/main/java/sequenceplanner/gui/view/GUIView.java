@@ -4,7 +4,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -48,7 +47,7 @@ import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
 
 /**
- *Main view class for the gui package. Updated by the GUIController and
+ * Main view class for the gui package. Updated by the GUIController and
  * shows the info in GUIModel.
  * @author Qw4z1
  */
