@@ -24,7 +24,11 @@ public class SopStructure implements ISopStructure {
 
     public SopStructure() {
     }
-    
+    /*public SopStructure(Cell cell, ASopNode sopNode, boolean before) {
+    //If the cell exists in the sequence, the new cell should be added
+    //*This is not really true, since the cell can exists within two
+    //sequences in the same OpView. So have to rethink this structure*/
+
     public LinkedList getSopSequence() {
         return sopStructure;
     }
