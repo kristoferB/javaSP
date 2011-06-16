@@ -44,7 +44,7 @@ public class SopStructure implements ISopStructure {
 
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode, boolean before) {
-
+        cell.getValue();
         //sopStructure.add(sopNode);
         for (LinkedList sopSeq : sopSeqs) {
             System.out.println("First: " + sopSeq.getFirst().toString());

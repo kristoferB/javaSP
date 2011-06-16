@@ -64,11 +64,8 @@ public class Cell extends mxCell {
    }
 
    public int getUniqueId() {
-      if (getValue() instanceof Data) {
          return ((Data)getValue()).getId();
-      }
 
-      return -1;
    }
 
 /*   @Override
