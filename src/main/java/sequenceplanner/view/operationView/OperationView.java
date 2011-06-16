@@ -51,7 +51,11 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import sequenceplanner.model.SOP.ASopNode;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeAlternative;
+import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
+import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopStructure;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
@@ -846,13 +850,13 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param cell Cell used as reference.
      * @param insertedCell new cell
      * @param before boolean stating before reference cell or not
-     * @param after boolean stating after reference ell or not
      */
     public void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
         /* if the cell is either before or after, theres no need to check the
         type of "cell". But if its not, the type of "cell" is important for
         how the cells   */
         //Operation
+        System.out.println("Cell ID: "+cell.getId()+ "Cell Type: "+cell.getType());
         if (insertedCell.getValue() instanceof OperationData) {
             System.out.println("Mu");
              sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
@@ -860,17 +864,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //Parallel
         else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
-            //sopNode = new SopNodeParallel((OperationData) insertedCell.getValue());
+            sopNode = new SopNodeParallel();
         }
         else if(insertedCell.getType() == Constants.ALTERNATIVE){
             //For when SopNodeAlternative is finished
-            //sopNode = new SopNodeAlternative((OperationData) insertedCell.getValue());
+            sopNode = new SopNodeAlternative();
         }
         else if(insertedCell.getType() == Constants.ARBITRARY){
             //For when SopNodeArbitrary is finished
-            //sopNode = new SopNodeArbitrary((OperationData) insertedCell.getValue());
+            sopNode = new SopNodeArbitrary();
         }
-        System.out.println("MuMu");
         sopStruct.setSopSequence(cell, sopNode, before);
         
     }

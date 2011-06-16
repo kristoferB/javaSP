@@ -2,6 +2,7 @@ package sequenceplanner.model.SOP;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**
@@ -17,9 +18,9 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 public class SopStructure implements ISopStructure {
 
     private ASopNode node;
-    private LinkedList<LinkedList<Object>> sopSeqs = new LinkedList<LinkedList<Object>>();
-    private LinkedList<Object> sopStructure;
-    private LinkedList<Object> li;
+    private LinkedList<LinkedList<ASopNode>> sopSeqs = new LinkedList<LinkedList<ASopNode>>();
+    private LinkedList<ASopNode> sopStructure;
+    private LinkedList<ASopNode> li;
 
     public SopStructure() {
     }
@@ -69,7 +70,7 @@ public class SopStructure implements ISopStructure {
     @Override
     public void setSopSequence(ASopNode sopNode) {
         //Create new SOPList
-        sopStructure = new LinkedList<Object>();
+        sopStructure = new LinkedList<ASopNode>();
         sopStructure.add(sopNode);
         sopSeqs.add(sopStructure);
         System.out.println("Sequence initiated");
@@ -80,40 +81,42 @@ public class SopStructure implements ISopStructure {
 
         //sopStructure.add(sopNode);
         for (LinkedList sopSeq : sopSeqs) {
-            System.out.println("First: "+sopSeq.getFirst().toString());
-            System.out.println("Second:"+sopNode.toString());
+            System.out.println("First: " + sopSeq.getFirst().toString());
+            System.out.println("Second:" + sopNode.toString());
             //Need to figure out how to compare
             //if (sopSeq.contains(sopNode)) {
-                //If the cell is inserted before an other cell
-                if (before == true) {
-                    for (ListIterator<Object> it = sopSeq.listIterator(); it.hasNext();) {
+            //If the cell is inserted before an other cell
+            if (before == true) {
+                for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
 
-                        //Need to figure out how to compare cell with SopNode
-                        if (it.next() == cell) {
+                    //Need to figure out how to compare cell with SopNode
+                    if (it.next().getClass() == SopNodeOperation.class) {
+                        if (it.next().getOperation() == cell.getValue()) {
                             System.out.println("Adding Sop to list");
                             it.add(sopNode);
                             break;
                         }
                         System.out.println("Going deeper");
-                        //it.next();
-                    }
-                    //If the cell is inserted after an other cell
-                } else if (before == false) {
-                    for (ListIterator<Object> it = sopSeq.listIterator(); it.hasNext();) {
-                        if (it.next().equals(cell)) {
-                            it.next();
-                            it.add(sopNode);
-                            break;
-                        }
-                        //it.next();
-
+                        
                     }
                 }
+                //If the cell is inserted after an other cell
+            } else if (before == false) {
+                for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
+                    if (it.next().getOperation() == cell.getValue()) {
+                        it.next();
+                        it.add(sopNode);
+                        break;
+                    }
+
+
+                }
+            }
 
 
 
             //} else {
-             //   System.out.println("Something went wrong!");
+            //   System.out.println("Something went wrong!");
             //}
         }
     }
