@@ -24,45 +24,7 @@ public class SopStructure implements ISopStructure {
 
     public SopStructure() {
     }
-    /*public SopStructure(Cell cell, ASopNode sopNode, boolean before) {
-    //If the cell exists in the sequence, the new cell should be added
-    //*This is not really true, since the cell can exists within two
-    //sequences in the same OpView. So have to rethink this structure*
-    for (SopSequence sopSeq :sopSeqs)  {
-    if (sopSeqs.contains(sopNode)) {
-    sopSeqs.add(sopNode);
-    } else {
-    //*******Fixa till Lista!*******
-    SopSequence sopSeq = new SopSequence(sopNode, cell, before);
-
-    }
-    }
-    }
-
-    @Override
-    public void addNode(ISopNode node) {
-    }
-
-    @Override
-    public void addNodeToRoot(ISopNode node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void addNodeToSequence(ISopNode node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void addSopSequence(SopSequence seq) {
-    sopSeqs.add(seq);
-    }
-    //Should be a list that is returned
-
-    public LinkedList<SopSequence> getAllSopSequences() {
-    return sopSeqs;
-    }*/
-    //A new Operation is created -> new SopSequence
-
+    
     public LinkedList getSopSequence() {
         return sopStructure;
     }
@@ -97,14 +59,12 @@ public class SopStructure implements ISopStructure {
                             break;
                         }
                         System.out.println("Going deeper");
-                        
                     }
                 }
                 //If the cell is inserted after an other cell
             } else if (before == false) {
                 for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
                     if (it.next().getOperation() == cell.getValue()) {
-                        it.next();
                         it.add(sopNode);
                         break;
                     }
@@ -113,11 +73,14 @@ public class SopStructure implements ISopStructure {
                 }
             }
 
-
+            for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
+                System.out.println("List: "+it.next().toString());
+            }
 
             //} else {
             //   System.out.println("Something went wrong!");
             //}
         }
+
     }
 }
