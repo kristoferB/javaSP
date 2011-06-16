@@ -63,7 +63,6 @@ public class SopStructure implements ISopStructure {
                             break;
                         }
                         System.out.println("Going deeper");
-                        
                     }
                 }
                 //If the cell is inserted after an other cell
@@ -78,11 +77,14 @@ public class SopStructure implements ISopStructure {
                 }
             }
 
-
+            for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
+                System.out.println("List: "+it.next().toString());
+            }
 
             //} else {
             //   System.out.println("Something went wrong!");
             //}
         }
+
     }
 }

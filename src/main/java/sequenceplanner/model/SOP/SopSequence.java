@@ -31,17 +31,17 @@ public class SopSequence{
                     it.add(sopOp);
                     break;
                 }
-                it.next();
+                //it.next();
             }
             //If the cell is inserted after an other cell
         } else if (before == false) {
             for (ListIterator<Object> it = SOPStructure.listIterator(); it.hasNext();) {
                 if (it.next().equals(cell)) {
-                    it.next();
+                    //it.next();
                     it.add(sopOp);
                     break;
                 }
-                it.next();
+                //it.next();
 
             }
         }
