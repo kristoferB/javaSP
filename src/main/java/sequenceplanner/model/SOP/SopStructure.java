@@ -56,13 +56,13 @@ public class SopStructure implements ISopStructure {
                 for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
 
                     //Need to figure out how to compare cell with SopNode
-                    if (it.next().getClass() == SopNodeOperation.class) {
+                    //if (it.next().getUniqueId() == ) {
                        // if (it.next().getOperation() == cell.getValue()) {
                             System.out.println("Adding Sop to list");
                             it.add(sopNode);
                             break;
-                        }
-                        System.out.println("Going deeper");
+                       // }
+                        //System.out.println("Going deeper");
                     //}
                 }
                 //If the cell is inserted after an other cell
