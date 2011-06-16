@@ -61,8 +61,7 @@ public class CellFactory {
             place = new Point(0, 0);
         }
 
-        Data d = new OperationData("OP", -1);
-        Model.giveId(d);
+        Data d = new OperationData("OP", Model.newId());
         d.setName("OP" + d.getId());
 
         Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 40,
@@ -85,8 +84,7 @@ public class CellFactory {
         geo.setAlternateBounds(new mxRectangle(place.getX(), place.getY(), 50,
                 40));
 
-        Data d = new Data("", -1);
-        Model.giveId(d);
+        Data d = new Data("", Model.newId());
         System.out.println(d.getId());
 
         Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
@@ -104,8 +102,7 @@ public class CellFactory {
             place = new Point(0, 0);
         }
 
-        Data d = new Data("", -1);
-        Model.giveId(d);
+        Data d = new Data("", Model.newId());
 
         Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
                 40), "perimeter=custom.alternativePerimeter;");
@@ -124,8 +121,7 @@ public class CellFactory {
             place = new Point(0, 0);
         }
 
-        Data d = new Data("", -1);
-        Model.giveId(d);
+        Data d = new Data("", Model.newId());
 
         Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
                 40), "perimeter=custom.operationPerimeter;");
@@ -146,8 +142,7 @@ public class CellFactory {
         mxGeometry geo = new mxGeometry(place.getX(), place.getY(), 40, 20);
         geo.setAlternateBounds(new mxRectangle(0, 0, 100, 80));
 
-        Data d = new OperationData("SOP", -1);
-        Model.giveId(d);
+        Data d = new OperationData("SOP", Model.newId());
         d.setName("OP" + d.getId());
         Cell cell = new Cell(d, geo,
                 "perimeter=custom.operationPerimeter;fillColor=yellow");
