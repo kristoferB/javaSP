@@ -45,32 +45,7 @@ public class DefaultModelParser implements IModelParser{
         for(TreeNode n : model.getAllVariables())
             variables.put(n.getNodeData().getId(), n);
         
-        //        recursiveVarFinder(model.getResourceRoot());
-        //        recursiveOpFinder(model.getOperationRoot());
     }
-
-//    private void recursiveVarFinder(TreeNode var) {
-//       if (var.getChildCount() > 0) {
-//         for (int i = 0; i < var.getChildCount(); i++) {
-//            TreeNode child = (TreeNode) var.getChildAt(i);
-//            if (Model.isResource(child.getNodeData())) {
-//               recursiveVarFinder(child);
-//            } else if (Model.isVariable(child.getNodeData())){
-//               this.variables.put(child.getNodeData().getId(), child);
-//            }
-//         }
-//      }        
-//    }
-//
-//    private void recursiveOpFinder(TreeNode op) {
-//        for (int i = 0; i < op.getChildCount(); i++) {
-//            TreeNode child = (TreeNode) op.getChildAt(i);
-//            if (Model.isOperation(child.getNodeData())){
-//                operations.put(child.getNodeData().getId(), child);
-//                recursiveOpFinder(child);
-//            }
-//        }        
-//    }
 
     @Override
     public SpEFAutomata getSpEFAutomata(){
@@ -279,32 +254,6 @@ public class DefaultModelParser implements IModelParser{
         return Integer.toString(d.getId());
     }
     
-//    private String createName(int id){
-//        TreeNode n = model.getNode(Integer.valueOf(id).intValue());
-//        if (n != null){
-//            return createName(n.getNodeData());
-//        }
-//        return "";
-//    }
-//    
-//    private String createName(Data d){
-//        if (Model.isOperation(d)){
-//            return createOpName((OperationData) d);
-//        }
-//        if (Model.isVariable(d)){
-//            return createVarName((ResourceVariableData) d);
-//        }
-//        return "";
-//    }
-//
-//    private String createOpName(OperationData od){
-//        return EFAVariables.OPERATION_NAME_PREFIX + Integer.toString(od.getId());
-//   }
-//
-//    private String createVarName(ResourceVariableData var){
-//        return EFAVariables.VARIABLE_NAME_PREFIX + Integer.toString(var.getId());
-//    }
-//
     private String getProjectName() {
         return createName(model.getOperationRoot().getId());
     }
@@ -314,11 +263,11 @@ public class DefaultModelParser implements IModelParser{
         String opName = getProjectName();
         SpEFA efa = new SpEFA(opName);
         
-        SpLocation iL = new SpLocation(opName + EFAVariables.STATE_INITIAL_POSTFIX);
+        SpLocation iL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_INITIAL_POSTFIX);
         iL.setInitialLocation();
-        //iL.setAccepting();
-        SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
-        SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
+
+        SpLocation eL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_EXECUTION_POSTFIX);
+        SpLocation fL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_FINAL_POSTFIX);
         fL.setAccepting();
         
         efa.addLocation(iL);

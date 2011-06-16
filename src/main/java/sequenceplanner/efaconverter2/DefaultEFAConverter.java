@@ -40,7 +40,7 @@ public class DefaultEFAConverter implements IEFAConverter{
             var.addVariable(0, spefa.getLocations().size() - 1, 0);
             
             for(SpLocation spl : spefa.getLocations()){
-                efa.addLocation(createEFAName(spl.getName()), spl.isAccepting(), spl.isInitialLocation());
+                efa.addLocation(createLocName(spl.getName()), spl.isAccepting(), spl.isInitialLocation());
             }
             
             for(SpEvent spe : spefa.getAlphabet())
@@ -56,8 +56,8 @@ public class DefaultEFAConverter implements IEFAConverter{
                 
                 action += actionLocation;
 
-                efa.addTransition(createEFAName(tran.getFrom().getName()), 
-                                  createEFAName(tran.getTo().getName()), 
+                efa.addTransition(createLocName(tran.getFrom().getName()), 
+                                  createLocName(tran.getTo().getName()), 
                                   createEventName(tran.getEvent().getName()), 
                                   guard, 
                                   action);
@@ -100,6 +100,10 @@ public class DefaultEFAConverter implements IEFAConverter{
         return result;
     }
     
+    private String createLocName(String iLocName) {
+        return EFAVariables.EFA_LOCATION_PREFIX + iLocName;
+    }
+
     private String createEFAName(String iOperationName) {
         return EFAVariables.OPERATION_NAME_PREFIX + iOperationName;
     }

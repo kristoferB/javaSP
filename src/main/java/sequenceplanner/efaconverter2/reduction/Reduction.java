@@ -4,7 +4,6 @@
  */
 package sequenceplanner.efaconverter2.reduction;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import sequenceplanner.efaconverter2.DefaultModelParser;
@@ -116,7 +115,7 @@ public class Reduction {
                 
                 efa.addTransition(newtran);
                 
-                last.setName(last + EFAVariables.EFA_NAME_DIVIDER + current.getFrom());
+                last.setName(last + EFAVariables.EFA_LOCATION_DIVIDER + current.getFrom());
             } else {
                 map.add(new String[] {efa2.getName(), efa.getName(), Integer.toString(current.getFrom().getValue()), Integer.toString(++state)});
                 current.getFrom().setValue(state);
@@ -229,7 +228,6 @@ public class Reduction {
 
     private void reduceEFA(SpEFA efa) {
         boolean finish = false;
-        HashSet<String> loc = new HashSet<String>();
         while(!finish){
             for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
                 SpTransition currentTran = itr.next();
@@ -244,12 +242,12 @@ public class Reduction {
 
                         currentFrom.getOutTransitions().remove(currentTran);
                         currentFrom.getOutTransitions().add(nextTran);
+                        currentFrom.setName(currentFrom + EFAVariables.EFA_LOCATION_DIVIDER + currentTo);
                         nextTran.setFrom(currentFrom);
                         efa.removeTransition(currentTran);
                         
                         System.out.println("Redirecting: " + nextTran);
                         efa.removeLocation(currentTo.getName());
-//                        loc.add(currentTo.getName());
                         
                         System.out.println("Removing: " + currentTo.getName());
                         
@@ -258,9 +256,9 @@ public class Reduction {
                         if(currentTo.isAccepting())
                             currentFrom.setAccepting();
                         currentFrom.getOutTransitions().remove(currentTran);
+                        currentFrom.setName(currentFrom + EFAVariables.EFA_LOCATION_DIVIDER + currentTo);
                         efa.removeTransition(currentTran);
                         efa.removeLocation(currentTo.getName());
-//                        loc.add(currentTo.getName());
                         System.out.println("Removing: " + currentTo.getName());
                         break;
                     }
@@ -270,11 +268,6 @@ public class Reduction {
             }
             
         }
-//        for(SpLocation l : efa.getLocations())
-//            System.out.println("LOC: " + l.getName());
-//        
-//        for(String s : loc)
-//            efa.removeLocation(s);
         
         if(!efa.getTransitions().isEmpty()){
             LinkedList<String[]> map = new LinkedList<String[]>();
