@@ -858,12 +858,13 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //Operation
         System.out.println("Cell ID: "+cell.getId()+ "Cell Type: "+cell.getType());
         if (insertedCell.getValue() instanceof OperationData) {
-            System.out.println("Mu");
+            System.out.println("Instance of OperationData");
              sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
         }
         //Parallel
         else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
+            System.out.println("Instance of Parallel");
             sopNode = new SopNodeParallel();
         }
         else if(insertedCell.getType() == Constants.ALTERNATIVE){

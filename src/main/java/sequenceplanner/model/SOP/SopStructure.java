@@ -79,8 +79,7 @@ public class SopStructure implements ISopStructure {
             }
 
             for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-                System.out.println("List: "+it.getClass().getCanonicalName().toString());
-                it.next();
+                System.out.println("List: "+it.next().toString());
             }
 
             //} else {

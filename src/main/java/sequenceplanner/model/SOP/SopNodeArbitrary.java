@@ -10,7 +10,7 @@ import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 public class SopNodeArbitrary extends ASopNode{
 
     public SopNodeArbitrary() {
-        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", ""));
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", ""),0);
     }
 
 }

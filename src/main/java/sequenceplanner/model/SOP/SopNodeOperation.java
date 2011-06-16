@@ -11,12 +11,12 @@ public class SopNodeOperation extends ASopNode{
     private OperationData mOperation = null;
 
     private SopNodeOperation() {
-        super("operation");
+        super("operation",0);
     }
 
     public SopNodeOperation(final OperationData iOperation) {
-        this();
-        setOperation(iOperation);
+        super("operation",iOperation.getId());
+        this.mOperation = iOperation;
     }
 
     @Override
@@ -26,5 +26,11 @@ public class SopNodeOperation extends ASopNode{
 
     public void setOperation(OperationData mOperation) {
         this.mOperation = mOperation;
+    }
+    
+    
+    @Override
+    public String toString(){
+        return mOperation.getName();
     }
 }

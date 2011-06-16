@@ -13,7 +13,7 @@ import sequenceplanner.model.data.OperationData;
 public abstract class ASopNode implements ISopNode {
 
     private String mTypeAsString = "";
-
+    private int uniqueId;
     /**
      * Set containing the first ISopNode in all sequences that are children to this node.<br/>
      */
@@ -21,11 +21,15 @@ public abstract class ASopNode implements ISopNode {
     private ISopNode mSuccessor = null;
     private int mSuccessorRelation = -1;
 
-    public ASopNode(final String iTypeAsString) {
+    public ASopNode(final String iTypeAsString, int id) {
         mSequenceSet = new HashSet<ISopNode>();
         this.mTypeAsString = iTypeAsString;
+        uniqueId = id;
     }
 
+    public int getUniqueId(){
+        return uniqueId;
+    }
     @Override
     public Set<ISopNode> getFirstNodesInSequencesAsSet() {
         return mSequenceSet;

@@ -10,7 +10,11 @@ import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 public class SopNodeParallel extends ASopNode{
 
     public SopNodeParallel() {
-        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""));
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""),0);
     }
 
+    @Override
+    public String toString(){
+        return "Parallel";
+    }
 }
