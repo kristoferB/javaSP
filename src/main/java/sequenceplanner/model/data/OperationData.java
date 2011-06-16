@@ -84,7 +84,7 @@ public class OperationData extends Data {
       if (key != null && value != null) {
          preference.put(key, value);
       } else {
-         System.out.println("Error in UserFile: Can not pass null values for key " + key);
+         System.out.println("Error in UserFile: You shall not pass null values for key " + key);
       }
    }
 
