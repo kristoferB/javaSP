@@ -53,19 +53,20 @@ public class SopStructure implements ISopStructure {
 
                     //Need to figure out how to compare cell with SopNode
                     if (it.next().getClass() == SopNodeOperation.class) {
-                        if (it.next().getOperation() == cell.getValue()) {
+                       // if (it.next().getOperation() == cell.getValue()) {
                             System.out.println("Adding Sop to list");
                             it.add(sopNode);
                             break;
                         }
                         System.out.println("Going deeper");
-                    }
+                    //}
                 }
                 //If the cell is inserted after an other cell
             } else if (before == false) {
                 for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-                    if (it.next().getOperation() == cell.getValue()) {
-                        it.add(sopNode);
+                     if (it.next().getClass() == SopNodeOperation.class) {
+                         System.out.println("Node added!");
+                         it.add(sopNode);
                         break;
                     }
 
@@ -74,7 +75,8 @@ public class SopStructure implements ISopStructure {
             }
 
             for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-                System.out.println("List: "+it.next().toString());
+                System.out.println("List: "+it.getClass().getCanonicalName().toString());
+                it.next();
             }
 
             //} else {
@@ -84,3 +86,4 @@ public class SopStructure implements ISopStructure {
 
     }
 }
+
