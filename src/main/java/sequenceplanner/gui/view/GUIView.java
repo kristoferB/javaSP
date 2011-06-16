@@ -545,19 +545,18 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
         propertyView.setOpView(opView);
-//-----
-
+//----- 
         opViewIndex++;
         View newView = new View(name, null, opView);
         opViewMap.addView(opViewIndex, newView);
 
         if (mainDocks.getChildWindowCount() == 0) {
-
             operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
         } else {
             mainDocks.addTab(newView);
             mainDocks.restore();
         }
+
     }
 
     /**
@@ -692,7 +691,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @param data ViewData
      */
     public void setFocusedOperationView(ViewData data) {
-        System.out.println("Not yet implemented!");
+        for (int i = 1; opViewMap.getViewCount() >= i; i++) {
+            if (data.getName().equals(opViewMap.getView(i).getTitle())) {
+                TabWindow parent = (TabWindow) opViewMap.getView(i).getWindowParent();
+                //Set the tab containing the View selected
+                parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
+            }
+        }
+
     }
 
     /**
