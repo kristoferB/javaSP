@@ -105,10 +105,31 @@ public class Condition {
         return newVars;
     }
 
+    public boolean isEmpty(){
+        return action.isEmpty() && guard.isEmpty();
+    }
+    
     @Override
     public String toString(){
         return this.guard.toString() + '/' + this.action.toString();
     }
+    
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof Condition){
+            Condition c = (Condition)obj;
+            if(this.guard.equals(c.getGuard()) && this.action.equals(c.getAction()))
+                return true;
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + (this.guard != null ? this.guard.hashCode() : 0);
+        hash = 11 * hash + (this.action != null ? this.action.hashCode() : 0);
+        return hash;
+    }
 
 }

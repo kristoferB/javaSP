@@ -107,5 +107,16 @@ public class SpTransition implements Cloneable{
     public SpTransition clone(){
         return new SpTransition(this.event, this.from, this.to, this.condition);
     }
+    
+    public boolean equal(Object obj){
+        if(obj instanceof SpTransition){
+            SpTransition t = (SpTransition)obj;
+            if(this.from.equals(t.getFrom())
+                    && this.to.equals(t.getTo())
+                    && this.condition.equals(t.getCondition()))
+                return true;
+        }
+        return false;
+    }
 
 }

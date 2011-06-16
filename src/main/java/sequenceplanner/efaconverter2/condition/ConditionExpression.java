@@ -113,12 +113,17 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
 
     @Override
     public boolean equals(Object obj) {
-        return (this == obj);
+        if(obj instanceof ConditionExpression)
+             return this.toString().equalsIgnoreCase(((ConditionExpression)obj).toString());
+        return false;
     }
 
-
-
-
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.expressionRoot != null ? this.expressionRoot.hashCode() : 0);
+        return hash;
+    }
 
     private void connectElements(ConditionElement from, ConditionOperator op, ConditionElement to){
         from.setNextOperator(op);

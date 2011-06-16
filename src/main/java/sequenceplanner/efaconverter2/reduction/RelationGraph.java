@@ -124,16 +124,20 @@ public class RelationGraph {
     }
 
     private LinkedList<LinkedList<Integer>> getPaths(Map<DefaultWeightedEdge, Double> result) {
+        System.out.println("##########");
+        for(DefaultWeightedEdge x : graph.edgeSet())
+            System.out.println("Edge: <"+ map.get(abs(graph.getEdgeSource(x))) +","+map.get(abs(graph.getEdgeTarget(x))) +","+graph.getEdgeWeight(x)+"> --- Weight: "+result.get(x));
+        
         LinkedList<LinkedList<Integer>> paths = new LinkedList<LinkedList<Integer>>();
         for(DefaultWeightedEdge e : graph.edgesOf(VERTEX_SOURCE)){
-            if(e.getWeight() == 1.0){
+            if(result.get(e) == EDGE_WEIGHT){
                 LinkedList<Integer> path = new LinkedList<Integer>();
                 int current = graph.getEdgeTarget(e);
                 while(current != VERTEX_SINK){
                     if(!path.contains(abs(current)))
                         path.add(abs(current));
                     for(DefaultWeightedEdge ed : graph.edgesOf(current)){
-                        if(ed.getWeight() == 1.0){
+                        if(result.get(ed) == EDGE_WEIGHT){
                             current = graph.getEdgeTarget(ed);
                         }
                     }

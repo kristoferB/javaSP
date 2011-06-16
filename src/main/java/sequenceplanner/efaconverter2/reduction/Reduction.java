@@ -10,6 +10,7 @@ import sequenceplanner.efaconverter2.DefaultModelParser;
 import sequenceplanner.efaconverter2.EFAVariables;
 import sequenceplanner.efaconverter2.SpEFA.*;
 import sequenceplanner.efaconverter2.condition.*;
+import sequenceplanner.efaconverter2.condition.ConditionOperator.Type;
 import sequenceplanner.model.Model;
 
 /**
@@ -20,7 +21,7 @@ public class Reduction {
     
     private Model model;
     SpEFAutomata automata;
-        
+    
     public Reduction(Model model){
         this.model = model;
         this.automata = null;
@@ -30,6 +31,7 @@ public class Reduction {
         DefaultModelParser parser = new DefaultModelParser(model);
         automata = parser.getSpEFAutomata();
         synchronizeModel();
+        reduceModel();
         return automata;
     }
     
@@ -37,15 +39,28 @@ public class Reduction {
         RelationGraph graph = new RelationGraph(automata);
         LinkedList<LinkedList<String>> paths = graph.getSequentialPaths();
         for(LinkedList<String> path : paths){
+            System.out.println("++++++++++++++++++");
+            for(String p : path)
+                System.out.println(p);
+        }
+            
+        for(LinkedList<String> path : paths){
             SpEFA seq = null;
             for(String operation : path){
                 SpEFA current = automata.getSpEFA(operation);
-                if(current == null)
+                if(current == null){
+                    System.out.println("Null: <"+operation+">");
                     continue;
+                }
+                System.out.println("OK: <"+operation+">");
                 seq = appendSpEFA(seq, current);
-                
-                automata.removeAutomaton(operation);
+
+                //automata.removeAutomaton(operation);
             }
+
+            for(String operation : path)
+                automata.removeAutomaton(operation);
+
             automata.addAutomaton(seq);
         }
     }
@@ -62,6 +77,13 @@ public class Reduction {
         int state = 0;
         SpLocation last = null;
         Iterator<SpTransition> itr = null;
+        /*
+         * map[0]: Old variable name
+         * map[1]: New variable name
+         * map[2]: Old variable value
+         * map[3]: New variable value
+         */
+        
         LinkedList<String[]> map = new LinkedList<String[]>();
         
         itr = efa1.iterateSequenceTransitions();
@@ -103,14 +125,15 @@ public class Reduction {
                 efa.addTransition(current);
             }
         }
-        updateGlobalGuards(efa1.getName(), efa2.getName(), map);
+        updateGlobalGuards(map);
         return efa;
     }
     
     private ConditionExpression removeGuard(String variable, String value, ConditionExpression expression){
+        
         ConditionStatment s1 = new ConditionStatment(variable, ConditionStatment.Operator.Equal, value);
         ConditionStatment s2 = new ConditionStatment(variable, ConditionStatment.Operator.GreaterEq, value);
-        
+        System.out.println("remove: " + s1 + " ~~~ " + s2);
         if(!expression.containsElement(s1) && !expression.containsElement(s2))
             return expression;
         
@@ -118,29 +141,42 @@ public class Reduction {
         
         for(Iterator<ConditionElement> itr = expression.iterator(); itr.hasNext();){
             ConditionElement e = itr.next();
+            System.out.println("check: " + e);
+            Type type = Type.AND;
+            if(e.getPreviousOperator() != null)
+                type = e.getPreviousOperator().getOperatorType();
+            
             if(e.isExpression()){
-                ConditionExpression ex = (ConditionExpression)e;
-                ConditionExpression result = removeGuard(variable, value, ex);
+                ConditionExpression result = removeGuard(variable, value, (ConditionExpression)e);
                 if(!result.isEmpty())
-                    newex.appendElement(e.getPreviousOperator(), result);
+                    newex.appendElement(type, result);
             } else {
                 ConditionStatment st = (ConditionStatment)e;
                 if(st.getVariable().equals(variable) 
                         && (st.getOperator() == ConditionStatment.Operator.Equal || st.getOperator() == ConditionStatment.Operator.GreaterEq)
                         && st.getValue().equals(value)){
+                    System.out.println("remove now: " + st);
                     continue;
                 }
-                newex.appendElement(e.getPreviousOperator(), e);
+                /*
+                 * Remove project execution guard from the rest of conditions
+                 */
+                if(st.getVariable().equals(automata.getEFAProjectName()) 
+                        && (st.getOperator() == ConditionStatment.Operator.Equal)
+                        && st.getValue().equals(EFAVariables.VARIABLE_EXECUTION_STATE)){
+                    System.out.println("remove now: " + st);
+                    continue;
+                }
+                
+                newex.appendElement(type, new ConditionStatment(st.getVariable(), st.getOperator(), st.getValue()));
             }
         }
+        System.out.println("return: " + newex);
         return newex;
     }
 
-    private void updateGlobalGuards(String e1, String e2, LinkedList<String[]> map) {
+    private void updateGlobalGuards(LinkedList<String[]> map) {
         for(SpEFA efa : automata.getAutomatons()){
-            if(efa.getName().equals(e1) || efa.getName().equals(e2))
-                continue;
-            
             for(SpTransition tran : efa.getTransitions()){
                 ConditionExpression c = tran.getConditionGuard();
                 updateGuard(map, c);
@@ -167,8 +203,9 @@ public class Reduction {
                         switch(st.getOperator()){
                             case Equal:
                                 st.setVariable(newName);
-                                st.setOperator(ConditionStatment.Operator.GreaterEq);
                                 st.setValue(newValue);
+                                if(Integer.parseInt(newValue) % 2 == 0)
+                                    st.setOperator(ConditionStatment.Operator.GreaterEq);
                             default:
                                 st.setVariable(newName);
                                 st.setValue(newValue);
@@ -177,5 +214,65 @@ public class Reduction {
                 }
             }
         }
+    }
+
+    private void reduceModel() {
+        for(SpEFA efa : automata.getAutomatons()){
+            reduceEFA(efa);
+        }
+    }
+
+    private void reduceEFA(SpEFA efa) {
+        Iterator<SpTransition> itr = efa.iterateSequenceTransitions();
+        while(itr.hasNext()){
+            SpTransition current = itr.next();
+            if(isSOLT(current) && isFreeLocation(efa.getName(), current.getTo().getValue())){
+                removeSOLT(current, efa);
+            }
+        }
+    }
+
+    private void removeSOLT(SpTransition transition, SpEFA efa){
+        for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
+            SpTransition t = itr.next();
+            if(t.equals(transition)){
+                
+            }
+        }
+    }
+    
+    private boolean isSOLT(SpTransition transition) {
+        return transition.getFrom().getOutTransitions().size() == 1 && transition.getCondition().isEmpty();
+    }
+
+    private boolean isFreeLocation(String efaName, Integer value) {
+        for(SpEFA efa : automata.getAutomatons()){
+            for(SpTransition tran : efa.getTransitions()){
+                ConditionExpression c = tran.getConditionGuard();
+                if(c == null || c.isEmpty())
+                    continue;
+                if(hasGuardOnLocation(efaName, value, c))
+                    return false;
+            }
+        }
+        return true;
+    }
+    
+    /*
+     * OPERATION STATE < value and OPERATION STATE > value, i.e. all locations < value is not handeled and should be implemented
+     */
+    private boolean hasGuardOnLocation(String efaName, Integer value, ConditionExpression expression) {
+        for(Iterator<ConditionElement> itr = expression.iterator(); itr.hasNext();){
+            ConditionElement e = itr.next();
+            if(e.isExpression()){
+                if(hasGuardOnLocation(efaName, value, (ConditionExpression)e))
+                    return true;
+            } else {
+                ConditionStatment st = (ConditionStatment)e;
+                if(st.getVariable().equals(efaName) && st.getValue().equals(Integer.toString(value)))
+                    return true;
+            }
+        }
+        return false;
     }
 }

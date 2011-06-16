@@ -39,32 +39,38 @@ public class DefaultModelParser implements IModelParser{
     private void init() {
         this.operations = new HashMap<Integer, TreeNode>();
         this.variables = new HashMap<Integer, TreeNode>();
-        recursiveVarFinder(model.getResourceRoot());
-        recursiveOpFinder(model.getOperationRoot());
+        for(TreeNode n : model.getAllOperations())
+            operations.put(n.getNodeData().getId(), n);
+        
+        for(TreeNode n : model.getAllVariables())
+            variables.put(n.getNodeData().getId(), n);
+        
+        //        recursiveVarFinder(model.getResourceRoot());
+        //        recursiveOpFinder(model.getOperationRoot());
     }
 
-    private void recursiveVarFinder(TreeNode var) {
-       if (var.getChildCount() > 0) {
-         for (int i = 0; i < var.getChildCount(); i++) {
-            TreeNode child = (TreeNode) var.getChildAt(i);
-            if (Model.isResource(child.getNodeData())) {
-               recursiveVarFinder(child);
-            } else if (Model.isVariable(child.getNodeData())){
-               this.variables.put(child.getNodeData().getId(), child);
-            }
-         }
-      }        
-    }
-
-    private void recursiveOpFinder(TreeNode op) {
-        for (int i = 0; i < op.getChildCount(); i++) {
-            TreeNode child = (TreeNode) op.getChildAt(i);
-            if (Model.isOperation(child.getNodeData())){
-                operations.put(child.getNodeData().getId(), child);
-                recursiveOpFinder(child);
-            }
-        }        
-    }
+//    private void recursiveVarFinder(TreeNode var) {
+//       if (var.getChildCount() > 0) {
+//         for (int i = 0; i < var.getChildCount(); i++) {
+//            TreeNode child = (TreeNode) var.getChildAt(i);
+//            if (Model.isResource(child.getNodeData())) {
+//               recursiveVarFinder(child);
+//            } else if (Model.isVariable(child.getNodeData())){
+//               this.variables.put(child.getNodeData().getId(), child);
+//            }
+//         }
+//      }        
+//    }
+//
+//    private void recursiveOpFinder(TreeNode op) {
+//        for (int i = 0; i < op.getChildCount(); i++) {
+//            TreeNode child = (TreeNode) op.getChildAt(i);
+//            if (Model.isOperation(child.getNodeData())){
+//                operations.put(child.getNodeData().getId(), child);
+//                recursiveOpFinder(child);
+//            }
+//        }        
+//    }
 
     @Override
     public SpEFAutomata getSpEFAutomata(){
@@ -97,8 +103,6 @@ public class DefaultModelParser implements IModelParser{
             SpEFAutomata temp = getSpEFA(op);
             for(SpEFA efa : temp.getAutomatons())
                 automata.addAutomaton(efa);
-//            for(SpVariable var : temp.getVariables())
-//                automata.addVariable(var);
         }
         createSpProject();
     }
@@ -133,17 +137,9 @@ public class DefaultModelParser implements IModelParser{
         SpTransition startT = new SpTransition(startE, iL, eL, createPreCondition(operation)); 
         SpTransition stopT = new SpTransition(stopE, eL, fL, createPostCondition(operation)); 
         
-//        iL.addOutTransition(startT);
-//        eL.addInTransition(startT);
-//        eL.addOutTransition(stopT);
-//        fL.addInTransition(stopT);
-        
         efa.addTransition(startT);
         efa.addTransition(stopT);
         
-        //SpVariable var = new SpVariable(EFAVariables.VARIABLE_NAME_PREFIX + opName, new Integer(0), new Integer(2), new Integer(0));
-
-        //output.addVariable(var);
         output.addAutomaton(efa);
         return output;
     }
@@ -155,9 +151,9 @@ public class DefaultModelParser implements IModelParser{
         OperationData od = (OperationData) operation.getNodeData();
         Condition c = createCondition(od.getSequenceCondition(),od.getResourceBooking(),od.getActions());
         if (hasParent(operation)){
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,"1"));
+            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE));
         } else {
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(getProjectName(),Operator.Equal,"1"));
+            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(getProjectName(),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE));
         }
         return c;
      }
@@ -343,10 +339,8 @@ public class DefaultModelParser implements IModelParser{
         efa.addTransition(startT);
         efa.addTransition(stopT);
         
-        //SpVariable var = new SpVariable(EFAVariables.VARIABLE_NAME_PREFIX + opName, new Integer(0), new Integer(2), new Integer(0));
-
-        //automata.addVariable(var);
         automata.addAutomaton(efa);
+        automata.setEFAProjectName(opName);
     }
         
 }

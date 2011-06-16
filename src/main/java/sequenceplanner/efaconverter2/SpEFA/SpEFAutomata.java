@@ -14,12 +14,14 @@ public class SpEFAutomata {
     private Map<String, SpEvent> alphabet;
     private Map<String, SpVariable> variables;
     private String name;
+    private String EFA_PROJECT;
 
     public SpEFAutomata(String iName) {
         this.automatons = new HashMap<String, SpEFA>();
         this.alphabet = new HashMap<String, SpEvent>();
         this.variables = new HashMap<String, SpVariable>();
         this.name = iName;
+        this.EFA_PROJECT = "";
     }
     
     public SpEFAutomata() {
@@ -82,6 +84,14 @@ public class SpEFAutomata {
     
     public SpVariable getSpVariable(String name){
         return variables.get(name);
+    }
+    
+    public void setEFAProjectName(String name){
+        EFA_PROJECT = name;
+    }
+    
+    public String getEFAProjectName(){
+        return EFA_PROJECT;
     }
     
 }

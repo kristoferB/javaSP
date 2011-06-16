@@ -1096,15 +1096,56 @@ public class Model extends Observable implements IModel{
         LinkedList<TreeNode> operations = new LinkedList<TreeNode>();
         Stack<TreeNode> children = new Stack<TreeNode>();
         
-        for (int i = 0; i < operationRoot.getChildCount(); i++) 
-            children.push(operationRoot.getChildAt(i));
+        for (int i = 0; i < operationRoot.getChildCount(); i++)
+            if(Model.isOperation(operationRoot.getChildAt(i)))
+                children.push(operationRoot.getChildAt(i));
 
         while (!children.isEmpty()) {
             TreeNode temp = children.pop();
             operations.add(temp);
-            for (int i = 0; i < temp.getChildCount(); i++) 
-                children.push(temp.getChildAt(i));
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isOperation(temp.getChildAt(i)))
+                    children.push(temp.getChildAt(i));
         }
         return operations;
    }
+   
+   public LinkedList<TreeNode> getAllVariables(){
+       
+        LinkedList<TreeNode> variables = new LinkedList<TreeNode>();
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        
+        for (int i = 0; i < variableRoot.getChildCount(); i++) 
+            if(Model.isVariable(variableRoot.getChildAt(i)))
+                children.push(variableRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            variables.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isVariable(temp.getChildAt(i)))
+                    children.push(temp.getChildAt(i));
+        }
+        return variables;
+   }
+
+   public LinkedList<TreeNode> getAllResources(){
+       
+        LinkedList<TreeNode> resources = new LinkedList<TreeNode>();
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        
+        for (int i = 0; i < resourceRoot.getChildCount(); i++) 
+            if(Model.isVariable(resourceRoot.getChildAt(i)))
+                children.push(resourceRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            resources.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isVariable(temp.getChildAt(i)))
+                    children.push(temp.getChildAt(i));
+        }
+        return resources;
+   }
+   
 }
