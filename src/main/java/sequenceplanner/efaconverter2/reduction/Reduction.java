@@ -4,6 +4,7 @@
  */
 package sequenceplanner.efaconverter2.reduction;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import sequenceplanner.efaconverter2.DefaultModelParser;
@@ -20,7 +21,7 @@ import sequenceplanner.model.Model;
 public class Reduction {
     
     private Model model;
-    SpEFAutomata automata;
+    private SpEFAutomata automata;
     
     public Reduction(Model model){
         this.model = model;
@@ -30,7 +31,9 @@ public class Reduction {
     public SpEFAutomata getReducedModel(){
         DefaultModelParser parser = new DefaultModelParser(model);
         automata = parser.getSpEFAutomata();
+        System.out.println("synchronizeModel()");
         synchronizeModel();
+        System.out.println("reduceModel()");
         reduceModel();
         return automata;
     }
@@ -105,7 +108,7 @@ public class Reduction {
                 map.add(new String[] {efa2.getName(), efa.getName(), Integer.toString(current.getFrom().getValue()), Integer.toString(last.getValue())});
                 
                 if(!current.getFrom().isAccepting())
-                    last.setNotAccepting();
+                    last.clearAccepting();
                 
                 ConditionExpression newGuard = removeGuard(efa1.getName(), Integer.toString(last.getValue()), current.getConditionGuard());
                 Condition newc = new Condition(newGuard, current.getConditionAction());
@@ -217,62 +220,146 @@ public class Reduction {
     }
 
     private void reduceModel() {
+        checkLocations();
         for(SpEFA efa : automata.getAutomatons()){
-            reduceEFA(efa);
+            if(!efa.getName().equals(automata.getEFAProjectName()))
+                reduceEFA(efa);
         }
     }
 
     private void reduceEFA(SpEFA efa) {
-        Iterator<SpTransition> itr = efa.iterateSequenceTransitions();
-        while(itr.hasNext()){
-            SpTransition current = itr.next();
-            if(isSOLT(current) && isFreeLocation(efa.getName(), current.getTo().getValue())){
-                removeSOLT(current, efa);
+        boolean finish = false;
+        HashSet<String> loc = new HashSet<String>();
+        while(!finish){
+            for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
+                SpTransition currentTran = itr.next();
+                SpLocation currentTo = currentTran.getTo();
+                SpLocation currentFrom = currentTran.getFrom();
+                System.out.println("Checking: " + currentTran);
+                if(isSOLT(currentTran) && !currentTo.isVisited()){
+                    if(itr.hasNext()){
+                        SpTransition nextTran = currentTo.getOutTransitions().iterator().next();
+                        if(currentTo.isAccepting())
+                            currentFrom.setAccepting();
+
+                        currentFrom.getOutTransitions().remove(currentTran);
+                        currentFrom.getOutTransitions().add(nextTran);
+                        nextTran.setFrom(currentFrom);
+                        efa.removeTransition(currentTran);
+                        
+                        System.out.println("Redirecting: " + nextTran);
+                        efa.removeLocation(currentTo.getName());
+//                        loc.add(currentTo.getName());
+                        
+                        System.out.println("Removing: " + currentTo.getName());
+                        
+                        break;
+                    } else {
+                        if(currentTo.isAccepting())
+                            currentFrom.setAccepting();
+                        currentFrom.getOutTransitions().remove(currentTran);
+                        efa.removeTransition(currentTran);
+                        efa.removeLocation(currentTo.getName());
+//                        loc.add(currentTo.getName());
+                        System.out.println("Removing: " + currentTo.getName());
+                        break;
+                    }
+                }
+                if(!itr.hasNext())
+                    finish = true;
             }
+            
         }
+//        for(SpLocation l : efa.getLocations())
+//            System.out.println("LOC: " + l.getName());
+//        
+//        for(String s : loc)
+//            efa.removeLocation(s);
+        
+        if(!efa.getTransitions().isEmpty()){
+            LinkedList<String[]> map = new LinkedList<String[]>();
+            int count = 0;
+            for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
+                SpTransition current = itr.next();
+                SpLocation l = current.getFrom();
+                map.add(new String[]{efa.getName(), efa.getName(), Integer.toString(l.getValue()), Integer.toString(count)});
+                l.setValue(count++);
+                if(!itr.hasNext()){
+                    l = current.getTo();
+                    map.add(new String[]{efa.getName(), efa.getName(), Integer.toString(l.getValue()), Integer.toString(count)});
+                    l.setValue(count);
+                }
+            }
+            updateGlobalGuards(map);
+        }        
     }
 
-    private void removeSOLT(SpTransition transition, SpEFA efa){
-        for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
-            SpTransition t = itr.next();
-            if(t.equals(transition)){
-                
-            }
-        }
-    }
-    
     private boolean isSOLT(SpTransition transition) {
         return transition.getFrom().getOutTransitions().size() == 1 && transition.getCondition().isEmpty();
     }
 
-    private boolean isFreeLocation(String efaName, Integer value) {
+    private void checkLocations() {
         for(SpEFA efa : automata.getAutomatons()){
             for(SpTransition tran : efa.getTransitions()){
-                ConditionExpression c = tran.getConditionGuard();
-                if(c == null || c.isEmpty())
-                    continue;
-                if(hasGuardOnLocation(efaName, value, c))
-                    return false;
+                checkLocation(tran.getConditionGuard());
             }
         }
-        return true;
     }
-    
-    /*
-     * OPERATION STATE < value and OPERATION STATE > value, i.e. all locations < value is not handeled and should be implemented
-     */
-    private boolean hasGuardOnLocation(String efaName, Integer value, ConditionExpression expression) {
+
+    private void checkLocation(ConditionExpression expression) {
         for(Iterator<ConditionElement> itr = expression.iterator(); itr.hasNext();){
             ConditionElement e = itr.next();
             if(e.isExpression()){
-                if(hasGuardOnLocation(efaName, value, (ConditionExpression)e))
-                    return true;
+                checkLocation((ConditionExpression)e);
             } else {
                 ConditionStatment st = (ConditionStatment)e;
-                if(st.getVariable().equals(efaName) && st.getValue().equals(Integer.toString(value)))
-                    return true;
+                if(isLocationVariable(st.getVariable()))
+                    setLocationVisited(st.getVariable(), st.getOperator(), st.getValue());
             }
         }
-        return false;
+    }
+
+    private boolean isLocationVariable(String variable) {
+        for(SpVariable var : automata.getVariables())
+            if(var.getName().equals(variable))
+                return false;
+        return true;
+    }
+    
+    private void setLocationVisited(String variable, ConditionStatment.Operator op, String value) {
+        SpEFA efa = automata.getSpEFA(variable);
+        boolean flag = false;
+        for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
+            SpLocation l = itr.next().getFrom();
+            switch (op){
+                    case Equal:
+                        if(value.equals(Integer.toString(l.getValue()))){
+                            l.setVisited();
+                            return;
+                        }
+                        
+                    case GreaterEq:
+                        if(value.equals(Integer.toString(l.getValue()))) flag = true;
+                        if(flag) l.setVisited();
+                    
+                    case Greater:
+                        if(value.equals(Integer.toString(l.getValue()))){
+                            flag = true;
+                            continue;
+                        }
+                        if(flag) l.setVisited();
+                    
+                    case Less:
+                        l.setVisited();
+                        if(value.equals(Integer.toString(l.getValue()))){
+                            l.clearVisited();
+                            return;
+                        }
+
+                    case LessEq:
+                        l.setVisited();
+                        if(Integer.toString(l.getValue()).equals(value)) return;
+            }
+        }
     }
 }

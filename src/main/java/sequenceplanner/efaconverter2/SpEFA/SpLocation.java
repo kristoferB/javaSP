@@ -15,6 +15,7 @@ public class SpLocation {
     private boolean isInitialLocation = false;
     private boolean isAccepting = false;
     private int value;
+    private boolean visited = false;
 
     public SpLocation(String locationName) {
         this.locationName = locationName;
@@ -59,7 +60,7 @@ public class SpLocation {
         this.isAccepting = true;
     }
 
-    public void setNotAccepting(){
+    public void clearAccepting(){
         this.isAccepting = false;
     }
     
@@ -84,7 +85,19 @@ public class SpLocation {
     }
     
     public int getValue(){
-        return value;
+        return this.value;
+    }
+    
+    public void setVisited(){
+        this.visited = true;
+    }
+    
+    public void clearVisited(){
+        this.visited = false;
+    }
+    
+    public boolean isVisited(){
+        return this.visited;
     }
     
     @Override

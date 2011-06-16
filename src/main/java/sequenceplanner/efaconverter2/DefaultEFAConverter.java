@@ -53,8 +53,6 @@ public class DefaultEFAConverter implements IEFAConverter{
                 String guard = parsGuards(tran.getConditionGuard());
                 String action = parsActions(tran.getConditionAction());
                 String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(++count) + EFAVariables.EFA_ACTION_DIVIDER;
-//                if(tran.getTo().getValue() < 0 && tran.getTo().getValue() != count)
-//                    throw new SecurityException("DefaultEFAConverter class: < "+ tran.getTo().getName() + " -- "+ tran.getTo().getValue() + "," + count +" >location value is not equal to counter value. Converter consistency error.");
                 
                 action += actionLocation;
 
@@ -64,6 +62,7 @@ public class DefaultEFAConverter implements IEFAConverter{
                                   guard, 
                                   action);
             }
+            
             automata.addEFAutomaton(efa);
             
             if(((sp.getAutomatons().size() * 2) + sp.getVariables().size()) == automata.getEFAutomatons().size())

@@ -52,6 +52,8 @@ public class OperationSequences {
 
     public void run(){
         model.getOperationRoot().setNodeData(new OperationData("Project", 6));
+        System.out.println("RUN op size: " + model.getAllOperations().size() + " --- " + model.getOperationRoot().getChildCount());
+        
         Reduction reduce = new Reduction(model);
         SpEFAutomata reducedModel = reduce.getReducedModel();
         DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);

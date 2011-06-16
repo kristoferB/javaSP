@@ -151,13 +151,20 @@ public class SpEFA {
     }
     
     public boolean removeTransition(SpTransition transition){
-        return transitions.remove(transition);
+        if (!transitions.contains(transition)) 
+            return false;
+
+        transitions.remove(transition);
+        return true;
+        
     }
     
-    public void removeLocation(SpLocation location){
-        transitions.removeAll(location.getInTransitions());
-        transitions.removeAll(location.getOutTransitions());
-        locations.remove(location.getName());
+    public void removeLocation(String location){
+        HashMap<String,SpLocation> temp = new HashMap<String, SpLocation>();
+        for(SpLocation l : locations.values())
+            if(!l.getName().equals(location))
+                temp.put(l.getName(), l);
+        this.locations = temp;
     }
 
     public void setName(String newName){
@@ -178,7 +185,8 @@ public class SpEFA {
             if (initialLocation.getOutTransitions().size() > 1)
                 throw new UnsupportedOperationException("Multiple outgoing transition");
             
-            this.next = initialLocation.getOutTransitions().iterator().next();
+            if(!initialLocation.getOutTransitions().isEmpty())
+                this.next = initialLocation.getOutTransitions().iterator().next();
         }
 
         @Override
