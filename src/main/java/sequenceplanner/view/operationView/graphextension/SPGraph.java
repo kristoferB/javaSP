@@ -42,6 +42,8 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphSelectionModel;
 import com.mxgraph.view.mxGraphView;
 import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
 
 /**
  *
@@ -509,6 +511,7 @@ public class SPGraph extends mxGraph {
             model.beginUpdate();
             try {
                 OperationData d = (OperationData) value;
+                                
                 getModel().setValue(cell, value);
                 d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
                         d.getSequenceCondition(), d.getResourceBooking()));

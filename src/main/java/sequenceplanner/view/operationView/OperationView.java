@@ -56,10 +56,11 @@ import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopStructure;
+import sequenceplanner.utils.Devel;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
-public class OperationView extends AbstractView implements IView, AsyncModelListener{
+public class OperationView extends AbstractView implements IView, AsyncModelListener {
 
     // Logging for this class
     private static Logger logger = Logger.getLogger(OperationView.class);
@@ -76,7 +77,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private SopStructure sopStruct;
 
     //TODO refactor name to SOPView
-
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
@@ -99,12 +99,13 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         registerKeystrokes(graphComponent.getInputMap(), graphComponent.getActionMap());
 
 
-        
+
     }
 
-    public void addGraphComponentListener(MouseAdapter ma){
+    public void addGraphComponentListener(MouseAdapter ma) {
         graphComponent.getGraphControl().addMouseListener(ma);
     }
+
     public OperationView(Model model, ViewData view) {
         this(model, view.getName());
         open(view);
@@ -303,12 +304,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             Cell cell = (Cell) o;
 
             //This will only return the topView, the rest is saved in
-            //TODO maby error with id = -1;
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
-            OperationData od = (OperationData) data[0].getNodeData();
-
-
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
@@ -320,8 +317,14 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             setChanged(false);
             updateName();
-
-            //        saveBackup();
+            //Test
+            for (TreeNode node : data) {
+                if (node.getNodeData() instanceof OperationData) {
+                    OperationData d = (OperationData) node.getNodeData();
+                    System.out.println("Dump map:");
+                    Devel.dumpMap(d.getPreferences());
+                }
+            }
         } else {
             logger.debug("Save was called but with a empty name");
         }
@@ -390,7 +393,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //TODO maby should check root.isSOP || root.isOP
         if (root.getValue() instanceof OperationData) {
             OperationData oldData = (OperationData) root.getValue();
-
+            System.out.println(".\n \n Dump map:" + oldData.getName());
+            Devel.dumpMap(oldData.getPreferences());
             OperationData d = (OperationData) oldData.clone();
             d = getPrecond(root, d);
 
@@ -862,18 +866,17 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
-        }
-        else if(insertedCell.getType() == Constants.ALTERNATIVE){
+        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
             //For when SopNodeAlternative is finished
             sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
-        }
-        else if(insertedCell.getType() == Constants.ARBITRARY){
+        } else if (insertedCell.getType() == Constants.ARBITRARY) {
             //For when SopNodeArbitrary is finished
             sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
         }
         sopStruct.setSopSequence(cell, sopNode, before);
-        
+
     }
+
     public void addSOPNode(Cell cell, Cell insertedCell) {
       if (insertedCell.getValue() instanceof OperationData) {
              sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
@@ -882,18 +885,17 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
-        }
-        else if(insertedCell.getType() == Constants.ALTERNATIVE){
+        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
             //For when SopNodeAlternative is finished
             sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
-        }
-        else if(insertedCell.getType() == Constants.ARBITRARY){
+        } else if (insertedCell.getType() == Constants.ARBITRARY) {
             //For when SopNodeArbitrary is finished
             sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
         }
         sopStruct.setSopSequence(cell, sopNode);
 
     }
+
     /**
      * Insert a cell as a leaf of the SOPStructure root
      * @param insertedCell cell containing Data
@@ -903,9 +905,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.
         if (insertedCell.getValue() instanceof OperationData) {
-             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        }
-        else{
+            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        } else {
             throw new UnsupportedOperationException("Not yet implemented");
         }
         sopStruct.setSopRoot(sopNode);

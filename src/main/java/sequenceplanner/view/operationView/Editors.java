@@ -253,7 +253,7 @@ public class Editors {
          initializePanels();
       }
 
-      protected void initializePanels() {
+      private void initializePanels() {
          text[0] = new JTextField("Name");
          text[1] = new JTextField("Start Condition");
          text[2] = new JTextField("Stop Condition");
@@ -296,7 +296,7 @@ public class Editors {
          text[0].setText(d.getName());
          text[1].setText(d.getPrecondition());
          text[2].setText(d.getPostcondition());
-
+         
          check[0].setSelected(d.isPreoperation());
          check[1].setSelected(d.isPostoperation());
 

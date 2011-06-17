@@ -48,6 +48,8 @@ public class OperationViewController implements Observer {
                         if (data.getId() == od.getId()) {
                             //replace old operation data with the updated version
                             operationView.getGraph().setValue(c, od);
+                            System.out.println("Data.getName: "+data.getName()+ "Data.getPost"+data.getPostcondition());
+                            System.out.println("Data.getName: "+data.getName() +"Data.getPre"+data.getPrecondition());
                         }
                     }
                 }
