@@ -17,7 +17,6 @@ public class SopStructure implements ISopStructure {
     private ASopNode sopRootNode;
     private ASopNode sopNode;
     private ISopNode sopIterator;
-    private LinkedList<LinkedList<ASopNode>> sopSeqs = new LinkedList<LinkedList<ASopNode>>();
     private LinkedList<ASopNode> sopStructure = new LinkedList<ASopNode>();
     private LinkedList<ASopNode> withinSops;
 
@@ -35,19 +34,18 @@ public class SopStructure implements ISopStructure {
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode, boolean before) {
         //Rest of the nodes
-        boolean notRoot = false;
         if (before == true) {
             sopIterator = sopStructure.getFirst();
-            System.out.println("This is sopStructureRoot: " + sopStructure.getFirst());
-            //If the added node is before the root it will be the new root
+            
             for (ListIterator<ASopNode> it = sopStructure.listIterator(); it.hasNext();) {
+                //If the added node is before the root it will be the new root
                 if (it.next().getUniqueId() == cell.getUniqueId()) {
                     sopNode.setSuccessorNode(sopStructure.getFirst());
                     sopStructure.removeFirst();
                     sopStructure.addFirst(sopNode);
-                    System.out.println("__1__");
                 }else{
                     sopIterator = sopStructure.getFirst();
+                    //Go through the whole Sequence chain
                     while (sopIterator.getSuccessorNode() != null) {
                         if (sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == true) {
                             sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
@@ -70,6 +68,15 @@ public class SopStructure implements ISopStructure {
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode) {
         //Lägg inuti en annan cell
-
+        for (ListIterator<ASopNode> it = sopStructure.listIterator(); it.hasNext();) {
+            while (sopIterator.getSuccessorNode() != null) {
+                if (sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId()){
+                    //sopIterator.getSuccessorNode().setSuccessorRelation(iRelation);
+                    //setRelation somehow
+                }
+                sopIterator = sopIterator.getSuccessorNode();
+            }
+            it.next();
+        }
     }
 }
