@@ -11,11 +11,6 @@ package sequenceplanner.efaconverter2;
 public class EFAVariables {
 
     // Options for constructor to the algorithms
-    public static int OPTION_ONE = 1;
-    public static int OPTION_TWO = 2;
-    public static int OPTION_THREE = 3;
-    public static int OPTION_FOUR = 4;
-    public static int OPTION_FIVE = 5;
     public static String OPERATION_NAME_PREFIX = "Op";
     public static String VARIABLE_NAME_PREFIX = "V_";
     public static String ID_PREFIX = "_Id";

@@ -56,6 +56,9 @@ public class OperationSequences {
         
         Reduction reduce = new Reduction(model);
         SpEFAutomata reducedModel = reduce.getReducedModel();
+        
+        if(reducedModel.getAutomatons().isEmpty()) return;
+        
         DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);
         DefaultExport export = new DefaultExport(converter.getModule());
         export.save();
@@ -115,9 +118,6 @@ public class OperationSequences {
         //createOperationView("Name of view", paths);
     }
 
-    public int nbrOfOperation(){
-        return operationList.size();
-    }
 
 //    public int nbrOfPaths(){
 //        return paths.size();

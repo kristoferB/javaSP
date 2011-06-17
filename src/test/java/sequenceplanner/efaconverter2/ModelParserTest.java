@@ -19,6 +19,7 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
 import sequenceplanner.efaconverter2.SpEFA.SpVariable;
+import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.Model;
@@ -91,6 +92,12 @@ public class ModelParserTest {
      */
     @Test
     public void testGetSpEFAutomata() {
+        Reduction reduce = new Reduction(model);
+        SpEFAutomata reducedModel = reduce.getReducedModel();
+        DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);
+        DefaultExport export = new DefaultExport(converter.getModule());
+        export.save();
+        assertEquals(true,true);
         
         //        System.out.println("ModelParse");
         //        DefaultModelParser instance = new DefaultModelParser(model);

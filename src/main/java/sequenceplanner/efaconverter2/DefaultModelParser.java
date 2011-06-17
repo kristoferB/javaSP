@@ -13,6 +13,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceVariableData;
 
 /**
@@ -29,30 +30,80 @@ public class DefaultModelParser implements IModelParser{
     public DefaultModelParser(Model model) {
         this.model = model;
         
-        if(model != null)
-            init();
-        else 
-            throw new NullPointerException("ModelParser: Null input model.");
+        if(model == null) throw new NullPointerException("ModelParser: Null input model.");
+        
+        init();
+
         
     }
     
     private void init() {
         this.operations = new HashMap<Integer, TreeNode>();
         this.variables = new HashMap<Integer, TreeNode>();
-        for(TreeNode n : model.getAllOperations())
+        
+        for(TreeNode n : model.getAllOperations()){
+            initPSequenceCondition(n);
             operations.put(n.getNodeData().getId(), n);
+        }
+        
+        initPSequenceCondition(model.getOperationRoot());
         
         for(TreeNode n : model.getAllVariables())
             variables.put(n.getNodeData().getId(), n);
-        
     }
+    
+    public void initPSequenceCondition(TreeNode operation){
+        
+        OperationData od = null;
+        if(operation.getNodeData() == null){
+            od = new OperationData("Op"+Integer.toString(operation.getId()), operation.getId());
+        } else {
+            od = (OperationData) operation.getNodeData();
+        }
+        
+      LinkedList<Integer> listOfChildren = new LinkedList<Integer>();
+      if (operation.getChildCount() > 0) {
+         for (int i = 0; i < operation.getChildCount(); i++) {
+            TreeNode subOperation = (TreeNode) operation.getChildAt(i);
+            OperationData subOpData = (OperationData) subOperation.getNodeData();
+            listOfChildren.add(subOpData.getId());
+         }
+      }
+
+      for (int i = 0; i < listOfChildren.size(); i++) {
+         TreeNode subOp = (TreeNode) model.getOperation(listOfChildren.get(i));
+         boolean write = true;
+         for (int j = 0; j < listOfChildren.size(); j++) {
+            TreeNode otherOp = (TreeNode) model.getOperation(listOfChildren.get(j));
+
+            OperationData data = (OperationData) otherOp.getNodeData();
+
+            LinkedList<LinkedList<SeqCond>> seqcon = data.getSequenceCondition();
+
+            for (int k = 0; k < seqcon.size(); k++) {
+               for (int l = 0; l < seqcon.get(k).size(); l++) {
+                  SeqCond s = seqcon.get(k).get(l);
+                  if (s.id == subOp.getId() && s.state == 2) {
+                     write = false;
+                  }
+               }
+            }
+         }
+         
+         // Does not work for alternative !!!!
+         if (write)
+             od.addPAnd(subOp.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
+      }
+    }
+        
 
     @Override
     public SpEFAutomata getSpEFAutomata(){
         this.automata = new SpEFAutomata();
+        if(operations.isEmpty()) return this.automata;
         createSpVariables();
         createSpEFAs();
-        return automata;
+        return this.automata;
     }
 
     private void createSpVariables() {
@@ -93,14 +144,14 @@ public class DefaultModelParser implements IModelParser{
         SpLocation iL = new SpLocation(opName + EFAVariables.STATE_INITIAL_POSTFIX);
         iL.setInitialLocation();
         iL.setAccepting();
-        iL.setValue(0);
+        iL.setValue(Integer.parseInt(EFAVariables.VARIABLE_INITIAL_STATE));
         
         SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
-        eL.setValue(1);
+        eL.setValue(Integer.parseInt(EFAVariables.VARIABLE_EXECUTION_STATE));
         
         SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
         fL.setAccepting();
-        fL.setValue(2);
+        fL.setValue(Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
         
         efa.addLocation(iL);
         efa.addLocation(eL);
@@ -263,12 +314,14 @@ public class DefaultModelParser implements IModelParser{
         String opName = getProjectName();
         SpEFA efa = new SpEFA(opName);
         
-        SpLocation iL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_INITIAL_POSTFIX);
+        SpLocation iL = new SpLocation(opName + EFAVariables.STATE_INITIAL_POSTFIX);
         iL.setInitialLocation();
-
-        SpLocation eL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_EXECUTION_POSTFIX);
-        SpLocation fL = new SpLocation(EFAVariables.EFA_LOCATION_PREFIX + EFAVariables.STATE_FINAL_POSTFIX);
+        iL.setValue(Integer.parseInt(EFAVariables.VARIABLE_INITIAL_STATE));
+        SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
+        eL.setValue(Integer.parseInt(EFAVariables.VARIABLE_EXECUTION_STATE));
+        SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
         fL.setAccepting();
+        fL.setValue(Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
         
         efa.addLocation(iL);
         efa.addLocation(eL);

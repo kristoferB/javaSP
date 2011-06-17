@@ -40,24 +40,25 @@ public class DefaultEFAConverter implements IEFAConverter{
             var.addVariable(0, spefa.getLocations().size() - 1, 0);
             
             for(SpLocation spl : spefa.getLocations()){
-                efa.addLocation(createLocName(spl.getName()), spl.isAccepting(), spl.isInitialLocation());
+                efa.addLocation(createEFAName(spl.getName()), spl.isAccepting(), spl.isInitialLocation());
             }
             
             for(SpEvent spe : spefa.getAlphabet())
                 efa.addEvent(createEventName(spe.getName()), spe.isControllable());
             
-            int count = 0;
+            int count = 1;
             for(Iterator<SpTransition> itr = spefa.iterateSequenceTransitions(); itr.hasNext();){
                 SpTransition tran = itr.next();
                 
                 String guard = parsGuards(tran.getConditionGuard());
                 String action = parsActions(tran.getConditionAction());
-                String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(++count) + EFAVariables.EFA_ACTION_DIVIDER;
+                String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(count++) + EFAVariables.EFA_ACTION_DIVIDER;
+                //String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(tran.getTo().getValue()) + EFAVariables.EFA_ACTION_DIVIDER;
                 
                 action += actionLocation;
 
-                efa.addTransition(createLocName(tran.getFrom().getName()), 
-                                  createLocName(tran.getTo().getName()), 
+                efa.addTransition(createEFAName(tran.getFrom().getName()), 
+                                  createEFAName(tran.getTo().getName()), 
                                   createEventName(tran.getEvent().getName()), 
                                   guard, 
                                   action);
