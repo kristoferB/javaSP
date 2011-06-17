@@ -511,20 +511,7 @@ public class SPGraph extends mxGraph {
             model.beginUpdate();
             try {
                 OperationData d = (OperationData) value;
-                
-                Condition preCondition = new Condition();
-                Condition postCondition = new Condition();
-                ConditionExpression preAction = new ConditionExpression();
-                ConditionExpression preGuard = new ConditionExpression();
-                ConditionExpression postAction = new ConditionExpression();
-                ConditionExpression postGuard = new ConditionExpression();
-                preCondition.setAction(preAction);
-                preCondition.setGuard(preGuard);
-                postCondition.setAction(postAction);
-                postCondition.setGuard(postGuard);
-                d.addPostConditions(postCondition);
-                d.addPreCondition(preCondition);
-                
+                                
                 getModel().setValue(cell, value);
                 d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
                         d.getSequenceCondition(), d.getResourceBooking()));

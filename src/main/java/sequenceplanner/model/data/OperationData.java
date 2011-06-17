@@ -41,11 +41,14 @@ public class OperationData extends Data {
     public static final int ACTION_ADD = 0;
     public static final int ACTION_DEC = 1;
     public static final int ACTION_EQ = 2;
+    //Maps the pre and post conditions according to String == ViewName, Condition
     private Map<String, Condition> preConditions;
     private Map<String, Condition> postConditions;
+    
     //Holds the sequencecondition for this operation
     LinkedList<LinkedList<SeqCond>> sequenceCondition;
     LinkedList<Integer[]> resourceBooking;
+    
     //PostCondtions
     LinkedList<LinkedList<SeqCond>> pSequenceCondition;
     LinkedList<Integer[]> pResourceBooking;
@@ -88,7 +91,7 @@ public class OperationData extends Data {
         }
     }
 
-    protected Map<String, String> getPreferences() {
+    public Map<String, String> getPreferences() {
         return preference;
     }
 

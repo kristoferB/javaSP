@@ -63,6 +63,8 @@ public class Model extends Observable implements IModel{
    private EditorTreeModel globalProperties;
 
    public Model() {
+       //newId() is used to set id of everything in the program. 
+       //That is why the first operation is set to *6 instead of *1
       treeRoot = new TreeNode(new Data("root", newId()));
 
       //Initalize tree
