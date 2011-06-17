@@ -1,92 +1,82 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package sequenceplanner.model.SOP;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
-import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**
  *
- * @author Qw4z1
- * *Till viktor*
- * Vi måste ha en Linked List för varje sekvens där ny root "Before ->Operation"
- * läggs till som ny "addFirst". Läggs en ny operation till "after" så läggs den
- * i sist i listan. Läggs en parallell eller alternativ till så måste de länkas
- * ihop i en annan lista via listan.
- *
+ * @author Peter
  */
 public class SopStructure implements ISopStructure {
 
-    private ASopNode node;
-    private LinkedList<LinkedList<ASopNode>> sopSeqs = new LinkedList<LinkedList<ASopNode>>();
-    private LinkedList<ASopNode> sopStructure;
-    private LinkedList<ASopNode> li;
+    private ASopNode sopRootNode;
+    private ASopNode sopNode;
+    private ISopNode sopIterator;
+    private LinkedList<ASopNode> sopStructure = new LinkedList<ASopNode>();
+    private LinkedList<ASopNode> withinSops;
 
     public SopStructure() {
     }
-    /*public SopStructure(Cell cell, ASopNode sopNode, boolean before) {
-    //If the cell exists in the sequence, the new cell should be added
-    //*This is not really true, since the cell can exists within two
-    //sequences in the same OpView. So have to rethink this structure*/
-
-    public LinkedList getSopSequence() {
-        return sopStructure;
-    }
 
     @Override
-    public void setSopSequence(ASopNode sopNode) {
-        //Create new SOPList
-        sopStructure = new LinkedList<ASopNode>();
-        sopStructure.add(sopNode);
-        sopSeqs.add(sopStructure);
-        System.out.println("Sequence initiated");
+    public void setSopRoot(ASopNode sopRootNode) {
+        //First node in a Sequence
+        this.sopRootNode = sopRootNode;
+        System.out.println("Adding: " + sopRootNode.getUniqueId());
+        sopStructure.add(sopRootNode);
     }
 
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode, boolean before) {
-        cell.getValue();
-        //sopStructure.add(sopNode);
-        for (LinkedList sopSeq : sopSeqs) {
-            System.out.println("First: " + sopSeq.getFirst().toString());
-            System.out.println("Second:" + sopNode.toString());
-            //Need to figure out how to compare
-            //if (sopSeq.contains(sopNode)) {
-            //If the cell is inserted before an other cell
-            if (before == true) {
-                for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-
-                    //Need to figure out how to compare cell with SopNode
-                    if (it.next().getClass() == SopNodeOperation.class) {
-                       // if (it.next().getOperation() == cell.getValue()) {
-                            System.out.println("Adding Sop to list");
-                            it.add(sopNode);
-                            break;
+        //Rest of the nodes
+        if (before == true) {
+            sopIterator = sopStructure.getFirst();
+            
+            for (ListIterator<ASopNode> it = sopStructure.listIterator(); it.hasNext();) {
+                //If the added node is before the root it will be the new root
+                if (it.next().getUniqueId() == cell.getUniqueId()) {
+                    sopNode.setSuccessorNode(sopStructure.getFirst());
+                    sopStructure.removeFirst();
+                    sopStructure.addFirst(sopNode);
+                }else{
+                    sopIterator = sopStructure.getFirst();
+                    //Go through the whole Sequence chain
+                    while (sopIterator.getSuccessorNode() != null) {
+                        if (sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == true) {
+                            sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                            sopIterator.setSuccessorNode(sopNode);
+                        }else if (sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == false) {
+                            sopIterator = sopIterator.getSuccessorNode();
+                            sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                            sopIterator.setSuccessorNode(sopNode);
                         }
-                        System.out.println("Going deeper");
-                    //}
-                }
-                //If the cell is inserted after an other cell
-            } else if (before == false) {
-                for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-                     if (it.next().getClass() == SopNodeOperation.class) {
-                         System.out.println("Node added!");
-                         it.add(sopNode);
-                        break;
+                        sopIterator = sopIterator.getSuccessorNode();
                     }
-
-
+                }
+                for (ListIterator<ASopNode> it2 = sopStructure.listIterator(); it2.hasNext();) {
+                    System.out.print("List: " + it2.next().toString());
                 }
             }
-
-            for (ListIterator<ASopNode> it = sopSeq.listIterator(); it.hasNext();) {
-                System.out.println("List: "+it.next().toString());
-            }
-
-            //} else {
-            //   System.out.println("Something went wrong!");
-            //}
         }
+    }
 
+    @Override
+    public void setSopSequence(Cell cell, ASopNode sopNode) {
+        //Lägg inuti en annan cell
+        for (ListIterator<ASopNode> it = sopStructure.listIterator(); it.hasNext();) {
+            while (sopIterator.getSuccessorNode() != null) {
+                if (sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId()){
+                    //sopIterator.getSuccessorNode().setSuccessorRelation(iRelation);
+                    //setRelation somehow
+                }
+                sopIterator = sopIterator.getSuccessorNode();
+            }
+            it.next();
+        }
     }
 }
-

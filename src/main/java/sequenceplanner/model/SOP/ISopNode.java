@@ -32,5 +32,6 @@ public interface ISopNode {
 
     String inDepthToString(String prefix);
 
+    public int getUniqueId();
     
 }

@@ -166,9 +166,11 @@ public class OperationActions {
                         } else if (cell.isAlternative() || cell.isArbitrary() || cell.isParallel()) {
 
                             if (!this.into) {
+                                getView(e).addSOPNode(cell, insertedCell, this.before);
                                 graph.insertNewCell(cell, insertedCell, this.before);
 
                             } else {
+                                getView(e).addSOPNode(cell, insertedCell);
                                 graph.insertGroupNode(cell, p, insertedCell);
                             }
                         }

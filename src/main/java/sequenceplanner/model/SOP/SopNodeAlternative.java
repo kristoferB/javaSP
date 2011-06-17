@@ -9,8 +9,8 @@ import sequenceplanner.algorithms.visualization.RelateTwoOperations;
  */
 public class SopNodeAlternative extends ASopNode{
 
-    public SopNodeAlternative() {
-        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", ""),0);
+    public SopNodeAlternative(int id) {
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", ""),id);
     }
 
 }

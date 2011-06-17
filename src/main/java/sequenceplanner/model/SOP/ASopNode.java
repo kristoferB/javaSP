@@ -24,9 +24,10 @@ public abstract class ASopNode implements ISopNode {
     public ASopNode(final String iTypeAsString, int id) {
         mSequenceSet = new HashSet<ISopNode>();
         this.mTypeAsString = iTypeAsString;
+        System.out.println("This is my Unique Id: " + id);
         uniqueId = id;
     }
-
+    @Override
     public int getUniqueId(){
         return uniqueId;
     }
@@ -163,4 +164,5 @@ public abstract class ASopNode implements ISopNode {
         }
         return returnString;
     }
+
 }
