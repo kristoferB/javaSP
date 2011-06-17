@@ -28,8 +28,8 @@ public interface ISopStructure {
      */
     //void addNodeToSequence(ISopNode node);
 
-    void setSopSequence(ASopNode sopNode);
+    void setSopRoot(ASopNode sopNode);
 
     void setSopSequence(Cell cell, ASopNode sopNode, boolean before);
-
+    public void setSopSequence(Cell cell, ASopNode sopNode);
     }

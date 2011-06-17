@@ -51,7 +51,6 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import sequenceplanner.model.SOP.ASopNode;
-import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -865,20 +864,41 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
             System.out.println("Instance of Parallel");
-            sopNode = new SopNodeParallel();
+            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
         }
         else if(insertedCell.getType() == Constants.ALTERNATIVE){
             //For when SopNodeAlternative is finished
-            sopNode = new SopNodeAlternative();
+            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
         }
         else if(insertedCell.getType() == Constants.ARBITRARY){
             //For when SopNodeArbitrary is finished
-            sopNode = new SopNodeArbitrary();
+            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
         }
         sopStruct.setSopSequence(cell, sopNode, before);
         
     }
+    public void addSOPNode(Cell cell, Cell insertedCell) {
+      if (insertedCell.getValue() instanceof OperationData) {
+            System.out.println("Instance of OperationData");
+             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        }
+        //Parallel
+        else if(insertedCell.getType() == Constants.PARALLEL){
+            //For when SopNodeParallel is finished
+            System.out.println("Instance of Parallel");
+            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
+        }
+        else if(insertedCell.getType() == Constants.ALTERNATIVE){
+            //For when SopNodeAlternative is finished
+            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
+        }
+        else if(insertedCell.getType() == Constants.ARBITRARY){
+            //For when SopNodeArbitrary is finished
+            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
+        }
+        sopStruct.setSopSequence(cell, sopNode);
 
+    }
     /**
      * Insert a cell as a leaf of the SOPStructure root
      * @param insertedCell cell containing Data
@@ -893,6 +913,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         else{
             throw new UnsupportedOperationException("Not yet implemented");
         }
-        sopStruct.setSopSequence(sopNode);
+        sopStruct.setSopRoot(sopNode);
     }
 }

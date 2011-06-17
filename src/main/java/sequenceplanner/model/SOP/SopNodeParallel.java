@@ -9,8 +9,8 @@ import sequenceplanner.algorithms.visualization.RelateTwoOperations;
  */
 public class SopNodeParallel extends ASopNode{
 
-    public SopNodeParallel() {
-        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""),0);
+    public SopNodeParallel(int id) {
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""),id);
     }
 
     @Override
