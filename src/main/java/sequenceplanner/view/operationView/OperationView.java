@@ -867,14 +867,12 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         type of "cell". But if its not, the type of "cell" is important for
         how the cells   */
         //Operation
-        System.out.println("Cell ID: " + cell.getId() + "Cell Type: " + cell.getType());
         if (insertedCell.getValue() instanceof OperationData) {
-            System.out.println("Instance of OperationData");
-            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        } //Parallel
-        else if (insertedCell.getType() == Constants.PARALLEL) {
+             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        }
+        //Parallel
+        else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
-            System.out.println("Instance of Parallel");
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
         } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
             //For when SopNodeAlternative is finished
@@ -888,13 +886,12 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     }
 
     public void addSOPNode(Cell cell, Cell insertedCell) {
-        if (insertedCell.getValue() instanceof OperationData) {
-            System.out.println("Instance of OperationData");
-            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        } //Parallel
-        else if (insertedCell.getType() == Constants.PARALLEL) {
+      if (insertedCell.getValue() instanceof OperationData) {
+             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        }
+        //Parallel
+        else if(insertedCell.getType() == Constants.PARALLEL){
             //For when SopNodeParallel is finished
-            System.out.println("Instance of Parallel");
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
         } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
             //For when SopNodeAlternative is finished
