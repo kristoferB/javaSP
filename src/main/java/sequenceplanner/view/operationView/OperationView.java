@@ -49,8 +49,14 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.DataToConditionHelper;
 import sequenceplanner.model.SOP.ASopNode;
+import sequenceplanner.model.SOP.ConditionsFromSopNode;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -317,14 +323,16 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             setChanged(false);
             updateName();
-            //Test
+            
+            ConditionsFromSopNode conditionExtractor = new ConditionsFromSopNode(sopStruct.getRoot());
             for (TreeNode node : data) {
                 if (node.getNodeData() instanceof OperationData) {
                     OperationData d = (OperationData) node.getNodeData();
-                    System.out.println("Dump map:");
-                    Devel.dumpMap(d.getPreferences());
+                    HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
+                    d.setConditions(map.get(d));
                 }
             }
+            
         } else {
             logger.debug("Save was called but with a empty name");
         }
@@ -393,11 +401,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //TODO maby should check root.isSOP || root.isOP
         if (root.getValue() instanceof OperationData) {
             OperationData oldData = (OperationData) root.getValue();
-            System.out.println(".\n \n Dump map:" + oldData.getName());
-            Devel.dumpMap(oldData.getPreferences());
+            //System.out.println(".\n \n Dump map\n" + oldData.getName());
+            //Devel.dumpMap(oldData.getPreferences());
+
             OperationData d = (OperationData) oldData.clone();
             d = getPrecond(root, d);
-
             out = d;
         } else {
             out = new Data("", -1);

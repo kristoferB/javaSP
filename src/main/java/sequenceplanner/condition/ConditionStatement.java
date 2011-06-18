@@ -31,9 +31,9 @@ public class ConditionStatement extends ConditionElement {
     public static String MULTIPLE_VALUES = "**";
 
 
-    private String variable;
+    private String variable; //Operation Name
     private Operator op;
-    private String value;
+    private String value; // 0, 1, 2
     private boolean isAction;
 
 

@@ -23,6 +23,9 @@ public class SopStructure implements ISopStructure {
     public SopStructure() {
     }
 
+    public ISopNode getRoot(){
+        return sopRootNode;
+    }
     @Override
     public void setSopRoot(ASopNode sopRootNode) {
         //First node in a Sequence

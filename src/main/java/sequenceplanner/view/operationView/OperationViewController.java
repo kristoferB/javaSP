@@ -42,14 +42,12 @@ public class OperationViewController implements Observer {
                 for(int i = 2; i < cells.size(); i++){
                     Cell c = (Cell) cells.get(Integer.toString(i));
                     
-                    if (c.getValue() instanceof OperationData) {
+                    if (c.getValue() != null && c.getValue() instanceof OperationData) {
                         OperationData data = (OperationData) operationView.getGraphModel().getValue(c);
 
                         if (data.getId() == od.getId()) {
                             //replace old operation data with the updated version
                             operationView.getGraph().setValue(c, od);
-                            System.out.println("Data.getName: "+data.getName()+ "Data.getPost"+data.getPostcondition());
-                            System.out.println("Data.getName: "+data.getName() +"Data.getPre"+data.getPrecondition());
                         }
                     }
                 }
