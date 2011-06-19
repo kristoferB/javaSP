@@ -18,19 +18,21 @@ import sequenceplanner.model.Model;
  */
 public class Reduction {
     
-    private Model model;
     private SpEFAutomata automata;
     
     public Reduction(Model model){
-        this.model = model;
         this.automata = null;
+        DefaultModelParser parser = new DefaultModelParser(model);
+        automata = parser.getSpEFAutomata();
+    }
+    
+    public Reduction(SpEFAutomata automata){
+        this.automata = automata;
     }
     
     public SpEFAutomata getReducedModel(){
-        DefaultModelParser parser = new DefaultModelParser(model);
-        automata = parser.getSpEFAutomata();
         
-        if(automata.getAutomatons().isEmpty()) return automata;
+        if(automata == null || automata.getAutomatons().isEmpty()) return automata;
         
         synchronizeModel();
         reduceModel();

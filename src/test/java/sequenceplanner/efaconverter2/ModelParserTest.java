@@ -19,6 +19,8 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
 import sequenceplanner.efaconverter2.SpEFA.SpVariable;
+import sequenceplanner.efaconverter2.condition.ConditionOperator;
+import sequenceplanner.efaconverter2.condition.ConditionStatment;
 import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.general.SP;
@@ -42,37 +44,8 @@ public class ModelParserTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         mSP = new SP();
-        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/testOperationSequences.sopx");
-        model = mSP.getModel();
-        TreeNode n = model.getOperationRoot();
-        OperationData nd = new OperationData(n.toString(), n.getId());
-        nd.addPAnd(1006, 2);
-        nd.addPAnd(1009, 2);
-        nd.addPAnd(1008, 2);
-        nd.addPAnd(1015, 2);
-        nd.addPAnd(1017, 2);
-        LinkedList<SeqCond> s = new LinkedList<SeqCond>();
-        s.add(new SeqCond(1012, 2));
-        s.add(new SeqCond(1011, 2));
-        nd.addPOr(s);
-        n.setNodeData(nd);
-
-        n = model.getOperation(1017);
-        nd = (OperationData) n.getNodeData();
-        nd.addPAnd(1023, 2);
-        
-        n = model.getOperation(1023);
-        nd = (OperationData) n.getNodeData();
-        nd.addPAnd(1027, 2);
-        nd.addPAnd(1026, 2);
-        
-        n = model.getOperation(1026);
-        nd = (OperationData) n.getNodeData();
-        LinkedList<SeqCond> sn = new LinkedList<SeqCond>();
-        sn.add(new SeqCond(1030, 2));
-        sn.add(new SeqCond(1029, 2));
-        nd.addPOr(sn);
-        
+        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/PPU_NEW_v2_LongSeq.sopx");
+        model = mSP.getModel();        
     }
 
     @AfterClass
@@ -90,39 +63,82 @@ public class ModelParserTest {
     /**
      * Test of getSpEFAutomata method, of class ModelParser.
      */
-//    @Test
+    @Test
     public void testGetSpEFAutomata() {
-        Reduction reduce = new Reduction(model);
+        DefaultModelParser parser = new DefaultModelParser(model);
+        SpEFAutomata auto = parser.getSpEFAutomata();
+        SpEFA e17 = auto.getSpEFA("17");
+        SpEFA e14 = auto.getSpEFA("14");
+        SpEFA e11 = auto.getSpEFA("11");
+        SpEFA e8 = auto.getSpEFA("8");
+        SpEFA e21 = auto.getSpEFA("21");
+        SpEFA e22 = auto.getSpEFA("22");
+        
+        SpTransition t17 = e17.iterateSequenceTransitions().next();
+        SpTransition t14 = e14.iterateSequenceTransitions().next();
+        SpTransition t11 = e11.iterateSequenceTransitions().next();
+        SpTransition t8 = e8.iterateSequenceTransitions().next();
+        SpTransition t21 = e21.iterateSequenceTransitions().next();
+        SpTransition t22 = e22.iterateSequenceTransitions().next();
+        
+        t17.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e21.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t14.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e21.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t11.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e21.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t8.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e21.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e17.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e14.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e11.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e8.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(1)));
+
+        
+        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e17.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(2)));
+        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e14.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(2)));
+        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e11.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(2)));
+        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+                                                new ConditionStatment(e8.getName(), 
+                                                ConditionStatment.Operator.NotEqual, 
+                                                Integer.toString(2)));
+
+        
+        Reduction reduce = new Reduction(auto);
         SpEFAutomata reducedModel = reduce.getReducedModel();
         DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);
         DefaultExport export = new DefaultExport(converter.getModule());
         export.save();
         assertEquals(true,true);
-        
-        //        System.out.println("ModelParse");
-        //        DefaultModelParser instance = new DefaultModelParser(model);
-        //        System.out.println("Converter");
-        //        DefaultEFAConverter converter = new DefaultEFAConverter(instance.getSpEFAutomata());
-        //        System.out.println("Export");
-        //        DefaultExport export = new DefaultExport(converter.getModule());
-        //        export.save();
-        //        assertEquals(true,true);
-        //        DefaultModelParser instance = new DefaultModelParser(model);
-        //        SpEFAutomata result = instance.getSpEFAutomata();
-        //        for(SpEFA a : result.getAutomatons()){
-        //            System.out.println(a.getName());
-        //            for(SpLocation l : a.getLocations())
-        //                System.out.println(l.getInTransitions().size() + " <> " + l.getOutTransitions().size());
-        //            if(a.getName().equals("6")){
-        //                for(Iterator<SpTransition> itr = a.iterateSequenceTransitions(); itr.hasNext();){
-        //                    System.out.println("-----------------");
-        //                    SpTransition tran = itr.next();
-        //                    System.out.println(tran.toString() + ": " + tran.getCondition().toString());
-        //                }
-        //            }
-        //        }
-        //
-        //        assertEquals(21, result.getAutomatons().size());
-        //        assertEquals(4, result.getVariables().size());
     }
 }
