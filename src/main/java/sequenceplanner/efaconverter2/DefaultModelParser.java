@@ -90,7 +90,7 @@ public class DefaultModelParser implements IModelParser{
             }
          }
          
-         // Does not work for alternative !!!!
+         // Alternative should precedes an operation
          if (write)
              od.addPAnd(subOp.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
       }
@@ -177,9 +177,13 @@ public class DefaultModelParser implements IModelParser{
         OperationData od = (OperationData) operation.getNodeData();
         Condition c = createCondition(od.getSequenceCondition(),od.getResourceBooking(),od.getActions());
         if (hasParent(operation)){
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE));
+            ConditionStatment s = new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE);
+            s.setHierarchicalStatement();
+            c.getGuard().appendElement(ConditionOperator.Type.AND, s);
         } else {
-            c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(getProjectName(),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE));
+            ConditionStatment s = new ConditionStatment(getProjectName(),Operator.Equal,EFAVariables.VARIABLE_EXECUTION_STATE);
+            s.setHierarchicalStatement();
+            c.getGuard().appendElement(ConditionOperator.Type.AND, s);
         }
         return c;
      }

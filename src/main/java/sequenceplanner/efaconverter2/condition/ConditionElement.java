@@ -55,7 +55,7 @@ public abstract class ConditionElement implements Cloneable{
     public ConditionElement getPreviousElement(){
         if (hasPrevioustOperator()){
             if (getPreviousOperator().hasPreviousElement()){
-                return getNextOperator().getPreviousElement();
+                return getPreviousOperator().getPreviousElement();
             }
         }
         return null;

@@ -35,7 +35,7 @@ public class ConditionStatment extends ConditionElement {
     private Operator op;
     private String value;
     private boolean isAction;
-
+    private boolean isHierarchicalStatement;
 
     public ConditionStatment(String variable, Operator op, String value) {
         super();
@@ -85,6 +85,14 @@ public class ConditionStatment extends ConditionElement {
 
     public void setVariable(String variable) {
         this.variable = variable;
+    }
+    
+    public void setHierarchicalStatement(){
+        this.isHierarchicalStatement = true;
+    }
+    
+    public boolean isHierarchicalStatement(){
+        return this.isHierarchicalStatement;
     }
 
 

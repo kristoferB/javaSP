@@ -2,6 +2,7 @@ package sequenceplanner.efaconverter2.condition;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -94,6 +95,40 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         return true;
     }
 
+    public void removeElement(ConditionElement ce){
+        if(ce.isExpression()){
+            for(Iterator<ConditionElement> itr = this.iterator(); itr.hasNext();){
+                ConditionElement e = itr.next();
+                if (e.isExpression() && e.equals(ce))
+                    itr.remove();
+            }
+        } else if (ce.isStatment()){
+            for(Iterator<ConditionElement> itr = this.iterator(); itr.hasNext();){
+                ConditionElement e = itr.next();
+                if (e.isExpression()){
+                    ((ConditionExpression)e).removeElement(ce);
+                } else if (e.isStatment()){
+                    if (e.equals(ce)){
+                        itr.remove();
+                    }
+                }
+            }
+        }
+    }
+    
+    public LinkedList<ConditionStatment> getAllConditionStatments(){
+        LinkedList<ConditionStatment> statments = new LinkedList<ConditionStatment>();
+        for(Iterator<ConditionElement> itr = this.iterator(); itr.hasNext();){
+            ConditionElement e = itr.next();
+            if (e.isExpression()){
+                statments.addAll(((ConditionExpression)e).getAllConditionStatments());
+            } else if (e.isStatment()){
+                statments.add((ConditionStatment)e);
+            }
+        }
+        return statments;
+    }
+    
     public boolean containsElement(ConditionElement ce){
         if (ce == null) return false;
         for (ConditionElement e : this){
@@ -222,7 +257,7 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
     
     class ConditionElementIterator implements Iterator<ConditionElement>{
         ConditionElement next = null;
-
+        ConditionElement current = null;
         public ConditionElementIterator(ConditionElement rootElement){
             this.next = rootElement;
         }
@@ -235,9 +270,9 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         @Override
         public ConditionElement next() {
             if (hasNext()){
-                ConditionElement ce = next;
+                current = next;
                 next = next.getNextElement();
-                return ce;
+                return current;
             }
             throw new NoSuchElementException("No more ConditionElements");
         }
@@ -245,13 +280,15 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         // This method is a little bit scarry. Maybe we should do nothing?
         @Override
         public void remove() {
-            ConditionElement current = next;
+            //ConditionElement current = current;
             if (current != null){
                 if (current.hasNextElement() && current.hasPreviousElement()) {
                     ConditionElement p = current.getPreviousElement();
                     ConditionElement n = current.getNextElement();
+                    
                     ConditionOperator co;
-                    // Not sure about this but here OR is used if any of the operatores are or.
+                    
+                    // Logical operator AND / OR are left associative and AND has higher priority than OR 
                     if (current.getNextOperator().isOperationType(ConditionOperator.Type.OR)
                             || current.getPreviousOperator().isOperationType(ConditionOperator.Type.OR))
                     {
@@ -259,24 +296,24 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
                     } else {
                         co = new ConditionOperator(p, n, ConditionOperator.Type.AND);
                     }
+                    
+                    // Logical operator AND / OR are left associative 
+                    //ConditionOperator co = new ConditionOperator(p, n, current.getPreviousOperator().getOperatorType());
                     p.setNextOperator(co);
                     n.setPreviousOperator(co);
-                    next = p;
                 } else if (current.hasNextElement()) {
                     ConditionElement n = current.getNextElement();
                     n.setPreviousOperator(null);
                     current.getNextOperator().clear();
                     current.clear();
-                    next = n;
+                    changeExpressionRoot(n);
                 } else if (current.hasPreviousElement()) {
                     ConditionElement prev = current.getPreviousElement();
                     prev.setNextOperator(null);
                     current.getPreviousOperator().clear();
                     current.clear();
-                    next = prev;
                 } else {
-                    current.clear();
-                    next = null;
+                    changeExpressionRoot(null);
                 }
             }
         }

@@ -90,7 +90,7 @@ public class ModelParserTest {
     /**
      * Test of getSpEFAutomata method, of class ModelParser.
      */
-    @Test
+//    @Test
     public void testGetSpEFAutomata() {
         Reduction reduce = new Reduction(model);
         SpEFAutomata reducedModel = reduce.getReducedModel();
