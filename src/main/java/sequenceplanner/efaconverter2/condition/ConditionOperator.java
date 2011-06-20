@@ -68,6 +68,22 @@ public class ConditionOperator {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ConditionOperator)
+             return this.isOperationType(((ConditionOperator)obj).getOperatorType());
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.nextElement != null ? this.nextElement.hashCode() : 0);
+        hash = 59 * hash + (this.prevElement != null ? this.prevElement.hashCode() : 0);
+        hash = 59 * hash + (this.operatotType != null ? this.operatotType.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public String toString(){
         return this.operatotType.equals(Type.AND)?EFAVariables.EFA_AND:EFAVariables.EFA_OR;
     }

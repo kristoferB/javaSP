@@ -118,6 +118,9 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
     
     public LinkedList<ConditionStatment> getAllConditionStatments(){
         LinkedList<ConditionStatment> statments = new LinkedList<ConditionStatment>();
+        
+        if(this.isEmpty()) return statments;
+        
         for(Iterator<ConditionElement> itr = this.iterator(); itr.hasNext();){
             ConditionElement e = itr.next();
             if (e.isExpression()){

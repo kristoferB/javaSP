@@ -16,6 +16,7 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpVariable;
 import sequenceplanner.efaconverter2.condition.ConditionElement;
 import sequenceplanner.efaconverter2.condition.ConditionExpression;
+import sequenceplanner.efaconverter2.condition.ConditionOperator;
 import sequenceplanner.efaconverter2.condition.ConditionStatment;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -166,10 +167,11 @@ public class RelationGraph {
         for(SpEFA efa : automata.getAutomatons()){
             String efaName = efa.getName();
             
-            if(efaName.equals(PROJECT_NAME))
-                continue;
+//            if(efaName.equals(PROJECT_NAME))
+//                continue;
             
             map.add(efaName);
+            System.out.println("Vertex Added: " + efa.getName());
             Integer v = map.indexOf(efaName);
             graph.addVertex(v);
             graph.addVertex(-v);
@@ -182,23 +184,37 @@ public class RelationGraph {
                 continue;
             
             ConditionExpression c = efa.getInitialLocation().getOutTransitions().iterator().next().getConditionGuard();
-            
-            if(c.isEmpty())
-                continue;
-            
-            for(Iterator<ConditionElement> itr = c.iterator(); itr.hasNext();){
-                ConditionElement e = itr.next();
-                if(e.isStatment()){
-                    ConditionStatment s = (ConditionStatment)e;
-                    if((s.getOperator().equals(ConditionStatment.Operator.Equal) || s.getOperator().equals(ConditionStatment.Operator.GreaterEq))
-                            && s.getValue().equals(EFAVariables.VARIABLE_FINAL_STATE) 
-                            && !isVariable(s.getVariable())
-                            && map.contains(s.getVariable())){
-                        DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
-                        graph.setEdgeWeight(ed, EDGE_WEIGHT);
-                    }
+            for(ConditionElement e : c.getAllConditionStatments()){
+                if((e.getNextOperator() != null && e.getNextOperator().isOperationType(ConditionOperator.Type.OR)) 
+                        || (e.getPreviousOperator() != null && e.getPreviousOperator().isOperationType(ConditionOperator.Type.OR)))
+                    continue;
+                
+                ConditionStatment s = (ConditionStatment)e;
+                if(s.getOperator().equals(ConditionStatment.Operator.Equal)
+                        && s.getValue().equals(EFAVariables.VARIABLE_FINAL_STATE) 
+                        && !isVariable(s.getVariable())
+                        && map.contains(s.getVariable())
+                        && map.contains(efa.getName())
+                        && graph.containsVertex(-map.indexOf(s.getVariable()))
+                        && graph.containsVertex(map.indexOf(efa.getName()))){
+                    DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
+                    graph.setEdgeWeight(ed, EDGE_WEIGHT);
                 }
             }
+            
+//            for(Iterator<ConditionElement> itr = c.iterator(); itr.hasNext();){
+//                ConditionElement e = itr.next();
+//                if(e.isStatment()){
+//                    ConditionStatment s = (ConditionStatment)e;
+//                    if((s.getOperator().equals(ConditionStatment.Operator.Equal) || s.getOperator().equals(ConditionStatment.Operator.GreaterEq))
+//                            && s.getValue().equals(EFAVariables.VARIABLE_FINAL_STATE) 
+//                            && !isVariable(s.getVariable())
+//                            && map.contains(s.getVariable())){
+//                        DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
+//                        graph.setEdgeWeight(ed, EDGE_WEIGHT);
+//                    }
+//                }
+//            }
         }
     }
 

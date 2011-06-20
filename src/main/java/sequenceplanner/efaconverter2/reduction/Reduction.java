@@ -167,7 +167,8 @@ public class Reduction {
                                 System.out.println("FROM: "+st);
                                 st.setVariable(newName);
                                 st.setValue(newValue);
-                                st.setOperator(ConditionStatment.Operator.GreaterEq);
+                                if(!st.isHierarchicalStatement())
+                                    st.setOperator(ConditionStatment.Operator.GreaterEq);
                                 System.out.println("TO: "+st);
                             default:
                                 System.out.println("FROM: "+st);
@@ -184,7 +185,7 @@ public class Reduction {
     private void reduceModel() {
         checkLocations();
         for(SpEFA efa : automata.getAutomatons()){
-            if(!efa.getName().equals(automata.getEFAProjectName()))
+            //if(!efa.getName().equals(automata.getEFAProjectName()))
                 reduceEFA(efa);
         }
     }
@@ -199,42 +200,26 @@ public class Reduction {
                 SpLocation currentFrom = currentTran.getFrom();
                 System.out.println("Checking: " + currentTran);
                 if(isSOLT(currentTran) && !currentFrom.isVisited()){
-                    if(itr.hasNext()){
-                        SpTransition nextTran = currentTo.getOutTransitions().iterator().next();
-                        if(currentTo.isAccepting())
-                            currentFrom.setAccepting();
-                        else
-                            currentFrom.clearAccepting();
-
-                        currentFrom.getOutTransitions().remove(currentTran);
-                        currentFrom.getOutTransitions().add(nextTran);
-                        currentFrom.setName(currentFrom + EFAVariables.EFA_LOCATION_DIVIDER + currentTo);
-                        nextTran.setFrom(currentFrom);
-                        map.add(new String[]{efa.getName(), efa.getName(), Integer.toString(currentTo.getValue()), Integer.toString(currentFrom.getValue())});
-                        efa.removeTransition(currentTran);
-                        System.out.println("Redirecting: " + nextTran);
-                        efa.removeLocation(currentTo.getName());
-                        System.out.println("Removing: " + currentTo.getName());
-                        break;
-                    } else {
-                        if(currentTo.isAccepting())
-                            currentFrom.setAccepting();
-                        else
-                            currentFrom.clearAccepting();
-
-                        currentFrom.getOutTransitions().remove(currentTran);
-                        currentFrom.setName(currentFrom + EFAVariables.EFA_LOCATION_DIVIDER + currentTo);
-                        map.add(new String[]{efa.getName(), efa.getName(), Integer.toString(currentTo.getValue()), Integer.toString(currentFrom.getValue())});                    
-                        efa.removeTransition(currentTran);
-                        efa.removeLocation(currentTo.getName());
-                        System.out.println("Removing: " + currentTo.getName());
+                    if(currentFrom.isInitialLocation()){
+                        currentTo.setInitialLocation();
+                        efa.setInitialLocation(currentTo.getName());
                     }
+                    currentTo.getInTransitions().remove(currentTran);
+                    for(SpTransition tran : currentFrom.getInTransitions()){
+                        tran.setTo(currentTo);
+                        currentTo.addInTransition(tran);
+                    }
+                    currentTo.setName(currentFrom + EFAVariables.EFA_LOCATION_DIVIDER + currentTo);
+                    map.add(new String[]{efa.getName(), efa.getName(), Integer.toString(currentTo.getValue()), Integer.toString(currentFrom.getValue())});
+                    currentTo.setValue(currentFrom.getValue());
+                    itr.remove();
+                    efa.removeLocation(currentFrom.getName());
+                    break;
                 }
                 
                 if(!itr.hasNext())
                     finish = true;
             }
-            
         }
         updateGlobalGuards(map);
         

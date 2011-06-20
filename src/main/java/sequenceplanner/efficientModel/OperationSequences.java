@@ -20,6 +20,7 @@ import sequenceplanner.efaconverter2.SpEFA.SpEFA;
 import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpLocation;
 import sequenceplanner.efaconverter2.SpEFA.SpTransition;
+import sequenceplanner.efaconverter2.condition.*;
 import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.efaconverter2.reduction.RelationGraph;
 import sequenceplanner.model.Model;
@@ -51,10 +52,9 @@ public class OperationSequences {
     }
 
     public void run(){
-        model.getOperationRoot().setNodeData(new OperationData("Project", 6));
         System.out.println("RUN op size: " + model.getAllOperations().size() + " --- " + model.getOperationRoot().getChildCount());
-        
-        Reduction reduce = new Reduction(model);
+        DefaultModelParser parser = new DefaultModelParser(model);
+        Reduction reduce = new Reduction(parser.getSpEFAutomata());
         SpEFAutomata reducedModel = reduce.getReducedModel();
         
         if(reducedModel.getAutomatons().isEmpty()) return;

@@ -35,7 +35,7 @@ public class EFAVariables {
     public static String EFA_AND = "&";
     public static String EFA_OR = "|";
     public static String EFA_ACTION_DIVIDER = ";";
-    public static String EFA_LOCATION_DIVIDER = ".";
+    public static String EFA_LOCATION_DIVIDER = "";
     public static String EFA_LOCATION_PREFIX = "Loc";
     public static String EFA_BOOK = "+=1;";
     public static String EFA_UNBOOK = "-=1;";

@@ -41,12 +41,12 @@ public class DefaultModelParser implements IModelParser{
         this.operations = new HashMap<Integer, TreeNode>();
         this.variables = new HashMap<Integer, TreeNode>();
         
+        initPSequenceCondition(model.getOperationRoot());
+        
         for(TreeNode n : model.getAllOperations()){
             initPSequenceCondition(n);
             operations.put(n.getNodeData().getId(), n);
         }
-        
-        initPSequenceCondition(model.getOperationRoot());
         
         for(TreeNode n : model.getAllVariables())
             variables.put(n.getNodeData().getId(), n);
@@ -55,45 +55,62 @@ public class DefaultModelParser implements IModelParser{
     public void initPSequenceCondition(TreeNode operation){
         
         OperationData od = null;
-        if(operation.getNodeData() == null){
-            od = new OperationData("Op"+Integer.toString(operation.getId()), operation.getId());
+        if(operation.getId() == model.getOperationRoot().getId()){
+            od = new OperationData("Project", operation.getId());
+            operation.setNodeData(od);
         } else {
             od = (OperationData) operation.getNodeData();
         }
         
-      LinkedList<Integer> listOfChildren = new LinkedList<Integer>();
+      LinkedList<TreeNode> listOfChildren = new LinkedList<TreeNode>();
       if (operation.getChildCount() > 0) {
          for (int i = 0; i < operation.getChildCount(); i++) {
             TreeNode subOperation = (TreeNode) operation.getChildAt(i);
-            OperationData subOpData = (OperationData) subOperation.getNodeData();
-            listOfChildren.add(subOpData.getId());
+            listOfChildren.add(subOperation);
          }
       }
 
-      for (int i = 0; i < listOfChildren.size(); i++) {
-         TreeNode subOp = (TreeNode) model.getOperation(listOfChildren.get(i));
-         boolean write = true;
-         for (int j = 0; j < listOfChildren.size(); j++) {
-            TreeNode otherOp = (TreeNode) model.getOperation(listOfChildren.get(j));
-
-            OperationData data = (OperationData) otherOp.getNodeData();
-
-            LinkedList<LinkedList<SeqCond>> seqcon = data.getSequenceCondition();
-
-            for (int k = 0; k < seqcon.size(); k++) {
-               for (int l = 0; l < seqcon.get(k).size(); l++) {
-                  SeqCond s = seqcon.get(k).get(l);
-                  if (s.id == subOp.getId() && s.state == 2) {
-                     write = false;
+      for(TreeNode op : listOfChildren){
+          boolean write = true;
+          OperationData opData = (OperationData)op.getNodeData();
+          for(TreeNode po : listOfChildren){
+              if(po.getNodeData() != null){
+                  OperationData poData = (OperationData)po.getNodeData();
+                  for(LinkedList<SeqCond> cons : poData.getSequenceCondition()){
+                      for(SeqCond con : cons){
+                          if(con.id == opData.getId() && Integer.toString(con.state).equals(EFAVariables.VARIABLE_FINAL_STATE))
+                              write = false;
+                      }
                   }
-               }
-            }
-         }
-         
-         // Alternative should precedes an operation
+              }
+          }
          if (write)
-             od.addPAnd(subOp.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
+             od.addPAnd(opData.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
       }
+//      for (int i = 0; i < listOfChildren.size(); i++) {
+//         TreeNode subOp = (TreeNode) model.getOperation(listOfChildren.get(i));
+//         boolean write = true;
+//         for (int j = 0; j < listOfChildren.size(); j++) {
+//            TreeNode otherOp = (TreeNode) model.getOperation(listOfChildren.get(j));
+//
+//            OperationData data = (OperationData) otherOp.getNodeData();
+//
+//            LinkedList<LinkedList<SeqCond>> seqcon = data.getSequenceCondition();
+//
+//            for (int k = 0; k < seqcon.size(); k++) {
+//               for (int l = 0; l < seqcon.get(k).size(); l++) {
+//                  SeqCond s = seqcon.get(k).get(l);
+//                  if (s.id == subOp.getId() && s.state == 2) {
+//                     write = false;
+//                  }
+//               }
+//            }
+//         }
+//         
+//         // Alternative should precedes an operation
+//         if (write)
+//             od.addPAnd(subOp.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
+//      }
     }
         
 

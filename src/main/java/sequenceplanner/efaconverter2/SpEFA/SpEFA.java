@@ -180,7 +180,7 @@ public class SpEFA {
     
     class SequenceTransitionIterator implements Iterator<SpTransition>{
         SpTransition next = null;
-
+        SpTransition current = null;
         public SequenceTransitionIterator(SpLocation initialLocation){
             if (initialLocation.getOutTransitions().size() > 1)
                 throw new UnsupportedOperationException("Multiple outgoing transition");
@@ -197,7 +197,7 @@ public class SpEFA {
         @Override
         public SpTransition next() {
         if (hasNext()){
-                SpTransition tran = next;
+                current = next;
 
                 if (next.getTo().getOutTransitions().size() > 1)
                     throw new UnsupportedOperationException("Multiple outgoing transition");
@@ -207,14 +207,14 @@ public class SpEFA {
                 else
                     next = next.getTo().getOutTransitions().iterator().next();
                 
-                return tran;
+                return current;
             }
             throw new NoSuchElementException("No more SpTransition");
         }
 
         @Override
         public void remove() {
+            transitions.remove(current);
         }
-
     }    
 }

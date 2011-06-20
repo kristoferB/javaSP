@@ -35,17 +35,12 @@ import sequenceplanner.model.data.OperationData.SeqCond;
  */
 public class ModelParserTest {
     
-    static SP mSP;
-    static Model model;
     
     public ModelParserTest() {
     }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        mSP = new SP();
-        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/PPU_NEW_v2_LongSeq.sopx");
-        model = mSP.getModel();        
     }
 
     @AfterClass
@@ -65,6 +60,10 @@ public class ModelParserTest {
      */
     @Test
     public void testGetSpEFAutomata() {
+        SP mSP = new SP();
+        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/PPU_NEW_v2_LongSeq.sopx");
+        Model model = mSP.getModel();        
+        
         DefaultModelParser parser = new DefaultModelParser(model);
         SpEFAutomata auto = parser.getSpEFAutomata();
         SpEFA e17 = auto.getSpEFA("17");
@@ -114,29 +113,31 @@ public class ModelParserTest {
                                                 new ConditionStatment(e8.getName(), 
                                                 ConditionStatment.Operator.NotEqual, 
                                                 Integer.toString(1)));
-
         
-        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
                                                 new ConditionStatment(e17.getName(), 
                                                 ConditionStatment.Operator.NotEqual, 
                                                 Integer.toString(2)));
-        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
                                                 new ConditionStatment(e14.getName(), 
                                                 ConditionStatment.Operator.NotEqual, 
                                                 Integer.toString(2)));
-        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
                                                 new ConditionStatment(e11.getName(), 
                                                 ConditionStatment.Operator.NotEqual, 
                                                 Integer.toString(2)));
-        t22.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
+        t21.getConditionGuard().appendElement(ConditionOperator.Type.AND, 
                                                 new ConditionStatment(e8.getName(), 
                                                 ConditionStatment.Operator.NotEqual, 
                                                 Integer.toString(2)));
-
         
+
+        DefaultEFAConverter converter2 = new DefaultEFAConverter(auto);
+        DefaultExport export2 = new DefaultExport(converter2.getModule());
+        export2.save();
+
         Reduction reduce = new Reduction(auto);
-        SpEFAutomata reducedModel = reduce.getReducedModel();
-        DefaultEFAConverter converter = new DefaultEFAConverter(reducedModel);
+        DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
         DefaultExport export = new DefaultExport(converter.getModule());
         export.save();
         assertEquals(true,true);
