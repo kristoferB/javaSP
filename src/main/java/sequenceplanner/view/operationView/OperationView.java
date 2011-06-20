@@ -330,6 +330,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                     OperationData d = (OperationData) node.getNodeData();
                     HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
                     d.setConditions(map.get(d));
+                    System.out.println("save " + d.getName());
                 }
             }
             
@@ -384,7 +385,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     }
 
     protected TreeNode[] convertToTreeData(Cell cell) {
-        System.out.println("Is free view: " + isFreeView());
         TreeNode node = convertCelltoTreeNode(cell);
         // is this view free or do just show the inside of a SOP
         if (!isFreeView()) {
