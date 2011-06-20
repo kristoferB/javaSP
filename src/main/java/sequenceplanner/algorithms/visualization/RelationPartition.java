@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
@@ -99,11 +100,11 @@ public class RelationPartition {
         ISopNode relationTypeNode = null;
         final String relationAsString = RelateTwoOperations.relationIntegerToString(mRelationInt, "", "");
         if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE,"",""))) {
-            relationTypeNode = new SopNodeAlternative();
+            relationTypeNode = new SopNodeAlternative(Model.newId());
         } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER,"",""))) {
-            relationTypeNode = new SopNodeArbitrary();
+            relationTypeNode = new SopNodeArbitrary(Model.newId());
         } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL,"",""))) {
-            relationTypeNode = new SopNodeParallel();
+            relationTypeNode = new SopNodeParallel(Model.newId());
         }
         root.addNodeToSequenceSet(relationTypeNode);
         //Move nodes in master set from root, to relation node
