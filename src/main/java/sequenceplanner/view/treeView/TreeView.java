@@ -253,8 +253,6 @@ public class TreeView extends AbstractView {
 
         @Override
         public void dragDropEnd(DragSourceDropEvent dsd) {
-            System.out.println("End; TargetAction: " + dsd.getDropAction());
-
             if (dsd.getDropAction() == TransferHandler.MOVE) {
                 node.getNodeData().setCopy(false);
             } else if (dsd.getDropAction() == TransferHandler.COPY) {

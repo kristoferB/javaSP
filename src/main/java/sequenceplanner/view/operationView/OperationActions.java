@@ -113,12 +113,12 @@ public class OperationActions {
 
             Cell insertedCell = null;
 
-            Object c = getView(e).getGraphComponent().getCellAt(clickPoint.getPoint().x, clickPoint.getPoint().y);
+            Cell cell = (Cell)getView(e).getGraphComponent().getCellAt(clickPoint.getPoint().x, clickPoint.getPoint().y);
 
 
             //TODO :UGLY fix to always insert after edge
-            if (c == null || ((Cell) c).isEdge()) {
-                c = (Cell)graph.getSelectionCell();
+            if (cell == null || ((Cell) cell).isEdge()) {
+                cell = (Cell)graph.getSelectionCell();
             }
 
             graph.getModel().beginUpdate();
@@ -129,11 +129,7 @@ public class OperationActions {
 
                     graph.updateCellSize(insertedCell);
                 }
-
-
-                if (c instanceof Cell) {
-
-                    Cell cell = (Cell) c;
+                if (cell instanceof Cell) {
 
                     if (cell.isEdge()) {
                         logger.debug("insert operation on edge is not implemented");
@@ -143,8 +139,6 @@ public class OperationActions {
 
                         mxPoint p = new mxPoint(clickPoint.getX() - state.getX(),
                                 clickPoint.getY() - state.getY());
-
-
 
                         if (cell.isOperation()) {
                             getView(e).addSOPNode(cell, insertedCell, this.before);

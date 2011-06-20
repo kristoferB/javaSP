@@ -51,38 +51,35 @@ import sequenceplanner.condition.ConditionExpression;
  */
 public class SPGraph extends mxGraph {
 
-   /**
-    * Global graph options
-    */
-   protected boolean OPTION_SHOW_STARTCONDITION = true;
-   protected boolean OPTION_SHOW_STOPCONDITION = true;
-   private final static int TOP = 0;
-   private final static int BOTTOM = 1;
-   private final static int GRP_TOP = 3;
-   private final static int GRP_BOT = 4;
-   private final static int GRP_INSIDE = 5;
-   private final static int GRP_MARK = 10;
-   
-   /**
-    * fontGraphics used to calculate fontsizes for autosizeing.
-    */
-   protected transient static Graphics fontGraphics;
-   // Logging for this class
-   private static Logger logger = Logger.getLogger(SPGraph.class);
+    /**
+     * Global graph options
+     */
+    protected boolean OPTION_SHOW_STARTCONDITION = true;
+    protected boolean OPTION_SHOW_STOPCONDITION = true;
+    private final static int TOP = 0;
+    private final static int BOTTOM = 1;
+    private final static int GRP_TOP = 3;
+    private final static int GRP_BOT = 4;
+    private final static int GRP_INSIDE = 5;
+    private final static int GRP_MARK = 10;
+    /**
+     * fontGraphics used to calculate fontsizes for autosizeing.
+     */
+    protected transient static Graphics fontGraphics;
+    // Logging for this class
+    private static Logger logger = Logger.getLogger(SPGraph.class);
 
-
-   static {
-      try {
-         fontGraphics = new BufferedImage(30, 20, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
-      } catch (Exception e) {
-      }
-   }
-   //Global options for drawing of operations
-   public static final Insets opInset = new Insets(7, 10, 10, 7);
-   // How many signs should be displayed for stop and start condition
-   public static final int cutOff = 100;
-
-   private boolean showPath = true;
+    static {
+        try {
+            fontGraphics = new BufferedImage(30, 20, BufferedImage.TYPE_BYTE_GRAY).getGraphics();
+        } catch (Exception e) {
+        }
+    }
+    //Global options for drawing of operations
+    public static final Insets opInset = new Insets(7, 10, 10, 7);
+    // How many signs should be displayed for stop and start condition
+    public static final int cutOff = 100;
+    private boolean showPath = true;
 
     public SPGraph(mxIGraphModel model) {
         super(model);
@@ -511,7 +508,7 @@ public class SPGraph extends mxGraph {
             model.beginUpdate();
             try {
                 OperationData d = (OperationData) value;
-                                
+
                 getModel().setValue(cell, value);
                 d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
                         d.getSequenceCondition(), d.getResourceBooking()));
@@ -716,11 +713,11 @@ public class SPGraph extends mxGraph {
         }
     }
 
-   public LinkedList<LinkedList<Cell>> getSortedSequences(Object[] cells) {
-      ArrayList list = new ArrayList();
-      for (int i = 0; i < cells.length; i++) {
-         list.add(cells[i]);
-      }
+    public LinkedList<LinkedList<Cell>> getSortedSequences(Object[] cells) {
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < cells.length; i++) {
+            list.add(cells[i]);
+        }
 
         return getSortedSequences(list, false);
     }
@@ -734,9 +731,9 @@ public class SPGraph extends mxGraph {
     public LinkedList<LinkedList<Cell>> getSortedSequences(ArrayList<Object> cells,
             boolean straightSequence) {
 
-      if (cells.isEmpty()) {
-         return new LinkedList<LinkedList<Cell>>();
-      }
+        if (cells.isEmpty()) {
+            return new LinkedList<LinkedList<Cell>>();
+        }
 
         LinkedList<LinkedList<Cell>> output = new LinkedList<LinkedList<Cell>>();
 
@@ -894,13 +891,13 @@ public class SPGraph extends mxGraph {
         return output.toArray();
     }
 
-   public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
-      getModel().beginUpdate();
-      try {
-         getModel().beginUpdate();
-         try {
-            Object arch = null;
-            arch = getEdge(oldCell, oldCell.getParent(), before);
+    public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
+        getModel().beginUpdate();
+        try {
+            getModel().beginUpdate();
+            try {
+                Object arch = null;
+                arch = getEdge(oldCell, oldCell.getParent(), before);
 
                 mxGeometry oldGeo = oldCell.getGeometry();
 
@@ -909,13 +906,13 @@ public class SPGraph extends mxGraph {
 
                 p.setX(oldGeo.getCenterX() - newCell.getGeometry().getWidth() / 2);
 
-            Object[] cells = new Object[2];
-            
-            if (before) {
-               p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
-            } else {
-               p.setY(oldGeo.getY() + oldGeo.getHeight() + Constants.AFTER_CELL);
-            }
+                Object[] cells = new Object[2];
+
+                if (before) {
+                    p.setY(oldGeo.getY() - Constants.BEFORE_CELL - newCell.getGeometry().getHeight());
+                } else {
+                    p.setY(oldGeo.getY() + oldGeo.getHeight() + Constants.AFTER_CELL);
+                }
 
                 if (p.getY() < 0) {
                     p.setY(0);
@@ -928,18 +925,24 @@ public class SPGraph extends mxGraph {
 
                 newCell.getGeometry().setX(p.getX());
                 newCell.getGeometry().setY(p.getY());
-                
+
                 Cell edge;
-                if(newCell.getType() == 0){
-                    edge = CellFactory.getInstance().getEdge(true, true);
-                }
-                else{
-                    edge = CellFactory.getInstance().getEdge(true, false);
+                if (newCell.isOperation()) {
+                    if (before && !oldCell.isOperation() && !oldCell.isSOP()) {
+                        edge = CellFactory.getInstance().getEdge(true, false);
+                    } else {
+                        edge = CellFactory.getInstance().getEdge(true, true);
+                    }
+                } else {
+                    if (before) {
+                        edge = CellFactory.getInstance().getEdge(true, true);
+                    } else {
+                        edge = CellFactory.getInstance().getEdge(true, false);
+                    }
                 }
                 getModel().add(oldCell.getParent(), edge, 0);
-
-                getModel().setTerminal(edge, oldCell, !before);
                 getModel().setTerminal(edge, newCell, before);
+                getModel().setTerminal(edge, oldCell, !before);
 
                 if (arch != null) {
                     getModel().setTerminal(arch, newCell, !before);
@@ -959,9 +962,9 @@ public class SPGraph extends mxGraph {
 
     }
 
-   public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
-      Cell edge1 = CellFactory.getInstance().getEdge(false,false);
-      Cell edge2 = CellFactory.getInstance().getEdge(false,false);
+    public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
+        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
+        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
 
 //      Object[] cells = new Object[3];
 
@@ -1523,7 +1526,7 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertSequence(LinkedList<Cell> seq, Cell target, int placement, boolean parType) {
-
+        System.out.println("insertSequence");
         seq = disconnectSequence(seq);
 
         Object targetParent = null;
@@ -1543,8 +1546,8 @@ public class SPGraph extends mxGraph {
 
 
 
-      } else if (placement == BOTTOM || placement == GRP_BOT) {
-         targetParent = getModel().getParent(target);
+        } else if (placement == BOTTOM || placement == GRP_BOT) {
+            targetParent = getModel().getParent(target);
 
             Cell outEdge = getEdge(target, targetParent, false);
 
@@ -1800,12 +1803,12 @@ public class SPGraph extends mxGraph {
         /*
         if (n.getData()!= null) System.out.println("SopNode name:" + n.getData().getName());
         System.out.println(n.toString());
-
-
+        
+        
         System.out.println("Seq Predecessor -----" );
         System.out.println(n.getPred().toString());
         if (n.getPred().getData()!= null) System.out.println("Pred node name:" + n.getPred().getData().getName());
-
+        
          */
 
 
@@ -1867,7 +1870,9 @@ public class SPGraph extends mxGraph {
             }
 
 
-       } else result = null;
+        } else {
+            result = null;
+        }
 
 
         if (result != null) {
