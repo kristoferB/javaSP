@@ -34,7 +34,7 @@ public class ConditionsFromSopNode {
         }
     };
     private final ISopNodeToolbox mSopNodeToolbox = new SopNodeToolboxSetOfOperations();
-    private final Map<OperationData, Map<ConditionType, Condition>> mOperationConditionMap = new HashMap<OperationData, Map<ConditionType, Condition>>(); //{pre,post}
+    private final HashMap<OperationData, Map<ConditionType, Condition>> mOperationConditionMap = new HashMap<OperationData, Map<ConditionType, Condition>>(); //{pre,post}
 
     public ConditionsFromSopNode(final ISopNode iRoot) {
         run(iRoot);
@@ -48,7 +48,7 @@ public class ConditionsFromSopNode {
      * Internal value: {@link Condition}
      * @return
      */
-    public Map<OperationData, Map<ConditionType, Condition>> getmOperationConditionMap() {
+    public HashMap<OperationData, Map<ConditionType, Condition>> getmOperationConditionMap() {
         return mOperationConditionMap;
     }
 

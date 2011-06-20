@@ -15,9 +15,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.DataToConditionHelper;
 
 import sequenceplanner.efaconverter.EFAVariables;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 
 /**
  *
@@ -41,14 +43,11 @@ public class OperationData extends Data {
     public static final int ACTION_ADD = 0;
     public static final int ACTION_DEC = 1;
     public static final int ACTION_EQ = 2;
-    //Maps the pre and post conditions according to String == ViewName, Condition
-    private Map<String, Condition> preConditions;
-    private Map<String, Condition> postConditions;
-    
+    //Maps the pre and post conditions according to ConditionType, Condition
+    //String should be name of OperationView
     //Holds the sequencecondition for this operation
     LinkedList<LinkedList<SeqCond>> sequenceCondition;
     LinkedList<Integer[]> resourceBooking;
-    
     //PostCondtions
     LinkedList<LinkedList<SeqCond>> pSequenceCondition;
     LinkedList<Integer[]> pResourceBooking;
@@ -58,13 +57,12 @@ public class OperationData extends Data {
     LinkedList<Action> actions;
     //Properties (Key = id, value = selected for operation)
     HashMap<Integer, Boolean> propertySettings;
+    private Map<ConditionType, Condition> conditions;
 
     public OperationData(String name, int id) {
         super(name, id);
         preference = Collections.synchronizedMap(new HashMap<String, String>());
-        preConditions = new HashMap<String, Condition>();
-        preConditions = new HashMap<String, Condition>();
-
+        conditions = new HashMap<ConditionType, Condition>(); 
         //Resource booking
         sequenceCondition = new LinkedList<LinkedList<SeqCond>>();
         resourceBooking = new LinkedList<Integer[]>();
@@ -83,6 +81,10 @@ public class OperationData extends Data {
         propertySettings = new HashMap<Integer, Boolean>();
     }
 
+    public void setConditions(Map<ConditionType, Condition > conditionMap){
+        this.conditions = conditionMap;
+        
+    }
     private void setValue(String key, String value) {
         if (key != null && value != null) {
             preference.put(key, value);
@@ -187,6 +189,10 @@ public class OperationData extends Data {
 
     // -----------------------
     // TO HANDLE SEQUENCECONDITIONS
+    /**
+     * Set sequence preconditions
+     * @param cond 
+     */
     public void setSequenceCondition(LinkedList<LinkedList<SeqCond>> cond) {
         this.sequenceCondition = cond;
     }
@@ -219,12 +225,21 @@ public class OperationData extends Data {
         this.pResourceBooking = pResourceBooking;
     }
 
+    /**
+     * Get sequence postconditions
+     * @return Linkedlist likedlists containing sequencepostconditions
+     */
     public LinkedList<LinkedList<SeqCond>> getPSequenceCondition() {
         return pSequenceCondition;
     }
 
+    /**
+     * Set sequence postconditions
+     * @param cond 
+     */
     public void setPSequenceCondition(LinkedList<LinkedList<SeqCond>> pSequenceCondition) {
         this.pSequenceCondition = pSequenceCondition;
+        DataToConditionHelper.extractPost(this);
     }
 
     //TO HANDLE PROPERTY SETTINGS
@@ -925,29 +940,5 @@ public class OperationData extends Data {
         public Object clone() {
             return new Action(id, state, value);
         }
-    }
-    /**
-     * Retrurns the new postconditions
-     */
-    public Map<String, Condition> getPostConditions() {
-        return postConditions;
-    }
-    /**
-     * Sets the new postconditions
-     */
-    public void addPostConditions(Condition condition) {
-        preConditions.put(this.getName(), condition);
-    }
-    /**
-     * Retrurns the new preconditions
-     */
-    public Map<String, Condition> getPreConditions() {
-        return preConditions;
-    }
-    /**
-     * Sets the new postconditions for this operationview
-     */
-    public void addPreCondition(Condition condition) {
-        preConditions.put(this.getName(), condition);
     }
 }

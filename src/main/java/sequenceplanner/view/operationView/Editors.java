@@ -57,7 +57,11 @@ public class Editors {
          this.view = view;
          this.name = name;
       }
-
+      
+      /**
+       * Sets value of labels
+       * @param node 
+       */
       public void setValue(Cell node) {
          this.node = node;
       }
@@ -75,6 +79,9 @@ public class Editors {
          return this.name;
       }
 
+      /**
+       * Saves a node with the values inserted into editor.
+       */
       abstract protected void saveNode();
    }
 
@@ -226,7 +233,7 @@ public class Editors {
          if (!labelName.equals(d.getName())) {
 //            labelName = view.getCellName(labelName, node);
          }
-
+         System.out.println("add cat");
          d.setName(labelName);
          d.setPreoperation(check[0].isSelected());
          d.setPostoperation(check[1].isSelected());
@@ -748,7 +755,7 @@ public class Editors {
             updateAnd(node);
             label = label.isEmpty() ? "" : label + " " + Constants.AND;
             label += " ( " + node.representation + " ) ";
-     //       System.out.println(label);
+            System.out.println(label);
             model.set(i, node);
 
          }
@@ -848,7 +855,6 @@ public class Editors {
          addOperation.setText("");
          addResource.setText("");
 
-
       }
 
       //If the main model is updated, reset editor.
@@ -861,13 +867,11 @@ public class Editors {
          if (preCondition) {
             d.setSequenceCondition(restoreAnd((DefaultListModel) getAnd().getModel()));
             d.setResourceBooking(restoreResource((DefaultListModel) resources.getModel()));
+            
          } else {
             d.setPSequenceCondition(restoreAnd((DefaultListModel) getAnd().getModel()));
             d.setPResourceBooking(restoreResource((DefaultListModel) resources.getModel()));
          }
-
-
-
       }
 
       protected LinkedList<Integer[]> restoreResource(DefaultListModel model) {
@@ -877,9 +881,7 @@ public class Editors {
             ResNode resNode = (ResNode) model.elementAt(i);
             list.add(resNode.model);
          }
-
          return list;
-
       }
 
       protected LinkedList<LinkedList<SeqCond>> restoreAnd(DefaultListModel model) {
