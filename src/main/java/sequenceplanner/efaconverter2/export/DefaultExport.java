@@ -1,8 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package sequenceplanner.efaconverter2;
+
+package sequenceplanner.efaconverter2.export;
 
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -15,14 +12,32 @@ import org.supremica.external.avocades.common.Module;
 
 /**
  *
- * @author Mohammad Reza
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class DefaultExport {
     
     private Module module;
+    private String path;
 
+    public DefaultExport(Module iModule, String path){
+        this.module = iModule;
+        this.path = path;
+    }
+    
     public DefaultExport(Module iModule){
         this.module = iModule;
+        this.path = "";
+    }
+    
+    
+    public void setPath(String path){
+        this.path = path;
+    }
+    
+    public String getPath(){
+        return path;
     }
     
     public void save(){
@@ -31,7 +46,7 @@ public class DefaultExport {
             moduleSubject.setName(module.getModule().getName());
 
             String filepath = "";
-            JFileChooser fc = new JFileChooser();
+            JFileChooser fc = new JFileChooser(path);
             FileNameExtensionFilter filter = new FileNameExtensionFilter("wmod", "wmod");
             fc.setFileFilter(filter);
             int fileResult = fc.showSaveDialog(null);

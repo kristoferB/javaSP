@@ -1,3 +1,4 @@
+
 package sequenceplanner.efaconverter2.SpEFA;
 
 import java.util.HashSet;
@@ -6,7 +7,10 @@ import java.util.Set;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class SpLocation {
 
     private String locationName;

@@ -1,3 +1,4 @@
+
 package sequenceplanner.efaconverter2.SpEFA;
 
 import java.util.Collection;
@@ -7,7 +8,10 @@ import java.util.Map;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class SpEFAutomata {
 
     private Map<String, SpEFA> automatons;

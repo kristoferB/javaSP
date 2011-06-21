@@ -21,9 +21,12 @@ import sequenceplanner.efaconverter2.condition.Condition;
 
 /**
  * This class is a Extended Finite Automaton model. It consist of a set
- * of locations, a set of transistions 
+ * of locations, a set of transitions 
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class SpEFA {
 
     String efaName;

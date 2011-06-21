@@ -360,7 +360,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization,
-            opSequences, reduceEFA;
+            normalEFA, reduceEFA;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -404,8 +404,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         //Efficient Model menu
         em = new JMenu("Efficient Model");
-        em.add(opSequences = new JMenuItem("Identify operation sequences"));
-        em.add(reduceEFA = new JMenuItem("Reduced-order EFA"));
+        em.add(normalEFA = new JMenuItem("Normal EFA"));
+        em.add(reduceEFA = new JMenuItem("Reduced EFA"));
         this.add(em);
         //Visualization
         visualization = new JMenu("Visualization");
@@ -507,8 +507,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         efaForMP.addActionListener(l);
     }
 
-    public void addSeqForOp(ActionListener l) {
-        opSequences.addActionListener(l);
+    public void addNormalEFA(ActionListener l) {
+        normalEFA.addActionListener(l);
     }
 
     public void addReducedEFA(ActionListener l) {

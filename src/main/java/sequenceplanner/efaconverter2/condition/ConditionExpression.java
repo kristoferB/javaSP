@@ -1,3 +1,4 @@
+
 package sequenceplanner.efaconverter2.condition;
 
 import java.util.ArrayList;
@@ -9,7 +10,10 @@ import java.util.NoSuchElementException;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class ConditionExpression extends ConditionElement implements Iterable<ConditionElement> {
 
     private ConditionElement expressionRoot = null;

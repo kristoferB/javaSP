@@ -4,7 +4,10 @@ package sequenceplanner.efaconverter2.SpEFA;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class SpVariable {
 
     private String name;

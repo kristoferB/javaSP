@@ -1,35 +1,45 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package sequenceplanner.efaconverter2.reduction;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import sequenceplanner.efaconverter2.DefaultModelParser;
-import sequenceplanner.efaconverter2.EFAVariables;
+import sequenceplanner.efaconverter2.EFA.EFAVariables;
 import sequenceplanner.efaconverter2.SpEFA.*;
 import sequenceplanner.efaconverter2.condition.*;
 import sequenceplanner.model.Model;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class Reduction {
     
     private SpEFAutomata automata;
     
+    /**
+     * Constructor for the Reduction class. The method is based on the Reduced-Order Synthesis of Operation Sequences paper (Shoaei et al., ETFA 2011)
+     * @param model SequencePlanner model of the system
+     */
     public Reduction(Model model){
         this.automata = null;
         DefaultModelParser parser = new DefaultModelParser(model);
         automata = parser.getSpEFAutomata();
     }
     
+    /**
+     * Constructor for the Reduction class. The method is based on the Reduced-Order Synthesis of Operation Sequences paper (Shoaei et al., ETFA 2011)
+     * @param automata SpEFAutomata of the system
+     */
     public Reduction(SpEFAutomata automata){
         this.automata = automata;
     }
     
+    /**
+     * Return the reduced model in SpEFAutomata
+     * @return SpEFAutomta of the reduced model
+     */
     public SpEFAutomata getReducedModel(){
         
         if(automata == null || automata.getAutomatons().isEmpty()) return automata;
@@ -47,10 +57,9 @@ public class Reduction {
             SpEFA seq = null;
             for(String operation : path){
                 SpEFA current = automata.getSpEFA(operation);
-                if(current == null){
-                    System.out.println("Null return: <"+operation+">");
-                    continue;
-                }
+                if(current == null)
+                    throw new NullPointerException(operation + " > No such operation in the graph.");
+
                 seq = appendSpEFA(seq, current);
             }
 
@@ -122,11 +131,9 @@ public class Reduction {
             } else {
                 map.add(new String[] {efa2.getName(), efa.getName(), Integer.toString(current.getFrom().getValue()), Integer.toString(++state)});
                 current.getFrom().setValue(state);
-                System.out.println("VALUE: "+current.getFrom()+" <> "+current.getFrom().getValue());
                 if(!itr.hasNext()){
                     map.add(new String[] {efa2.getName(), efa.getName(), Integer.toString(current.getTo().getValue()), Integer.toString(++state), Boolean.toString(current.getTo().isAccepting())});
                     current.getTo().setValue(state);
-                    System.out.println("VALUE: "+current.getTo()+" <> "+current.getTo().getValue());
                 }
                 efa.addTransition(current);
             }
@@ -164,17 +171,13 @@ public class Reduction {
                     if(st.getVariable().equals(oldName) && st.getValue().equals(oldValue)){
                         switch(st.getOperator()){
                             case Equal:
-                                System.out.println("FROM: "+st);
                                 st.setVariable(newName);
                                 st.setValue(newValue);
                                 if(!st.isHierarchicalStatement())
                                     st.setOperator(ConditionStatment.Operator.GreaterEq);
-                                System.out.println("TO: "+st);
                             default:
-                                System.out.println("FROM: "+st);
                                 st.setVariable(newName);
                                 st.setValue(newValue);
-                                System.out.println("TO: "+st);
                         }
                     }
                 }
@@ -185,8 +188,7 @@ public class Reduction {
     private void reduceModel() {
         checkLocations();
         for(SpEFA efa : automata.getAutomatons()){
-            //if(!efa.getName().equals(automata.getEFAProjectName()))
-                reduceEFA(efa);
+            reduceEFA(efa);
         }
     }
 
@@ -198,7 +200,6 @@ public class Reduction {
                 SpTransition currentTran = itr.next();
                 SpLocation currentTo = currentTran.getTo();
                 SpLocation currentFrom = currentTran.getFrom();
-                System.out.println("Checking: " + currentTran);
                 if(isSOLT(currentTran) && !currentFrom.isVisited()){
                     if(currentFrom.isInitialLocation()){
                         currentTo.setInitialLocation();
@@ -229,17 +230,12 @@ public class Reduction {
             for(Iterator<SpTransition> itr = efa.iterateSequenceTransitions(); itr.hasNext();){
                 SpTransition current = itr.next();
                 SpLocation l = current.getFrom();
-                System.out.println("##################");
-                System.out.println("UPDATE FROM: " + l.getValue());
                 map2.add(new String[]{efa.getName(), efa.getName(), Integer.toString(l.getValue()), Integer.toString(count)});
                 l.setValue(count++);
-                System.out.println("UPDATE TO: " + l.getValue());
                 if(!itr.hasNext()){
                     l = current.getTo();
-                    System.out.println("UPDATE FROMx: " + l.getValue());
                     map2.add(new String[]{efa.getName(), efa.getName(), Integer.toString(l.getValue()), Integer.toString(count)});
                     l.setValue(count);
-                    System.out.println("UPDATE TOx: " + l.getValue());
                 }
             }
             updateGlobalGuards(map2);
@@ -261,7 +257,6 @@ public class Reduction {
         LinkedList<ConditionStatment> statments = expression.getAllConditionStatments();
         for(ConditionStatment st : statments){
             if(isLocationVariable(st.getVariable())){
-                System.out.println("<<< " + st.getVariable()+ st.getOperator()+ st.getValue());
                 setLocationVisited(st);
             }
         }
@@ -280,7 +275,6 @@ public class Reduction {
         String value = st.getValue();
         
         SpEFA efa = automata.getSpEFA(variable);
-        System.out.println("EFA NAME: " + efa.getName());
         boolean flag = false;
         boolean finish = false;
         SpLocation current = efa.getInitialLocation();
@@ -289,7 +283,6 @@ public class Reduction {
                 case Equal:
                     if(value.equals(Integer.toString(current.getValue()))){
                         current.setVisited();
-                        System.out.println("SET VISITED: " + current.getName());
                         return;
                     }
                     break;
@@ -301,20 +294,17 @@ public class Reduction {
                     }
                     if(flag){
                         current.setVisited();
-                        System.out.println("SET VISITED: " + current.getName());
                     }
                     break;
                     
                 case GreaterEq:
                     if(value.equals(Integer.toString(current.getValue()))){
                         current.setVisited();
-                        System.out.println("SET VISITED: " + current.getName());
                         return;
                     }
                     break;
                     
                 case Less:
-                    System.out.println("LESS VISITED: " + current.getName());
                     current.setVisited();
                     if(value.equals(Integer.toString(current.getValue()))){
                         current.clearVisited();
@@ -323,7 +313,6 @@ public class Reduction {
                     break;
                     
                 case LessEq:
-                    System.out.println("LESSEq VISITED: " + current.getName());
                     current.setVisited();
                     if(Integer.toString(current.getValue()).equals(value)) return;
                     break;

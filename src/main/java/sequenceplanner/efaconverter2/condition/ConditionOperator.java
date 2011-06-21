@@ -1,11 +1,15 @@
+
 package sequenceplanner.efaconverter2.condition;
 
-import sequenceplanner.efaconverter2.EFAVariables;
+import sequenceplanner.efaconverter2.EFA.EFAVariables;
 
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class ConditionOperator {
 
     public enum Type {AND,OR};

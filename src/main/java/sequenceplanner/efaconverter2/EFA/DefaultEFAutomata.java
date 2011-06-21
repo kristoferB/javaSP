@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package sequenceplanner.efaconverter2.EFA;
 
@@ -12,18 +8,18 @@ import org.supremica.external.avocades.common.Module;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class DefaultEFAutomata implements Iterable<DefaultEFAutomaton>{
 
     private Module module;
     private HashMap<String, DefaultEFAutomaton> automatons;
-    private String name;
     
-    public DefaultEFAutomata(String iName){
-        module = new Module(iName, false);
+    public DefaultEFAutomata(String name){
+        module = new Module(name, false);
         automatons = new HashMap<String, DefaultEFAutomaton>();
-        this.name = iName;
     }
 
     public void addEvent(String iEvent){

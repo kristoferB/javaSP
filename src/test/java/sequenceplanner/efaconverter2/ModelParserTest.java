@@ -1,9 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package sequenceplanner.efaconverter2;
 
+import sequenceplanner.efaconverter2.export.DefaultExport;
+import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
+import sequenceplanner.efaconverter2.EFA.DefaultEFAConverter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,8 +31,10 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class ModelParserTest {
     
     

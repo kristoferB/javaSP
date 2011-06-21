@@ -1,9 +1,13 @@
+
 package sequenceplanner.efaconverter2.condition;
 
 /**
  * This class defines the elements that are used in a condition.
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public abstract class ConditionElement implements Cloneable{
 
     private ConditionOperator nextOperator;

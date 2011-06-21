@@ -1,13 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package sequenceplanner.efaconverter2;
+
+package sequenceplanner.efaconverter2.EFA;
 
 /**
  *
  * @author EXJOBB SOCvision
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class EFAVariables {
 
     // Options for constructor to the algorithms

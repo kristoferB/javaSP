@@ -1,16 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package sequenceplanner.efaconverter2.reduction;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import org.jgrapht.alg.EdmondsKarpMaximumFlow;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import sequenceplanner.efaconverter2.EFAVariables;
+import sequenceplanner.efaconverter2.EFA.EFAVariables;
 import sequenceplanner.efaconverter2.SpEFA.SpEFA;
 import sequenceplanner.efaconverter2.SpEFA.SpEFAutomata;
 import sequenceplanner.efaconverter2.SpEFA.SpVariable;
@@ -23,8 +19,10 @@ import sequenceplanner.model.data.OperationData;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class RelationGraph {
     
     private LinkedList<TreeNode> operations;
@@ -34,8 +32,11 @@ public class RelationGraph {
     private static int VERTEX_SOURCE = 0;
     private static int VERTEX_SINK = 1;
     private static double EDGE_WEIGHT = 1.0;
-    private static String PROJECT_NAME = "6";    
     
+    /**
+     * Constructor for RelationGraph class based on the SequencePlanner self-contained operations
+     * @param operations The graph will be created based on the given operations
+     */
     public RelationGraph(LinkedList<TreeNode> operations){
         this.operations = operations;
         this.graph = new DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -45,6 +46,10 @@ public class RelationGraph {
         automata = null;
     }
     
+    /**
+     * Constructor for RelationGraph class based on the SpEEFAutomata 
+     * @param automata SpEFAutomata. The graph will be generated based on the Condition set of the start transition. 
+     */
     public RelationGraph(SpEFAutomata automata){
         this.automata = automata;
         this.graph = new DefaultDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
@@ -54,6 +59,10 @@ public class RelationGraph {
         operations = null;
     }
     
+    /**
+     * Return the list of independent paths in the graph
+     * @return List of all the independent paths in the graph
+     */
     public LinkedList<LinkedList<String>> getSequentialPaths(){
         LinkedList<LinkedList<Integer>> allPaths = new LinkedList<LinkedList<Integer>>();
         if(operations != null)
@@ -125,10 +134,6 @@ public class RelationGraph {
     }
 
     private LinkedList<LinkedList<Integer>> getPaths(Map<DefaultWeightedEdge, Double> result) {
-        System.out.println("##########");
-        for(DefaultWeightedEdge x : graph.edgeSet())
-            System.out.println("Edge: <"+ map.get(abs(graph.getEdgeSource(x))) +","+map.get(abs(graph.getEdgeTarget(x))) +","+graph.getEdgeWeight(x)+"> --- Weight: "+result.get(x));
-        
         LinkedList<LinkedList<Integer>> paths = new LinkedList<LinkedList<Integer>>();
         for(DefaultWeightedEdge e : graph.edgesOf(VERTEX_SOURCE)){
             if(result.get(e) == EDGE_WEIGHT){
@@ -171,7 +176,6 @@ public class RelationGraph {
 //                continue;
             
             map.add(efaName);
-            System.out.println("Vertex Added: " + efa.getName());
             Integer v = map.indexOf(efaName);
             graph.addVertex(v);
             graph.addVertex(-v);
@@ -197,24 +201,17 @@ public class RelationGraph {
                         && map.contains(efa.getName())
                         && graph.containsVertex(-map.indexOf(s.getVariable()))
                         && graph.containsVertex(map.indexOf(efa.getName()))){
-                    DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
-                    graph.setEdgeWeight(ed, EDGE_WEIGHT);
+                    try{
+                        DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
+                        graph.setEdgeWeight(ed, EDGE_WEIGHT);
+                        
+                    } catch(Exception ex){
+                        throw new UnknownError("Unknown error while creating the edge <"
+                                +s.getVariable()+","+efa.getName()
+                                +">. Check for duplicated finish location guards.");
+                    }
                 }
             }
-            
-//            for(Iterator<ConditionElement> itr = c.iterator(); itr.hasNext();){
-//                ConditionElement e = itr.next();
-//                if(e.isStatment()){
-//                    ConditionStatment s = (ConditionStatment)e;
-//                    if((s.getOperator().equals(ConditionStatment.Operator.Equal) || s.getOperator().equals(ConditionStatment.Operator.GreaterEq))
-//                            && s.getValue().equals(EFAVariables.VARIABLE_FINAL_STATE) 
-//                            && !isVariable(s.getVariable())
-//                            && map.contains(s.getVariable())){
-//                        DefaultWeightedEdge ed = graph.addEdge(-map.indexOf(s.getVariable()), map.indexOf(efa.getName()));
-//                        graph.setEdgeWeight(ed, EDGE_WEIGHT);
-//                    }
-//                }
-//            }
         }
     }
 

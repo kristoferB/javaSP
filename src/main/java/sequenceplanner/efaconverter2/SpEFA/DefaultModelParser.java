@@ -1,14 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package sequenceplanner.efaconverter2;
+
+package sequenceplanner.efaconverter2.SpEFA;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import sequenceplanner.efaconverter2.EFA.EFAVariables;
 import sequenceplanner.efaconverter2.condition.*;
 import sequenceplanner.efaconverter2.condition.ConditionStatment.Operator;
-import sequenceplanner.efaconverter2.SpEFA.*;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
@@ -18,15 +15,21 @@ import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class DefaultModelParser implements IModelParser{
     private final Model model;
     private HashMap<Integer, TreeNode> variables;
     private HashMap<Integer, TreeNode> operations;
     
     private SpEFAutomata automata;
-
+    
+    /**
+     * Default parser for the SequencePlanner model to SpEFAutomata
+     * @param model SequencePlanner model
+     */
     public DefaultModelParser(Model model) {
         this.model = model;
         
@@ -52,7 +55,7 @@ public class DefaultModelParser implements IModelParser{
             variables.put(n.getNodeData().getId(), n);
     }
     
-    public void initPSequenceCondition(TreeNode operation){
+    private void initPSequenceCondition(TreeNode operation){
         
         OperationData od = null;
         if(operation.getId() == model.getOperationRoot().getId()){
@@ -87,33 +90,13 @@ public class DefaultModelParser implements IModelParser{
          if (write)
              od.addPAnd(opData.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
       }
-//      for (int i = 0; i < listOfChildren.size(); i++) {
-//         TreeNode subOp = (TreeNode) model.getOperation(listOfChildren.get(i));
-//         boolean write = true;
-//         for (int j = 0; j < listOfChildren.size(); j++) {
-//            TreeNode otherOp = (TreeNode) model.getOperation(listOfChildren.get(j));
-//
-//            OperationData data = (OperationData) otherOp.getNodeData();
-//
-//            LinkedList<LinkedList<SeqCond>> seqcon = data.getSequenceCondition();
-//
-//            for (int k = 0; k < seqcon.size(); k++) {
-//               for (int l = 0; l < seqcon.get(k).size(); l++) {
-//                  SeqCond s = seqcon.get(k).get(l);
-//                  if (s.id == subOp.getId() && s.state == 2) {
-//                     write = false;
-//                  }
-//               }
-//            }
-//         }
-//         
-//         // Alternative should precedes an operation
-//         if (write)
-//             od.addPAnd(subOp.getId(), Integer.parseInt(EFAVariables.VARIABLE_FINAL_STATE));
-//      }
     }
         
-
+    
+    /**
+     * Get the SpEFAutomata model of all the operations and variables
+     * @return SpEFAutomata of the corresponding SequencePlanner model
+     */
     @Override
     public SpEFAutomata getSpEFAutomata(){
         this.automata = new SpEFAutomata();
@@ -132,6 +115,11 @@ public class DefaultModelParser implements IModelParser{
         }
     }
     
+    /**
+     * Return the corresponding SpVariable of the input SequencePlanner variable
+     * @param variable SP variable
+     * @return SpVariable if the input is an SequencePlanner variable otherwise Null
+     */
     @Override
     public SpVariable getSpVariable(TreeNode variable){
         if(Model.isVariable(variable.getNodeData())){
@@ -143,18 +131,21 @@ public class DefaultModelParser implements IModelParser{
 
     private void createSpEFAs() {
         for(TreeNode op : operations.values()){
-            SpEFAutomata temp = getSpEFA(op);
-            for(SpEFA efa : temp.getAutomatons())
-                automata.addAutomaton(efa);
+            SpEFA temp = getSpEFA(op);
+            if(!temp.getLocations().isEmpty())
+                automata.addAutomaton(getSpEFA(op));
         }
         createSpProject();
     }
     
+    /**
+     * Create the corresponding SpEFA model
+     * @param operation Operation to convert to SpEFA
+     * @return corresponding SpEFA model
+     */
     @Override
-    public SpEFAutomata getSpEFA(TreeNode operation){
+    public SpEFA getSpEFA(TreeNode operation){
         OperationData opData = (OperationData)operation.getNodeData();
-
-        SpEFAutomata output = new SpEFAutomata("Operation " + operation.getId() + " Automata");
         String opName = createName(opData);
         SpEFA efa = new SpEFA(opName);
         
@@ -164,6 +155,7 @@ public class DefaultModelParser implements IModelParser{
         iL.setValue(Integer.parseInt(EFAVariables.VARIABLE_INITIAL_STATE));
         
         SpLocation eL = new SpLocation(opName + EFAVariables.STATE_EXECUTION_POSTFIX);
+        eL.setAccepting();
         eL.setValue(Integer.parseInt(EFAVariables.VARIABLE_EXECUTION_STATE));
         
         SpLocation fL = new SpLocation(opName + EFAVariables.STATE_FINAL_POSTFIX);
@@ -183,8 +175,7 @@ public class DefaultModelParser implements IModelParser{
         efa.addTransition(startT);
         efa.addTransition(stopT);
         
-        output.addAutomaton(efa);
-        return output;
+        return efa;
     }
 
     private Condition createPreCondition(TreeNode operation){
@@ -303,16 +294,16 @@ public class DefaultModelParser implements IModelParser{
          return Operator.Equal;
      }
      
-     private Operator getActionOperator(OperationData.Action a){
-         if (a.state == OperationData.ACTION_ADD){
-             return Operator.Inc;
-         } else if (a.state == OperationData.ACTION_DEC){
-             return Operator.Dec;
-         }else if (a.state == OperationData.ACTION_EQ){
-             return Operator.Assign;
-         }
-         return Operator.Assign;
-     }
+    private Operator getActionOperator(OperationData.Action a){
+        if (a.state == OperationData.ACTION_ADD){
+            return Operator.Inc;
+        } else if (a.state == OperationData.ACTION_DEC){
+            return Operator.Dec;
+        }else if (a.state == OperationData.ACTION_EQ){
+            return Operator.Assign;
+        }
+        return Operator.Assign;
+    }
 
     private boolean hasParent(TreeNode op){
         return !op.getParent().equals(model.getOperationRoot());

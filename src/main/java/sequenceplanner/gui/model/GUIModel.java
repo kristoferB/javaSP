@@ -29,6 +29,7 @@ public class GUIModel {
     private File projectFile;
     private ResourceView resourceView;
     private LinkedList<OperationView> operationViews = new LinkedList();
+    private String path = "user.dir";
     //Main model for the project
     private Model model;
 
@@ -100,12 +101,14 @@ public class GUIModel {
     }
 
     public boolean openModel() {
-        JFileChooser fc = new JFileChooser("user.dir");
-
+        JFileChooser fc = new JFileChooser(path);
+        
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
         removeAllOpViews();
-
+        
+        path = fc.getCurrentDirectory().getPath();
+                
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());
             getModel().reloadNamesCache();
@@ -247,5 +250,13 @@ public class GUIModel {
             }
         }
         return new OperationView(this.model, data);
+    }
+    
+    public String getPath(){
+        return path;
+    }
+    
+    public void setPath(String path){
+        this.path = path;
     }
 }

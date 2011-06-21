@@ -1,9 +1,13 @@
+
 package sequenceplanner.efaconverter2.condition;
 
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class ConditionStatment extends ConditionElement {
 
     public enum Operator {Equal("=="),

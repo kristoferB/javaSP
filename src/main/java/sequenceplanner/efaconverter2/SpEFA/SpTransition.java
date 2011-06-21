@@ -8,7 +8,10 @@ import sequenceplanner.efaconverter2.condition.ConditionExpression;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class SpTransition implements Cloneable{
 
     SpEvent event;

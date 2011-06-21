@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package sequenceplanner.efaconverter2.EFA;
 
@@ -9,8 +5,10 @@ import java.util.LinkedList;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public interface IEFAutomaton {
 
     public void addLocation(String iName);

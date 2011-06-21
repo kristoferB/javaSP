@@ -6,6 +6,10 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
+import sequenceplanner.efaconverter2.export.DefaultExport;
+import sequenceplanner.efaconverter2.EFA.DefaultEFAConverter;
+import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
+import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 //import sequenceplanner.gui.view.OperationWindowListener;
@@ -14,7 +18,6 @@ import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.treeView.TreeViewController;
 
-import sequenceplanner.efficientModel.OperationSequences;
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
  * changes the model accordingly and finally tells the view to show the updated
@@ -68,8 +71,8 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
-        guiView.addSeqForOp(new OperationSeqListener());
-        guiView.addReducedEFA(new EfficientEFAListener());
+        guiView.addNormalEFA(new NormalEFAListener());
+        guiView.addReducedEFA(new ReducedEFAListener());
         guiView.addEditorListener();
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
@@ -266,20 +269,30 @@ public class GUIController {
         }
     }
 
-    class OperationSeqListener implements ActionListener {
+    class NormalEFAListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            OperationSequences ops = new OperationSequences(guiModel.getModel());
-            ops.run();
+            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
+            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
+            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
+            export.save();
+            guiModel.setPath(export.getPath());
         }
     }
 
-    class EfficientEFAListener implements ActionListener {
+    class ReducedEFAListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
+            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            Reduction reduce = new Reduction(parser.getSpEFAutomata());
+            DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
+            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
+            export.save();
+            guiModel.setPath(export.getPath());
         }
     }
 

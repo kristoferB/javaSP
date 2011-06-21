@@ -1,32 +1,33 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package sequenceplanner.efaconverter2;
+
+package sequenceplanner.efaconverter2.EFA;
 
 import java.util.Iterator;
 import org.supremica.external.avocades.common.Module;
-import sequenceplanner.efaconverter2.EFA.*;
 import sequenceplanner.efaconverter2.SpEFA.*;
 import sequenceplanner.efaconverter2.condition.*;
 
 /**
  *
- * @author shoaei
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
+
 public class DefaultEFAConverter implements IEFAConverter{
     
     private SpEFAutomata sp;
     private DefaultEFAutomata automata;
-    
+    /**
+     * Default converter for SpEFAutomata
+     * 
+     * @param sp SpEFAutomata
+     */
     public DefaultEFAConverter(SpEFAutomata sp){
         this.sp = sp;
         automata = new DefaultEFAutomata(sp.getName());
         convert();
     }
     
-    private boolean convert(){
-        boolean result = false;
+    private void convert(){
         for(SpVariable spv : sp.getVariables()){
             DefaultEFAutomaton var = new DefaultEFAutomaton(createVariableName(spv.getName()), automata);
             var.addVariable(spv.getMin(), spv.getMax(), spv.getInit());
@@ -53,7 +54,6 @@ public class DefaultEFAConverter implements IEFAConverter{
                 String guard = parsGuards(tran.getConditionGuard());
                 String action = parsActions(tran.getConditionAction());
                 String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(count++) + EFAVariables.EFA_ACTION_DIVIDER;
-                //String actionLocation = varName + ConditionStatment.Operator.Assign + Integer.toString(tran.getTo().getValue()) + EFAVariables.EFA_ACTION_DIVIDER;
                 
                 action += actionLocation;
 
@@ -63,13 +63,8 @@ public class DefaultEFAConverter implements IEFAConverter{
                                   guard, 
                                   action);
             }
-            
             automata.addEFAutomaton(efa);
-            
-            if(((sp.getAutomatons().size() * 2) + sp.getVariables().size()) == automata.getEFAutomatons().size())
-                result = true;
         }
-        return result;
     }
 
     private String parsGuards(ConditionExpression cex){
@@ -101,10 +96,6 @@ public class DefaultEFAConverter implements IEFAConverter{
         return result;
     }
     
-    private String createLocName(String iLocName) {
-        return EFAVariables.EFA_LOCATION_PREFIX + iLocName;
-    }
-
     private String createEFAName(String iOperationName) {
         return EFAVariables.OPERATION_NAME_PREFIX + iOperationName;
     }
@@ -134,11 +125,20 @@ public class DefaultEFAConverter implements IEFAConverter{
                 result = true;
         return result;
     }
+    
+    /**
+     * 
+     * @return return the EFA model of the self-contained operations 
+     */
     @Override
     public DefaultEFAutomata getEFAutomata(){
         return automata;
     }
     
+    /**
+     * 
+     * @return return the Module of the current automata
+     */
     @Override
     public Module getModule(){
         return automata.getThisModule();

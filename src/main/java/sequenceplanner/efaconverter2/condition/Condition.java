@@ -1,3 +1,4 @@
+
 package sequenceplanner.efaconverter2.condition;
 
 import java.util.HashMap;
@@ -6,6 +7,8 @@ import java.util.Map;
 /**
  *
  * @author kbe
+ * @author Mohammad Reza Shoaei
+ * @version 21062011
  */
 public class Condition {
 
