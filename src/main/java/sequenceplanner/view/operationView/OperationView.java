@@ -57,10 +57,12 @@ import sequenceplanner.condition.DataToConditionHelper;
 import sequenceplanner.model.SOP.ASopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.SOP.SopStructure;
 import sequenceplanner.utils.Devel;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -323,17 +325,21 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             setChanged(false);
             updateName();
-            
-            ConditionsFromSopNode conditionExtractor = new ConditionsFromSopNode(sopStruct.getRoot());
+
+            final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
+            final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopStruct.getRoot());
+            //ConditionsFromSopNode conditionExtractor = new ConditionsFromSopNode(sopStruct.getRoot());
             for (TreeNode node : data) {
                 if (node.getNodeData() instanceof OperationData) {
                     OperationData d = (OperationData) node.getNodeData();
-                    HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
-                    d.setConditions(map.get(d));
+                    //HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
+                    if (operationConditionMap.containsKey(d)) {
+                        d.setConditions(operationConditionMap.get(d));
+                    }
                     System.out.println("save " + d.getName());
                 }
             }
-            
+
         } else {
             logger.debug("Save was called but with a empty name");
         }
@@ -559,8 +565,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
 
         } catch (NullPointerException e) {
-            logger.error("An null pointer was passed in getGraphicalPrecond, probably"
-                    + " was viewData = null");
+            logger.error("An null pointer was passed in getGraphicalPrecond, probably" + " was viewData = null");
 
         }
 
@@ -868,10 +873,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         how the cells   */
         //Operation
         if (insertedCell.getValue() instanceof OperationData) {
-             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        }
-        //Parallel
-        else if(insertedCell.getType() == Constants.PARALLEL){
+            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        } //Parallel
+        else if (insertedCell.getType() == Constants.PARALLEL) {
             //For when SopNodeParallel is finished
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
         } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
@@ -886,11 +890,10 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     }
 
     public void addSOPNode(Cell cell, Cell insertedCell) {
-      if (insertedCell.getValue() instanceof OperationData) {
-             sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        }
-        //Parallel
-        else if(insertedCell.getType() == Constants.PARALLEL){
+        if (insertedCell.getValue() instanceof OperationData) {
+            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+        } //Parallel
+        else if (insertedCell.getType() == Constants.PARALLEL) {
             //For when SopNodeParallel is finished
             sopNode = new SopNodeParallel(insertedCell.getUniqueId());
         } else if (insertedCell.getType() == Constants.ALTERNATIVE) {

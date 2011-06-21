@@ -1,7 +1,10 @@
 package sequenceplanner.model.SOP;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -42,8 +45,9 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void relationsToSelfContainedOperations(ISopNode iRootNode) {
-        new ConditionsFromSopNode(iRootNode);
+    public Map<OperationData, Map<ConditionType, Condition>> relationsToSelfContainedOperations(ISopNode iRootNode) {
+        final ConditionsFromSopNode cfsn = new ConditionsFromSopNode(iRootNode);
+        return cfsn.getmOperationConditionMap();
     }
 
     @Override

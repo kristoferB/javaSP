@@ -1,6 +1,8 @@
 package sequenceplanner.model.SOP;
 
+import java.util.Map;
 import java.util.Set;
+import sequenceplanner.condition.Condition;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -90,8 +92,13 @@ public interface ISopNodeToolbox {
     /**
      * Relations in SOP added to as conditions for (selfcontained) operation data.<br/>
      * @param iRootNode container for sequences where conditions should be found
+     * @return
+     * External key: operation object<br/>
+     * External value: internal map<br/>
+     * Internal key: {@link ConditionsFromSopNode}.ConditionType.PRE/POST<br/>
+     * Internal value: {@link Condition}
      */
-    public void relationsToSelfContainedOperations(ISopNode iRootNode);
+    Map<OperationData, Map<ConditionsFromSopNode.ConditionType, Condition>> relationsToSelfContainedOperations(ISopNode iRootNode);
 
     /**
      * Get all {@link ISopNode} nodes recursively from sequences to iRootNode.<br/>

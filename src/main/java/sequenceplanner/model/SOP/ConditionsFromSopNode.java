@@ -48,7 +48,7 @@ public class ConditionsFromSopNode {
      * Internal value: {@link Condition}
      * @return
      */
-    public HashMap<OperationData, Map<ConditionType, Condition>> getmOperationConditionMap() {
+    public Map<OperationData, Map<ConditionType, Condition>> getmOperationConditionMap() {
         return mOperationConditionMap;
     }
 
