@@ -41,7 +41,7 @@ import sequenceplanner.editor.EditorView;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
-import sequenceplanner.objectattribute.AttributePanel;
+import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -421,7 +421,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 
     }//End createMenu
-
+    //<editor-fold defaultstate="collapsed" desc="AddListener Methods">
     //Menubar listeners
     public void addCreateOPL(ActionListener l) {
         newOperationView.addActionListener(l);
@@ -519,8 +519,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addAddOperationsFromFileL(ActionListener l) {
         addOperationsFromFile.addActionListener(l);
     }
-//End listeners
-
+//End listeners 
+    //</editor-fold>
     /**
      * Opens a new window with a preference pane in it.
      */
@@ -714,7 +714,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
     public boolean addAttributePanelView(AttributePanel toInsert) {
-        // Check if view exists. Story 111
+        // Check if view exists.
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
             if (objectViewMap.getView(i).getComponent() != null
                     && objectViewMap.getView(i).getComponent() instanceof AttributePanel

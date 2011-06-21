@@ -8,7 +8,9 @@
  *
  * Created on 2011-jun-21, 11:27:20
  */
-package sequenceplanner.objectattribute;
+package sequenceplanner.gui.view.attributepanel;
+
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -37,7 +39,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
         postRadioButton = new javax.swing.JRadioButton();
         guardRadioButton = new javax.swing.JRadioButton();
         actionRadioButton = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
 
         conditionButtonGroup.add(preRadioButton);
         conditionButtonGroup.add(postRadioButton);
@@ -47,24 +49,22 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 
         expresionTextField.setText("Enter SP condtition...");
         expresionTextField.setToolTipText("Enter SP condition");
+        expresionTextField.setActionCommand("save");
 
         preRadioButton.setSelected(true);
         preRadioButton.setText("Pre");
 
         postRadioButton.setText("Post");
-        postRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                postRadioButtonActionPerformed(evt);
-            }
-        });
 
         guardRadioButton.setSelected(true);
         guardRadioButton.setText("Guard");
 
         actionRadioButton.setText("Action");
 
-        jButton1.setText("Save");
-        jButton1.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        saveButton.setText("Save");
+        saveButton.setToolTipText("Save condition");
+        saveButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        saveButton.setActionCommand("save");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -76,7 +76,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(expresionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(preRadioButton)
@@ -93,7 +93,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(expresionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(saveButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(preRadioButton)
@@ -106,18 +106,26 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void postRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postRadioButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_postRadioButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup actionGuardButtonGroup;
     private javax.swing.JRadioButton actionRadioButton;
     private javax.swing.ButtonGroup conditionButtonGroup;
     private javax.swing.JTextField expresionTextField;
     private javax.swing.JRadioButton guardRadioButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JRadioButton postRadioButton;
     private javax.swing.JRadioButton preRadioButton;
+    private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
+
+    public void addSaveButtonListener(ActionListener l){
+        saveButton.addActionListener(l);
+    }
+    
+    /**
+     * Clears the textfield and returns a String with the text
+     * @return String text
+     */
+    public String getConditionString(){
+        return expresionTextField.getText();
+    }
 }
