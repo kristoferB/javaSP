@@ -13,8 +13,8 @@ package sequenceplanner.gui.view.attributepanel;
 import java.awt.event.ActionListener;
 
 /**
- *
- * @author QW4z1
+ *  Small editor class. Used to edit or add conditions to an OperationData object.
+ * @author Qw4z1
  */
 public class OperationAttributeEditor extends javax.swing.JPanel {
 

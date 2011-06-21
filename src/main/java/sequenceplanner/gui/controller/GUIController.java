@@ -422,7 +422,9 @@ public class GUIController {
     public void addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            panel.addEditorSaveListener(new AttributePanelController(data,panel,panel.getEditor()));
+            AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
+            data.addObserver(ctrl);
+            panel.addEditorSaveListener(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {
             printToConsole("Operation already opened.");

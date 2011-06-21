@@ -83,6 +83,7 @@ public class OperationData extends Data {
 
     public void setConditions(Map<ConditionType, Condition > conditionMap){
         this.conditions = conditionMap;
+        System.out.println("update?");
         setChanged();
         notifyObservers(this);
         

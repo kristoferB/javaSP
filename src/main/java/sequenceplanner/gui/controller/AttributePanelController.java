@@ -11,7 +11,8 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Listens to changes in the OperationData object connected to the AttributePanel
+ * and updates the panel accordingly 
  * @author Qw4z1
  */
 public class AttributePanelController implements ActionListener, Observer {
@@ -20,7 +21,12 @@ public class AttributePanelController implements ActionListener, Observer {
     private OperationData model;
     private OperationAttributeEditor attributeEditor;
     
-
+    /**
+     * Creates an AttributePanelController with two views and one model
+     * @param model
+     * @param panel
+     * @param editor 
+     */
     public AttributePanelController(OperationData model,AttributePanel panel, OperationAttributeEditor editor) {
         this.model = model;
         this.attributePanel = panel;
@@ -40,7 +46,10 @@ public class AttributePanelController implements ActionListener, Observer {
             attributePanel.setConditions();
         }
     }
-
+    /**
+     * Adds a set of conditions to the OperationData object acting as model
+     * @param conditionString String conditions as a string in the SP form.
+     */
     private void setCondition(String conditionString) {
         //ConditionType should be selected from the choises of the radiobuttons
         model.setConditions(StringConditionParser.getInstance().getConditionMap(conditionString,ConditionType.PRE));

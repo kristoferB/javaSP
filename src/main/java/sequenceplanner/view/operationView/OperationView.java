@@ -49,13 +49,10 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.DataToConditionHelper;
 import sequenceplanner.model.SOP.ASopNode;
-import sequenceplanner.model.SOP.ConditionsFromSopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeAlternative;
@@ -64,7 +61,6 @@ import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.SOP.SopStructure;
-import sequenceplanner.utils.Devel;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
@@ -292,7 +288,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     @Override
     public void save(boolean newSave, boolean saveView) {
-
+        
         String tempName = "";
 
         if (saveView) {
@@ -310,7 +306,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             Object o = gModel.getChildAt(gModel.getRoot(), 0);
             Cell cell = (Cell) o;
-
             //This will only return the topView, the rest is saved in
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
@@ -322,7 +317,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
             model.saveOperationData(data);
-
+            
             setChanged(false);
             updateName();
 

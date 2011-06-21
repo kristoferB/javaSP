@@ -11,7 +11,7 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Class showing attributes of an {@link OperationData} object
  * @author Qw4z1
  */
 public class AttributePanel extends javax.swing.JPanel{
@@ -130,10 +130,17 @@ public class AttributePanel extends javax.swing.JPanel{
     private javax.swing.JList preCondList;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Sets the ID label to display the id of the {@link OperationData} object.
+     * @param id 
+     */
     public void setID(int id) {
         this.operationIdLabel.setText("Operation ID: " + id);
     }
 
+    /**
+     * Sets the listobjects to display the conditions in the OperationData class.
+     */
     public void setConditions() {
         DefaultListModel preListModel = new DefaultListModel();
         DefaultListModel postListModel = new DefaultListModel();
@@ -160,7 +167,10 @@ public class AttributePanel extends javax.swing.JPanel{
     public void addEditorSaveListener(ActionListener l){
         operationAttributeEditor.addSaveButtonListener(l);
     }
-
+    /**
+     * Method for getting the inner {@link OperationAttributeeEditor}
+     * @return 
+     */
     public OperationAttributeEditor getEditor() {
         return operationAttributeEditor;
     }
