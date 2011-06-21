@@ -14,7 +14,7 @@ import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.objectattribute.PropertyPanel;
+import sequenceplanner.objectattribute.AttributePanel;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -420,7 +420,7 @@ public class GUIController {
     }
 
     public void addPropertyPanelView(OperationData data) {
-        if (guiView.addPropertyPanelView(new PropertyPanel(data))) {
+        if (guiView.addAttributePanelView(new AttributePanel(data))) {
             printToConsole("Operation " + data.getName() + " opened.");
         } else {
             printToConsole("Operation already opened.");

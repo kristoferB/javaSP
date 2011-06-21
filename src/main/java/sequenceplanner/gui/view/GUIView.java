@@ -41,7 +41,7 @@ import sequenceplanner.editor.EditorView;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
-import sequenceplanner.objectattribute.PropertyPanel;
+import sequenceplanner.objectattribute.AttributePanel;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -713,11 +713,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @param toInsert PropertyPanel to insert
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
-    public boolean addPropertyPanelView(PropertyPanel toInsert) {
+    public boolean addAttributePanelView(AttributePanel toInsert) {
         // Check if view exists. Story 111
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
             if (objectViewMap.getView(i).getComponent() != null
-                    && objectViewMap.getView(i).getComponent() instanceof PropertyPanel
+                    && objectViewMap.getView(i).getComponent() instanceof AttributePanel
                     && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView

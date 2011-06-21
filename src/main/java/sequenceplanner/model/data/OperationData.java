@@ -83,7 +83,12 @@ public class OperationData extends Data {
 
     public void setConditions(Map<ConditionType, Condition > conditionMap){
         this.conditions = conditionMap;
+        setChanged();
+        notifyObservers(this);
         
+    }
+    public Map<ConditionType, Condition > getConditions(){
+        return conditions;
     }
     private void setValue(String key, String value) {
         if (key != null && value != null) {
