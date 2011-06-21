@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.ScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.Iterator;
@@ -717,7 +718,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         // Check if view exists.
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
             if (objectViewMap.getView(i).getComponent() != null
-                    && objectViewMap.getView(i).getComponent() instanceof AttributePanel
                     && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
@@ -735,8 +735,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
             }
         }
-
-        View newView = new View(toInsert.getName(), null, toInsert);
+        View newView = new View(toInsert.getName(), null,new JScrollPane(toInsert));
         objectViewMap.addView(objectViewMap.getViewCount() + 1, newView);
         objectDocks.addTab(newView);
         objectDocks.restore();
