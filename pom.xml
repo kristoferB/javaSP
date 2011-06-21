@@ -33,6 +33,12 @@
             <artifactId>idw-gpl</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--For excel-->
+        <dependency>
+            <groupId>jxl</groupId>
+            <artifactId>jxl</artifactId>
+            <version>1.0</version>
+        </dependency>
         
 	<!-- Test -->
         <dependency>
