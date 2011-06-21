@@ -661,7 +661,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }*/
         try {
             for (int i = 0; i < tempViewMap.getChildWindowCount(); i++) {
-                System.out.println("TempViewMap: " + tempViewMap.getChildWindow(i));
                 mainDocks.addTab(tempViewMap.getChildWindow(i));
             }
 
@@ -682,7 +681,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 consoleRootView));
         // mainDocks = new TabWindow(tempViewMap);
         mainDocks.restore();
-        System.out.println("Child count: " + mainDocks.getChildWindowCount());
     }
 
     /**

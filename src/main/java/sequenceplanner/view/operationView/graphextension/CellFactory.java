@@ -85,8 +85,6 @@ public class CellFactory {
                 40));
 
         Data d = new Data("", Model.newId());
-        System.out.println(d.getId());
-
         Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
 
         cell.setType(Constants.PARALLEL);

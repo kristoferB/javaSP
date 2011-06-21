@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.model.Model;
 
 /**
  * Remove unnecessary nodes recursively in a {@link ISopNode}.<br/>
@@ -159,11 +160,11 @@ public class ResolveSopNode {
                 //create new node
                 ISopNode newNode = null;
                 if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", ""))) {
-                    newNode = new SopNodeAlternative();
+                    newNode = new SopNodeAlternative(Model.newId());
                 } else if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", ""))) {
-                    newNode = new SopNodeArbitrary();
+                    newNode = new SopNodeArbitrary(Model.newId());
                 } else if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""))) {
-                    newNode = new SopNodeParallel();
+                    newNode = new SopNodeParallel(Model.newId());
                 }
                 iNode.addNodeToSequenceSet(newNode);
                 

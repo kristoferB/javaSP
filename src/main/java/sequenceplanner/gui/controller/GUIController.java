@@ -360,7 +360,7 @@ public class GUIController {
             if (e.getClickCount() == 2) {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
-                if (clickedCell != null && v.getGraph().isOperation(clickedCell)) {
+                if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
                     addPropertyPanelView((OperationData) clickedCell.getValue());
                 }
             }

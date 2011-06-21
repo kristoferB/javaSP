@@ -91,7 +91,8 @@
   <repositories>
     <repository>
       <id>my-remote-local-site</id>
-      <url>http://www.ohlson.be/maven/releases/</url>
+      <!--<url>http://www.ohlson.be/maven/releases/</url>-->
+      <url>http://129.16.80.161/</url>
     </repository>
   </repositories>
 
