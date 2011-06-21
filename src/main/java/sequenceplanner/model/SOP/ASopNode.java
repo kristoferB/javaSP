@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -20,6 +21,10 @@ public abstract class ASopNode implements ISopNode {
     private Set<ISopNode> mSequenceSet = null;
     private ISopNode mSuccessor = null;
     private int mSuccessorRelation = -1;
+
+    public ASopNode(final String iTypeAsString) {
+        this(iTypeAsString,Model.newId());
+    }
 
     public ASopNode(final String iTypeAsString, int id) {
         mSequenceSet = new HashSet<ISopNode>();
