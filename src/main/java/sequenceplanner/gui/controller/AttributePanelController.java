@@ -42,9 +42,10 @@ public class AttributePanelController implements ActionListener, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o.hasChanged() && arg == "Condition") {
-            attributePanel.setConditions();
-        }
+        OperationData od = (OperationData)arg;
+        if(od.getName().equalsIgnoreCase(attributePanel.getName()))
+            attributePanel.updateModel(od);
+        
     }
     /**
      * Adds a set of conditions to the OperationData object acting as model

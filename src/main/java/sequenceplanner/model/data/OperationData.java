@@ -62,7 +62,7 @@ public class OperationData extends Data {
     public OperationData(String name, int id) {
         super(name, id);
         preference = Collections.synchronizedMap(new HashMap<String, String>());
-        conditions = new HashMap<ConditionType, Condition>(); 
+        conditions = new HashMap<ConditionType, Condition>();
         //Resource booking
         sequenceCondition = new LinkedList<LinkedList<SeqCond>>();
         resourceBooking = new LinkedList<Integer[]>();
@@ -81,16 +81,18 @@ public class OperationData extends Data {
         propertySettings = new HashMap<Integer, Boolean>();
     }
 
-    public void setConditions(Map<ConditionType, Condition > conditionMap){
+    public void setConditions(Map<ConditionType, Condition> conditionMap) {
         this.conditions = conditionMap;
         System.out.println("update?");
         setChanged();
         notifyObservers(this);
-        
+
     }
-    public Map<ConditionType, Condition > getConditions(){
+
+    public Map<ConditionType, Condition> getConditions() {
         return conditions;
     }
+
     private void setValue(String key, String value) {
         if (key != null && value != null) {
             preference.put(key, value);
@@ -201,6 +203,9 @@ public class OperationData extends Data {
      */
     public void setSequenceCondition(LinkedList<LinkedList<SeqCond>> cond) {
         this.sequenceCondition = cond;
+        System.out.println("update?");
+        setChanged();
+        notifyObservers(this);
     }
 
     public LinkedList<LinkedList<SeqCond>> getSequenceCondition() {
