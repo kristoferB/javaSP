@@ -152,7 +152,7 @@ public class OperationActions {
                             } else {
                                 //Relative movement
                                 //TODO place cells.
-                                getView(e).addSOPNode(cell, insertedCell, this.before);
+                                getView(e).addSOPNode(cell, insertedCell);
                                 graph.addCell(insertedCell, cell);
 
                             }

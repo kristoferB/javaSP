@@ -24,6 +24,11 @@ public class SopStructure implements ISopStructure {
     //private LinkedList<ASopNode> sopStructure = new LinkedList<ASopNode>();
     private LinkedList<ISopNode> withinSops;
 
+    /**
+     * Toolbox for {@link ISopNode}s
+     */
+    private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
+
     public SopStructure() {
     }
 
@@ -42,6 +47,7 @@ public class SopStructure implements ISopStructure {
         }*/
         System.out.println("wheres your head at");
         sopRootNode.addNodeToSequenceSet(newNode);
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
     }
 
     @Override
@@ -61,11 +67,12 @@ public class SopStructure implements ISopStructure {
             //Check if the added node is first in a sequence set
             if (sopIterator.getUniqueId() == cell.getUniqueId() && before == true) {
                 //System.out.println("1");
-                //If so, set the old one as a successor
+                //If so, set the old SOPNode as a successor to the new SOPNode
                 sopNode.setSuccessorNode(sopIterator);
                 System.out.println("New Root added! It = " + sopIterator.toString());
                 //..Remove the old one as a "first node"
-                firstNodes.remove();
+                firstNodes.remove(); //IS THIS LINE NEEDED? DO WE USE firstNodes ANYMORE?
+                mSNToolbox.removeNode(sopIterator, sopRootNode);
                 //..And set the new one as a "first node"
                 sopRootNode.addNodeToSequenceSet(sopNode);
                 break;
@@ -74,9 +81,12 @@ public class SopStructure implements ISopStructure {
             } else if (sopIterator.getUniqueId() == cell.getUniqueId() && before == false) {
                 //System.out.println("2");
                 //Check for successor nodes
-                if (sopNode.getSuccessorNode() != null) {
+                if (sopNode.getSuccessorNode() != null) { //THIS IS ALWAYS TRUE! NO SUCCESSOR HAS BEEN ADDED!! -> ALWYAS GO TO ELSE
                     sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
                 }else{
+                    //A->B and add C between A and B
+                    //first C->B and then A->C gives A->C->B
+                    sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
                     sopIterator.setSuccessorNode(sopNode);
                 }
                 System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
@@ -118,8 +128,9 @@ public class SopStructure implements ISopStructure {
 
             }
             //printSops();
-            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+//            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
         }
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
     }
 
     @Override
@@ -196,6 +207,7 @@ public class SopStructure implements ISopStructure {
             firstNodes.next();
         }
         //printSops();
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
 
     }
 
@@ -298,5 +310,20 @@ public class SopStructure implements ISopStructure {
                 } */            }
             //System.out.println("I'm out!");
         }
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell, boolean iBefore) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

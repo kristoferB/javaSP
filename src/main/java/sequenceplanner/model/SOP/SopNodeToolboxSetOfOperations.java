@@ -100,4 +100,18 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
         return succ;
     }
+
+    @Override
+    public ISopNode getPredecessor(ISopNode iSuccessorNode, ISopNode iRootNode) {
+        final Set<ISopNode> nodeSet = getNodes(iRootNode, true);
+        for (final ISopNode node : nodeSet) {
+            final ISopNode successorNode = node.getSuccessorNode();
+            if (successorNode != null) {
+                if (iSuccessorNode.equals(successorNode)) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
 }
