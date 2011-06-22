@@ -7,15 +7,21 @@ import sequenceplanner.algorithms.visualization.RelateTwoOperations;
  *
  * @author patrik
  */
-public class SopNodeParallel extends ASopNode{
+public class SopNodeParallel extends ASopNode {
+
     private int id;
+
     public SopNodeParallel(int id) {
-        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""),id);
-        this.id=id;
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""), id);
+        this.id = id;
+    }
+
+    public SopNodeParallel() {
+        super(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""));
     }
 
     @Override
-    public String toString(){
-        return "Parallel-"+id;
+    public String toString() {
+        return "Parallel-" + id;
     }
 }

@@ -25,6 +25,11 @@ public class SopStructure implements ISopStructure {
     //private LinkedList<ASopNode> sopStructure = new LinkedList<ASopNode>();
     private LinkedList<ISopNode> withinSops;
 
+    /**
+     * Toolbox for {@link ISopNode}s
+     */
+    private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
+
     public SopStructure() {
     }
 
@@ -273,5 +278,20 @@ public class SopStructure implements ISopStructure {
                 } */            }
             //System.out.println("I'm out!");
         }
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell, boolean iBefore) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

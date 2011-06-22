@@ -3,19 +3,22 @@
  *
  * Created on 2011-jun-21, 10:14:10
  */
-package sequenceplanner.objectattribute;
+package sequenceplanner.gui.view.attributepanel;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**
- *
+ * Class showing attributes of an {@link OperationData} object
  * @author Qw4z1
  */
-public class AttributePanel extends javax.swing.JPanel implements Observer {
+public class AttributePanel extends javax.swing.JPanel{
+
+    static void updateView() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
     /**OperationData object, acting as model for the view**/
     private OperationData model;
@@ -46,7 +49,7 @@ public class AttributePanel extends javax.swing.JPanel implements Observer {
         jScrollPane2 = new javax.swing.JScrollPane();
         postCondList = new javax.swing.JList();
         jSeparator2 = new javax.swing.JSeparator();
-        operationAttributeEditor = new sequenceplanner.objectattribute.OperationAttributeEditor();
+        operationAttributeEditor = new sequenceplanner.gui.view.attributepanel.OperationAttributeEditor();
 
         operationIdLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         operationIdLabel.setText("Operation ID: ");
@@ -121,24 +124,24 @@ public class AttributePanel extends javax.swing.JPanel implements Observer {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private sequenceplanner.objectattribute.OperationAttributeEditor operationAttributeEditor;
+    private sequenceplanner.gui.view.attributepanel.OperationAttributeEditor operationAttributeEditor;
     private javax.swing.JLabel operationIdLabel;
     private javax.swing.JList postCondList;
     private javax.swing.JList preCondList;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Sets the ID label to display the id of the {@link OperationData} object.
+     * @param id 
+     */
     public void setID(int id) {
         this.operationIdLabel.setText("Operation ID: " + id);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        model = (OperationData) o;
-        setID(model.getId());
-        setConditions();
-    }
-
-    private void setConditions() {
+    /**
+     * Sets the listobjects to display the conditions in the OperationData class.
+     */
+    public void setConditions() {
         DefaultListModel preListModel = new DefaultListModel();
         DefaultListModel postListModel = new DefaultListModel();
         if (model.getConditions() != null) {
@@ -149,8 +152,8 @@ public class AttributePanel extends javax.swing.JPanel implements Observer {
                     preListModel.addElement(model.getConditions().get(key).toString());
                 }
             }
-            preCondList = new javax.swing.JList(postListModel);
-            postCondList = new javax.swing.JList(postListModel);
+            preCondList.setModel(preListModel);
+            postCondList.setModel(postListModel);
         }
     }
 
@@ -158,8 +161,17 @@ public class AttributePanel extends javax.swing.JPanel implements Observer {
         this.model = od;
         setConditions();
         this.setName(od.getName());
-        model.addObserver(this);
         setID(model.getId());
 
+    }
+    public void addEditorSaveListener(ActionListener l){
+        operationAttributeEditor.addSaveButtonListener(l);
+    }
+    /**
+     * Method for getting the inner {@link OperationAttributeeEditor}
+     * @return 
+     */
+    public OperationAttributeEditor getEditor() {
+        return operationAttributeEditor;
     }
 }

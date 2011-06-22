@@ -124,4 +124,13 @@ public interface ISopNodeToolbox {
      * @return last {@link ISopNode} in the successor sequence (this can be parameter iNode), or null if 1) parameter iNode ==null
      */
     ISopNode getBottomSuccessor(ISopNode iNode);
+
+    /**
+     * {@link ISopNode} only has successor pointers.</br>
+     * This method returns predecessor if such exists.
+     * @param iSuccessorNode is the successor node for the node that is sought
+     * @param iRootNode root node
+     * @return Predecessor as {@link ISopNode} or null if no predecessor exists
+     */
+    ISopNode getPredecessor(ISopNode iSuccessorNode, ISopNode iRootNode);
 }

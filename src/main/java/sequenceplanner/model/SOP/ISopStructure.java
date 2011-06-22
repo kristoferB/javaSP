@@ -32,4 +32,8 @@ public interface ISopStructure {
 
     void setSopSequence(Cell cell, ASopNode sopNode, boolean before);
     public void setSopSequence(Cell cell, ASopNode sopNode);
+
+    boolean addCellToSop(Cell iReferenceCell, Cell iNewCell, boolean iBefore);
+    boolean addCellToSop(Cell iReferenceCell, Cell iNewCell);
+    boolean addCellToSop(Cell iNewCell);
     }
