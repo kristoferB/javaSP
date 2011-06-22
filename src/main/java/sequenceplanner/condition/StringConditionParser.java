@@ -1,16 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sequenceplanner.condition;
 
-import java.util.HashMap;
-import java.util.Map;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 
 /**
- *
- * @author QW4z1
+ * Simple singleton parser class.
+ * Only has two public methods. getInstance and getParseConditionString.
+ * @author Qw4z1
  */
 public class StringConditionParser {
     
@@ -26,7 +21,14 @@ public class StringConditionParser {
         private static final StringConditionParser INSTANCE = new StringConditionParser();
     }
     
-    public Map<ConditionType,Condition> getConditionMap(String conditionString, ConditionType type){
-        return new HashMap<ConditionType,Condition>();
+    /**
+     * Takes a String as argument and 
+     * parses the String into a {@link Condition}
+     * @param String Conditionstring
+     * @return the {@link Condition} 
+     */
+    public Condition parseConditionString(String conditionString){
+        Condition condition = new Condition();
+        return condition;
     }
 }
