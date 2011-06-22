@@ -240,11 +240,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //--------------------
 
         //Set window starting layout. Should perhaps be moved to a default layout object.
-        rootWindow.setWindow(new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
-                new SplitWindow(true, 0.15f, treeRootView,
-                new SplitWindow(true, 0.75f, operationRootView,
-                new SplitWindow(false, 0.7f, objectRootView, editorRootView))),
-                consoleRootView));
+        setRootWindowProportions();
         this.getContentPane().add(rootWindow);
 
         printToConsole("Welcome to SP 2.0");
@@ -257,8 +253,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             public boolean acceptDrop(DropInfo dropInfo) {
                 InteriorDropInfo inter = (InteriorDropInfo) dropInfo;
 
-                if (inter.getDropWindow() instanceof DockingWindow || inter.getWindow() instanceof DockingWindow
-                        || inter.getWindow() == rootWindow || inter.getDropWindow() instanceof RootWindow || inter.getDropWindow() instanceof View) {
+                if (inter.getDropWindow() instanceof DockingWindow || inter.getWindow() instanceof DockingWindow || inter.getWindow() == rootWindow || inter.getDropWindow() instanceof RootWindow || inter.getDropWindow() instanceof View) {
                     return false;
                 }
                 return true;
@@ -423,6 +418,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }//End createMenu
     //<editor-fold defaultstate="collapsed" desc="AddListener Methods">
     //Menubar listeners
+
     public void addCreateOPL(ActionListener l) {
         newOperationView.addActionListener(l);
     }
@@ -521,6 +517,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 //End listeners 
     //</editor-fold>
+
     /**
      * Opens a new window with a preference pane in it.
      */
@@ -673,12 +670,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootViewMap.addView(1, operationRootView);
 
         //Set original rootwindow proportions
-        rootWindow.setWindow(
-                new SplitWindow(false, 0.85f, //Console takes up 15% of the frame.
-                new SplitWindow(true, 0.15f, treeRootView,
-                new SplitWindow(true, 0.75f, operationRootView,
-                new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
-                consoleRootView));
+        setRootWindowProportions();
         // mainDocks = new TabWindow(tempViewMap);
         mainDocks.restore();
     }
@@ -716,9 +708,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public boolean addAttributePanelView(AttributePanel toInsert) {
         // Check if view exists.
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
-            if (objectViewMap.getView(i).getComponent() != null
-                    && objectViewMap.getView(i).getComponent() instanceof AttributePanel
-                    && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
+            if (objectViewMap.getView(i).getComponent() != null && objectViewMap.getView(i).getComponent() instanceof AttributePanel && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();
@@ -743,5 +733,17 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 
         return true;
+    }
+
+    /**
+     * To set the layout/proportions between splitwindow in root/main window
+     */
+    private void setRootWindowProportions() {
+        rootWindow.setWindow(
+                new SplitWindow(false, 0.85f, //Console takes up 15% of the frame.
+                new SplitWindow(true, 0.15f, treeRootView,
+                new SplitWindow(true, 0.75f, operationRootView,
+                new SplitWindow(false, 0.7f, objectRootView, editorRootView))),
+                consoleRootView));
     }
 }
