@@ -243,7 +243,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         rootWindow.setWindow(new SplitWindow(false, 0.9f, //Console takes up 10% of the frame.
                 new SplitWindow(true, 0.15f, treeRootView,
                 new SplitWindow(true, 0.75f, operationRootView,
-                new SplitWindow(false, 0.5f, objectRootView, editorRootView))),
+                new SplitWindow(false, 0.7f, objectRootView, editorRootView))),
                 consoleRootView));
         this.getContentPane().add(rootWindow);
 
