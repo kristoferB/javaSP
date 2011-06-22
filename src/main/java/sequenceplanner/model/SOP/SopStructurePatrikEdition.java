@@ -144,7 +144,9 @@ public class SopStructurePatrikEdition implements ISopStructure {
             Object[] children = null;
             Object[] connections = null;
             o = graphModel.getCell(string);
-            System.out.println("o: " + o);
+            System.out.println("o: " + o + " value: " + graphModel.getValue(o));
+            Cell cell = (Cell) graphModel.getCell(string);
+            System.out.println("cell: " + cell.toString());
             if (idCellMap.containsKey(string)) {
                 oo = SPGraphModel.getOutgoingEdges(graphModel, o);
                 ooo = SPGraphModel.getIncomingEdges(graphModel, o);
