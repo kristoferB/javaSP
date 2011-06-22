@@ -137,7 +137,7 @@ public abstract class ASopNode implements ISopNode {
         if (getSuccessorNode() != null) {
             returnString += iNewLinePrefix + "Successor: ";
             returnString += RelateTwoOperations.relationIntegerToString(getSuccessorRelation(), "", " ");
-            returnString += getSuccessorNode().typeToString();
+            returnString += getSuccessorNode().toString();//.typeToString();
             returnString += "\n";
         }
         //-----------------------------------------------------------------------
