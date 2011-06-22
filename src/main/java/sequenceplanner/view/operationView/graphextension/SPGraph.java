@@ -962,7 +962,9 @@ public class SPGraph extends mxGraph {
                 getModel().add(oldCell.getParent(), edge, 0);
                 getModel().setTerminal(edge, newCell, before);
                 getModel().setTerminal(edge, oldCell, !before);
-
+                
+                //Allways set newCell as a terminal. 
+                //Is set as source if !before else as target.
                 if (arch != null) {
                     getModel().setTerminal(arch, newCell, !before);
                 }
@@ -1861,7 +1863,7 @@ public class SPGraph extends mxGraph {
                 result = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
             } else if (n.isAlternative()) {
                 result = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
-                // Add arbitary when supported
+                // Add arbitary when supportedf
             } else {
                 result = null;
             }
