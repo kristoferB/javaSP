@@ -111,7 +111,7 @@ public abstract class ASopNode implements ISopNode {
         String returnString = "";
         //-----------------------------------------------------------------------
         returnString += iNewLinePrefix + "Node type: ";
-        returnString += getTypeAsString();
+        returnString += typeToString();
 //        if (getNodeType() != null) {
 //            returnString += typeToString();
 //        } else {
@@ -119,7 +119,7 @@ public abstract class ASopNode implements ISopNode {
 //        }
         returnString += "\n";
         //-----------------------------------------------------------------------
-        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
+        if (!sequenceSetIsEmpty()) {
             returnString += iNewLinePrefix + "Sequence set: {";
             for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
                 if (!returnString.endsWith("{")) {

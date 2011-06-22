@@ -55,12 +55,14 @@ import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ASopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.ISopStructure;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.SOP.SopStructure;
+import sequenceplanner.model.SOP.SopStructurePatrikEdition;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
@@ -79,6 +81,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private boolean isHidden;
     private ASopNode sopNode;
     private SopStructure sopStruct;
+    private ISopStructure mSopStruct2 = new SopStructurePatrikEdition();
 
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
@@ -881,6 +884,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
         }
         sopStruct.setSopSequence(cell, sopNode, before);
+        mSopStruct2.addCellToSop(cell, insertedCell, before);
 
     }
 
@@ -899,6 +903,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
         }
         sopStruct.setSopSequence(cell, sopNode);
+        mSopStruct2.addCellToSop(cell, insertedCell);
 
     }
 
@@ -907,6 +912,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param insertedCell cell containing Data
      */
     public void addSOPNode(Cell insertedCell) {
+        mSopStruct2.addCellToSop(insertedCell);
         //TODO mxgraph --> SOP
         //Check element type here and pass on to SOPStructure. SOPStructure should create the 
         //correct type of SOPNode and place it as a leaf under the root.
@@ -916,5 +922,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             throw new UnsupportedOperationException("Not yet implemented");
         }
         sopStruct.setSopRoot(sopNode);
+        
     }
 }

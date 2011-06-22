@@ -47,7 +47,7 @@ public class SopStructure implements ISopStructure {
         }*/
         System.out.println("wheres your head at");
         sopRootNode.addNodeToSequenceSet(newNode);
-        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
     }
 
     @Override
@@ -130,7 +130,7 @@ public class SopStructure implements ISopStructure {
             //printSops();
 //            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
         }
-        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
     }
 
     @Override
@@ -207,7 +207,7 @@ public class SopStructure implements ISopStructure {
             firstNodes.next();
         }
         //printSops();
-        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
 
     }
 
@@ -310,5 +310,20 @@ public class SopStructure implements ISopStructure {
                 } */            }
             //System.out.println("I'm out!");
         }
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell, boolean iBefore) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iReferenceCell, Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addCellToSop(Cell iNewCell) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
