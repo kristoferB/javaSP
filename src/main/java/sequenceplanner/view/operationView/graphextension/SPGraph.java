@@ -896,7 +896,7 @@ public class SPGraph extends mxGraph {
         try {
             getModel().beginUpdate();
             try {
-                Object arch = null;
+                Cell arch = null;
                 arch = getEdge(oldCell, oldCell.getParent(), before);
 
                 mxGeometry oldGeo = oldCell.getGeometry();
@@ -933,9 +933,28 @@ public class SPGraph extends mxGraph {
                     } else {
                         edge = CellFactory.getInstance().getEdge(true, true);
                     }
-                } else {
-                    if (before) {
-                        edge = CellFactory.getInstance().getEdge(true, true);
+                } else {//If inserted cell, newCell, is not an operation
+                    if (before) {//if placed before oldCell
+
+                        edge = CellFactory.getInstance().getEdge(true, true);//Create new edge with arrow. Will be pointing at oldCell
+                        
+                        //Get previous cell and OpViewroot
+                        Cell previousCell = (Cell)arch.getTerminal(true);
+                        Cell root = (Cell)oldCell.getParent();
+                        
+                        //Remove the edge going from previous cell and oldCell
+                        getModel().remove(arch);
+                        
+                        //Create new edge with no arrow
+                        arch = CellFactory.getInstance().getEdge(true, false);
+                        
+                        //Add new edge to goot
+                        getModel().add(root, arch, 0);
+                        
+                        //Set terminals for new edge previousCell is set to source
+                        //and newCell is set as target
+                        getModel().setTerminal(arch, previousCell, before);
+
                     } else {
                         edge = CellFactory.getInstance().getEdge(true, false);
                     }
