@@ -15,6 +15,7 @@ import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.data.Data;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -361,7 +362,7 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    addPropertyPanelView((OperationData) clickedCell.getValue());
+                clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
                 }
             }
         }
@@ -419,17 +420,17 @@ public class GUIController {
         return false;
     }
 
-    public void addPropertyPanelView(OperationData data) {
+    public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
             AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
-            data.addObserver(ctrl);
             panel.addEditorSaveListener(ctrl);
+            guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {
             printToConsole("Operation already opened.");
 
         }
-
+        return data;
     }
 }
