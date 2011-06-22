@@ -152,8 +152,8 @@ public class AttributePanel extends javax.swing.JPanel{
                     preListModel.addElement(model.getConditions().get(key).toString());
                 }
             }
-            preCondList = new javax.swing.JList(postListModel);
-            postCondList = new javax.swing.JList(postListModel);
+            preCondList.setModel(preListModel);
+            postCondList.setModel(postListModel);
         }
     }
 

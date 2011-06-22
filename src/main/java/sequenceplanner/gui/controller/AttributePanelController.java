@@ -52,7 +52,7 @@ public class AttributePanelController implements ActionListener, Observer {
      */
     private void setCondition(String conditionString) {
         //ConditionType should be selected from the choises of the radiobuttons
-        model.setConditions(StringConditionParser.getInstance().getConditionMap(conditionString,ConditionType.PRE));
+        model.getConditions().put(ConditionType.PRE, StringConditionParser.getInstance().parseConditionString(conditionString));
     
     }
 }

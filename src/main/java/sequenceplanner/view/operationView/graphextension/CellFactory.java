@@ -44,7 +44,7 @@ public class CellFactory {
                     : ";strokeColor=#000000;strokeWidth=2;";
         }
         Cell edge = new Cell("edge", new mxGeometry(), style);
-
+        edge.setId("-2");
         edge.setEdge(true);
         edge.setConnectable(false);
         edge.getGeometry().setRelative(true);
@@ -68,7 +68,7 @@ public class CellFactory {
                 20), "perimeter=custom.operationPerimeter;fillColor=red");
 
         cell.setType(Constants.OP);
-        cell.setId(null);
+        cell.setId("operation "+d.getId());
         cell.setVertex(true);
         cell.setConnectable(false);
 
@@ -88,7 +88,7 @@ public class CellFactory {
         Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
 
         cell.setType(Constants.PARALLEL);
-        cell.setId(null);
+        cell.setId("paralll "+d.getId());
         cell.setVertex(true);
         cell.setConnectable(false);
 
