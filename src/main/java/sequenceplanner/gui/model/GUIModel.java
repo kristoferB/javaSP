@@ -166,11 +166,13 @@ public class GUIModel {
         if (saveAs) {
             String filepath = "";
 
-            JFileChooser fc = new JFileChooser("user.dir");
+            JFileChooser fc = new JFileChooser(path);
             fc.setFileFilter(SPFileFilter.getInstance());
 
             int fileResult = fc.showSaveDialog(null);
-
+            
+            path = fc.getSelectedFile().getPath();
+            
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
 

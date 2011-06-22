@@ -63,11 +63,13 @@ public class ModelParserTest {
     @Test
     public void testGetSpEFAutomata() {
         SP mSP = new SP();
-        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/PPU_NEW_v2_LongSeq.sopx");
+        mSP.loadFromSOPXFile("src/main/resources/sequenceplanner/resources/filesForTesting/PPU_NEW_v4.sopx");
         Model model = mSP.getModel();        
-        
+        System.out.println("Number of operations: "+model.getAllOperations().size());
         DefaultModelParser parser = new DefaultModelParser(model);
         SpEFAutomata auto = parser.getSpEFAutomata();
+        System.out.println("Number of EFAs: "+auto.getAutomatons().size());
+        System.out.println("Number of Variables: "+auto.getVariables().size());
         SpEFA e17 = auto.getSpEFA("17");
         SpEFA e14 = auto.getSpEFA("14");
         SpEFA e11 = auto.getSpEFA("11");
@@ -139,6 +141,8 @@ public class ModelParserTest {
         export2.save();
 
         Reduction reduce = new Reduction(auto);
+        System.out.println("Number of Reduced EFAs: "+reduce.getReducedModel().getAutomatons().size());
+        System.out.println("Number of Reduced Variables: "+reduce.getReducedModel().getVariables().size());
         DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
         DefaultExport export = new DefaultExport(converter.getModule());
         export.save();

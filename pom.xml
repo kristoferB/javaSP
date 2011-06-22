@@ -33,6 +33,11 @@
             <artifactId>idw-gpl</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>jgrapht</groupId>
+            <artifactId>jgrapht</artifactId>
+            <version>0.8.2</version>
+        </dependency>
         
 	<!-- Test -->
         <dependency>
@@ -46,11 +51,6 @@
   	    <artifactId>mockito-all</artifactId>
             <version>1.8.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht</artifactId>
-            <version>0.8.2</version>
         </dependency>
     </dependencies>
 
@@ -92,11 +92,18 @@
         </plugins>
     </build>
 
-
+<!--
   <repositories>
     <repository>
       <id>my-remote-local-site</id>
       <url>http://www.ohlson.be/maven/releases/</url>
+    </repository>
+  </repositories>
+-->
+  <repositories>
+    <repository>
+      <id>my-remote-local-site</id>
+      <url>http://129.16.80.161/</url>
     </repository>
   </repositories>
 

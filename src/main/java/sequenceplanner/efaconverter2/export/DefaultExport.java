@@ -52,7 +52,7 @@ public class DefaultExport {
             int fileResult = fc.showSaveDialog(null);
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
-
+                path = fc.getSelectedFile().getPath();
                 if(!filepath.contains(".wmod"))
                     filepath += ".wmod";
                 
