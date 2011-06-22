@@ -71,7 +71,7 @@ public class SopStructure implements ISopStructure {
                 sopNode.setSuccessorNode(sopIterator);
                 System.out.println("New Root added! It = " + sopIterator.toString());
                 //..Remove the old one as a "first node"
-                firstNodes.remove();
+                firstNodes.remove(); //IS THIS LINE NEEDED? DO WE USE firstNodes ANYMORE?
                 mSNToolbox.removeNode(sopIterator, sopRootNode);
                 //..And set the new one as a "first node"
                 sopRootNode.addNodeToSequenceSet(sopNode);
@@ -84,6 +84,9 @@ public class SopStructure implements ISopStructure {
                 if (sopNode.getSuccessorNode() != null) { //THIS IS ALWAYS TRUE! NO SUCCESSOR HAS BEEN ADDED!! -> ALWYAS GO TO ELSE
                     sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
                 }else{
+                    //A->B and add C between A and B
+                    //first C->B and then A->C gives A->C->B
+                    sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
                     sopIterator.setSuccessorNode(sopNode);
                 }
                 System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
@@ -125,7 +128,7 @@ public class SopStructure implements ISopStructure {
 
             }
             //printSops();
-            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+//            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
         }
         System.out.println("Patrik.super.out.print"+sopRootNode.toString());
     }
