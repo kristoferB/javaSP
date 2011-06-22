@@ -20,7 +20,8 @@ public class SopStructure implements ISopStructure {
     private ASopNode sopNode;
     private ISopNode sopIterator;
     private Iterator specialNode;
-    private Iterator specialNode2;
+    private ISopNode specialNodeSaved;
+    private boolean before, after;
     //private LinkedList<ASopNode> sopStructure = new LinkedList<ASopNode>();
     private LinkedList<ISopNode> withinSops;
 
@@ -39,181 +40,148 @@ public class SopStructure implements ISopStructure {
     @Override
     public void setSopRoot(ASopNode newNode) {
         //First node in a Sequence
-        /*if (sopRootNode == null) {
-            this.sopRootNode = newNode;
-        }/* else {
-            System.out.println("Adding: " + sopRootNode.getUniqueId());
-            this.sopNode = newNode;
-        }*/
-        System.out.println("wheres your head at");
         sopRootNode.addNodeToSequenceSet(newNode);
-//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+        firstNodes = sopRootNode.getFirstNodesInSequencesAsSet().iterator();
+        //System.out.println("Sop Structure: "+sopRootNode.toString()+"\n_____________________________________");
+        System.out.println("First2: "+firstNodes.next());
+        printSops();
     }
 
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode, boolean before) {
-        //Rest of the nodes
-        boolean finished = false;
-        //sopIterator = sopStructure.getFirst();
-        //System.out.println("____________________________________");
-        //for (ListIterator<ASopNode> it = sopStructure.listIterator(); it.hasNext();) {
-        firstNodes = sopRootNode.getFirstNodesInSequencesAsSet().iterator();
-        //If the added node is before the root it will be the new root
-        while (firstNodes.hasNext()) {
-            sopIterator = (ISopNode) firstNodes.next();
-            //System.out.println("Iterating through sopStructure...");
-            //System.out.println("Iterating Id: " + sopIterator.getUniqueId() + "Cell Id" + cell.getUniqueId());
-
-            //Check if the added node is first in a sequence set
-            if (sopIterator.getUniqueId() == cell.getUniqueId() && before == true) {
-                //System.out.println("1");
-                //If so, set the old SOPNode as a successor to the new SOPNode
-                sopNode.setSuccessorNode(sopIterator);
-                System.out.println("New Root added! It = " + sopIterator.toString());
-                //..Remove the old one as a "first node"
-                firstNodes.remove(); //IS THIS LINE NEEDED? DO WE USE firstNodes ANYMORE?
-                mSNToolbox.removeNode(sopIterator, sopRootNode);
-                //..And set the new one as a "first node"
-                sopRootNode.addNodeToSequenceSet(sopNode);
-                break;
-
-                //Check if the node is added after the first node in the sequence
-            } else if (sopIterator.getUniqueId() == cell.getUniqueId() && before == false) {
-                //System.out.println("2");
-                //Check for successor nodes
-                if (sopNode.getSuccessorNode() != null) { //THIS IS ALWAYS TRUE! NO SUCCESSOR HAS BEEN ADDED!! -> ALWYAS GO TO ELSE
-                    sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
-                }else{
-                    //A->B and add C between A and B
-                    //first C->B and then A->C gives A->C->B
-                    sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
-                    sopIterator.setSuccessorNode(sopNode);
-                }
-                System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
-            } else {
-                //System.out.println("3");
-                //sopIterator = sopStructure.getFirst();
-                //System.out.println("Successor node: " + sopIterator.getSuccessorNode().toString());
-
-                //Since the click wasn't on the first node, we have to go through the whole Sequence chain
-                do {
-                    //System.out.println("3.1");
-
-                    //Check if the next node is the clicked node.. and add before
-                    if (sopIterator.getSuccessorNode() != null && sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == true) {
-                        //System.out.println("3.2");
-                        sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
-                        System.out.println("Adding " + sopNode.toString() + " before " + sopIterator.getSuccessorNode().toString());
-                        sopIterator.setSuccessorNode(sopNode);
-                        break;
-                    //Check if the next node is the clicked node.. and add after
-                    } else if (sopIterator.getSuccessorNode() != null && sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == false) {
-                        //System.out.println("3.2");
-                        sopIterator = sopIterator.getSuccessorNode();
-                        sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
-                        System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
-                        sopIterator.setSuccessorNode(sopNode);
-                        break;
-                    }
-                    //}
-                    //System.out.println("Iterator successor: "+sopIterator.getSuccessorNode().toString());
-                    //System.out.println("4");
-                    //System.out.println("sopIterator point at: " + sopIterator.toString());
-                    if (sopIterator.getSuccessorNode() != null) {
-                        sopIterator = sopIterator.getSuccessorNode();
-                    } else {
-                        finished = true;
-                    }
-                } while (finished == false);
-
-            }
-            //printSops();
-//            System.out.println("Patrik.super.out.print"+sopRootNode.toString());
-        }
-//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+        this.before = before;
+        if(before == false){
+            after = true;
+        }else after = false;
+        setSopSequence(cell, sopNode);
     }
 
     @Override
     public void setSopSequence(Cell cell, ASopNode sopNode) {
         //Put a cell within a cell
         firstNodes = sopRootNode.getFirstNodesInSequencesAsSet().iterator();
+
         boolean finished = false;
-        while (firstNodes.hasNext()) {
-            //System.out.println("blabla11 ");
+        do {
+            sopIterator = (ISopNode) firstNodes.next();
             while (finished == false) {
-                //System.out.println("blabla22 cell Id: " + cell.getUniqueId() + " sopIterator: " + sopIterator + " getOperation: ");
                 //If not operation, we either add or look deeper
                 if (sopIterator.getOperation() == null) {
                     //If the clicked cell is within the iterated cell
-                    //System.out.println("0000000000000000");
-                    if (sopIterator.getUniqueId() == cell.getUniqueId()) {
+                    if (sopIterator.getUniqueId() == cell.getUniqueId()&& before == false && after == false) {
                         System.out.println("Adding:" + sopNode.toString());
                         sopIterator.addNodeToSequenceSet(sopNode);
                         break;
                     } else if (sopIterator.getFirstNodesInSequencesAsSet().isEmpty() == false) {
                         //The cell has a set
+                        specialNodeSaved = sopIterator;
                         specialNode = sopIterator.getFirstNodesInSequencesAsSet().iterator();
 
-
-                        //System.out.println("*********SpecialNode: " + sopIterator);
                         while (specialNode.hasNext()) {
-                            //System.out.println("1.");
                             sopIterator = (ISopNode) specialNode.next();
-                            //System.out.println("2.");
+
                             if (sopIterator.getUniqueId() == cell.getUniqueId()) {
-                                //sopIterator.setSuccessorRelation(4);
-                                System.out.println("Adding node to an Alternative node");
-                                //setRelation
-                                sopIterator.addNodeToSequenceSet(sopNode);
+                                if(before == true){
+                                    sopNode.setSuccessorNode(sopIterator);
+                                    specialNodeSaved.getFirstNodesInSequencesAsSet().remove(sopIterator);
+                                    specialNodeSaved.addNodeToSequenceSet(sopNode);
+                                }else if(after == true){
+                                    if (sopNode.getSuccessorNode() != null) {
+                                        sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                                    } else {
+                                        sopIterator.setSuccessorNode(sopNode);
+                                    }
+                                    System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
+                                    break;
+                                }else{
+                                    System.out.println("Adding node to an Alternative node");
+                                    sopIterator.addNodeToSequenceSet(sopNode);
+                                }
                                 break;
                             } else {
-                                do {
-                                    if (sopIterator.getSuccessorNode() != null) {
+                                while (sopIterator.getSuccessorNode() != null) {
                                         sopIterator = sopIterator.getSuccessorNode();
-                                        //System.out.println("3.");
-                                        if (sopIterator.getUniqueId() == cell.getUniqueId()) {
-                                            //System.out.println("4.");
-                                            sopIterator.addNodeToSequenceSet(sopNode);
+                                        if (sopIterator.getUniqueId() == cell.getUniqueId() && before == true) {
+                                            //If so, set the old one as a successor
+                                            sopNode.setSuccessorNode(sopIterator);
+                                            System.out.println("New Root added! It = " + sopIterator.toString());
+                                            //..Remove the old one as a "first node"
+                                            sopRootNode.getFirstNodesInSequencesAsSet().remove(sopIterator);
+                                            //..And set the new one as a "first node"
+                                            sopRootNode.addNodeToSequenceSet(sopNode);
+                                            break;
+                                        } else if (sopIterator.getUniqueId() == cell.getUniqueId() && after == true) {
+                                            //Check for successor nodes
+                                            if (sopNode.getSuccessorNode() != null) {
+                                                sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                                            } else {
+                                                sopIterator.setSuccessorNode(sopNode);
+                                            }
+                                            System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
+                                            break;
                                         }
-                                        //System.out.println("5.");
-                                    }
-                                } while (sopIterator.getSuccessorNode() != null);
+                                } 
                             }
                         }
-                        //System.out.println("6.");
-                        //sopIterator = (ISopNode) specialNode.next();
-                        //System.out.println("woot wooooot");
                     }
                 }
+
+                else if (sopIterator.getUniqueId() == cell.getUniqueId() && before == true && sopRootNode.getFirstNodesInSequencesAsSet().contains(sopIterator)) {
+                    //If so, set the old one as a successor
+                    sopNode.setSuccessorNode(sopIterator);
+                    System.out.println("New Root added! It = " + sopNode.toString());
+                    //..Remove the old one as a "first node"
+                    sopRootNode.getFirstNodesInSequencesAsSet().remove(sopIterator);
+                    //..And set the new one as a "first node"
+                    sopRootNode.addNodeToSequenceSet(sopNode);
+                    break;
+
+                }else if (sopIterator.getSuccessorNode() != null && sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId() && before == true) {
+                        sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                        System.out.println("Adding " + sopNode.toString() + " before " + sopIterator.getSuccessorNode().toString());
+                        sopIterator.setSuccessorNode(sopNode);
+                        break;
+                }else if (sopIterator.getUniqueId() == cell.getUniqueId() && after == true) {
+                    //Check for successor nodes
+                    if (sopNode.getSuccessorNode() != null) {
+                        sopNode.setSuccessorNode(sopIterator.getSuccessorNode());
+                    } else {
+                        sopIterator.setSuccessorNode(sopNode);
+
+                    }
+                    System.out.println("Adding " + sopNode.toString() + " after " + sopIterator.toString());
+                    //reset
+                    after=false;
+                    break;
+
+                }
+
                 if (sopIterator.getSuccessorNode() != null) {
                     sopIterator = sopIterator.getSuccessorNode();
-                }//else if (sopIterator.getFirstNodesInSequencesAsSet() != null){
-                // sopIterator =
+                }
                 else {
                     finished = true;
                 }
 
             }
 
-            if (sopIterator.getSuccessorNode() != null && sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId()) {
-                //sopIterator.setSuccessorRelation(4);
-                //System.out.println("blabla33");
-                //setRelation
+            if (sopIterator.getSuccessorNode() != null && sopIterator.getSuccessorNode().getUniqueId() == cell.getUniqueId()&&sopIterator.getFirstNodesInSequencesAsSet().isEmpty()==false) {
                 sopIterator = sopIterator.getSuccessorNode();
                 sopIterator.addNodeToSequenceSet(sopNode);
                 break;
             }
-            //System.out.println(sopIterator.getSuccessor().);
-            firstNodes.next();
-        }
-        //printSops();
-//        System.out.println("Patrik.super.out.print"+sopRootNode.toString());
+            
+        }while (firstNodes.hasNext());
+        printSops();
+        System.out.println("Sop Structure: "+sopRootNode.toString()+"\n_____________________________________");
+    }
 
+    public void deleteNode(ASopNode sopNode) {
     }
 
     public void printSops() {
         int sequenceCounter = 0;
-        System.out.println("bagagaga");
+        
         firstNodes = sopRootNode.getFirstNodesInSequencesAsSet().iterator();
         //If the added node is before the root it will be the new root
         while (firstNodes.hasNext()) {
