@@ -284,6 +284,8 @@ public class OperationActions {
             } else if (toRemove.isEdge()) {
                 getGraph(e).removeCells(new Object[]{toRemove});
             }
+
+            getView(e).updateSopNode();
         }
     }
 }

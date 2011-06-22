@@ -1,6 +1,7 @@
 package sequenceplanner.model.SOP;
 
 import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
  * 
@@ -36,4 +37,5 @@ public interface ISopStructure {
     boolean addCellToSop(Cell iReferenceCell, Cell iNewCell, boolean iBefore);
     boolean addCellToSop(Cell iReferenceCell, Cell iNewCell);
     boolean addCellToSop(Cell iNewCell);
+    boolean updateSopNode(SPGraph iSpGraph);
     }
