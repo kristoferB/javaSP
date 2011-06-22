@@ -1,7 +1,5 @@
 package sequenceplanner.condition;
 
-import java.util.Scanner;
-import java.util.regex.MatchResult;
 
 /**
  * Simple singleton parser class.
@@ -32,32 +30,36 @@ public class StringConditionParser {
      * @param String Conditionstring
      * @return the {@link Condition} 
      */
-    public Condition parseConditionString(/*String conditionString*/) {
+    public Condition parseConditionString(String conditionString) {
         Condition condition = new Condition();
 
-        System.out.println("YYYYYYYYY: " + (var = test.substring(0, 4)));
+        System.out.println("Condition variable: " + (var = test.substring(0, 4)));
         if(test.length() == 7){
-            System.out.println("YYYYYYYYY:" + (op = test.substring(4, 6)));
-            System.out.println("YYYYYYYYY:" + (val = test.substring(6, 7)));
+            System.out.println("Condition operator: " + (op = test.substring(4, 6)));
+            System.out.println("Condition value: " + (val = test.substring(6, 7)));
         }else if(test.length() == 6){
-            System.out.println("YYYYYYYYY:" + (op = test.substring(4, 5)));
-            System.out.println("YYYYYYYYY:" + (val = test.substring(5, 6)));
+            System.out.println("Condition operator: " + (op = test.substring(4, 5)));
+            System.out.println("Condition value: " + (val = test.substring(5, 6)));
         }else {
             System.out.println("Wrong condition");
             return null;
         }
+
         //Check if operator is valid (==,!=,>,<,>=,<=,=,+=,-=,->)
         for (String opList : operatorPattern) {
             if (op.equals(opList)) {
                 System.out.println(op + " is valid");
             }
         }
+
         if(Integer.parseInt(val) == 0 || Integer.parseInt(val) == 1 ||Integer.parseInt(val) == 2){
             System.out.println(val + " is valid");
         }else {
             System.out.println("Wrong condition");
             return null;
         }
+        //ConditionStatement condState = new ConditionStatement(var,op,val);
+
         return condition;
     }
 }

@@ -125,7 +125,7 @@ public class SopStructure implements ISopStructure {
                             }
                         }
                     }
-                }
+                
 
                 }else if (sopIterator.getUniqueId() == cell.getUniqueId() && before == true && sopRootNode.getFirstNodesInSequencesAsSet().contains(sopIterator)) {
                     //If so, set the old one as a successor
