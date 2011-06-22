@@ -924,4 +924,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         sopStruct.setSopRoot(sopNode);
         
     }
+
+    public void updateSopNode() {
+        mSopStruct2.updateSopNode(getGraph());
+    }
 }

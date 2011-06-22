@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
  *
@@ -326,4 +327,11 @@ public class SopStructure implements ISopStructure {
     public boolean addCellToSop(Cell iNewCell) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public boolean updateSopNode(SPGraph iSpGraph) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
 }
