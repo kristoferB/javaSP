@@ -8,7 +8,6 @@ import sequenceplanner.model.data.OperationData;
  * @author patrik
  */
 public interface ISopNode {
-    String getTypeAsString();
 
     OperationData getOperation();
 
@@ -26,12 +25,22 @@ public interface ISopNode {
 
     boolean sequenceSetIsEmpty();
 
+    /**
+     * Only works this node.
+     * @return operation name or node type as symbol
+     */
     String typeToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString(String prefix);
-
-    public int getUniqueId();
     
 }

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.algorithms.visualization.RelateTwoOperations;
-import sequenceplanner.model.Model;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -14,7 +13,6 @@ import sequenceplanner.model.data.OperationData;
 public abstract class ASopNode implements ISopNode {
 
     private String mTypeAsString = "";
-    private int uniqueId;
     /**
      * Set containing the first ISopNode in all sequences that are children to this node.<br/>
      */
@@ -23,18 +21,8 @@ public abstract class ASopNode implements ISopNode {
     private int mSuccessorRelation = -1;
 
     public ASopNode(final String iTypeAsString) {
-        this(iTypeAsString,Model.newId());
-    }
-
-    public ASopNode(final String iTypeAsString, int id) {
         mSequenceSet = new HashSet<ISopNode>();
         this.mTypeAsString = iTypeAsString;
-        System.out.println("This is my Unique Id: " + id);
-        uniqueId = id;
-    }
-    @Override
-    public int getUniqueId(){
-        return uniqueId;
     }
     @Override
     public Set<ISopNode> getFirstNodesInSequencesAsSet() {
@@ -83,19 +71,12 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
-    public String getTypeAsString() {
-        return mTypeAsString;
-    }
-
-
-
-    @Override
     public String typeToString() {
         String returnString = "";
         if (this instanceof SopNodeOperation) {
             returnString += getOperation().getName();
         } else if (this instanceof SopNode || this instanceof SopNodeAlternative || this instanceof SopNodeArbitrary || this instanceof SopNodeParallel) {
-            returnString += getTypeAsString();
+            returnString += mTypeAsString;
         } else {
             returnString += null;
         }
@@ -112,11 +93,6 @@ public abstract class ASopNode implements ISopNode {
         //-----------------------------------------------------------------------
         returnString += iNewLinePrefix + "Node type: ";
         returnString += typeToString();
-//        if (getNodeType() != null) {
-//            returnString += typeToString();
-//        } else {
-//            returnString += null;
-//        }
         returnString += "\n";
         //-----------------------------------------------------------------------
         if (!sequenceSetIsEmpty()) {
@@ -137,7 +113,7 @@ public abstract class ASopNode implements ISopNode {
         if (getSuccessorNode() != null) {
             returnString += iNewLinePrefix + "Successor: ";
             returnString += RelateTwoOperations.relationIntegerToString(getSuccessorRelation(), "", " ");
-            returnString += getSuccessorNode().toString();//.typeToString();
+            returnString += getSuccessorNode().typeToString();
             returnString += "\n";
         }
         //-----------------------------------------------------------------------

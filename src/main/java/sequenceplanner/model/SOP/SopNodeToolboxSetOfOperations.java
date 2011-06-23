@@ -47,6 +47,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     @Override
     public Map<OperationData, Map<ConditionType, Condition>> relationsToSelfContainedOperations(ISopNode iRootNode) {
         final ConditionsFromSopNode cfsn = new ConditionsFromSopNode(iRootNode);
+        cfsn.printOperationsWithConditions();
         return cfsn.getmOperationConditionMap();
     }
 

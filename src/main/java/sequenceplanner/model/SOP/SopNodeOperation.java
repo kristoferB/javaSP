@@ -10,12 +10,8 @@ public class SopNodeOperation extends ASopNode{
 
     private OperationData mOperation = null;
 
-    private SopNodeOperation() {
-        super("operation",0);
-    }
-
     public SopNodeOperation(final OperationData iOperation) {
-        super("operation",iOperation.getId());
+        super("operation");
         this.mOperation = iOperation;
     }
 
@@ -26,11 +22,5 @@ public class SopNodeOperation extends ASopNode{
 
     public void setOperation(OperationData mOperation) {
         this.mOperation = mOperation;
-    }
-    
-    
-    @Override
-    public String toString(){
-        return mOperation.getName();
     }
 }

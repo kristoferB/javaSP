@@ -100,11 +100,11 @@ public class RelationPartition {
         ISopNode relationTypeNode = null;
         final String relationAsString = RelateTwoOperations.relationIntegerToString(mRelationInt, "", "");
         if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE,"",""))) {
-            relationTypeNode = new SopNodeAlternative(Model.newId());
+            relationTypeNode = new SopNodeAlternative();
         } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER,"",""))) {
-            relationTypeNode = new SopNodeArbitrary(Model.newId());
+            relationTypeNode = new SopNodeArbitrary();
         } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL,"",""))) {
-            relationTypeNode = new SopNodeParallel(Model.newId());
+            relationTypeNode = new SopNodeParallel();
         }
         root.addNodeToSequenceSet(relationTypeNode);
         //Move nodes in master set from root, to relation node

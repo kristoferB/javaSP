@@ -38,7 +38,6 @@ public class ConditionsFromSopNode {
 
     public ConditionsFromSopNode(final ISopNode iRoot) {
         run(iRoot);
-        printOperationsWithConditions();
     }
 
     /**
@@ -330,7 +329,7 @@ public class ConditionsFromSopNode {
 
     }
 
-    private void printOperationsWithConditions() {
+    public void printOperationsWithConditions() {
         for (final OperationData opData : mOperationConditionMap.keySet()) {
             final Map<ConditionType, Condition> typeConditionMap = mOperationConditionMap.get(opData);
 

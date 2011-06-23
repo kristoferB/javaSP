@@ -54,6 +54,7 @@ import java.util.Map;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ASopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.ISopStructure;
 import sequenceplanner.model.SOP.SopNodeAlternative;
@@ -61,9 +62,9 @@ import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
-import sequenceplanner.model.SOP.SopStructure;
-//import sequenceplanner.model.SOP.SopStructurePatrikEdition;
-import sequenceplanner.model.SOP.SopStructurePatrikEdition;
+//import sequenceplanner.model.SOP.SopStructure2;
+import sequenceplanner.model.SOP.SopStructure2;
+import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
@@ -81,8 +82,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private boolean isClosed;
     private boolean isHidden;
     private ASopNode sopNode;
-    private SopStructure sopStruct;
-    private ISopStructure mSopStruct2 = new SopStructurePatrikEdition();
+    private ISopStructure mSopStruct2 = new SopStructure2();
 
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
@@ -94,7 +94,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-        sopStruct = new SopStructure();
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -326,7 +325,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             updateName();
 
             final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
-            final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopStruct.getRoot());
+            SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+            ISopNode theSopNode = snfspgm.getSopNodeRoot();
+            final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
             //ConditionsFromSopNode conditionExtractor = new ConditionsFromSopNode(sopStruct.getRoot());
             for (TreeNode node : data) {
                 if (node.getNodeData() instanceof OperationData) {
@@ -867,45 +868,47 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param before boolean stating before reference cell or not
      */
     public void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
-        /* if the cell is either before or after, theres no need to check the
-        type of "cell". But if its not, the type of "cell" is important for
-        how the cells   */
-        //Operation
-        if (insertedCell.getValue() instanceof OperationData) {
-            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        } //Parallel
-        else if (insertedCell.getType() == Constants.PARALLEL) {
-            //For when SopNodeParallel is finished
-            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
-        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
-            //For when SopNodeAlternative is finished
-            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
-        } else if (insertedCell.getType() == Constants.ARBITRARY) {
-            //For when SopNodeArbitrary is finished
-            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
-        }
-        sopStruct.setSopSequence(cell, sopNode, before);
-        mSopStruct2.addCellToSop(cell, insertedCell, before);
+//        /* if the cell is either before or after, theres no need to check the
+//        type of "cell". But if its not, the type of "cell" is important for
+//        how the cells   */
+//        //Operation
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } //Parallel
+//        else if (insertedCell.getType() == Constants.PARALLEL) {
+//            //For when SopNodeParallel is finished
+//            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
+//            //For when SopNodeAlternative is finished
+//            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ARBITRARY) {
+//            //For when SopNodeArbitrary is finished
+//            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
+//        }
+//        sopStruct.setSopSequence(cell, sopNode, before);
+//        mSopStruct2.addCellToSop(cell, insertedCell, before);
+        
+        updateSopNode();
 
     }
 
     public void addSOPNode(Cell cell, Cell insertedCell) {
-        if (insertedCell.getValue() instanceof OperationData) {
-            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        } //Parallel
-        else if (insertedCell.getType() == Constants.PARALLEL) {
-            //For when SopNodeParallel is finished
-            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
-        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
-            //For when SopNodeAlternative is finished
-            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
-        } else if (insertedCell.getType() == Constants.ARBITRARY) {
-            //For when SopNodeArbitrary is finished
-            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
-        }
-        sopStruct.setSopSequence(cell, sopNode);
-        mSopStruct2.addCellToSop(cell, insertedCell);
-
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } //Parallel
+//        else if (insertedCell.getType() == Constants.PARALLEL) {
+//            //For when SopNodeParallel is finished
+//            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
+//            //For when SopNodeAlternative is finished
+//            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ARBITRARY) {
+//            //For when SopNodeArbitrary is finished
+//            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
+//        }
+//        sopStruct.setSopSequence(cell, sopNode);
+//        mSopStruct2.addCellToSop(cell, insertedCell);
+        updateSopNode();
     }
 
     /**
@@ -913,20 +916,31 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @param insertedCell cell containing Data
      */
     public void addSOPNode(Cell insertedCell) {
-        mSopStruct2.addCellToSop(insertedCell);
-        //TODO mxgraph --> SOP
-        //Check element type here and pass on to SOPStructure. SOPStructure should create the 
-        //correct type of SOPNode and place it as a leaf under the root.
-        if (insertedCell.getValue() instanceof OperationData) {
-            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
-        } else {
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-        sopStruct.setSopRoot(sopNode);
-        
+//        mSopStruct2.addCellToSop(insertedCell);
+//        //TODO mxgraph --> SOP
+//        //Check element type here and pass on to SOPStructure. SOPStructure should create the
+//        //correct type of SOPNode and place it as a leaf under the root.
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } else {
+//            throw new UnsupportedOperationException("Not yet implemented");
+//        }
+//        sopStruct.setSopRoot(sopNode);
+        updateSopNode();
     }
 
     public void updateSopNode() {
-        mSopStruct2.updateSopNode(getGraph());
+        //Create a new sop node root aka theSopNode
+        final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+        final ISopNode theSopNode = snfspgm.getSopNodeRoot();
+        
+        System.out.println(":::::");
+        System.out.println(theSopNode.toString());
+        System.out.println(":::::");
+
+        //Create conditions
+        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+
     }
 }

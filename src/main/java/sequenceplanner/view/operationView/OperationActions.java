@@ -141,30 +141,23 @@ public class OperationActions {
                                 clickPoint.getY() - state.getY());
 
                         if (cell.isOperation()) {
-                            getView(e).addSOPNode(cell, insertedCell, this.before);
                             graph.insertNewCell(cell, insertedCell, this.before);
 
                         } else if (cell.isSOP()) {
                             if (!this.into) {
-                                getView(e).addSOPNode(cell, insertedCell, this.before);
                                 graph.insertNewCell(cell, insertedCell, this.before);
-
                             } else {
                                 //Relative movement
                                 //TODO place cells.
-                                getView(e).addSOPNode(cell, insertedCell);
                                 graph.addCell(insertedCell, cell);
-
                             }
 
                         } else if (cell.isAlternative() || cell.isArbitrary() || cell.isParallel()) {
 
                             if (!this.into) {
-                                getView(e).addSOPNode(cell, insertedCell, this.before);
                                 graph.insertNewCell(cell, insertedCell, this.before);
 
                             } else {
-                                getView(e).addSOPNode(cell, insertedCell);
                                 graph.insertGroupNode(cell, p, insertedCell);
                             }
                         }
@@ -173,8 +166,8 @@ public class OperationActions {
                     insertedCell.getGeometry().setX(clickPoint.getX());
                     insertedCell.getGeometry().setY(clickPoint.getY());
                     graph.addCell(insertedCell);
-                    getView(e).addSOPNode(insertedCell);
                 }
+                getView(e).updateSopNode();
             } finally {
                 graph.getModel().endUpdate();
             }
@@ -189,6 +182,7 @@ public class OperationActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             getView(e).getGraphComponent().getUndoManager().undo();
+            getView(e).updateSopNode();
         }
     }
 
@@ -200,6 +194,7 @@ public class OperationActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             getView(e).getGraphComponent().getUndoManager().redo();
+            getView(e).updateSopNode();
         }
     }
 

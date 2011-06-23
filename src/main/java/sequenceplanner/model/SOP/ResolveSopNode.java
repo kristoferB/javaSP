@@ -52,12 +52,12 @@ public class ResolveSopNode {
         boolean hasPerformedAChange = false;
 
         if (iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
-            final String iNodeType = iNode.getTypeAsString();
+            final String iNodeType = iNode.typeToString();
             final Set<ISopNode> nodesToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iNode, false));
             for (final ISopNode childNode : nodesToLoop) {
                 if (childNode instanceof SopNode && childNode.getFirstNodesInSequencesAsSet().size() == 1) {
                     final ISopNode childChildNode = childNode.getFirstNodesInSequencesAsSet().iterator().next();
-                    final String childChildNodeType = childChildNode.getTypeAsString();
+                    final String childChildNodeType = childChildNode.typeToString();
                     if (iNodeType.equals(childChildNodeType)) {
                         //Move children to childChild from childChild to root
                         for (final ISopNode childChildChildNode : childChildNode.getFirstNodesInSequencesAsSet()) {
@@ -101,10 +101,10 @@ public class ResolveSopNode {
         boolean hasPerformedAChange = false;
 
         if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
-            final String iNodeType = iNode.getTypeAsString();
+            final String iNodeType = iNode.typeToString();
             final Set<ISopNode> nodesToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iNode, false));
             for (final ISopNode childNode : nodesToLoop) {
-                final String childNodeType = childNode.getTypeAsString();
+                final String childNodeType = childNode.typeToString();
                 if (iNodeType.equals(childNodeType)) {
                     //Move children to child from child to root
                     for (final ISopNode childChildNode : childNode.getFirstNodesInSequencesAsSet()) {
@@ -144,7 +144,7 @@ public class ResolveSopNode {
         for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
             //All node types except OperationData and SOP are of interest
             if (node instanceof SopNodeAlternative || node instanceof SopNodeArbitrary || node instanceof SopNodeParallel) {
-                final String nodeType = node.getTypeAsString();
+                final String nodeType = node.typeToString();
                 if (!nodeTypeSetMap.containsKey(nodeType)) {
                         nodeTypeSetMap.put(nodeType, new HashSet<ISopNode>());
                     }
@@ -160,11 +160,11 @@ public class ResolveSopNode {
                 //create new node
                 ISopNode newNode = null;
                 if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", ""))) {
-                    newNode = new SopNodeAlternative(Model.newId());
+                    newNode = new SopNodeAlternative();
                 } else if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", ""))) {
-                    newNode = new SopNodeArbitrary(Model.newId());
+                    newNode = new SopNodeArbitrary();
                 } else if(key.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", ""))) {
-                    newNode = new SopNodeParallel(Model.newId());
+                    newNode = new SopNodeParallel();
                 }
                 iNode.addNodeToSequenceSet(newNode);
                 
