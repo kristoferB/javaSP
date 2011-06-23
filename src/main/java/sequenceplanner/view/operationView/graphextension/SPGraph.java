@@ -42,8 +42,6 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphSelectionModel;
 import com.mxgraph.view.mxGraphView;
 import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionExpression;
 
 /**
  *
@@ -937,20 +935,20 @@ public class SPGraph extends mxGraph {
                     if (before) {//if placed before oldCell
 
                         edge = CellFactory.getInstance().getEdge(true, true);//Create new edge with arrow. Will be pointing at oldCell
-                        
+
                         //Get previous cell and OpViewroot
-                        Cell previousCell = (Cell)arch.getTerminal(true);
-                        Cell root = (Cell)oldCell.getParent();
-                        
+                        Cell previousCell = (Cell) arch.getTerminal(true);
+                        Cell root = (Cell) oldCell.getParent();
+
                         //Remove the edge going from previous cell and oldCell
                         getModel().remove(arch);
-                        
+
                         //Create new edge with no arrow
                         arch = CellFactory.getInstance().getEdge(true, false);
-                        
+
                         //Add new edge to goot
                         getModel().add(root, arch, 0);
-                        
+
                         //Set terminals for new edge previousCell is set to source
                         //and newCell is set as target
                         getModel().setTerminal(arch, previousCell, before);
@@ -962,7 +960,7 @@ public class SPGraph extends mxGraph {
                 getModel().add(oldCell.getParent(), edge, 0);
                 getModel().setTerminal(edge, newCell, before);
                 getModel().setTerminal(edge, oldCell, !before);
-                
+
                 //Allways set newCell as a terminal. 
                 //Is set as source if !before else as target.
                 if (arch != null) {
@@ -984,19 +982,24 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
-        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
-        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
+        Cell edge1 = CellFactory.getInstance().getEdge(true, insertCell.isOperation());
+        Cell edge2 = CellFactory.getInstance().getEdge(true, insertCell.isOperation());
 
 //      Object[] cells = new Object[3];
 
         model.beginUpdate();
         try {
-            addCell(edge1, parent, 0, parent, insertCell);
+            for(int i = 1; parent.getParent().getChildCount()>i;i++){
+                System.out.println("parentparent: "+parent.getParent().getChildAt(i).getId());
+            }
+            System.out.println(parent.getParent().getChildCount());
             addCell(edge2, parent, 0, insertCell, parent);
+            addCell(edge1, parent, 0, parent, insertCell);
             addCell(insertCell, parent);
         } finally {
             model.endUpdate();
         }
+        updateCellSize(insertCell);
     }
 
     public void cellTypeChanged(Object cell, int type) {
