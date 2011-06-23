@@ -62,7 +62,7 @@ public class ConditionsFromSopNode {
      * Each {@link ISopNode} in each sequence in the iRoot parameter is examined.<br/>
      * Conditions are added based on node type.<br/>
      * Children to each node are called recursively.<br/>
-     * Conditions to possible successor node is added.<br/>
+     * Conditions to possible successor node are added.<br/>
      * @param iRoot node whos child nodes should be examined
      * @return true if ok else false
      */
@@ -96,7 +96,15 @@ public class ConditionsFromSopNode {
                         return false;
                     }
 
-                    //Get the set of operations that occur first in successor node.
+                    //To capture e.g. a parallel node without any child nodes.
+                    try{
+                        condition.clone();
+                    } catch(NullPointerException e) {
+                        System.out.println("Graph is not complete. No conditions are calculated!");
+                        return false;
+                    }
+
+                    //Get the set of operations that occurs first in successor node.
                     //E.g. operation case: successor node has type operation -> operation set == the operation itself.
                     //E.g. alternative case: successor node has type alternative -> operation set == the first operation in each sequence for successor node.
                     final Set<OperationData> operationSet = new HashSet<OperationData>();
