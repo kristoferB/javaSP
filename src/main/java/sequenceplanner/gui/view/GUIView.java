@@ -752,18 +752,4 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 consoleRootView));
     }
 
-    public void updateAttributeView(OperationData toUpdate) {
-        AttributePanel panel;
-        for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
-            if (objectViewMap.getView(i).getComponent() != null
-                    && toUpdate.getName().equals(objectViewMap.getView(i).getTitle())) {
-                System.out.println("Setting Conditions");
-                JScrollPane pane = (JScrollPane) objectViewMap.getView(i).getComponent();
-                JViewport port = (JViewport) pane.getViewport();
-                panel = (AttributePanel) port.getComponent(0);
-                panel.updateModel(toUpdate);
-
-            }
-        }
-    }
 }

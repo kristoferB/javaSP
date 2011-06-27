@@ -43,7 +43,7 @@ public class GUIController {
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
         //Set observer on model
-        opViewController = new OperationViewController(this);
+        opViewController = new OperationViewController();
         guiModel.getModel().addObserver(opViewController);
         //Add first operation view to opViewController
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
@@ -117,10 +117,6 @@ public class GUIController {
 
     public GUIView getView() {
         return this.guiView;
-    }
-
-    public void updateAttributeView(OperationData data) {
-        guiView.updateAttributeView(data);
     }
 
     //File menu listenrs
@@ -369,7 +365,9 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    
+                    
                 }
             }
         }
