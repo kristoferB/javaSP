@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
+import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
@@ -16,9 +17,11 @@ public class OperationViewController implements Observer {
 
     //All exsting operation views
     private LinkedList<OperationView> views;
+    private GUIController controller;
 
-    public OperationViewController() {
+    public OperationViewController(GUIController controller) {
         views = new LinkedList();
+        this.controller = controller;
     }
 
     /**
@@ -35,16 +38,16 @@ public class OperationViewController implements Observer {
         if (arg instanceof OperationData) {
             OperationData od = (OperationData) arg;
 
+            controller.updateAttributeView(od);
             for (OperationView operationView : views) {
                 //if operation view contains od with this id, update od
                 Hashtable cells = operationView.getGraphModel().getCells();
 
-                for(int i = 2; i < cells.size(); i++){
+                for (int i = 2; i < cells.size(); i++) {
                     Cell c = (Cell) cells.get(Integer.toString(i));
-                    
-                    if (c !=null && c.getValue() != null && c.getValue() instanceof OperationData) {
-                        OperationData data = (OperationData) operationView.getGraphModel().getValue(c);
 
+                    if (c != null && c.getValue() != null && c.getValue() instanceof OperationData) {
+                        OperationData data = (OperationData) operationView.getGraphModel().getValue(c);
                         if (data.getId() == od.getId()) {
                             //replace old operation data with the updated version
                             operationView.getGraph().setValue(c, od);
@@ -52,6 +55,7 @@ public class OperationViewController implements Observer {
                     }
                 }
             }
+
         }
     }
 }

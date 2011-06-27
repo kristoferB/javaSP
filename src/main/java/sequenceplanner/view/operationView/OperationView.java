@@ -57,10 +57,6 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.ISopStructure;
-import sequenceplanner.model.SOP.SopNodeAlternative;
-import sequenceplanner.model.SOP.SopNodeArbitrary;
-import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 //import sequenceplanner.model.SOP.SopStructure2;
 import sequenceplanner.model.SOP.SopStructure2;
@@ -334,7 +330,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                     OperationData d = (OperationData) node.getNodeData();
                     //HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
                     if (operationConditionMap.containsKey(d)) {
-                        d.setConditions(operationConditionMap.get(d));
+                        d.setConditions(operationConditionMap.get(d), this.startName);
                     }
                     System.out.println("save " + d.getName());
                 }
@@ -589,18 +585,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         this.setLayout(new BorderLayout());
 
-        AttributeEditor edit = new AttributeEditor(this);
-        edit.registerEditor(OperationData.class,
-                new Editors.OperationConditionEditor(this));
-
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, true, "Preconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, false, "Postconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.ActionEditor(this, "Actions"));
-
-        graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
+        //Formerly used by the AttributeEditor. Could be used to listen to changes
+        //in the cells.
+        //graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
 
         pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false);
 
@@ -608,8 +595,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         pane.setDividerSize(3);
 
 
-        pane.setTopComponent(graphComponent);
-        pane.setBottomComponent(edit);
+        pane.add(graphComponent);
 
         this.add(pane, BorderLayout.CENTER);
 

@@ -15,7 +15,6 @@ import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
-import sequenceplanner.model.data.Data;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -44,7 +43,7 @@ public class GUIController {
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
         //Set observer on model
-        opViewController = new OperationViewController();
+        opViewController = new OperationViewController(this);
         guiModel.getModel().addObserver(opViewController);
         //Add first operation view to opViewController
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
@@ -114,6 +113,14 @@ public class GUIController {
             guiView.setFocusedOperationView(data);
             printToConsole("Already open!");
         }
+    }
+
+    public GUIView getView() {
+        return this.guiView;
+    }
+
+    public void updateAttributeView(OperationData data) {
+        guiView.updateAttributeView(data);
     }
 
     //File menu listenrs

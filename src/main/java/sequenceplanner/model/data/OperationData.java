@@ -57,11 +57,14 @@ public class OperationData extends Data {
     LinkedList<Action> actions;
     //Properties (Key = id, value = selected for operation)
     HashMap<Integer, Boolean> propertySettings;
+    private Map<String, Map<ConditionType, Condition>> globalConditions;
     private Map<ConditionType, Condition> conditions;
 
     public OperationData(String name, int id) {
         super(name, id);
         preference = Collections.synchronizedMap(new HashMap<String, String>());
+
+        globalConditions = Collections.synchronizedMap(new HashMap<String, Map<ConditionType, Condition>>());
         conditions = new HashMap<ConditionType, Condition>();
         //Resource booking
         sequenceCondition = new LinkedList<LinkedList<SeqCond>>();
@@ -81,14 +84,14 @@ public class OperationData extends Data {
         propertySettings = new HashMap<Integer, Boolean>();
     }
 
-    public void setConditions(Map<ConditionType, Condition> conditionMap) {
-        this.conditions = conditionMap;
-        System.out.println("update?");
-        setChanged();
-        notifyObservers(this);
-
+    public void setConditions(Map<ConditionType, Condition> conditionMap, String operationViewName) {
+        this.globalConditions.put(operationViewName, conditionMap);
     }
 
+    public void setConditions(Map<ConditionType, Condition> map) {
+        this.conditions =(map);
+    } 
+    
     public Map<ConditionType, Condition> getConditions() {
         return conditions;
     }
@@ -203,9 +206,7 @@ public class OperationData extends Data {
      */
     public void setSequenceCondition(LinkedList<LinkedList<SeqCond>> cond) {
         this.sequenceCondition = cond;
-        System.out.println("update?");
-        setChanged();
-        notifyObservers(this);
+
     }
 
     public LinkedList<LinkedList<SeqCond>> getSequenceCondition() {
@@ -855,6 +856,10 @@ public class OperationData extends Data {
             }
         }
         return false;
+    }
+
+    public Map<String, Map<ConditionType, Condition>> getGlobalConditions() {
+        return globalConditions;
     }
 
     //************************************************************************
