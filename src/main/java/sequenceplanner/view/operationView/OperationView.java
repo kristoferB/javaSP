@@ -52,6 +52,7 @@ import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import java.util.Map;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.StringConditionParser;
 import sequenceplanner.model.SOP.ASopNode;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
@@ -83,6 +84,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private boolean isHidden;
     private ASopNode sopNode;
     private ISopStructure mSopStruct2 = new SopStructure2();
+    private StringConditionParser par = new StringConditionParser();
 
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
@@ -887,7 +889,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //        }
 //        sopStruct.setSopSequence(cell, sopNode, before);
 //        mSopStruct2.addCellToSop(cell, insertedCell, before);
-        
+
         updateSopNode();
 
     }
@@ -933,7 +935,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //Create a new sop node root aka theSopNode
         final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
         final ISopNode theSopNode = snfspgm.getSopNodeRoot();
-        
+                System.out.println("______________");
+        //par.parseConditionString();
         System.out.println(":::::");
         System.out.println(theSopNode.toString());
         System.out.println(":::::");
