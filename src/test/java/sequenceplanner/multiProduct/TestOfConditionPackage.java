@@ -8,6 +8,7 @@ import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
 import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.condition.StringConditionParser;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
@@ -28,7 +29,7 @@ public class TestOfConditionPackage {
     public static void tearDownClass() throws Exception {
     }
 
-    @Test
+//    @Test
     public void method1() {
         final OperationData op1 = sp.insertOperation();
         final OperationData op2 = sp.insertOperation();
@@ -78,5 +79,12 @@ public class TestOfConditionPackage {
         ConditionElement ceT2 = ceT.getExpressionRoot().getNextElement();
         System.out.println(((ConditionExpression) ceT2).getExpressionRoot());
         //-----------------------------------------------------------------------
+    }
+
+    @Test
+    public void method2() {
+        String text = "id1008==2&id1020!=e&&id1034==2";
+        StringConditionParser scp = new StringConditionParser();
+        scp.parseConditionString(text);
     }
 }

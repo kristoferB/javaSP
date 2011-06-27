@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionElement;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.condition.StringConditionParser;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
@@ -20,19 +24,19 @@ public class AttributePanelController implements ActionListener, Observer {
     private AttributePanel attributePanel;
     private OperationData model;
     private OperationAttributeEditor attributeEditor;
-    
+
     /**
      * Creates an AttributePanelController with two views and one model
      * @param model
      * @param panel
      * @param editor 
      */
-    public AttributePanelController(OperationData model,AttributePanel panel, OperationAttributeEditor editor) {
+    public AttributePanelController(OperationData model, AttributePanel panel, OperationAttributeEditor editor) {
         this.model = model;
         this.attributePanel = panel;
         this.attributeEditor = editor;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
@@ -42,18 +46,31 @@ public class AttributePanelController implements ActionListener, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        OperationData od = (OperationData)arg;
-        if(od.getName().equalsIgnoreCase(attributePanel.getName()))
+        OperationData od = (OperationData) arg;
+        if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
             attributePanel.updateModel(od);
-        
+        }
+
     }
+
     /**
      * Adds a set of conditions to the OperationData object acting as model
      * @param conditionString String conditions as a string in the SP form.
      */
     private void setCondition(String conditionString) {
         //ConditionType should be selected from the choises of the radiobuttons
-        model.getConditions().put(ConditionType.PRE, StringConditionParser.getInstance().parseConditionString(conditionString));
-    
+        final Condition condition = new Condition();
+        final ConditionExpression ce = StringConditionParser.getInstance().parseConditionString(conditionString);
+//        if(radiobutton==guard) {
+        condition.setGuard(ce);
+//        } else {//action
+//            condition.setAction(ce);
+//        }
+
+//        if(radiobutton==pre) {
+        model.getConditions().put(ConditionType.PRE, condition);
+//          } else {//post
+//        model.getConditions().put(ConditionType.POST, condition);
+//      }
     }
 }
