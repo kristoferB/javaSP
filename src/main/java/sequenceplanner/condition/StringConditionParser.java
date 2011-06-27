@@ -17,7 +17,7 @@ public class StringConditionParser {
     
     //private String test = "id1007!=0&&id1008<i&&id1009>=e";
     private static String guard = "([=><!][=]|[><])";
-    private static String action = "(=|[+-[=]])";
+    private static String action = "([+-]=)"; //Fixa för =
     private static String id = "(id\\d{4})";
     private static String value = "([012ief])";
     private static String type = "(&&|&|and|or|\\|\\||\\|)";
@@ -69,7 +69,7 @@ public class StringConditionParser {
 
         System.out.println("Replace whitespace: "+ conditionString);
         Pattern pattern1 = Pattern.compile(type + id + guard + value);
-        Pattern pattern2 = Pattern.compile(type + id + guard + value);
+        Pattern pattern2 = Pattern.compile(type + id + action + value);
         Pattern rootPattern = Pattern.compile(id + guard + value + type);
         Matcher matcher = pattern1.matcher(conditionString);
         Matcher matcher2 = pattern2.matcher(conditionString);
@@ -86,13 +86,14 @@ public class StringConditionParser {
             System.out.println("Root: " + tempCond);
             if(matcher3.group(4).equals("&&")||matcher3.group(4).equals("&")||matcher3.group(4).equals("and")){
                 right.changeExpressionRoot(new ConditionStatement(matcher3.group(1), operators.get(matcher3.group(2)), matcher3.group(3)));
+                conditions = conditions + "  " + tempCond;
                 
             }else if(matcher3.group(4).equals("||")||matcher3.group(4).equals("|")||matcher3.group(4).equals("or")){
                 left.changeExpressionRoot(new ConditionStatement(matcher3.group(1), operators.get(matcher3.group(2)), matcher3.group(3)));
+                conditions2 = conditions2 + "  " + tempCond;
             }
 
             //Collecting conditions
-            conditions = conditions + "  " + tempCond;
             copyString = copyString.replace(tempCond, " ");
         }
 
@@ -159,10 +160,10 @@ public class StringConditionParser {
         }
         if(right.getExpressionRoot() != null){
             System.out.println("Root: "+ right.getExpressionRoot().toString());
-        }else if(right.getExpressionRoot() != null){
-            System.out.println("Root: "+ right.getExpressionRoot().toString());
+        }else if(left.getExpressionRoot() != null){
+            System.out.println("Root: "+ left.getExpressionRoot().toString());
         }else{
-            System.out.println("Illegal condition statment");
+            System.out.println("Illegal condition statment (root)");
         }
 
 
