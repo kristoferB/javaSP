@@ -22,6 +22,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JViewport;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 import net.infonode.docking.DockingWindow;
@@ -43,6 +44,7 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -729,7 +731,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
             }
         }
-        View newView = new View(toInsert.getName(), null,new JScrollPane(toInsert));
+        View newView = new View(toInsert.getName(), null, new JScrollPane(toInsert));
         objectViewMap.addView(objectViewMap.getViewCount() + 1, newView);
         objectDocks.addTab(newView);
         objectDocks.restore();
@@ -749,4 +751,5 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 new SplitWindow(false, 0.7f, objectRootView, editorRootView))),
                 consoleRootView));
     }
+
 }

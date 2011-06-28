@@ -6,16 +6,15 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.OperationData.SeqCond;
 
 /**
  * Class showing attributes of an {@link OperationData} object
@@ -95,29 +94,25 @@ public class AttributePanel extends javax.swing.JPanel {
      * Sets the listobjects to display the conditions in the OperationData class.
      */
     public void setConditions() {
-        if (model.getConditions() != null) {
-            for (Object key : model.getConditions().keySet()) {
-                if (key == ConditionType.PRE) {
-                    preCondModel.addElement(model.getConditions().get(key).toString());
-                } else if ((key == ConditionType.POST)) {
-                    postCondModel.addElement(model.getConditions().get(key).toString());
+        if (model.getGlobalConditions() != null) {
+            //Extract each set of condition sets
+            for (Object viewKey : model.getGlobalConditions().keySet()) {
+                System.out.println("uno");
+                Map<ConditionType, Condition> conditionMap = model.getGlobalConditions().get(viewKey);
+                //Split conditions into post and pre
+                for (Object key : conditionMap.keySet()) {
+                    System.out.println("due");
+                    if (key == ConditionType.PRE && !preCondModel.contains(conditionMap.get(key.toString()))) {
+                        preCondModel.addElement(conditionMap.get(key).toString());
+                        System.out.println("pre");
+                    } else if (key == ConditionType.POST && !postCondModel.contains(conditionMap.get(key.toString()))) {
+                        System.out.println("post");
+                        postCondModel.addElement(conditionMap.get(key).toString());
+                    }
+
                 }
             }
         }
-        setOldConditions();
-    }
-
-    private void setOldConditions() {
-        Iterator it = model.getSequenceCondition().iterator();
-        while (it.hasNext()) {
-            LinkedList<SeqCond> list = (LinkedList) it.next();
-            Iterator inner = list.iterator();
-            while (inner.hasNext()) {
-                SeqCond cond = (SeqCond) inner.next();
-                preCondModel.addElement(cond.id + " " + cond.state + " " + cond.value);
-            }
-        }
-
     }
 
     private void initVariables(OperationData od) {
@@ -127,6 +122,10 @@ public class AttributePanel extends javax.swing.JPanel {
         setID(model.getId());
     }
 
+    /**
+     * Adds a ActionListener to the savebutton
+     * @param l the ActionListener
+     */
     public void addEditorSaveListener(ActionListener l) {
         operationAttributeEditor.addSaveButtonListener(l);
     }
@@ -139,6 +138,10 @@ public class AttributePanel extends javax.swing.JPanel {
         return operationAttributeEditor;
     }
 
+    /**
+     * Sets model to a new OperationData and updates the conditions.
+     * @param od 
+     */
     public void updateModel(OperationData od) {
         this.model = od;
         setConditions();

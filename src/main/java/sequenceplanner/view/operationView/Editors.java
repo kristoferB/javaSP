@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
@@ -30,11 +29,9 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import sequenceplanner.condition.Condition;
 
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.OperationData.Action;
@@ -42,7 +39,7 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**
- *
+ * @deprecated 
  * @author Erik Ohlson
  */
 public class Editors {

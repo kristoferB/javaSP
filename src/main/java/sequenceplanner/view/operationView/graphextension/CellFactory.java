@@ -37,11 +37,11 @@ public class CellFactory {
         if (arrow) {
             style = regular ? "strokeColor=#000000;strokeWidth=2;"
                     + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
-                    : ";strokeColor=#000000;strokeWidth=2;";
+                    : ";strokeColor=#000000;strokeWidth=2;arrow=ARROW_BLACK;";
         } else {
             style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;"
                     + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
-                    : ";strokeColor=#000000;strokeWidth=2;";
+                    : ";strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;";
         }
         Cell edge = new Cell("edge", new mxGeometry(), style);
         edge.setId("-2");

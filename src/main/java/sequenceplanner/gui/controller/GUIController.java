@@ -15,7 +15,6 @@ import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
-import sequenceplanner.model.data.Data;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -114,6 +113,10 @@ public class GUIController {
             guiView.setFocusedOperationView(data);
             printToConsole("Already open!");
         }
+    }
+
+    public GUIView getView() {
+        return this.guiView;
     }
 
     //File menu listenrs
@@ -362,7 +365,9 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    
+                    
                 }
             }
         }

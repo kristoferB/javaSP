@@ -51,6 +51,7 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.StringConditionParser;
 import sequenceplanner.model.SOP.ASopNode;
@@ -58,10 +59,6 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.ISopStructure;
-import sequenceplanner.model.SOP.SopNodeAlternative;
-import sequenceplanner.model.SOP.SopNodeArbitrary;
-import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 //import sequenceplanner.model.SOP.SopStructure2;
 import sequenceplanner.model.SOP.SopStructure2;
@@ -293,7 +290,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     @Override
     public void save(boolean newSave, boolean saveView) {
-        
+
         String tempName = "";
 
         if (saveView) {
@@ -301,8 +298,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         } else {
             tempName = "Temporary View";
         }
-
-
 
         if (!tempName.isEmpty()) {
             startName = tempName;
@@ -314,7 +309,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //This will only return the topView, the rest is saved in
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
-
+            
+            data = setConditions(data);
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());
@@ -322,30 +318,36 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
             model.saveOperationData(data);
-            
+
             setChanged(false);
             updateName();
-
-            final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
-            SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
-            ISopNode theSopNode = snfspgm.getSopNodeRoot();
-            final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
-            //ConditionsFromSopNode conditionExtractor = new ConditionsFromSopNode(sopStruct.getRoot());
-            for (TreeNode node : data) {
-                if (node.getNodeData() instanceof OperationData) {
-                    OperationData d = (OperationData) node.getNodeData();
-                    //HashMap<OperationData, Map<ConditionType, Condition>> map =conditionExtractor.getmOperationConditionMap();
-                    if (operationConditionMap.containsKey(d)) {
-                        d.setConditions(operationConditionMap.get(d));
-                    }
-                    System.out.println("save " + d.getName());
-                }
-            }
 
         } else {
             logger.debug("Save was called but with a empty name");
         }
 
+
+    }
+
+    private TreeNode[] setConditions(TreeNode[] data) {
+        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
+        SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+        ISopNode theSopNode = snfspgm.getSopNodeRoot();
+
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+        for (TreeNode node : data) {
+            if (node.getNodeData() instanceof OperationData) {
+                OperationData d = (OperationData) node.getNodeData();
+                for (OperationData operation : operationConditionMap.keySet()) {
+
+                    if (operation.getName().equalsIgnoreCase(d.getName())) {
+                        d.setConditions(operationConditionMap.get(operation), this.startName);
+                        node.setNodeData(d);
+                    }
+                }
+            }
+        }
+        return data;
 
     }
 
@@ -591,18 +593,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         this.setLayout(new BorderLayout());
 
-        AttributeEditor edit = new AttributeEditor(this);
-        edit.registerEditor(OperationData.class,
-                new Editors.OperationConditionEditor(this));
-
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, true, "Preconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, false, "Postconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.ActionEditor(this, "Actions"));
-
-        graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
+        //Formerly used by the AttributeEditor. Could be used to listen to changes
+        //in the cells.
+        //graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
 
         pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false);
 
@@ -610,8 +603,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         pane.setDividerSize(3);
 
 
-        pane.setTopComponent(graphComponent);
-        pane.setBottomComponent(edit);
+        pane.add(graphComponent);
 
         this.add(pane, BorderLayout.CENTER);
 
@@ -935,7 +927,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //Create a new sop node root aka theSopNode
         final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
         final ISopNode theSopNode = snfspgm.getSopNodeRoot();
-                System.out.println("______________");
+        System.out.println("______________");
         //par.parseConditionString();
         System.out.println(":::::");
         System.out.println(theSopNode.toString());

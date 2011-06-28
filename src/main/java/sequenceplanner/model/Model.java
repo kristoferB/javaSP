@@ -226,9 +226,9 @@ public class Model extends Observable implements IModel{
 
          if (node.getNodeData() instanceof OperationData) {
              OperationData od = (OperationData) node.getNodeData();
+             saveNode(data[i], operationRoot);
              setChanged();
              notifyObservers(od);
-             saveNode(data[i], operationRoot);
          } else {
              logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
          }

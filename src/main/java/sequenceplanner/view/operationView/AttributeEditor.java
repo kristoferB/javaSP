@@ -25,7 +25,7 @@ import com.mxgraph.util.mxEventSource;
 import sequenceplanner.utils.IconHandler;
 
 /**
- *
+ * @deprecated 
  * @author Erik Ohlson
  */
 public class AttributeEditor extends JPanel
