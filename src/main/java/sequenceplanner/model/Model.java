@@ -19,7 +19,7 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.view.operationView.Constants;
+import sequenceplanner.view.operationView.Constansts;
 
 /**
  *
@@ -37,7 +37,7 @@ public class Model extends Observable implements IModel{
    public static final String VARIABLE_ROOT_NAME = "Variables";
 
    static Logger logger = Logger.getLogger(Model.class);
-   private static int idConter = 1001;
+   private static int idConter = 5;
    private static int propertyIdCounter = 0;
    //Holds a cache for easy access to all operations names and paths
    private NameCacheMap nameCache;
@@ -63,8 +63,6 @@ public class Model extends Observable implements IModel{
    private EditorTreeModel globalProperties;
 
    public Model() {
-       //newId() is used to set id of everything in the program. 
-       //That is why the first operation is set to *6 instead of *1
       treeRoot = new TreeNode(new Data("root", newId()));
 
       //Initalize tree
@@ -234,7 +232,7 @@ public class Model extends Observable implements IModel{
          }
 
       }
-      
+
       reloadNamesCache();
    }
 
@@ -504,8 +502,7 @@ public class Model extends Observable implements IModel{
       return result;
    }
 
-   /* Is not used, therefor removed *
-    protected void updatePreconditions(TreeNode node) {
+   protected void updatePreconditions(TreeNode node) {
 
       for (int i = 0; i < node.getChildCount(); i++) {
          OperationData d = ((OperationData) node.getChildAt(i).getNodeData());
@@ -515,7 +512,7 @@ public class Model extends Observable implements IModel{
 
          updatePreconditions(node.getChildAt(i));
       }
-   }*/
+   }
 
    public static String updateCondition(NameCacheMap cache,
          LinkedList<LinkedList<SeqCond>> sequenceCondition,
@@ -531,7 +528,7 @@ public class Model extends Observable implements IModel{
 
       for (LinkedList<SeqCond> linkedList : sequenceCondition) {
          if (linkedList.size() == 1) {
-            s = s.isEmpty() ? s : s + " " + Constants.AND + " ";
+            s = s.isEmpty() ? s : s + " " + Constansts.AND + " ";
 
             String[] out = cache.get(linkedList.getFirst().id);
 
@@ -549,7 +546,7 @@ public class Model extends Observable implements IModel{
             
 
          } else if (linkedList.size() > 1) {
-            s += s.isEmpty() ? s : " " + Constants.AND + " ";
+            s += s.isEmpty() ? s : " " + Constansts.AND + " ";
 
             boolean is = s.isEmpty();
 
@@ -574,7 +571,7 @@ public class Model extends Observable implements IModel{
                
 
                if (it.hasNext()) {
-                  s = s + " " + Constants.OR + " ";
+                  s = s + " " + Constansts.OR + " ";
                }
             }
             s = is ? s : s + ") ";
@@ -584,7 +581,7 @@ public class Model extends Observable implements IModel{
       }
 
 
-      s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constants.AND + " ";
+      s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constansts.AND + " ";
 
       for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
          Integer[] integers = it.next();
@@ -593,7 +590,7 @@ public class Model extends Observable implements IModel{
                s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
 
          if (it.hasNext()) {
-            s = s + " " + Constants.AND + " ";
+            s = s + " " + Constansts.AND + " ";
          }
 
       }
@@ -629,7 +626,7 @@ public class Model extends Observable implements IModel{
    }
 
    public static String getOperationEnding(int state) {
-      String s = Constants.ENDING;
+      String s = Constansts.ENDING;
 
       if (state == 0) {
          s = s + "i";
@@ -1093,4 +1090,68 @@ public class Model extends Observable implements IModel{
          getRoot().getChildAt(i).removeAllChildren();
       }
    }
+   
+   public LinkedList<TreeNode> getAllOperations(){       
+        LinkedList<TreeNode> operations = new LinkedList<TreeNode>();
+                
+        if(operationRoot == null || operationRoot.getChildCount() == 0)
+            return operations;
+
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        for (int i = 0; i < operationRoot.getChildCount(); i++)
+            if(Model.isOperation(operationRoot.getChildAt(i).getNodeData()))
+                children.push(operationRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            operations.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isOperation(temp.getChildAt(i).getNodeData()))
+                    children.push(temp.getChildAt(i));
+        }
+        return operations;
+   }
+   
+   public LinkedList<TreeNode> getAllVariables(){
+        LinkedList<TreeNode> variables = new LinkedList<TreeNode>();
+        
+        if(variableRoot == null || variableRoot.getChildCount() == 0)
+            return variables;
+        
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        for (int i = 0; i < variableRoot.getChildCount(); i++) 
+            if(Model.isVariable(variableRoot.getChildAt(i).getNodeData()))
+                children.push(variableRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            variables.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isVariable(temp.getChildAt(i).getNodeData()))
+                    children.push(temp.getChildAt(i));
+        }
+        return variables;
+   }
+
+   public LinkedList<TreeNode> getAllResources(){
+        LinkedList<TreeNode> resources = new LinkedList<TreeNode>();
+        
+        if(resourceRoot == null || resourceRoot.getChildCount() == 0)
+            return resources;
+        
+        Stack<TreeNode> children = new Stack<TreeNode>();
+        for (int i = 0; i < resourceRoot.getChildCount(); i++) 
+            if(Model.isResource(resourceRoot.getChildAt(i).getNodeData()))
+                children.push(resourceRoot.getChildAt(i));
+
+        while (!children.isEmpty()) {
+            TreeNode temp = children.pop();
+            resources.add(temp);
+            for (int i = 0; i < temp.getChildCount(); i++)
+                if(Model.isResource(temp.getChildAt(i).getNodeData()))
+                    children.push(temp.getChildAt(i));
+        }
+        return resources;
+   }
+   
 }

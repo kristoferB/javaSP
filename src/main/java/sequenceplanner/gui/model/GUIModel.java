@@ -14,7 +14,7 @@ import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.utils.SPFileFilter;
-import sequenceplanner.view.operationView.Constants;
+import sequenceplanner.view.operationView.Constansts;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.resourceView.ResourceView;
 import sequenceplanner.xml.SequencePlannerProjectFile;
@@ -29,6 +29,7 @@ public class GUIModel {
     private File projectFile;
     private ResourceView resourceView;
     private LinkedList<OperationView> operationViews = new LinkedList();
+    private String path = "user.dir";
     //Main model for the project
     private Model model;
 
@@ -100,12 +101,14 @@ public class GUIModel {
     }
 
     public boolean openModel() {
-        JFileChooser fc = new JFileChooser("user.dir");
-
+        JFileChooser fc = new JFileChooser(path);
+        
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
         removeAllOpViews();
-
+        
+        path = fc.getCurrentDirectory().getPath();
+                
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());
             getModel().reloadNamesCache();
@@ -115,6 +118,8 @@ public class GUIModel {
                     if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
                         ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         createNewOpView(toOpen);
+                        if(toOpen.isClosed())
+                            operationViews.getLast().setClosed(true);
                     }
             }
 
@@ -161,18 +166,20 @@ public class GUIModel {
         if (saveAs) {
             String filepath = "";
 
-            JFileChooser fc = new JFileChooser("user.dir");
+            JFileChooser fc = new JFileChooser(path);
             fc.setFileFilter(SPFileFilter.getInstance());
 
             int fileResult = fc.showSaveDialog(null);
-
+            
+            path = fc.getSelectedFile().getPath();
+            
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
 
-                filepath = filepath.endsWith(Constants.FILEFORMAT) ? filepath
-                        : filepath + Constants.FILEFORMAT;
+                filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
+                        : filepath + Constansts.FILEFORMAT;
 
-                if (filepath.endsWith(Constants.FILEFORMAT)) {
+                if (filepath.endsWith(Constansts.FILEFORMAT)) {
 
                     projectFile = saveModelToFile(filepath);
                     return true;
@@ -196,7 +203,7 @@ public class GUIModel {
             Calendar c = Calendar.getInstance();
             String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
 
-            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constants.FILEFORMAT;
+            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constansts.FILEFORMAT;
             saveModelToFile(path);
         }
     }
@@ -245,5 +252,13 @@ public class GUIModel {
             }
         }
         return new OperationView(this.model, data);
+    }
+    
+    public String getPath(){
+        return path;
+    }
+    
+    public void setPath(String path){
+        this.path = path;
     }
 }
