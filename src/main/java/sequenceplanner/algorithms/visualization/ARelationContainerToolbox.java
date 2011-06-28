@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -63,9 +64,8 @@ public abstract class ARelationContainerToolbox implements IRelationContainerToo
     @Override
     public ISopNode getSopNode(OperationData iOpData, ISopNode iRoot) {
         for (final ISopNode node : mSopNodeToolbox.getNodes(iRoot, true)) {
-            if (node.getNodeType() instanceof OperationData) {
-                final OperationData internalOpData = (OperationData) node.getNodeType();
-                if (internalOpData.equals(iOpData)) {
+            if(node instanceof SopNodeOperation) {
+                if(node.getOperation().equals(iOpData)) {
                     return node;
                 }
             }

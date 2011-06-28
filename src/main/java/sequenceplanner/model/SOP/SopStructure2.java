@@ -1,26 +1,23 @@
 package sequenceplanner.model.SOP;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
-import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 /**
  * 
  * @author patrik
  */
-public class SopStructurePatrikEdition implements ISopStructure {
+public class SopStructure2 implements ISopStructure {
 
     private Map<Cell, ISopNode> mCellSopNodeMap;
     private ISopNode mSopNodeRoot;
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
 
-    public SopStructurePatrikEdition() {
+    public SopStructure2() {
         mCellSopNodeMap = new HashMap<Cell, ISopNode>();
         mSopNodeRoot = new SopNode();
     }
@@ -109,93 +106,6 @@ public class SopStructurePatrikEdition implements ISopStructure {
 
     @Override
     public boolean updateSopNode(SPGraph iSpGraph) {
-
-        SPGraphModel graphModel = iSpGraph.getGraphModel();
-        System.out.println("table: " + graphModel.getCells());
-        System.out.println("root: " + graphModel.getRoot());
-        System.out.println("graphroot: " + graphModel.getGraphRoot().toString());
-
-        Set s = graphModel.getCells().keySet();
-
-        for (Cell cell : mCellSopNodeMap.keySet()) {
-            if (s.contains(cell.getId())) {
-                System.out.println("graph: " + graphModel.getCell(cell.getId()).toString());
-                System.out.println("map: " + mCellSopNodeMap.get(cell).getTypeAsString());
-
-            } else {
-                System.out.println("Not in keyset, Cell.id: " + cell.getId());
-            }
-        }
-
-        Collection collection = graphModel.getCells().keySet();
-
-        Map<String, Cell> idCellMap = new HashMap<String, Cell>();
-        for (Cell cell : mCellSopNodeMap.keySet()) {
-            idCellMap.put(cell.getId(), cell);
-        }
-
-        System.out.println(".-----");
-
-        Set<Object> edgeSet = new HashSet<Object>();
-        for (Object o : s) {
-            String string = (String) o;
-            Object[] oo = null;
-            Object[] ooo = null;
-            Object[] children = null;
-            Object[] connections = null;
-            o = graphModel.getCell(string);
-            System.out.println("o: " + o + " value: " + graphModel.getValue(o));
-            Cell cell = (Cell) graphModel.getCell(string);
-            System.out.println("cell: " + cell.toString());
-            if (idCellMap.containsKey(string)) {
-                oo = SPGraphModel.getOutgoingEdges(graphModel, o);
-                ooo = SPGraphModel.getIncomingEdges(graphModel, o);
-                children = SPGraphModel.getChildren(graphModel, o);
-                connections = SPGraphModel.getConnections(graphModel, o);
-            }
-//            } else {
-//                oo = SPGraphModel.getChildren(graphModel, o);
-//                oo = SPGraphModel.getConnections(graphModel, o);
-//            }
-            if(oo != null) {
-            for (Object obj : oo) {
-                System.out.println("obj: " + obj);
-                if(edgeSet.contains(obj)) {
-                    System.out.println("new edge");
-                } else {
-                    System.out.println("old edge");
-                }
-                edgeSet.add(obj);
-            }
-            }
-            if(ooo != null) {
-            for (Object obj : ooo) {
-                System.out.println("obj: " + obj);
-                if(edgeSet.contains(obj)) {
-                    System.out.println("new edge");
-                } else {
-                    System.out.println("old edge");
-                }
-                edgeSet.add(obj);
-            }
-            }
-            if(children != null) {
-            for (Object obj : children) {
-                System.out.println("child: " + obj);
-            }
-            }
-            if(connections != null) {
-            for (Object obj : connections) {
-                System.out.println("con: " + obj);
-                if(edgeSet.contains(obj)) {
-                    System.out.println("new edge");
-                } else {
-                    System.out.println("old edge");
-                }
-                edgeSet.add(obj);
-            }
-            }
-        }
         return true;
     }
 

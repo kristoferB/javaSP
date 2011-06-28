@@ -12,32 +12,21 @@ import sequenceplanner.model.data.OperationData;
  */
 public abstract class ASopNode implements ISopNode {
 
-    private Object mType = null;
+    private String mTypeAsString = "";
     /**
      * Set containing the first ISopNode in all sequences that are children to this node.<br/>
      */
     private Set<ISopNode> mSequenceSet = null;
-    private ISopNode mPredecessor = null;
     private ISopNode mSuccessor = null;
     private int mSuccessorRelation = -1;
 
-    public ASopNode() {
+    public ASopNode(final String iTypeAsString) {
         mSequenceSet = new HashSet<ISopNode>();
+        this.mTypeAsString = iTypeAsString;
     }
-
     @Override
     public Set<ISopNode> getFirstNodesInSequencesAsSet() {
         return mSequenceSet;
-    }
-
-    @Override
-    public Object getNodeType() {
-        return mType;
-    }
-
-    @Override
-    public ISopNode getPredecessorNode() {
-        return mPredecessor;
     }
 
     @Override
@@ -48,16 +37,6 @@ public abstract class ASopNode implements ISopNode {
     @Override
     public void addNodeToSequenceSet(ISopNode iNode) {
         mSequenceSet.add(iNode);
-    }
-
-    @Override
-    public void setNodeType(Object iType) {
-        mType = iType;
-    }
-
-    @Override
-    public void setPredecessorNode(ISopNode iPredecessor) {
-        mPredecessor = iPredecessor;
     }
 
     @Override
@@ -78,17 +57,26 @@ public abstract class ASopNode implements ISopNode {
         }
     }
 
-    
+    @Override
+    public boolean sequenceSetIsEmpty() {
+        if(getFirstNodesInSequencesAsSet().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public OperationData getOperation() {
+        return null;
+    }
 
     @Override
     public String typeToString() {
         String returnString = "";
-        if (getNodeType() instanceof OperationData) {
-            OperationData opData = (OperationData) getNodeType();
-            returnString += opData.getName();
-        } else if (getNodeType() instanceof String) {
-            String s = (String) getNodeType();
-            returnString += s;
+        if (this instanceof SopNodeOperation) {
+            returnString += getOperation().getName();
+        } else if (this instanceof SopNode || this instanceof SopNodeAlternative || this instanceof SopNodeArbitrary || this instanceof SopNodeParallel) {
+            returnString += mTypeAsString;
         } else {
             returnString += null;
         }
@@ -104,14 +92,10 @@ public abstract class ASopNode implements ISopNode {
         String returnString = "";
         //-----------------------------------------------------------------------
         returnString += iNewLinePrefix + "Node type: ";
-        if (getNodeType() != null) {
-            returnString += typeToString();
-        } else {
-            returnString += null;
-        }
+        returnString += typeToString();
         returnString += "\n";
         //-----------------------------------------------------------------------
-        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
+        if (!sequenceSetIsEmpty()) {
             returnString += iNewLinePrefix + "Sequence set: {";
             for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
                 if (!returnString.endsWith("{")) {
@@ -124,12 +108,6 @@ public abstract class ASopNode implements ISopNode {
                 }
             }
             returnString += "}\n";
-        }
-        //-----------------------------------------------------------------------
-        if (getPredecessorNode() != null) {
-            returnString += iNewLinePrefix + "Predecessor: ";
-            returnString += getPredecessorNode().typeToString();
-            returnString += "\n";
         }
         //-----------------------------------------------------------------------
         if (getSuccessorNode() != null) {
@@ -167,4 +145,5 @@ public abstract class ASopNode implements ISopNode {
         }
         return returnString;
     }
+
 }

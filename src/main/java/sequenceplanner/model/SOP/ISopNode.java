@@ -1,6 +1,7 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Interface for a SOP node<br/>
@@ -8,17 +9,11 @@ import java.util.Set;
  */
 public interface ISopNode {
 
-    Object getNodeType();
-
-    void setNodeType(Object iType);
+    OperationData getOperation();
 
     Set<ISopNode> getFirstNodesInSequencesAsSet();
 
     void addNodeToSequenceSet(ISopNode iNode);
-
-    ISopNode getPredecessorNode();
-
-    void setPredecessorNode(ISopNode iPredecessor);
 
     ISopNode getSuccessorNode();
 
@@ -28,9 +23,24 @@ public interface ISopNode {
 
     void setSuccessorRelation(int iRelation);
 
+    boolean sequenceSetIsEmpty();
+
+    /**
+     * Only works this node.
+     * @return operation name or node type as symbol
+     */
     String typeToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString(String prefix);
+    
 }

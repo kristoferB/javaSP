@@ -18,7 +18,6 @@ import sequenceplanner.gui.view.GUIView;
 // TODO Handle comparing variables with values in sequenceconditions
 // TODO Handle actions
 // TODO Remove preconditions when cell is removed.
-//FIXME EOH: Refact, move icon functions to new class.
 public class SequencePlanner {
 
     static int id = 0;
@@ -54,20 +53,22 @@ public class SequencePlanner {
      */
     public static void main(String[] args) {
 // Docking windwos should be run in the Swing thread
+
     SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         GUIModel model = new GUIModel();
         GUIView view = new GUIView(model);
-        new GUIController(model, view);
+        GUIController gc = new GUIController(model, view);
       }
     });
         
 
     }
 
-    public void initiateLogger() {
+    private void initiateLogger() {
         BasicConfigurator.configure();
         Logger l = Logger.getRootLogger();
-        l.getRootLogger().setLevel(Level.ALL);
+        Logger.getRootLogger().setLevel(Level.ALL);
     }
 }

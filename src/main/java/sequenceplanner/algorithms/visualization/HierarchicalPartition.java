@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -100,7 +101,8 @@ public class HierarchicalPartition {
         mSNToolbox.removeNode(childNode, iOldParent);
 
         final ISopNode parentNode = mRCToolbox.getSopNode(iNewParent, iOldParent);
-        mSNToolbox.createNode(iChild, parentNode);
+        final ISopNode newChildNode = new SopNodeOperation(iChild);
+        parentNode.addNodeToSequenceSet(newChildNode);
 
         return true;
     }

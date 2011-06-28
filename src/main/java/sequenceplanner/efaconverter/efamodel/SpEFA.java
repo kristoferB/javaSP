@@ -11,12 +11,9 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import sequenceplanner.condition.Condition;
 
 /**
  * This class is a Extended Finite Automaton model. It consist of a set
@@ -28,7 +25,6 @@ public class SpEFA {
     String efaName;
     SpLocation initialLocation;
     HashMap<String,SpLocation> locations;
-    HashSet<SpTransition> transitions;
     Set<SpEvent> alphabet;
 
 
@@ -44,7 +40,6 @@ public class SpEFA {
     private void init(String name){
         this.efaName = name;
         locations = new HashMap<String, SpLocation>();
-        transitions = new HashSet<SpTransition>();
         alphabet = new HashSet<SpEvent>();
     }
 
@@ -52,7 +47,7 @@ public class SpEFA {
         return initialLocation;
     }
 
-    public final void setInitialLocation(String name){
+    public void setInitialLocation(String name){
         SpLocation l = locations.get(name);
         if (l != null){
             initialLocation = l;
@@ -86,26 +81,24 @@ public class SpEFA {
     // These addTransition should be handled in a better way! Fix later!
 
     public SpTransition addTransition(SpLocation from, SpLocation to, String event){
-        SpTransition trans = new SpTransition(from, event, to);
+        SpTransition trans = new SpTransition(event, from, to);
         this.alphabet.add(trans.getEvent());
         from.addOutTransition(trans);
         to.addInTransition(trans);
         addLocation(from);
         addLocation(to);
-        transitions.add(trans);
         return trans;
     }
 
     public SpTransition addTransition(String from, String to, String event, String guard, String action){
         SpLocation fromL = addLocation(from);
         SpLocation toL = addLocation(to);
-        SpTransition trans = new SpTransition(fromL, event, toL);
+        SpTransition trans = new SpTransition(event, fromL, toL);
         this.alphabet.add(trans.getEvent());
         fromL.addOutTransition(trans);
         toL.addInTransition(trans);
         trans.setGuard(guard);
         trans.setAction(action);
-        transitions.add(trans);
         return trans;
     }
     
@@ -114,7 +107,6 @@ public class SpEFA {
         this.alphabet.add(transition.getEvent());
         addLocation(transition.getFrom());
         addLocation(transition.getTo());
-        transitions.add(transition);
     }
 
     // This method tries to keep the EFA consistent. But this must be fixed in a better way
@@ -148,17 +140,7 @@ public class SpEFA {
         return this.alphabet;
     }
 
-    public Iterator<SpLocation> iterateLocations(){
-        return locations.values().iterator();
-    }
-    
-    public Iterator<SpTransition> iterateTransitions(){
-        return transitions.iterator();
-    }
 
-    public Collection<SpLocation> getLocations(){
-        return locations.values();
-    }
     @Override
     public String toString(){
         return this.getName();

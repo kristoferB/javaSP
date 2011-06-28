@@ -1,6 +1,8 @@
 package sequenceplanner.model.SOP;
 
+import java.util.Map;
 import java.util.Set;
+import sequenceplanner.condition.Condition;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -9,22 +11,6 @@ import sequenceplanner.view.operationView.OperationView;
  * @author patrik
  */
 public interface ISopNodeToolbox {
-
-    /**
-     * To create a new node<br/>
-     * Not sure on parameter iWhere, modify for better solution.<br/>
-     * No node should be created if some other node in the sequence where this node should be added already points to parameter iOperation.<br/>
-     * E.g.:---------------<br/>
-     * node1->node2. node3 should be created after node2.<br/>
-     * node1 points to some operation op1 and node3 also points to operation op1.<br/>
-     * This gives: the sequence should NOT be extended to node1->node2->node3.<br/>
-     * null is returned.<br/>
-     * --------------------<br/>
-     * @param iNodeType see {@link ISopNodeType}
-     * @param iWhere Before or after som other node, or as the first node in a sequence, CHANGE TO FIT WHAT IS BEST
-     * @return the created {@link ISopNode} or null if no node was created
-     */
-    public ISopNode createNode(Object iNodeType, Object iWhere);
 
     /**
      * Removes a node and all sequence nodes to this node.<br/>
@@ -106,8 +92,13 @@ public interface ISopNodeToolbox {
     /**
      * Relations in SOP added to as conditions for (selfcontained) operation data.<br/>
      * @param iRootNode container for sequences where conditions should be found
+     * @return
+     * External key: operation object<br/>
+     * External value: internal map<br/>
+     * Internal key: {@link ConditionsFromSopNode}.ConditionType.PRE/POST<br/>
+     * Internal value: {@link Condition}
      */
-    public void relationsToSelfContainedOperations(ISopNode iRootNode);
+    Map<OperationData, Map<ConditionsFromSopNode.ConditionType, Condition>> relationsToSelfContainedOperations(ISopNode iRootNode);
 
     /**
      * Get all {@link ISopNode} nodes recursively from sequences to iRootNode.<br/>
@@ -133,4 +124,13 @@ public interface ISopNodeToolbox {
      * @return last {@link ISopNode} in the successor sequence (this can be parameter iNode), or null if 1) parameter iNode ==null
      */
     ISopNode getBottomSuccessor(ISopNode iNode);
+
+    /**
+     * {@link ISopNode} only has successor pointers.</br>
+     * This method returns predecessor if such exists.
+     * @param iSuccessorNode is the successor node for the node that is sought
+     * @param iRootNode root node
+     * @return Predecessor as {@link ISopNode} or null if no predecessor exists
+     */
+    ISopNode getPredecessor(ISopNode iSuccessorNode, ISopNode iRootNode);
 }

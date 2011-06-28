@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -130,7 +132,7 @@ public class Sequencing {
      * @param iNode Node to check if group
      */
     private void processGroupNode(final ISopNode iNode) {
-        if (!(iNode.getNodeType() instanceof OperationData)) {
+        if (!(iNode instanceof SopNodeOperation)) {
             //node is group
             sequence(mSNToolbox.getNodes(iNode, false), iNode);
         }
@@ -229,9 +231,9 @@ public class Sequencing {
      * @param ioSet
      */
     private void addOperationsToSet(final ISopNode iNode, final Set<OperationData> ioSet) {
-        if (iNode.getNodeType() instanceof OperationData) {
-            final OperationData opData = (OperationData) iNode.getNodeType();
-            ioSet.add(opData);
+        if (iNode instanceof SopNodeOperation) {
+//            final OperationData opData = (OperationData) iNode.getNodeType();
+            ioSet.add(iNode.getOperation());
         } else {
             final Set<OperationData> opDataSet = mSNToolbox.getOperations(iNode, true);
             ioSet.addAll(opDataSet);
@@ -247,21 +249,18 @@ public class Sequencing {
         //Do remove
         final Set<ISopNode> setToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iRoot, false));
         for (final ISopNode child : setToLoop) {
-            if (child.getNodeType() instanceof String) {
-                final String childNodeType = (String) child.getNodeType();
-                if (childNodeType.equals("SOP")) {
-                    if (child.getFirstNodesInSequencesAsSet().size() == 1) {
-                        final ISopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
-                        //Move node one level up
-                        iRoot.addNodeToSequenceSet(childChild);
-                        mSNToolbox.removeNode(child, iRoot);
-                        //Set successor relations
-                        final ISopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
-                        final ISopNode firstNodeAfterChild = child.getSuccessorNode();
-                        lastNodeInChildChildSequence.setSuccessorNode(firstNodeAfterChild);
-                        final int successorRelationType = child.getSuccessorRelation();
-                        lastNodeInChildChildSequence.setSuccessorRelation(successorRelationType);
-                    }
+            if (child instanceof SopNode) {
+                if (child.getFirstNodesInSequencesAsSet().size() == 1) {
+                    final ISopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
+                    //Move node one level up
+                    iRoot.addNodeToSequenceSet(childChild);
+                    mSNToolbox.removeNode(child, iRoot);
+                    //Set successor relations
+                    final ISopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
+                    final ISopNode firstNodeAfterChild = child.getSuccessorNode();
+                    lastNodeInChildChildSequence.setSuccessorNode(firstNodeAfterChild);
+                    final int successorRelationType = child.getSuccessorRelation();
+                    lastNodeInChildChildSequence.setSuccessorRelation(successorRelationType);
                 }
             }
         }

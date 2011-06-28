@@ -1,12 +1,13 @@
 package sequenceplanner.model.data;
 
 import java.util.Hashtable;
+import java.util.Observable;
 
 /**
  *
  * @author Erik Ohlson
  */
-public class Data  implements Cloneable {
+public class Data  extends Observable implements Cloneable {
 
     public static final int FOLDER=0;
     public static final int OPERATION=1;

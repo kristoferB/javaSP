@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -40,7 +38,6 @@ import sequenceplanner.view.operationView.OperationActions.Delete;
 import sequenceplanner.view.operationView.OperationActions.Redo;
 import sequenceplanner.view.operationView.OperationActions.Select;
 import sequenceplanner.view.operationView.OperationActions.Undo;
-import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphComponent;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
@@ -52,6 +49,21 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.StringConditionParser;
+import sequenceplanner.model.SOP.ASopNode;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.ISopStructure;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+//import sequenceplanner.model.SOP.SopStructure2;
+import sequenceplanner.model.SOP.SopStructure2;
+import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
+import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
 public class OperationView extends AbstractView implements IView, AsyncModelListener {
@@ -65,23 +77,22 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     private String startName;
     protected mxGraphOutline outline = null;
     JSplitPane pane;
-
     private boolean isClosed;
+    private boolean isHidden;
+    private ASopNode sopNode;
+    private ISopStructure mSopStruct2 = new SopStructure2();
+    private StringConditionParser par = new StringConditionParser();
 
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
         super(model, name);
         startName = name;
-        updateName();
-        isClosed = false;
-
+        initVariables();
         SPGraphModel graphModel = new SPGraphModel();
         graphModel.setCacheParent(this.model.getNameCache());
-
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -90,33 +101,15 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
         });
 
-
-
         initPanels();
         registerKeystrokes(graphComponent.getInputMap(), graphComponent.getActionMap());
 
 
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                createPopup(e);
-            }
+    }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                createPopup(e);
-            }
-
-            protected void createPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-
-                    ClickMenu c = new ClickMenu();
-                    c.show(OperationView.this, e);
-
-                }
-            }
-        });
+    public void addGraphComponentListener(MouseAdapter ma) {
+        graphComponent.getGraphControl().addMouseListener(ma);
     }
 
     public OperationView(Model model, ViewData view) {
@@ -128,15 +121,27 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return pane;
     }
 
+    private void saveGraphToSOP() {
+    }
+
+    @Override
     public void change(Integer[] changedNodes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    /**
+     * Method for checking if the view is hidden or not
+     * @return boolean true if hidden else false
+     */
+    public boolean isHidden() {
+        return isHidden;
+    }
+
     /**
      * Method for checking if the view is closed or not
      * @return boolean true if closed else false
      */
-    public boolean isClosed(){
+    public boolean isClosed() {
         return isClosed;
     }
 
@@ -144,9 +149,18 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * Sets the isClosed variable to true or false
      * @param closed true if closed else false
      */
-    public void setClosed(boolean closed){
+    public void setClosed(boolean closed) {
         isClosed = closed;
     }
+
+    /**
+     * Sets the isHidden variable to true or false
+     * @param closed true if hidden closed else false
+     */
+    public void setHidden(boolean hidden) {
+        isHidden = hidden;
+    }
+
     public boolean isChanged() {
         return changed;
     }
@@ -191,14 +205,14 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             cell = new Cell(node.getNodeData());
             cell.setCollapsed(true);
             cell.setVertex(true);
-            cell.setStyle("perimeter=custom.operationPerimeter;fillColor=#FFFF00");
+            cell.setStyle("perimeter=custom.operationPerimeter;fillColor=red");
             cell.setConnectable(false);
             mxGeometry geo = new mxGeometry();
 
             if (node.getChildCount() > 0) {
-                cell.setType(Cell.SOP);
+                cell.setType(Constants.SOP);
             } else {
-                cell.setType(Cell.OP);
+                cell.setType(Constants.OP);
             }
 
             mxRectangle rect = SPGraph.getSizeForOperation(cell);
@@ -211,7 +225,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return cell;
     }
 
-    public void open(ViewData view) {
+    private void open(ViewData view) {
         OperationData in = null;
         if (view.getRoot() != -1) {
             TreeNode d = model.getOperation(view.getRoot());
@@ -285,8 +299,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             tempName = "Temporary View";
         }
 
-
-
         if (!tempName.isEmpty()) {
             startName = tempName;
 
@@ -294,13 +306,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             Object o = gModel.getChildAt(gModel.getRoot(), 0);
             Cell cell = (Cell) o;
-
             //This will only return the topView, the rest is saved in
-            //TODO maby error with id = -1;
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
-            OperationData od = (OperationData) data[0].getNodeData();
-
+            
+            data = setConditions(data);
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());
@@ -312,11 +322,32 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             setChanged(false);
             updateName();
 
-            //        saveBackup();
         } else {
             logger.debug("Save was called but with a empty name");
         }
 
+
+    }
+
+    private TreeNode[] setConditions(TreeNode[] data) {
+        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
+        SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+        ISopNode theSopNode = snfspgm.getSopNodeRoot();
+
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+        for (TreeNode node : data) {
+            if (node.getNodeData() instanceof OperationData) {
+                OperationData d = (OperationData) node.getNodeData();
+                for (OperationData operation : operationConditionMap.keySet()) {
+
+                    if (operation.getName().equalsIgnoreCase(d.getName())) {
+                        d.setConditions(operationConditionMap.get(operation), this.startName);
+                        node.setNodeData(d);
+                    }
+                }
+            }
+        }
+        return data;
 
     }
 
@@ -364,7 +395,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     }
 
     protected TreeNode[] convertToTreeData(Cell cell) {
-        System.out.println("Is free view: " + isFreeView());
         TreeNode node = convertCelltoTreeNode(cell);
         // is this view free or do just show the inside of a SOP
         if (!isFreeView()) {
@@ -381,10 +411,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //TODO maby should check root.isSOP || root.isOP
         if (root.getValue() instanceof OperationData) {
             OperationData oldData = (OperationData) root.getValue();
+            //System.out.println(".\n \n Dump map\n" + oldData.getName());
+            //Devel.dumpMap(oldData.getPreferences());
 
             OperationData d = (OperationData) oldData.clone();
             d = getPrecond(root, d);
-
             out = d;
         } else {
             out = new Data("", -1);
@@ -538,8 +569,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
 
         } catch (NullPointerException e) {
-            logger.error("An null pointer was passed in getGraphicalPrecond, probably"
-                    + " was viewData = null");
+            logger.error("An null pointer was passed in getGraphicalPrecond, probably" + " was viewData = null");
 
         }
 
@@ -563,18 +593,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         this.setLayout(new BorderLayout());
 
-        AttributeEditor edit = new AttributeEditor(this);
-        edit.registerEditor(OperationData.class,
-                new Editors.OperationConditionEditor(this));
-
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, true, "Preconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.SequenceConditionEditor(this, false, "Postconditions"));
-        edit.registerEditor(OperationData.class,
-                new Editors.ActionEditor(this, "Actions"));
-
-        graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
+        //Formerly used by the AttributeEditor. Could be used to listen to changes
+        //in the cells.
+        //graph.getSelectionModel().addListener(mxEvent.CHANGE, edit);
 
         pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false);
 
@@ -582,8 +603,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         pane.setDividerSize(3);
 
 
-        pane.setTopComponent(graphComponent);
-        pane.setBottomComponent(edit);
+        pane.add(graphComponent);
 
         this.add(pane, BorderLayout.CENTER);
 
@@ -642,6 +662,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         showGrid.setSelected(getGraphComponent().isGridVisible());
         showGrid.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
 
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -664,6 +685,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         showPath.setSelected(getGraph().isShowPath());
         showPath.addItemListener(new ItemListener() {
 
+            @Override
             public void itemStateChanged(ItemEvent e) {
 
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -699,7 +721,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         if (outline == null) {
             outline = new mxGraphOutline(graphComponent);
-            outline.setPreferredSize(new Dimension(30, 100));
+            outline.setPreferredSize(new Dimension(500, 100));
         }
 
         return outline;
@@ -724,7 +746,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     protected void validateResources() {
         //Validate preconditions.
-        //Validate precondtions.
     }
 
     public String getCellName(String name, Cell node) {
@@ -774,7 +795,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return name;
     }
 
-    public void addmxIEventListener(mxIEventListener l){
+    public void addmxIEventListener(mxIEventListener l) {
         graph.getSelectionModel().addListener(mxEvent.CHANGE, l);
     }
 
@@ -822,5 +843,99 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         iMap.put(KeyStroke.getKeyStroke("control X"), "cut");
         aMap.put("cut",
                 createAction("cut", TransferHandler.getCutAction(), "", true));
+    }
+
+    private void initVariables() {
+        setClosed(false);
+        setHidden(false);
+        updateName();
+    }
+
+    /**
+     * Insert a SOPnode into the SOPstructure containing the Data object in 
+     * the insertedCell. SOPNode is inserted before or after reference cell.
+     * If the cell is neither after or before, it's within an other cell, which
+     * means a new list has to be placed within the list.
+     * 
+     * @param cell Cell used as reference.
+     * @param insertedCell new cell
+     * @param before boolean stating before reference cell or not
+     */
+    public void addSOPNode(Cell cell, Cell insertedCell, boolean before) {
+//        /* if the cell is either before or after, theres no need to check the
+//        type of "cell". But if its not, the type of "cell" is important for
+//        how the cells   */
+//        //Operation
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } //Parallel
+//        else if (insertedCell.getType() == Constants.PARALLEL) {
+//            //For when SopNodeParallel is finished
+//            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
+//            //For when SopNodeAlternative is finished
+//            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ARBITRARY) {
+//            //For when SopNodeArbitrary is finished
+//            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
+//        }
+//        sopStruct.setSopSequence(cell, sopNode, before);
+//        mSopStruct2.addCellToSop(cell, insertedCell, before);
+
+        updateSopNode();
+
+    }
+
+    public void addSOPNode(Cell cell, Cell insertedCell) {
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } //Parallel
+//        else if (insertedCell.getType() == Constants.PARALLEL) {
+//            //For when SopNodeParallel is finished
+//            sopNode = new SopNodeParallel(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ALTERNATIVE) {
+//            //For when SopNodeAlternative is finished
+//            sopNode = new SopNodeAlternative(insertedCell.getUniqueId());
+//        } else if (insertedCell.getType() == Constants.ARBITRARY) {
+//            //For when SopNodeArbitrary is finished
+//            sopNode = new SopNodeArbitrary(insertedCell.getUniqueId());
+//        }
+//        sopStruct.setSopSequence(cell, sopNode);
+//        mSopStruct2.addCellToSop(cell, insertedCell);
+        updateSopNode();
+    }
+
+    /**
+     * Insert a cell as a leaf of the SOPStructure root
+     * @param insertedCell cell containing Data
+     */
+    public void addSOPNode(Cell insertedCell) {
+//        mSopStruct2.addCellToSop(insertedCell);
+//        //TODO mxgraph --> SOP
+//        //Check element type here and pass on to SOPStructure. SOPStructure should create the
+//        //correct type of SOPNode and place it as a leaf under the root.
+//        if (insertedCell.getValue() instanceof OperationData) {
+//            sopNode = new SopNodeOperation((OperationData) insertedCell.getValue());
+//        } else {
+//            throw new UnsupportedOperationException("Not yet implemented");
+//        }
+//        sopStruct.setSopRoot(sopNode);
+        updateSopNode();
+    }
+
+    public void updateSopNode() {
+        //Create a new sop node root aka theSopNode
+        final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+        final ISopNode theSopNode = snfspgm.getSopNodeRoot();
+        System.out.println("______________");
+        //par.parseConditionString();
+        System.out.println(":::::");
+        System.out.println(theSopNode.toString());
+        System.out.println(":::::");
+
+        //Create conditions
+        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+
     }
 }

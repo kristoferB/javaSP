@@ -9,11 +9,9 @@ import java.util.Set;
  */
 public class SpLocation {
 
-    private String locationName;
-    private Set<SpTransition> inTransitions;
-    private Set<SpTransition> outTransitions;
-    private boolean isInitialLocation = false;
-    private boolean isAccepting = false;
+    String locationName;
+    Set<SpTransition> inTransitions;
+    Set<SpTransition> outTransitions;
 
     public SpLocation(String locationName) {
         this.locationName = locationName;
@@ -52,31 +50,7 @@ public class SpLocation {
     public boolean hasInTransition(){
         return !inTransitions.isEmpty();
     }
-    
-    public void setAccepting(){
-        this.isAccepting = true;
-    }
 
-    public void setNotAccepting(){
-        this.isAccepting = false;
-    }
-    
-    public void setInitialLocation(){
-        this.isInitialLocation = true;
-    }
-
-    public void setNotInitialLocation(){
-        this.isInitialLocation = false;
-    }
-
-    public boolean isAccepting(){
-        return this.isAccepting;
-    }
-    
-    public boolean isInitialLocation(){
-        return isInitialLocation;
-    }
-    
     @Override
     public String toString(){
         return this.locationName;

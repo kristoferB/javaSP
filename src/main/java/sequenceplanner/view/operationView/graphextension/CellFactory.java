@@ -6,9 +6,9 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
+import sequenceplanner.view.operationView.Constants;
 
 /**
  * 
@@ -17,154 +17,158 @@ import com.mxgraph.util.mxRectangle;
  */
 public class CellFactory {
 
-	private static CellFactory factoryInstance = new CellFactory();
+    private static CellFactory factoryInstance = new CellFactory();
 
-	private CellFactory() {
-		// Make sure no more instances of this class can be created
-	}
+    // Private constructor prevents instantiation from other classes
+    private CellFactory() {
+    }
 
-	public static CellFactory getInstance() {
-		return factoryInstance;
-	}
+    public static CellFactory getInstance() {
+        return factoryInstance;
+    }
 
-	public mxCell getEdge(boolean regular) {
-		String style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=;"
-				+ "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1"
-				: "strokeColor=#000000;strokeWidth=2;endArrow=";
-		mxCell edge = new Cell("edge", new mxGeometry(), style);
+    /**
+     * Creates a Cell as an edge.
+     * @param regular
+     * @return 
+     */
+    public Cell getEdge(boolean regular,boolean arrow) {
+        String style = "";
+        if (arrow) {
+            style = regular ? "strokeColor=#000000;strokeWidth=2;"
+                    + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
+                    : ";strokeColor=#000000;strokeWidth=2;arrow=ARROW_BLACK;";
+        } else {
+            style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;"
+                    + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
+                    : ";strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;";
+        }
+        Cell edge = new Cell("edge", new mxGeometry(), style);
+        edge.setId("-2");
+        edge.setEdge(true);
+        edge.setConnectable(false);
+        edge.getGeometry().setRelative(true);
+        return edge;
 
-		edge.setEdge(true);
-		edge.setConnectable(false);
-		edge.getGeometry().setRelative(true);
+    }
 
-		return edge;
+    public Cell getOperationCell() {
+        return getOperationCell(null);
+    }
 
-	}
+    public Cell getOperationCell(Point place) {
+        if (place == null) {
+            place = new Point(0, 0);
+        }
 
-	public mxCell getOperationCell() {
-		return getOperationCell(null);
-	}
+        Data d = new OperationData("OP", Model.newId());
+        d.setName("OP" + d.getId());
 
-	public Cell getOperationCell(Point place) {
-		if (place == null) {
-			place = new Point(0, 0);
-		}
+        Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 40,
+                20), "perimeter=custom.operationPerimeter;fillColor=red");
 
-		Data d = new OperationData("OP", -1);
-		Model.giveId(d);
-		d.setName("OP" + d.getId());
+        cell.setType(Constants.OP);
+        cell.setId("operation "+d.getId());
+        cell.setVertex(true);
+        cell.setConnectable(false);
 
-		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 40,
-				20), "perimeter=custom.operationPerimeter;fillColor=#FFFF00");
+        return cell;
+    }
 
-		cell.setType(Cell.OP);
-		cell.setId(null);
-		cell.setVertex(true);
-		cell.setConnectable(false);
+    public Cell getParallelCell(Point place) {
+        if (place == null) {
+            place = new Point(0, 0);
+        }
 
-		return cell;
-	}
+        mxGeometry geo = new mxGeometry(place.getX(), place.getY(), 50, 40);
+        geo.setAlternateBounds(new mxRectangle(place.getX(), place.getY(), 50,
+                40));
 
-	public Cell getParallelCell(Point place) {
-		if (place == null) {
-			place = new Point(0, 0);
-		}
+        Data d = new Data("", Model.newId());
+        Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
 
-		mxGeometry geo = new mxGeometry(place.getX(), place.getY(), 50, 40);
-		geo.setAlternateBounds(new mxRectangle(place.getX(), place.getY(), 50,
-				40));
+        cell.setType(Constants.PARALLEL);
+        cell.setId("paralll "+d.getId());
+        cell.setVertex(true);
+        cell.setConnectable(false);
 
-		Data d = new Data("", -1);
-		Model.giveId(d);
-		System.out.println(d.getId());
+        return cell;
+    }
 
-		Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
+    public Cell getAlternativeCell(Point place) {
+        if (place == null) {
+            place = new Point(0, 0);
+        }
 
-		cell.setType(Cell.PARALLEL);
-		cell.setId(null);
-		cell.setVertex(true);
-		cell.setConnectable(false);
+        Data d = new Data("", Model.newId());
 
-		return cell;
-	}
+        Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
+                40), "perimeter=custom.alternativePerimeter;");
+        cell.setType(Constants.ALTERNATIVE);
+        cell.getGeometry().setAlternateBounds(
+                new mxRectangle(place.getX(), place.getY(), 50, 40));
+        cell.setId(null);
+        cell.setVertex(true);
+        cell.setConnectable(false);
 
-	public Cell getAlternativeCell(Point place) {
-		if (place == null) {
-			place = new Point(0, 0);
-		}
+        return cell;
+    }
 
-		Data d = new Data("", -1);
-		Model.giveId(d);
+    public Cell getArbitraryCell(Point place) {
+        if (place == null) {
+            place = new Point(0, 0);
+        }
 
-		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
-				40), "perimeter=custom.alternativePerimeter;");
-		cell.setType(Cell.ALTERNATIVE);
-		cell.getGeometry().setAlternateBounds(
-				new mxRectangle(place.getX(), place.getY(), 50, 40));
-		cell.setId(null);
-		cell.setVertex(true);
-		cell.setConnectable(false);
+        Data d = new Data("", Model.newId());
 
-		return cell;
-	}
+        Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
+                40), "perimeter=custom.operationPerimeter;");
+        cell.setType(Constants.ARBITRARY);
+        cell.getGeometry().setAlternateBounds(
+                new mxRectangle(place.getX(), place.getY(), 50, 40));
+        cell.setId(null);
+        cell.setVertex(true);
+        cell.setConnectable(false);
 
-	public Cell getArbitraryCell(Point place) {
-		if (place == null) {
-			place = new Point(0, 0);
-		}
+        return cell;
+    }
 
-		Data d = new Data("", -1);
-		Model.giveId(d);
+    public Cell getSOPCell(Point place) {
+        if (place == null) {
+            place = new Point(0, 0);
+        }
+        mxGeometry geo = new mxGeometry(place.getX(), place.getY(), 40, 20);
+        geo.setAlternateBounds(new mxRectangle(0, 0, 100, 80));
 
-		Cell cell = new Cell(d, new mxGeometry(place.getX(), place.getY(), 50,
-				40), "perimeter=custom.operationPerimeter;");
-		cell.setType(Cell.ARBITRARY);
-		cell.getGeometry().setAlternateBounds(
-				new mxRectangle(place.getX(), place.getY(), 50, 40));
-		cell.setId(null);
-		cell.setVertex(true);
-		cell.setConnectable(false);
+        Data d = new OperationData("SOP", Model.newId());
+        d.setName("OP" + d.getId());
+        Cell cell = new Cell(d, geo,
+                "perimeter=custom.operationPerimeter;fillColor=yellow");
+        cell.setType(Constants.SOP);
+        cell.setId(null);
+        cell.setVertex(true);
+        cell.setConnectable(false);
 
-		return cell;
-	}
+        return cell;
+    }
 
-	public Cell getSOPCell(Point place) {
-		if (place == null) {
-			place = new Point(0, 0);
-		}
-		mxGeometry geo = new mxGeometry(place.getX(), place.getY(), 40, 20);
-		geo.setAlternateBounds(new mxRectangle(0, 0, 100, 80));
+    public Cell getOperation(String type) {
+        return getOperation(type, null);
+    }
 
-		Data d = new OperationData("SOP", -1);
-		Model.giveId(d);
-		d.setName("OP" + d.getId());
-		Cell cell = new Cell(d, geo,
-				"perimeter=custom.operationPerimeter;fillColor=#FFFF00");
-		cell.setType(Cell.SOP);
-		cell.setId(null);
-		cell.setVertex(true);
-		cell.setConnectable(false);
+    public Cell getOperation(String type, Point place) {
+        if (type.equals(SPGraphModel.TYPE_OPERATION)) {
+            return getOperationCell(place);
 
-		return cell;
-	}
-
-	public Cell getOperation(String type) {
-		return getOperation(type, null);
-	}
-
-	public Cell getOperation(String type, Point place) {
-		if (type.equals(SPGraphModel.TYPE_OPERATION)) {
-			return getOperationCell(place);
-
-		} else if (type.equals(SPGraphModel.TYPE_SOP)) {
-			return getSOPCell(place);
-		} else if (type.equals(SPGraphModel.TYPE_PARALLEL)) {
-			return getParallelCell(place);
-		} else if (type.equals(SPGraphModel.TYPE_ALTERNATIVE)) {
-			return getAlternativeCell(place);
-		} else if (type.equals(SPGraphModel.TYPE_ARBITRARY)) {
-			return getArbitraryCell(place);
-		}
-		return null;
-	}
+        } else if (type.equals(SPGraphModel.TYPE_SOP)) {
+            return getSOPCell(place);
+        } else if (type.equals(SPGraphModel.TYPE_PARALLEL)) {
+            return getParallelCell(place);
+        } else if (type.equals(SPGraphModel.TYPE_ALTERNATIVE)) {
+            return getAlternativeCell(place);
+        } else if (type.equals(SPGraphModel.TYPE_ARBITRARY)) {
+            return getArbitraryCell(place);
+        }
+        return null;
+    }
 }

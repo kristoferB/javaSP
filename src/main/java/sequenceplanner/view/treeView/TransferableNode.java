@@ -16,6 +16,7 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.util.mxGraphTransferable;
 import com.mxgraph.util.mxRectangle;
+import sequenceplanner.view.operationView.Constants;
 
 /**
  *
@@ -63,9 +64,9 @@ public class TransferableNode implements Transferable {
 
 
          if (node.getChildCount() > 0) {
-            cell.setType(Cell.SOP);
+            cell.setType(Constants.SOP);
          } else {
-            cell.setType(Cell.OP);
+            cell.setType(Constants.OP);
          }
 
          mxRectangle rect = SPGraph.getSizeForOperation(cell);

@@ -337,7 +337,7 @@ public class SequenceCreator {
             branch.setNext(null);
             return true;
 
-        } else if (branch.getBranches().size() == 0){
+        } else if (branch.getBranches().isEmpty()){
             if (branch.getNext() != null){
                 branch.getNext().setPred(branch.getPred());
             }

@@ -26,7 +26,6 @@ import sequenceplanner.xml.ViewType;
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
 import sequenceplanner.editor.IGlobalProperty;
-import sequenceplanner.editor.Value;
 import sequenceplanner.xml.GlobalProperty;
 
 /**
@@ -270,6 +269,9 @@ public class ConvertToXML {
          viewX.setName(view.getName());
          viewX.setRoot(view.getRoot());
 
+         viewX.setIsClosed(view.isClosed());
+         viewX.setIsHidden(view.isHidden());
+       
          LinkedList<ViewData.CellData> list = view.getData();
 
          for (ViewData.CellData data : list) {

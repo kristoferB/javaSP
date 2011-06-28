@@ -4,8 +4,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeAlternative;
+import sequenceplanner.model.SOP.SopNodeArbitrary;
+import sequenceplanner.model.SOP.SopNodeOperation;
+import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -44,11 +50,10 @@ public class RelationPartition {
         for (final ISopNode node : sopNodesForThisLevel) {
 
             Set<OperationData> set = new HashSet<OperationData>();
-            if (node.getNodeType() instanceof OperationData) {
-                final OperationData opData = (OperationData) node.getNodeType();
-                set.add(opData);
+            if (node instanceof SopNodeOperation) {
+                set.add(node.getOperation());
             } else {
-                Set<OperationData> opDataSet = mSNToolbox.getOperations(node, true);
+                final Set<OperationData> opDataSet = mSNToolbox.getOperations(node, true);
                 set.addAll(opDataSet);
             }
 
@@ -92,8 +97,16 @@ public class RelationPartition {
 
         //Update Root------------------------------------------------------------
         //Add relation type node to root
+        ISopNode relationTypeNode = null;
         final String relationAsString = RelateTwoOperations.relationIntegerToString(mRelationInt, "", "");
-        ISopNode relationTypeNode = mSNToolbox.createNode(relationAsString, root);
+        if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE,"",""))) {
+            relationTypeNode = new SopNodeAlternative();
+        } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER,"",""))) {
+            relationTypeNode = new SopNodeArbitrary();
+        } else if(relationAsString.equals(RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL,"",""))) {
+            relationTypeNode = new SopNodeParallel();
+        }
+        root.addNodeToSequenceSet(relationTypeNode);
         //Move nodes in master set from root, to relation node
         ISopNode masterSetNode = moveNodeSetToSopNode(masterSet, root, relationTypeNode);
         //Move nodes in relation set from root, to relation node
@@ -117,7 +130,8 @@ public class RelationPartition {
             if (remainingElementsSet.size() == 1) {
                 remainingElementsNode = remainingElementsSet.iterator().next();
             } else { //remainingElementsSet.size() > 1
-                remainingElementsNode = mSNToolbox.createNode("SOP", root);
+                remainingElementsNode = new SopNode();
+                root.addNodeToSequenceSet(remainingElementsNode);
                 //Move nodes in remaining set from root, to new node
                 moveNodeSetToSopNode(remainingElementsSet, root, remainingElementsNode);
             }
@@ -137,7 +151,8 @@ public class RelationPartition {
      */
     private ISopNode moveNodeSetToSopNode(final Set<ISopNode> iSetToMove, final ISopNode iOldNode, final ISopNode iNewNode) {
         if (iSetToMove.size() > 1) {
-            ISopNode groupNode = mSNToolbox.createNode("SOP", iNewNode);
+            final ISopNode groupNode = new SopNode();
+            iNewNode.addNodeToSequenceSet(groupNode);
             for (final ISopNode node : iSetToMove) {
                 groupNode.addNodeToSequenceSet(node);
                 mSNToolbox.removeNode(node, iOldNode);

@@ -18,7 +18,7 @@ public class SpTransition {
     SpLocation to;
 
 
-    public SpTransition(SpLocation from, String eventLabel, SpLocation to) {
+    public SpTransition(String eventLabel,SpLocation from, SpLocation to) {
         this.event = new SpEvent(eventLabel);
         this.from = from;
         this.to = to;

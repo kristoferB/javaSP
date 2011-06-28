@@ -2,8 +2,12 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JFileChooser;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import sequenceplanner.IO.ReadFromVolvoFile;
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.efaconverter2.export.DefaultExport;
@@ -12,10 +16,13 @@ import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
 import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
-//import sequenceplanner.gui.view.OperationWindowListener;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
+import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.treeView.TreeViewController;
 
 /**
@@ -44,6 +51,7 @@ public class GUIController {
         guiModel.getModel().addObserver(opViewController);
         //Add first operation view to opViewController
         opViewController.addOperationView(guiModel.getOperationViews().getLast());
+        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
         //  addNewOpTab();
         addListeners();
@@ -73,22 +81,27 @@ public class GUIController {
         guiView.addEFAForMPL(new EFAForMPListener());
         guiView.addNormalEFA(new NormalEFAListener());
         guiView.addReducedEFA(new ReducedEFAListener());
-        guiView.addEditorListener();
+//        guiView.addEditorListener();
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
         guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
+        guiView.addAddOperationsFromFileL(new AddOperationsFromFileListener());
     }
     //Listener classes
+
+    public void printToConsole(String text) {
+        guiView.printToConsole(text);
+    }
 
     //private methods
     private void addNewOpTab() {
         guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
-        //guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener());
-    }
+        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
 
-    public void printToConsole(String text) {
-        guiView.printToConsole(text);
+        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
+
     }
 
     /**
@@ -102,10 +115,15 @@ public class GUIController {
         if (!isOpened(data)) {
             guiModel.createNewOpView(data);
             addNewOpTab();
+
         } else {
-            guiView.setFocused(data);
+            guiView.setFocusedOperationView(data);
             printToConsole("Already open!");
         }
+    }
+
+    public GUIView getView() {
+        return this.guiView;
     }
 
     //File menu listenrs
@@ -265,7 +283,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            guiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -334,9 +352,67 @@ public class GUIController {
             guiModel.createNewOpView();
             final OperationView opView = guiModel.getOperationViews().getLast();
             opView.setName("Projection" + guiModel.getModel().getCounter());
-            new UserInteractionForVisualization(opView,guiModel.getModel());
+            new UserInteractionForVisualization(opView, guiModel.getModel());
             addNewOpTab();
-            
+
+        }
+    }
+
+    class AddOperationsFromFileListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
+
+            if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                final String path = dialog.getSelectedFile().getAbsolutePath();
+                final ReadFromVolvoFile r = new ReadFromVolvoFile(path, null, guiModel.getModel());
+                r.run();
+            }
+        }
+    }
+
+    /**
+     * Class for listening on clicks in an OperationView.
+     */
+    private class OperationViewGraphicsListener extends MouseAdapter {
+
+        private OperationView oV;
+
+        public OperationViewGraphicsListener(OperationView oV) {
+            super();
+            this.oV = oV;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            createPopup(e);
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            createPopup(e);
+            OperationView v = oV;
+            //If double click
+            if (e.getClickCount() == 2) {
+                //If operation is clicked
+                Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
+                if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
+                    clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    
+                    
+                }
+            }
+        }
+
+        public void createPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+
+                ClickMenu c = new ClickMenu();
+                c.show(oV, e);
+
+            }
         }
     }
 
@@ -348,12 +424,12 @@ public class GUIController {
             guiView.closeAllViews();
             guiView.updateEditorView();
             guiView.updatePropertyView();
-            for(OperationView o:guiModel.getOperationViews()){
-                 guiView.addNewOpTab(o.toString(), o);
-                 if(o.isClosed())
-                     //TODO Q: get guiView do close operationview if closed...
-                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
-                
+            for (OperationView o : guiModel.getOperationViews()) {
+                guiView.addNewOpTab(o.toString(), o);
+                if (o.isClosed()) {
+                    guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
+                }
+
             }
 
         }
@@ -381,5 +457,19 @@ public class GUIController {
             }
         }
         return false;
+    }
+
+    public OperationData addPropertyPanelView(OperationData data) {
+        AttributePanel panel = new AttributePanel(data);
+        if (guiView.addAttributePanelView(panel)) {
+            AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
+            panel.addEditorSaveListener(ctrl);
+            guiModel.getModel().addObserver(ctrl);
+            printToConsole("Operation " + data.getName() + " opened.");
+        } else {
+            printToConsole("Operation already opened.");
+
+        }
+        return data;
     }
 }

@@ -14,7 +14,6 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 
 /**
@@ -23,11 +22,9 @@ import com.mxgraph.model.mxGeometry;
  */
 public class ConvertToCell {
 
-   //TODO What need to urgently be fixed.
-   // * An Op can have transformed into an SOP, check and change!
-   // * A SOP can have transformed into an op
-
-
+    //TODO What need to urgently be fixed.
+    // * An Op can have transformed into an SOP, check and change!
+    // * A SOP can have transformed into an op
     public LinkedList<CellData> cellTable;
     public Model model;
     private Cell root;
@@ -44,7 +41,7 @@ public class ConvertToCell {
 
         this.realRootId = data.getRoot();
 
-        for(int i=0; i<cellTable.size(); i++){
+        for (int i = 0; i < cellTable.size(); i++) {
             CellData c = cellTable.get(i);
             System.out.println("CellID: " + c.id + " Previous Cell: " + c.previousCell
                     + " Type: " + c.type + " Relation: " + c.relation + " LastInRelation: " + c.lastInRelation);
@@ -82,11 +79,7 @@ public class ConvertToCell {
 
         Cell thisCell = new Cell();
 
-
-
-
-
-        if (cellType == Cell.PARALLEL) {
+        if (cellType == Constants.PARALLEL) {
 
             // Draw a parallel cell with transition from previousCell to this cell.
             thisCell = drawParallel(tableIndex, previousCell, parentCell);
@@ -104,7 +97,7 @@ public class ConvertToCell {
             }
 
 
-        } else if (cellType == Cell.ALTERNATIVE) {
+        } else if (cellType == Constants.ALTERNATIVE) {
             // Draw an alternative cell with transition from previousCell to this cell.
             thisCell = drawAlternative(tableIndex, previousCell, parentCell);
 
@@ -122,11 +115,11 @@ public class ConvertToCell {
 
 
 
-        } else if (cellType == Cell.OP || cellType == Cell.SOP) {
+        } else if (cellType == Constants.OP || cellType == Constants.SOP) {
 
             if (isExisting(cellID)) {
                 // An existing operation
-                if (previousCellType == Cell.PARALLEL) {
+                if (previousCellType == Constants.PARALLEL) {
 
                     if (relationID == previousCellID) {
 
@@ -134,17 +127,17 @@ public class ConvertToCell {
                         int type = previousCellType;
                         int name = previousCellID;
 
-                        while (type != Cell.OP) {
+                        while (type != Constants.OP) {
                             CellData o = cellTable.get(getIndexOfCell(name));
 
-                            if(o.previousCell == -1){
+                            if (o.previousCell == -1) {
                                 noPreviousOp = true;
                                 break;
                             }
 
                             CellData o2 = cellTable.get(getIndexOfCell(o.previousCell));
                             name = o2.id;
-                            type = o2.type;                                                        
+                            type = o2.type;
                         }
 
                         // name is the name of the precondition operation.
@@ -153,7 +146,7 @@ public class ConvertToCell {
 
                         } else {
                             if (seqPreconditionOK(name, cellID)) {
-                             
+
                                 // Draw an operation cell in parentCell with transition from parentCell.
                                 thisCell = drawOperation(tableIndex, previousCell, parentCell, name);
 
@@ -173,7 +166,7 @@ public class ConvertToCell {
 
                     }
 
-                } else if (previousCellType == Cell.OP || previousCellType == Cell.SOP) {
+                } else if (previousCellType == Constants.OP || previousCellType == Constants.SOP) {
 
                     if (seqPreconditionOK(previousCellID, cellID)) {
                         // Draw an operation in its relation with transition from previousCell to this cell.
@@ -185,7 +178,7 @@ public class ConvertToCell {
                     }
 
 
-                } else if (previousCellType == Cell.ALTERNATIVE) {
+                } else if (previousCellType == Constants.ALTERNATIVE) {
 
                     if (relationID == previousCellID) {
 
@@ -193,10 +186,10 @@ public class ConvertToCell {
                         int type = previousCellType;
                         int name = previousCellID;
 
-                        while (type != Cell.OP) {
+                        while (type != Constants.OP) {
                             CellData o = cellTable.get(getIndexOfCell(name));
 
-                            if(o.previousCell == -1){
+                            if (o.previousCell == -1) {
                                 noPreviousOp = true;
                                 break;
                             }
@@ -213,7 +206,7 @@ public class ConvertToCell {
 
                         } else if (altResourceOK(cellID, relationID) && seqPreconditionOK(name, cellID)) {
                             // The alternative resource and precondition exist.
-                 
+
                             // Draw an operation cell in parentCell with transition from parentCell.
                             thisCell = drawOperation(tableIndex, previousCell, parentCell, name);
                         } else {
@@ -221,7 +214,7 @@ public class ConvertToCell {
                             // Remove the resource booking and the precondition
                             // Draw an operation in parent with no connection to top of alternative
 
-                      
+
                             thisCell = drawOperation(tableIndex, null, parentCell);
                             removeAltResourceBooking(cellID, relationID);
                             removeSeqPrecondition(cellID, name);
@@ -238,11 +231,11 @@ public class ConvertToCell {
 
 
                 } else { // No previous cell
-                    if (cellType == Cell.OP || cellType == Cell.SOP) {
+                    if (cellType == Constants.OP || cellType == Constants.SOP) {
                         thisCell = drawOperation(tableIndex, null, parentCell);
-                    } else if (cellType == Cell.PARALLEL) {
+                    } else if (cellType == Constants.PARALLEL) {
                         thisCell = drawParallel(tableIndex, null, parentCell);
-                    } else if (cellType == Cell.ALTERNATIVE) {
+                    } else if (cellType == Constants.ALTERNATIVE) {
                         thisCell = drawAlternative(tableIndex, null, parentCell);
                     } else {
                         // Unknown type.
@@ -252,13 +245,13 @@ public class ConvertToCell {
                 if (endOfRelation) {
                     int followingOp = getFollowingOperation(cellID);
 
-                   
+
                     // followingOp is the op that should have this cell as sequence condition.
 
                     int relationIndex = getIndexOfCell(relationID);
-                    if (cellTable.get(relationIndex).type == Cell.ALTERNATIVE) {
+                    if (cellTable.get(relationIndex).type == Constants.ALTERNATIVE) {
                         // This operation is last in an alternative cell with followingOp as first cell after the alternative.
-            
+
                         if (followingOp == -1) {
                             // No following operation
                             drawTransition(thisCell, parentCell);
@@ -311,7 +304,7 @@ public class ConvertToCell {
                     // The new cell lies outside this cell and i therefore a child to the same cell as this cell is.
                     newCell(i, thisCell, parentCell, cellData);
                 }
-            } else if(o.previousCell == -1 && o.relation == cellID){
+            } else if (o.previousCell == -1 && o.relation == cellID) {
 
                 // The cell lies in the relation but has no precondition
                 newCell(i, null, thisCell, null);
@@ -321,7 +314,7 @@ public class ConvertToCell {
     }
 
     public void drawTransition(Cell theCell, Cell theParent) {
-        mxCell edge = CellFactory.getInstance().getEdge(false);
+        Cell edge = CellFactory.getInstance().getEdge(false, false);
         theParent.insertEdge(edge, false);
         theCell.insertEdge(edge, true);
         theParent.insert(edge);
@@ -341,12 +334,11 @@ public class ConvertToCell {
         return drawOperation(tableIndex, previousCell, parent, 0);
     }
 
-
     public Cell drawOperation(int tableIndex, Cell previousCell, Cell parent, int seqConId) {
         CellData data = cellTable.get(tableIndex);
         Cell thisCell;
-        
-        if(model.getOperation(data.id).getChildCount() > 0 || data.type == Cell.SOP){
+
+        if (model.getOperation(data.id).getChildCount() > 0 || data.type == Constants.SOP) {
             thisCell = drawCell(tableIndex, previousCell, parent, SPGraphModel.TYPE_SOP, data);
 
 
@@ -409,16 +401,16 @@ public class ConvertToCell {
 
         LinkedList<SeqCond> listOfIDs = new LinkedList<SeqCond>();
         for (Cell cell : cells) {
-            listOfIDs.add(new SeqCond(cell.getUniqueId(), 2) );
+            listOfIDs.add(new SeqCond(cell.getUniqueId(), 2));
         }
 
-        OperationData oD = ((OperationData)theOperationCell.getValue());
+        OperationData oD = ((OperationData) theOperationCell.getValue());
 
         LinkedList<LinkedList<SeqCond>> seqcon = oD.getSequenceCondition();
 
         for (LinkedList<SeqCond> linkedList : seqcon) {
 
-     //        System.out.println("linkedList: " + linkedList);
+            //        System.out.println("linkedList: " + linkedList);
             if (oD.isListEqual(linkedList, listOfIDs)) {
                 seqcon.remove(linkedList);
                 break;
@@ -430,13 +422,13 @@ public class ConvertToCell {
         LinkedList<Cell> cells = view.getGraph().
                 getPreviousOperations(view.getGraph().getNextCell(theOperationCell, true));;
 
-        OperationData oD = ((OperationData)theOperationCell.getValue());
+        OperationData oD = ((OperationData) theOperationCell.getValue());
 
         for (Cell cell : cells) {
             oD.removeAnd(cell.getUniqueId(), 2);
 
-          //    System.out.println("removeParSeqConFromCell cell:  " + cell);
-        }        
+            //    System.out.println("removeParSeqConFromCell cell:  " + cell);
+        }
     }
 
     /// FINISHED NEW
@@ -458,7 +450,7 @@ public class ConvertToCell {
 
         if (previousCell != null) {
             boolean typus = !(previousCell.isGroup() && previousCell == parent);
-            mxCell edge = CellFactory.getInstance().getEdge(typus);
+            Cell edge = CellFactory.getInstance().getEdge(typus,false);
             thisCell.insertEdge(edge, false);
             previousCell.insertEdge(edge, true);
             parent.insert(edge);
@@ -487,18 +479,18 @@ public class ConvertToCell {
             int parent = o.relation;
 
             CellData o2 = cellTable.get(getIndexOfCell(parent));
-            end =  o2.lastInRelation;
+            end = o2.lastInRelation;
             previousName = o2.id;
         }
 
 
         //TODO fix take the one before instead of the one after.
-   
+
         // name is the ID of the cell which is the main parallel
 
         int followingOp = -1;
-        for (int j = 0; j <
-                cellTable.size(); j++) {
+        for (int j = 0; j
+                < cellTable.size(); j++) {
             CellData ob = cellTable.get(j);
             if (ob.previousCell == previousName && ob.relation != previousName) {
                 followingOp = ob.id;
@@ -521,8 +513,8 @@ public class ConvertToCell {
     public int getIndexOfCell(int cellID) {
         int index = -1;
 
-        for (int i = 0; i <
-                cellTable.size(); i++) {
+        for (int i = 0; i
+                < cellTable.size(); i++) {
             if (cellTable.get(i).id == cellID) {
                 index = i;
                 break;
@@ -533,7 +525,6 @@ public class ConvertToCell {
         }
         return index;
     }
-
 
     /**
      * Methods for checking if the cell exists in the model and lies in the right SOP
@@ -550,9 +541,9 @@ public class ConvertToCell {
         } else if (realRootId != -1 && node.getParent().getId() != realRootId) {
             return false;
         }
-        
+
         return true;
-        
+
     }
 
 // Return true if the precondition that sourceOpID should be finished before targetOpID exists.
@@ -602,8 +593,8 @@ public class ConvertToCell {
         TreeNode node = model.getOperation(cellID);
         LinkedList<LinkedList<OperationData.SeqCond>> seqcon = ((OperationData) node.getNodeData()).getSequenceCondition();
 
-        for (int i = 0; i <
-                seqcon.size(); i++) {
+        for (int i = 0; i
+                < seqcon.size(); i++) {
             if (seqcon.get(i).size() == 1 && seqcon.get(i).get(0).id == preconditionID) {
                 seqcon.remove(i);
             }
@@ -640,18 +631,18 @@ public class ConvertToCell {
             }
         }
 
-        for (int i = 0; i <
-                seqcon.size(); i++) {
+        for (int i = 0; i
+                < seqcon.size(); i++) {
             boolean ok = true;
 
-            for (int j = 0; j <
-                    seqcon.get(i).size(); j++) {
+            for (int j = 0; j
+                    < seqcon.get(i).size(); j++) {
                 OperationData.SeqCond con = seqcon.get(i).get(j);
 
                 boolean inTheList = false;
 
-                for (int h = 0; h <
-                        listOfOps.size(); h++) {
+                for (int h = 0; h
+                        < listOfOps.size(); h++) {
                     if (con.id == listOfOps.get(h).id && con.state == 2) {
 
                         inTheList = true;

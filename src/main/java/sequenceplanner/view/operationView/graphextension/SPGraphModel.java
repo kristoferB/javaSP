@@ -11,9 +11,8 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.NameCacheMap;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 
@@ -48,14 +47,14 @@ public class SPGraphModel extends mxGraphModel {
 
    @Override
    public Object createRoot() {
-      mxCell root = new Cell("Process");
+      Cell root = new Cell("Process");
       root.insert(new Cell(new Data("root", -1)));
       return root;
    }
 
    public void reloadNamesCache() {
       Cell c = getGraphRoot();
-      reloadNameChache(c, Constansts.VIEW);
+      reloadNameChache(c, Constants.VIEW);
    }
 
    protected void reloadNameChache(Cell node, String path) {
@@ -82,9 +81,7 @@ public class SPGraphModel extends mxGraphModel {
 
          d.setPrecondition(Model.updateCondition(nameCache,
                d.getSequenceCondition(), d.getResourceBooking(), showPath));
-         d.setPostcondition(Model.updateCondition(nameCache,
-               d.getPSequenceCondition(), d.getPResourceBooking(), showPath));
-
+         
          updatePreconditions(sops[i], showPath);
       }
    }

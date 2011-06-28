@@ -1,14 +1,13 @@
 package sequenceplanner.model.SOP;
 
-import com.mxgraph.model.mxCell;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
 import sequenceplanner.view.operationView.graphextension.SPGraph;
@@ -71,10 +70,10 @@ public class DrawSopNode {
                 mGraph.addCell(iNodeCellMap.get(node));
             } else {
                 mGraph.insertGroupNode(iNodeCellMap.get(iRoot), null, iNodeCellMap.get(node));
-                if (iNodeCellMap.get(iRoot).getType() == Cell.SOP) {
+                if (iNodeCellMap.get(iRoot).getType() == Constants.SOP) {
                     Object[] oSet = mGraph.getEdges(iNodeCellMap.get(node));
                     for (Object o : oSet) {
-                        mxCell c = (mxCell) o;
+                        Cell c = (Cell) o;
                         c.removeFromParent();
                     }
                 }
@@ -108,7 +107,6 @@ public class DrawSopNode {
     private void drawSequenceWithRespectToRelation(final ISopNode iPredNode, final ISopNode iSuccNode, final Map<ISopNode, Cell> iNodeCellMap) {
         final Cell cellPred = iNodeCellMap.get(iPredNode);
         final Cell cellSucc = iNodeCellMap.get(iSuccNode);
-        final int predSuccRelation = iPredNode.getSuccessorRelation();
 
         mGraph.insertNewCell(cellPred, cellSucc, false);
 
@@ -143,12 +141,11 @@ public class DrawSopNode {
      * @return corresponding Cell
      */
     private Cell getCellForNode(final ISopNode iNode) {
-        final Object nodeType = iNode.getNodeType();
-        final boolean sequenceSetIsEmpty = iNode.getFirstNodesInSequencesAsSet().isEmpty();
+
         Cell cell;
-        if (nodeType instanceof OperationData) {
-            final OperationData opData = (OperationData) nodeType;
-            if (sequenceSetIsEmpty) {
+        if (iNode instanceof SopNodeOperation) {
+            final OperationData opData = iNode.getOperation();
+            if (iNode.sequenceSetIsEmpty()) {
                 //Operation
                 cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION);
             } else {
@@ -157,42 +154,60 @@ public class DrawSopNode {
             }
             final Data newOpData = new OperationData(opData.getName(), -1);
             Model.giveId(newOpData);
+            addDescriptionAsCondition(newOpData, opData);
             cell.setValue(newOpData);
             return cell;
-        } else if (nodeType instanceof String) {
-            final String nodeTypeString = (String) nodeType;
-            final String sop = "SOP";
-            final String alternative = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ALTERNATIVE, "", "");
-            final String arbitraryOrder = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.ARBITRARY_ORDER, "", "");
-            final String parallel = RelateTwoOperations.relationIntegerToString(IRelateTwoOperations.PARALLEL, "", "");
-
-            if (nodeTypeString.equals(sop)) {
-                cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
-                final Data newOpData = new OperationData("", -1);
-                Model.giveId(newOpData);
-                cell.setValue(newOpData);
-                return cell;
-            } else if (nodeTypeString.equals(alternative)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
-            } else if (nodeTypeString.equals(arbitraryOrder)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
-            } else if (nodeTypeString.equals(parallel)) {
-                return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
-            }
+        } else if (iNode instanceof SopNode) {
+            cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+            final Data newOpData = new OperationData("", -1);
+            Model.giveId(newOpData);
+            cell.setValue(newOpData);
+            return cell;
+        } else if (iNode instanceof SopNodeAlternative) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
+        } else if (iNode instanceof SopNodeArbitrary) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
+        } else if (iNode instanceof SopNodeParallel) {
+            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
         }
+        
         return null;
+    }
+
+    /**
+     * Ad hoc in order to enable that signlas/variables written in an operation description to appear in precon in the projection.
+     * @param iOpData
+     * @param iOldOperation
+     */
+    private void addDescriptionAsCondition(final Data iOpData, final OperationData iOldOperation) {
+        final OperationData opData = (OperationData) iOpData;
+        opData.setDescription(iOldOperation.getDescription());
+        final String description = opData.getDescription();
+
+        if (description.length() <= 1) {
+            return;
+        }
+
+        final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
+        final String[] conjunctionSplit = description.split("AND");
+
+        for (final String idAsString : conjunctionSplit) {
+            final int idAsInt = Integer.parseInt(idAsString);
+
+            final OperationData.SeqCond sq = new OperationData.SeqCond(idAsInt, 0, 1);
+
+            final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
+            llOR.add(sq);
+            llAND.add(llOR);
+        }
+
+        opData.setSequenceCondition(llAND);
     }
 
     /**
      * Dummy method, just to see how to work with {@link SPGraph}.<br/>
      */
     private void drawExampleSequence() {
-
-//   final public static String TYPE_OPERATION = "operation";
-//   final public static String TYPE_SOP = "sop";
-//   final public static String TYPE_PARALLEL = "parallel";
-//   final public static String TYPE_ALTERNATIVE = "alternative";
-//   final public static String TYPE_ARBITRARY = "arbitrary";
 
         Cell cell1, cell2, cell3, cell4, cell5, cell6, cell7;
         Cell cell8;
@@ -225,7 +240,7 @@ public class DrawSopNode {
         mGraph.insertGroupNode(cell6, null, cell7);
         Object[] oSet = mGraph.getEdges(cell7);
         for (Object o : oSet) {
-            mxCell c = (mxCell) o;
+            Cell c = (Cell) o;
             c.removeFromParent();
         }
 

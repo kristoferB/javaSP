@@ -20,7 +20,7 @@ import org.supremica.external.avocades.common.Module;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.ConditionStatment;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.efaconverter.efamodel.SpEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.efaconverter.efamodel.SpLocation;
@@ -114,7 +114,7 @@ public class convertSeqToEFA {
        
         saveToFile(module);
     }
-      
+
     private SpEFA createSeqEFA(OpNode firstOp, SpEFAutomata automata){
         String efaName = createEFAName(firstOp);
         String seqName = "Seq_" + efaName;
@@ -464,7 +464,7 @@ public class convertSeqToEFA {
                 ce = translateOpGuards((ConditionExpression) ce);
             } else if(ce.isStatment()){
                 //this.opLocationGuardMap.get(createOpLocationName(o.getName(), sc.state));
-                ConditionStatment cs = (ConditionStatment) ce;
+                ConditionStatement cs = (ConditionStatement) ce;
                 if (isStatmentRelatedToOp(cs)){
                     // How this is handled now should probably change. opLocationGuardMap is 
                     // created to generate EFA to supremica. Therfore no error check here!
@@ -480,11 +480,11 @@ public class convertSeqToEFA {
         return guard;
     }
 
-    private boolean isStatmentRelatedToOp(ConditionStatment cs){
+    private boolean isStatmentRelatedToOp(ConditionStatement cs){
         return modelparser.getOpNode(cs.getVariable()) != null;
     }
 
-    private String getGuardsRelatedToOpStatment(ConditionStatment cs){
+    private String getGuardsRelatedToOpStatment(ConditionStatement cs){
         try{
             int intValue = Integer.parseInt(cs.getValue());
             String guard = this.opLocationGuardMap.get(createOpLocationName(cs.getVariable(), intValue));

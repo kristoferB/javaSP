@@ -33,6 +33,13 @@
             <artifactId>idw-gpl</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--For excel-->
+        <dependency>
+            <groupId>jxl</groupId>
+            <artifactId>jxl</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <!--For graph-->        
         <dependency>
             <groupId>jgrapht</groupId>
             <artifactId>jgrapht</artifactId>
@@ -92,14 +99,6 @@
         </plugins>
     </build>
 
-<!--
-  <repositories>
-    <repository>
-      <id>my-remote-local-site</id>
-      <url>http://www.ohlson.be/maven/releases/</url>
-    </repository>
-  </repositories>
--->
   <repositories>
     <repository>
       <id>my-remote-local-site</id>

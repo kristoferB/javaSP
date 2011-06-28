@@ -13,17 +13,13 @@ public class SpEFAutomata {
     private Map<String, SpEFA> automatons;
     private Map<String, SpEvent> alphabet;
     private Map<String, SpVariable> variables;
-    private String name;
 
-    public SpEFAutomata(String iName) {
+    public SpEFAutomata() {
         this.automatons = new HashMap<String, SpEFA>();
         this.alphabet = new HashMap<String, SpEvent>();
         this.variables = new HashMap<String, SpVariable>();
-        this.name = iName;
     }
-    public SpEFAutomata() {
-        this("SequencePlanner Model");
-    }
+
     public Collection<SpEvent> getAlphabet() {
         return alphabet.values();
     }
@@ -51,13 +47,7 @@ public class SpEFAutomata {
         this.variables.put(variables.getName(), variables);
     }
 
-    public String getName(){
-        return name;
-    }
 
-    public void setName(String iName){
-        this.name = iName;
-    }
 
 
 

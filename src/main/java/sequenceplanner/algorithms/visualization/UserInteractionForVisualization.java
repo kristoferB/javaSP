@@ -3,7 +3,6 @@ package sequenceplanner.algorithms.visualization;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -17,12 +16,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
+
 
 /**
  * To manage the user interaction for {@link PerformVisualization}.<br/>
@@ -71,6 +71,11 @@ public class UserInteractionForVisualization {
         System.out.println("--------------------------------");
 
         mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
+
+        System.out.println("\n--------------------------------");
+        System.out.println("Get conditions");
+        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());
+        System.out.println("--------------------------------");
 
         return true;
     }
@@ -156,6 +161,7 @@ public class UserInteractionForVisualization {
             //Layout-------------------------------------------------------------
             setTitle("Operation selection");
             Container c = getContentPane();
+            
             c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
             JPanel jpButton = new JPanel(new GridLayout(1, 1));
             jpButton.add(generateButton);
@@ -171,7 +177,6 @@ public class UserInteractionForVisualization {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (generateButton == e.getSource()) {
-                final ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
                 final ISopNode allOperationsNode = new SopNode();
                 final ISopNode hasToFinishNode = new SopNode();
                 final ISopNode operationsToViewNode = new SopNode();
@@ -180,13 +185,14 @@ public class UserInteractionForVisualization {
                     final OperationData opData = listIterator.next();
                     final int operationIndex = mOperationList.indexOf(opData);
 
+                    final ISopNode opNode = new SopNodeOperation(opData);
                     if (mOpSelectionTable[operationIndex][0].isSelected()) {
-                        toolbox.createNode(opData, allOperationsNode);
+                        allOperationsNode.addNodeToSequenceSet(opNode);
                         if (mOpSelectionTable[operationIndex][1].isSelected()) {
-                            toolbox.createNode(opData, hasToFinishNode);
+                            hasToFinishNode.addNodeToSequenceSet(opNode);
                         }
                         if (mOpSelectionTable[operationIndex][2].isSelected()) {
-                            toolbox.createNode(opData, operationsToViewNode);
+                            operationsToViewNode.addNodeToSequenceSet(opNode);
                         }
                     }
                 }

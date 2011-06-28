@@ -10,8 +10,8 @@ import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
-import sequenceplanner.condition.ConditionStatment;
-import sequenceplanner.condition.ConditionStatment.Operator;
+import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.condition.ConditionStatement.Operator;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
@@ -301,7 +301,7 @@ public class ModelParser {
          OperationData od = (OperationData) operation.getTreeNode().getNodeData();
          Condition c = createCondition(od.getSequenceCondition(),od.getResourceBooking(),od.getActions());
          if (operation.hasParent()){
-             c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(operation.getParent().getId()),Operator.Equal,"1"));
+             c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatement(createName(operation.getParent().getId()),Operator.Equal,"1"));
          }
          return c;
      }
@@ -317,7 +317,7 @@ public class ModelParser {
          Condition c = createCondition(od.getPSequenceCondition(),od.getPResourceBooking(),new LinkedList<OperationData.Action>());
          if (operation.hasChildren()){
              for (OpNode child : findLastOperations(operation.getChildren())){
-                 c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatment(createName(child.getId()),Operator.Equal,"2"));
+                 c.getGuard().appendElement(ConditionOperator.Type.AND, new ConditionStatement(createName(child.getId()),Operator.Equal,"2"));
              }
          }
          return c;
@@ -363,34 +363,34 @@ public class ModelParser {
 
 
 
-     private ConditionStatment createConditionStatment(OperationData.SeqCond cond){
-         return new ConditionStatment(createName(cond.id), getConditionOperator(cond), Integer.toString(cond.value));
+     private ConditionStatement createConditionStatment(OperationData.SeqCond cond){
+         return new ConditionStatement(createName(cond.id), getConditionOperator(cond), Integer.toString(cond.value));
      }
 
-     private ConditionStatment createGuardConditionStatment(Integer[] resourceAlloc){
+     private ConditionStatement createGuardConditionStatment(Integer[] resourceAlloc){
          TreeNode n = model.getNode(resourceAlloc[0]);
          if (n != null && Model.isVariable(n.getNodeData())) {
              ResourceVariableData var = (ResourceVariableData) n.getNodeData();
              if (resourceAlloc[1] == 1) { // increase variable
-                 return new ConditionStatment(createName(var.getId()), Operator.Less, Integer.toString(var.getMax()));
+                 return new ConditionStatement(createName(var.getId()), Operator.Less, Integer.toString(var.getMax()));
              } else if (resourceAlloc[1] == 0) { // decrease variable
-                 return new ConditionStatment(createName(var.getId()), Operator.Less, Integer.toString(var.getMax()));
+                 return new ConditionStatement(createName(var.getId()), Operator.Less, Integer.toString(var.getMax()));
              }
          }
          return null;
      }
 
-     private ConditionStatment createActionConditionStatment(Integer[] resourceAlloc){
+     private ConditionStatement createActionConditionStatment(Integer[] resourceAlloc){
              if (resourceAlloc[1] == 1) { // increase variable
-                 return new ConditionStatment(createName(resourceAlloc[0]), Operator.Inc, "");
+                 return new ConditionStatement(createName(resourceAlloc[0]), Operator.Inc, "");
              } else if (resourceAlloc[1] == 0) { // decrease variable
-                 return new ConditionStatment(createName(resourceAlloc[0]), Operator.Dec, "");
+                 return new ConditionStatement(createName(resourceAlloc[0]), Operator.Dec, "");
              }
          return null;
      }
 
-     private ConditionStatment createActionConditionStatment(OperationData.Action action){
-         return new ConditionStatment(createName(action.id), getActionOperator(action), Integer.toString(action.value));
+     private ConditionStatement createActionConditionStatment(OperationData.Action action){
+         return new ConditionStatement(createName(action.id), getActionOperator(action), Integer.toString(action.value));
      }
 
 

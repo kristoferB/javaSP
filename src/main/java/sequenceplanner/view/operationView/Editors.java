@@ -39,7 +39,7 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**
- *
+ * @deprecated 
  * @author Erik Ohlson
  */
 public class Editors {
@@ -57,7 +57,11 @@ public class Editors {
          this.view = view;
          this.name = name;
       }
-
+      
+      /**
+       * Sets value of labels
+       * @param node 
+       */
       public void setValue(Cell node) {
          this.node = node;
       }
@@ -75,6 +79,9 @@ public class Editors {
          return this.name;
       }
 
+      /**
+       * Saves a node with the values inserted into editor.
+       */
       abstract protected void saveNode();
    }
 
@@ -185,7 +192,6 @@ public class Editors {
       public void setValue(Cell node) {
          super.setValue(node);
          OperationData d = (OperationData) node.getValue();
-
          text[0].setText(d.getName());
          text[1].setText(d.getPrecondition());
          text[2].setText(d.getPostcondition());
@@ -226,7 +232,7 @@ public class Editors {
          if (!labelName.equals(d.getName())) {
 //            labelName = view.getCellName(labelName, node);
          }
-
+         System.out.println("add cat");
          d.setName(labelName);
          d.setPreoperation(check[0].isSelected());
          d.setPostoperation(check[1].isSelected());
@@ -253,7 +259,7 @@ public class Editors {
          initializePanels();
       }
 
-      protected void initializePanels() {
+      private void initializePanels() {
          text[0] = new JTextField("Name");
          text[1] = new JTextField("Start Condition");
          text[2] = new JTextField("Stop Condition");
@@ -296,7 +302,7 @@ public class Editors {
          text[0].setText(d.getName());
          text[1].setText(d.getPrecondition());
          text[2].setText(d.getPostcondition());
-
+         
          check[0].setSelected(d.isPreoperation());
          check[1].setSelected(d.isPostoperation());
 
@@ -746,9 +752,9 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             AndNode node = (AndNode) model.elementAt(i);
             updateAnd(node);
-            label = label.isEmpty() ? "" : label + " " + Constansts.AND;
+            label = label.isEmpty() ? "" : label + " " + Constants.AND;
             label += " ( " + node.representation + " ) ";
-     //       System.out.println(label);
+            System.out.println(label);
             model.set(i, node);
 
          }
@@ -757,7 +763,7 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             ResNode node = (ResNode) model.elementAt(i);
 
-            label = label.isEmpty() ? "" : label + " " + Constansts.AND + " ";
+            label = label.isEmpty() ? "" : label + " " + Constants.AND + " ";
             label += node.representation;
 
             model.set(i, node);
@@ -777,7 +783,7 @@ public class Editors {
          for (int i = 0; i < model.size(); i++) {
             OrNode orNode = (OrNode) model.elementAt(i);
             updateOr(orNode);
-            rep = rep.isEmpty() ? rep : rep + " " + Constansts.OR + " ";
+            rep = rep.isEmpty() ? rep : rep + " " + Constants.OR + " ";
             rep += orNode.representation;
          }
          node.representation = rep;
@@ -805,7 +811,7 @@ public class Editors {
             OrNode n = new OrNode((SeqCond) seqCond.clone(), t[0] + "." + t[1]);
             model.addElement(n);
 
-            rep = rep.isEmpty() ? rep : rep + " " + Constansts.OR + " ";
+            rep = rep.isEmpty() ? rep : rep + " " + Constants.OR + " ";
             rep += n.representation;
          }
 
@@ -848,7 +854,6 @@ public class Editors {
          addOperation.setText("");
          addResource.setText("");
 
-
       }
 
       //If the main model is updated, reset editor.
@@ -861,13 +866,11 @@ public class Editors {
          if (preCondition) {
             d.setSequenceCondition(restoreAnd((DefaultListModel) getAnd().getModel()));
             d.setResourceBooking(restoreResource((DefaultListModel) resources.getModel()));
+            
          } else {
             d.setPSequenceCondition(restoreAnd((DefaultListModel) getAnd().getModel()));
             d.setPResourceBooking(restoreResource((DefaultListModel) resources.getModel()));
          }
-
-
-
       }
 
       protected LinkedList<Integer[]> restoreResource(DefaultListModel model) {
@@ -877,9 +880,7 @@ public class Editors {
             ResNode resNode = (ResNode) model.elementAt(i);
             list.add(resNode.model);
          }
-
          return list;
-
       }
 
       protected LinkedList<LinkedList<SeqCond>> restoreAnd(DefaultListModel model) {
