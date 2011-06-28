@@ -128,4 +128,10 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public String getConditionString(){
         return expresionTextField.getText();
     }
+    public boolean getPreButtonStatus (){
+        return preRadioButton.isSelected();
+    }
+    public boolean getGuardButtonStatus (){
+        return guardRadioButton.isSelected();
+    }
 }

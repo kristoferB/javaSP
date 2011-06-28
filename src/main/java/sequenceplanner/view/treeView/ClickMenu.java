@@ -63,7 +63,7 @@ public class ClickMenu extends JPopupMenu {
          add(first,0);
          draw = true;
          
-      } else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
+        }/* else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
          first.setAction(av.createAction("Insert Liason",
                new InsertVariable(node, Data.LIASON), "resources/icons/min.png"));
 
@@ -74,7 +74,7 @@ public class ClickMenu extends JPopupMenu {
             
          draw = true;
 
-      } else if (Model.isResource(d)) {
+        }*/ else if (Model.isResource(d)) {
          first.setAction(av.createAction("Insert Resource",
                new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png") );
 

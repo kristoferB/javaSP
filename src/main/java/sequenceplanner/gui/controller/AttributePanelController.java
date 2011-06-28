@@ -24,7 +24,8 @@ public class AttributePanelController implements ActionListener, Observer {
     private AttributePanel attributePanel;
     private OperationData model;
     private OperationAttributeEditor attributeEditor;
-
+    private boolean preRadioButton;
+    private boolean guardRadioButton;
     /**
      * Creates an AttributePanelController with two views and one model
      * @param model
@@ -40,6 +41,11 @@ public class AttributePanelController implements ActionListener, Observer {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
+            
+            System.out.println("pre: "+attributeEditor.getPreButtonStatus());
+            System.out.println("guard: "+attributeEditor.getGuardButtonStatus());
+            preRadioButton = attributeEditor.getPreButtonStatus();
+            guardRadioButton = attributeEditor.getGuardButtonStatus();
             setCondition(attributeEditor.getConditionString());
         }
     }
@@ -61,16 +67,16 @@ public class AttributePanelController implements ActionListener, Observer {
         //ConditionType should be selected from the choises of the radiobuttons
         final Condition condition = new Condition();
         final ConditionExpression ce = StringConditionParser.getInstance().parseConditionString(conditionString);
-//        if(radiobutton==guard) {
-        condition.setGuard(ce);
-//        } else {//action
-//            condition.setAction(ce);
-//        }
+        if(guardRadioButton==true) {
+            condition.setGuard(ce);
+        } else {//action
+            condition.setAction(ce);
+        }
 
-//        if(radiobutton==pre) {
-        model.getConditions().put(ConditionType.PRE, condition);
-//          } else {//post
-//        model.getConditions().put(ConditionType.POST, condition);
-//      }
+        if(preRadioButton==true) {
+            model.getConditions().put(ConditionType.PRE, condition);
+        } else {//post
+            model.getConditions().put(ConditionType.POST, condition);
+        }
     }
 }

@@ -35,7 +35,7 @@ public class SPGraphComponent extends mxGraphComponent {
    private mxUndoManager undoManager;
    private final OperationView view;
    private boolean moveInto;
-
+   private int zoomCounter = 0;
    public SPGraphComponent(mxGraph graph, final OperationView view) {
       super(graph);
       this.view = view;
@@ -159,15 +159,18 @@ public class SPGraphComponent extends mxGraphComponent {
                int rot = e.getWheelRotation();
                Double zoom = zoomFactor;
                zoomFactor *= zoomFactor * Math.abs(rot);
-               if (rot > 0) {
+               //SPGraphComponent.this.setCenterZoom(true);
+                System.out.println("Zoom: "+rot + "Counter: " + zoomCounter );
+               if (rot > 0 && zoomCounter <5 ) {
                   SPGraphComponent.this.zoomOut();
-               } else {
+                  zoomCounter++;
+               } else if (rot < 0 && zoomCounter > 0) {
                   SPGraphComponent.this.zoomIn();
+                  zoomCounter--;
                }
                zoomFactor = zoom;
             } else {
                Rectangle r = getViewport().getViewRect();
-
                int rot = 0;
                if (Math.abs(e.getWheelRotation()) == 1) {
                   rot = scrollFactor * e.getWheelRotation();

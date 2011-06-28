@@ -72,8 +72,8 @@ public class Model extends Observable implements IModel{
       operationRoot = new TreeNode(new FolderData("Operations", newId()));
       treeRoot.insert(operationRoot);
 
-      liasonRoot = new TreeNode(new FolderData("Liasons", newId()));
-      treeRoot.insert(liasonRoot);
+      //liasonRoot = new TreeNode(new FolderData("Liasons", newId()));
+      //treeRoot.insert(liasonRoot);
 
       resourceRoot = new TreeNode(new FolderData("Resources", newId()));
 

@@ -1,8 +1,11 @@
 package sequenceplanner.condition;
 
+import java.awt.Font;
 import java.util.regex.*;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import sequenceplanner.condition.ConditionStatement.Operator;
 
 /**
@@ -97,7 +100,7 @@ public class StringConditionParser {
 
             //Collecting conditions
             conditions = conditions + " " + tempCond;
-            copyString = copyString.replace(tempCond, " ");
+            copyString = copyString.replace(tempCond, "");
         }
 
         //Make it prettier, seperate to method
@@ -110,7 +113,7 @@ public class StringConditionParser {
 
             //Collecting conditions
             conditions = conditions + " " + tempCond;
-            copyString = copyString.replace(tempCond, " ");
+            copyString = copyString.replace(tempCond, "");
             System.out.println("Statement: " + cs.toString());
 
 
@@ -153,22 +156,25 @@ public class StringConditionParser {
         // Out prints
 
         //System.out.println("The original conditions: " + conditionString);
-        System.out.println("The illegal characters: " + copyString);
+        System.out.println("The illegal characters: " + copyString + "Legnth: "+copyString.length());
         System.out.println("Final Guards: " + conditions);
         System.out.println("Final Actions: " + conditions2);
 
         //_________________________________
-
         //Check illegal statements
-        if (copyString.matches("\\w+")) {
-            System.out.println("Illegal condition statment");
+        if (copyString.length()>0) {
+            errorNotifier();
+            return null;
+            
         }
-        if (ce.getExpressionRoot() != null) {
+        else if(ce.getExpressionRoot() != null) {
             System.out.println("Root: " + ce.getExpressionRoot().toString());
         } else if (ce.getExpressionRoot() != null) {
             System.out.println("Root: " + ce.getExpressionRoot().toString());
         } else {
+            errorNotifier();
             System.out.println("Illegal condition statment");
+            return null;
         }
 
 //        while(ce.getExpressionRoot().hasNextElement()){
@@ -187,6 +193,15 @@ public class StringConditionParser {
         iValue = iValue.replaceAll("f", "2");
 
         return new ConditionStatement(iVariable, iOperator, iValue);
+    }
+    private void errorNotifier(){
+        JFrame fr = new JFrame();
+        JLabel notify = new JLabel("Condition error!");
+        notify.setFont(new Font("Arial",Font.BOLD,20));
+        fr.add(notify);
+        fr.setLocation(500, 300);
+        fr.setVisible(true);
+        fr.setSize(200,100);
     }
 }
 
