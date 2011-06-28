@@ -6,9 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import sequenceplanner.condition.AStringToConditionParser;
+import sequenceplanner.condition.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.StringConditionParser;
+import sequenceplanner.condition.GuardAsTextInputToConditionParser;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
@@ -47,7 +49,7 @@ public class AttributePanelController implements ActionListener, Observer {
         OperationData od = (OperationData) arg;
         if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
             attributePanel.updateModel(od);
-            System.out.println("APC"+o.toString());
+            System.out.println("APC" + o.toString());
         }
     }
 
@@ -58,17 +60,26 @@ public class AttributePanelController implements ActionListener, Observer {
     private void setCondition(String conditionString) {
         //ConditionType should be selected from the choises of the radiobuttons
         final Condition condition = new Condition();
-        final ConditionExpression ce = StringConditionParser.getInstance().parseConditionString(conditionString);
-//        if(radiobutton==guard) {
-        condition.setGuard(ce);
-//        } else {//action
-//            condition.setAction(ce);
-//        }
 
-//        if(radiobutton==pre) {
-        model.getConditions().put(ConditionType.PRE, condition);
-//          } else {//post
-//        model.getConditions().put(ConditionType.POST, condition);
-//      }
+        if (true) {//radiobutton==guard) {
+            final AStringToConditionParser parser = new GuardAsTextInputToConditionParser();
+            final ConditionExpression ce = new ConditionExpression();
+            if (parser.run(conditionString, ce)) {
+                condition.setGuard(ce);
+            }
+
+        } else { //action
+            final AStringToConditionParser parser = new ActionAsTextInputToConditionParser();
+            final ConditionExpression ce = new ConditionExpression();
+            if (parser.run(conditionString, ce)) {
+                condition.setAction(ce);
+            }
+        }
+
+        if (true) {//radiobutton==pre) {
+            model.getConditions().put(ConditionType.PRE, condition);
+        } else { //post
+            model.getConditions().put(ConditionType.POST, condition);
+        }
     }
 }
