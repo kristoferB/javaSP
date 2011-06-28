@@ -14,7 +14,7 @@ import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.utils.SPFileFilter;
-import sequenceplanner.view.operationView.Constansts;
+import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.resourceView.ResourceView;
 import sequenceplanner.xml.SequencePlannerProjectFile;
@@ -176,10 +176,10 @@ public class GUIModel {
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
 
-                filepath = filepath.endsWith(Constansts.FILEFORMAT) ? filepath
-                        : filepath + Constansts.FILEFORMAT;
+                filepath = filepath.endsWith(Constants.FILEFORMAT) ? filepath
+                        : filepath + Constants.FILEFORMAT;
 
-                if (filepath.endsWith(Constansts.FILEFORMAT)) {
+                if (filepath.endsWith(Constants.FILEFORMAT)) {
 
                     projectFile = saveModelToFile(filepath);
                     return true;
@@ -203,7 +203,7 @@ public class GUIModel {
             Calendar c = Calendar.getInstance();
             String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
 
-            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constansts.FILEFORMAT;
+            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constants.FILEFORMAT;
             saveModelToFile(path);
         }
     }

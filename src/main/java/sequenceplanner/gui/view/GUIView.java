@@ -344,7 +344,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Identify relations
      *  Visualization
      *      Brute Force
-     *      Add Selfcontained operations from file
+     *      Add Self-contained operations from file
      *  MP
      *      Print product types and op in model
      *      EFA for transport planning
@@ -358,7 +358,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
             normalEFA, reduceEFA;
 
     private JMenuBar createMenu() {

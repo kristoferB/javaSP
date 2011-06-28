@@ -81,7 +81,7 @@ public class GUIController {
         guiView.addEFAForMPL(new EFAForMPListener());
         guiView.addNormalEFA(new NormalEFAListener());
         guiView.addReducedEFA(new ReducedEFAListener());
-        guiView.addEditorListener();
+//        guiView.addEditorListener();
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
