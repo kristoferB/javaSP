@@ -102,10 +102,10 @@ public class AttributePanel extends javax.swing.JPanel {
                 //Split conditions into post and pre
                 for (Object key : conditionMap.keySet()) {
                     System.out.println("due");
-                    if (key == ConditionType.PRE) {
+                    if (key == ConditionType.PRE && !preCondModel.contains(conditionMap.get(key.toString()))) {
                         preCondModel.addElement(conditionMap.get(key).toString());
                         System.out.println("pre");
-                    } else if ((key == ConditionType.POST)) {
+                    } else if (key == ConditionType.POST && !postCondModel.contains(conditionMap.get(key.toString()))) {
                         System.out.println("post");
                         postCondModel.addElement(conditionMap.get(key).toString());
                     }
