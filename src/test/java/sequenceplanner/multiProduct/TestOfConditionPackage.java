@@ -3,12 +3,15 @@ package sequenceplanner.multiProduct;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sequenceplanner.condition.AStringToConditionParser;
+import sequenceplanner.condition.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.ConditionOperator;
 import sequenceplanner.condition.ConditionStatement;
-import sequenceplanner.condition.StringConditionParser;
+import sequenceplanner.condition.GuardAsTextInputToConditionParser;
+import sequenceplanner.condition.SupremicaGuardToConditionParser;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
@@ -67,7 +70,7 @@ public class TestOfConditionPackage {
         ce.changeExpressionRoot(left);
         ce.appendElement(ConditionOperator.Type.OR, right);
         //-----------------------------------------------------------------------
-        
+
         System.out.println(c.toString());
 
         //Testing----------------------------------------------------------------
@@ -83,8 +86,37 @@ public class TestOfConditionPackage {
 
     @Test
     public void method2() {
-        String text = "id1008==2&id1020!=e&&id1034==2";
-        StringConditionParser scp = new StringConditionParser();
-        scp.parseConditionString(text);
+        String supremicaGuard = "(T2_P1 != 0 | ((R1_P1 != 0 & R1_P1 != 4) | ((M2 != 0 | (R1 != 1 | ((T2 != 0 | (cP2 != 0 | R1_F2 == 3)) & (T2 != 1 | (T2_P2 != 0 | cP2 != 0))))) & (M2 != 1 | (R1 != 1 | ((((cP1 != 0 | R1_F2 == 3) & (cP1 != 2 | ((M1_P1 == 1 | R1_F2 == 3) & (M1_P1 != 1 | ((T2 != 0 | R1_F2 == 3) & T2 != 1))))) & (cP1 != 1 | ((M1_P1 == 1 | ((T2 != 0 | R1_F2 == 3) & T2 != 1)) & (M1_P1 != 1 | R1_F2 == 3)))) & (cP1 != 3 | ((T2 != 0 | R1_F2 == 3) & T2 != 1))))))))";
+        String guard = "(id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)";
+        String action = "(id1234=100&id1002+=2&&(id1003=123&id1004=2))&&id1005-=2&id1006+=99&&id1007=7";
+
+        AStringToConditionParser parser;
+        ConditionExpression ce;
+
+        parser = new SupremicaGuardToConditionParser();
+        ce = new ConditionExpression();
+        assertTrue(parser.run(supremicaGuard, ce));
+        ce = new ConditionExpression();
+        assertFalse(parser.run(guard, ce));
+        ce = new ConditionExpression();
+        assertFalse(parser.run(action, ce));
+
+        parser = new GuardAsTextInputToConditionParser();
+        ce = new ConditionExpression();
+        assertFalse(parser.run(supremicaGuard, ce));
+        ce = new ConditionExpression();
+        assertTrue(parser.run(guard, ce));
+        ce = new ConditionExpression();
+        assertFalse(parser.run(action, ce));
+
+        parser = new ActionAsTextInputToConditionParser();
+        ce = new ConditionExpression();
+        assertFalse(parser.run(supremicaGuard, ce));
+        ce = new ConditionExpression();
+        assertFalse(parser.run(guard, ce));
+        ce = new ConditionExpression();
+        assertTrue(parser.run(action, ce));
+
     }
+
 }
