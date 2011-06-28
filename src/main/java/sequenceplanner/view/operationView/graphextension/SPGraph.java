@@ -929,12 +929,12 @@ public class SPGraph extends mxGraph {
                     if (before && !oldCell.isOperation() && !oldCell.isSOP()) {
                         edge = CellFactory.getInstance().getEdge(true, false);
                     } else {
-                        edge = CellFactory.getInstance().getEdge(true, true);
+                        edge = CellFactory.getInstance().getEdge(true, false);
                     }
                 } else {//If inserted cell, newCell, is not an operation
                     if (before) {//if placed before oldCell
 
-                        edge = CellFactory.getInstance().getEdge(true, true);//Create new edge with arrow. Will be pointing at oldCell
+                        edge = CellFactory.getInstance().getEdge(true, false);//Create new edge with arrow. Will be pointing at oldCell
 
                         //Get previous cell and OpViewroot
                         Cell previousCell = (Cell) arch.getTerminal(true);
@@ -982,17 +982,13 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
-        Cell edge1 = CellFactory.getInstance().getEdge(true, insertCell.isOperation());
-        Cell edge2 = CellFactory.getInstance().getEdge(true, !insertCell.isOperation());
+        Cell edge1 = CellFactory.getInstance().getEdge(true, false);
+        Cell edge2 = CellFactory.getInstance().getEdge(true, false);
 
 //      Object[] cells = new Object[3];
 
         model.beginUpdate();
         try {
-            for(int i = 1; parent.getParent().getChildCount()>i;i++){
-                System.out.println("parentparent: "+parent.getParent().getChildAt(i).getId());
-            }
-            System.out.println(parent.getParent().getChildCount());
             addCell(edge2, parent, 0, insertCell, parent);
             addCell(edge1, parent, 0, parent, insertCell);
             addCell(insertCell, parent);
