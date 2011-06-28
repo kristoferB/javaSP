@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JOptionPane;
 import sequenceplanner.condition.AStringToConditionParser;
 import sequenceplanner.condition.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
@@ -66,6 +67,9 @@ public class AttributePanelController implements ActionListener, Observer {
             final ConditionExpression ce = new ConditionExpression();
             if (parser.run(conditionString, ce)) {
                 condition.setGuard(ce);
+            } else {
+                JOptionPane.showMessageDialog(null, "This is not a correct guard!\n" +
+                        "This is: (id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)");
             }
 
         } else { //action
@@ -73,6 +77,9 @@ public class AttributePanelController implements ActionListener, Observer {
             final ConditionExpression ce = new ConditionExpression();
             if (parser.run(conditionString, ce)) {
                 condition.setAction(ce);
+            } else {
+                JOptionPane.showMessageDialog(null, "This is not a correct action!\n" +
+                        "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
             }
         }
 
