@@ -365,9 +365,12 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    
-                    
+                    if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
+                        clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    }else 
+                        clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+
+
                 }
             }
         }
@@ -428,7 +431,7 @@ public class GUIController {
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
             panel.addEditorSaveListener(ctrl);
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
