@@ -101,11 +101,11 @@ public class AttributePanel extends JPanel {
                 for (Object key : conditionMap.keySet()) {
                     System.out.println("due");
                     if (key == ConditionType.PRE && !preCondModel.contains(conditionMap.get(key.toString()))) {
-                        preCondModel.addElement(conditionMap.get(key).toString());
+                        preCondModel.addElement(conditionMap.get(key).getGuard().toString());
                         System.out.println("pre");
                     } else if (key == ConditionType.POST && !postCondModel.contains(conditionMap.get(key.toString()))) {
                         System.out.println("post");
-                        postCondModel.addElement(conditionMap.get(key).toString());
+                        postCondModel.addElement(conditionMap.get(key).getGuard().toString());
                     }
 
                 }

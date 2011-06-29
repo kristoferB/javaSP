@@ -50,6 +50,7 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import sequenceplanner.condition.Condition;
@@ -309,7 +310,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             //This will only return the topView, the rest is saved in
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
-            
+
+            removeConditions();
             data = setConditions(data);
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
@@ -329,12 +331,30 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
     }
 
-    private TreeNode[] setConditions(TreeNode[] data) {
-        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
-        SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
-        ISopNode theSopNode = snfspgm.getSopNodeRoot();
+    /**
+     * Removes the {@link Condition}s that are related to this SOP/view.
+     */
+    private void removeConditions() {
+        final String viewLabel = this.startName;
+        final List<TreeNode> allOperationsList = model.getAllOperations();
+        for (final TreeNode tn : allOperationsList) {
+            final OperationData opData = (OperationData) tn.getNodeData();
+            opData.getGlobalConditions().remove(viewLabel);
+        }
+    }
 
+    private TreeNode[] setConditions(TreeNode[] data) {
+        //Get SOP from graph model-----------------------------------------------
+        final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
+        final ISopNode theSopNode = snfspgm.getSopNodeRoot();
+        //-----------------------------------------------------------------------
+
+        //Get new conditions from SOP--------------------------------------------
+        final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+        //-----------------------------------------------------------------------
+
+        //Add new conditions from SOP--------------------------------------------
         for (TreeNode node : data) {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData d = (OperationData) node.getNodeData();
@@ -346,7 +366,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                     }
                 }
             }
-        }
+        }//----------------------------------------------------------------------
         return data;
 
     }
