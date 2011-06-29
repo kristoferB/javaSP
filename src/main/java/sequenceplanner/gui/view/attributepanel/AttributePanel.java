@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import sequenceplanner.condition.Condition;
@@ -20,7 +21,7 @@ import sequenceplanner.model.data.OperationData;
  * Class showing attributes of an {@link OperationData} object
  * @author Qw4z1
  */
-public class AttributePanel extends javax.swing.JPanel {
+public class AttributePanel extends JPanel {
 
     private JLabel jLabel1;
     private JLabel jLabel2;
@@ -59,9 +60,6 @@ public class AttributePanel extends javax.swing.JPanel {
         jScrollPane1 = new JScrollPane(preCondList);
         jScrollPane2 = new JScrollPane(postCondList);
 
-
-
-        preCondList.setVisibleRowCount(5);
 
         jSeparator2 = new JSeparator();
         operationAttributeEditor = new OperationAttributeEditor();

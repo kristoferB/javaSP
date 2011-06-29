@@ -42,6 +42,8 @@ public class AttributePanelController implements ActionListener, Observer {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
             setCondition(attributeEditor.getConditionString());
+        } else if(e.getActionCommand().equalsIgnoreCase("edit")){
+            attributeEditor.opendToEdit(e.getSource());
         }
     }
 
