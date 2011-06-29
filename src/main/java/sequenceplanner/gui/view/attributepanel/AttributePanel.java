@@ -48,10 +48,10 @@ public class AttributePanel extends JPanel {
         jSeparator1 = new JSeparator();
         operationIdLabel = new JLabel();
 
-        preCondListPanel = new ConditionListPanel("Preconditions");
-        postCondListPanel = new ConditionListPanel("Postconditions");
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
+        preCondListPanel = new ConditionListPanel();
+        postCondListPanel = new ConditionListPanel();
+        jLabel1 = new JLabel("Preconditions");
+        jLabel2 = new JLabel("Postconditions");
         jScrollPane1 = new JScrollPane(preCondListPanel);
         jScrollPane2 = new JScrollPane(postCondListPanel);
 

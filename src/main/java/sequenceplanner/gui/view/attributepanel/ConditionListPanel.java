@@ -1,7 +1,6 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.util.HashMap;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,16 +15,13 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
     private HashMap<String, Condition> conditionList;
 
-    public ConditionListPanel(String title) {
+    public ConditionListPanel() {
         conditionList = new HashMap<String, Condition>();
-        init(title);
+        init();
     }
 
-    private void init(String title) {
+    private void init() {
 
-        if (title != null || !title.equalsIgnoreCase("")) {
-            this.setBorder(BorderFactory.createTitledBorder(title));
-        }
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
     }
@@ -42,6 +38,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
     private void updateList() {
         if (!conditionList.isEmpty()) {
+            this.removeAll();
             for (String key : conditionList.keySet()) {
                 JPanel internalPanel = new JPanel();
                 internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));

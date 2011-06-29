@@ -4,6 +4,8 @@ import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
@@ -90,11 +92,14 @@ public class AttributePanelController implements ActionListener, Observer {
                         "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
             }
         }
-
-        if(preRadioButton==true) {
-            model.getConditions().put(ConditionType.PRE, condition);
-        } else { //post
-            model.getConditions().put(ConditionType.POST, condition);
-        }
+//        
+//        Map conditionMap = new HashMap<ConditionType, Condition>();
+//        if(preRadioButton==true) {
+//            conditionMap.put(ConditionType.PRE, condition);
+//            model.getGlobalConditions().put("manual",new HashMap<ConditionType,Condition>(ConditionType.PRE, condition));
+//        } else { //post
+//            model.getGlobalConditions().put(ConditionType.POST, condition);
+//        }
+//        attributePanel.updateModel(model);
     }
 }

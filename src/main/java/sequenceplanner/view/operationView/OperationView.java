@@ -51,7 +51,6 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.StringConditionParser;
 import sequenceplanner.model.SOP.ASopNode;
