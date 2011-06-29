@@ -352,10 +352,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      EFA for MP supervisor
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp, windows, visualization;
+    private JMenu fileMenu, edit, project, convert, mp, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile, about, shortCommands;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -407,6 +407,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         windows.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(windows);
 
+        //Help
+        help = new JMenu("Help");
+        help.add(shortCommands = new JMenuItem("Short commands"));
+        help.add(about = new JMenuItem("About"));
+        this.add(help);
+
         //Add menues to menubar
         mb.add(fileMenu);
         mb.add(edit);
@@ -415,6 +421,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(mp);
         mb.add(windows);
         mb.add(visualization);
+        mb.add(help);
         return mb;
 
 
@@ -517,6 +524,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addAddOperationsFromFileL(ActionListener l) {
         addOperationsFromFile.addActionListener(l);
+    }
+    public void addShortCommandsL(ActionListener l){
+        shortCommands.addActionListener(l);
+    }
+    public void addAboutL(ActionListener l){
+        about.addActionListener(l);
     }
 //End listeners 
     //</editor-fold>

@@ -12,6 +12,7 @@ import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
@@ -80,6 +81,8 @@ public class GUIController {
         guiView.addSavePropViewL(new SavePropViewListener());
         guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
         guiView.addAddOperationsFromFileL(new AddOperationsFromFileListener());
+        guiView.addShortCommandsL(new AddShortCommandsListener());
+        guiView.addAboutL(new AddAboutListener());
     }
     //Listener classes
 
@@ -337,7 +340,23 @@ public class GUIController {
             }
         }
     }
+    class AddShortCommandsListener implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            HelpPanes hp = new HelpPanes("Short Commands");
+
+        }
+
+    }
+    class AddAboutListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Soon implemented");
+        }
+
+    }
     /**
      * Class for listening on clicks in an OperationView.
      */
