@@ -344,18 +344,23 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Identify relations
      *  Visualization
      *      Brute Force
-     *      Add Selfcontained operations from file
+     *      Add Self-contained operations from file
      *  MP
      *      Print product types and op in model
      *      EFA for transport planning
      *      Update model after transport planning
      *      EFA for MP supervisor
+     *  EM
+     *      Identify operation sequences
+     *      Reduced-order EFA
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp, windows, visualization, help;
+
+    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile, about, shortCommands;
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
+            normalEFA, reduceEFA, about, shortCommands;;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -397,6 +402,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mp.add(efaForMP = new JMenuItem("EFA for MP supervisor"));
         this.add(mp);
 
+        //Efficient Model menu
+        em = new JMenu("Efficient Model");
+        em.add(normalEFA = new JMenuItem("Normal EFA"));
+        em.add(reduceEFA = new JMenuItem("Reduced EFA"));
+        this.add(em);
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
@@ -419,6 +429,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(project);
         mb.add(convert);
         mb.add(mp);
+        mb.add(em);
         mb.add(windows);
         mb.add(visualization);
         mb.add(help);
@@ -503,6 +514,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addEFAForMPL(ActionListener l) {
         efaForMP.addActionListener(l);
+    }
+
+    public void addNormalEFA(ActionListener l) {
+        normalEFA.addActionListener(l);
+    }
+
+    public void addReducedEFA(ActionListener l) {
+        reduceEFA.addActionListener(l);
     }
 
     public void addEditorListener(MouseAdapter l) {

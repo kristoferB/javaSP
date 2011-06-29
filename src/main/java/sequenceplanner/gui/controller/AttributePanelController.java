@@ -48,6 +48,8 @@ public class AttributePanelController implements ActionListener, Observer {
             preRadioButton = attributeEditor.getPreButtonStatus();
             guardRadioButton = attributeEditor.getGuardButtonStatus();
             setCondition(attributeEditor.getConditionString());
+        } else if(e.getActionCommand().equalsIgnoreCase("edit")){
+            attributeEditor.opendToEdit(e.getSource());
         }
     }
 

@@ -128,6 +128,18 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public String getConditionString(){
         return expresionTextField.getText();
     }
+
+    public void opendToEdit(Object source) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Sets the text in the textfield to the String specified in the argument
+     * @param conditionString the input String
+     */
+    public void setConditionString(String conditionString){
+        expresionTextField.setText(conditionString);
+    }
     public boolean getPreButtonStatus (){
         return preRadioButton.isSelected();
     }

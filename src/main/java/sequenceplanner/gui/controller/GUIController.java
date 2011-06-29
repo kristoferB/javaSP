@@ -10,6 +10,10 @@ import javax.swing.event.TreeModelListener;
 import sequenceplanner.IO.ReadFromVolvoFile;
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 import sequenceplanner.editor.EditorMouseAdapter;
+import sequenceplanner.efaconverter2.export.DefaultExport;
+import sequenceplanner.efaconverter2.EFA.DefaultEFAConverter;
+import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
+import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.gui.view.HelpPanes;
@@ -76,6 +80,9 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
+        guiView.addNormalEFA(new NormalEFAListener());
+        guiView.addReducedEFA(new ReducedEFAListener());
+//        guiView.addEditorListener();
         guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
         guiView.addTreeModelListener(new EditorTreeModelListener());
         guiView.addSavePropViewL(new SavePropViewListener());
@@ -283,6 +290,33 @@ public class GUIController {
         }
     }
 
+    class NormalEFAListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
+            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
+            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
+            export.save();
+            guiModel.setPath(export.getPath());
+        }
+    }
+
+    class ReducedEFAListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
+            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            Reduction reduce = new Reduction(parser.getSpEFAutomata());
+            DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
+            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
+            export.save();
+            guiModel.setPath(export.getPath());
+        }
+    }
+
     class EditorTreeModelListener implements TreeModelListener {
 
         @Override
@@ -384,9 +418,12 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    
-                    
+                    if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
+                        clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    }else 
+                        clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+
+
                 }
             }
         }
@@ -447,7 +484,7 @@ public class GUIController {
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
             panel.addEditorSaveListener(ctrl);
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
