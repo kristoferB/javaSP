@@ -7,7 +7,7 @@ package sequenceplanner.condition;
 public class SupremicaGuardToConditionParser extends AStringToConditionParser {
 
     private static String variable = "([^\\(\\)\\d]\\w*)"; 
-    private static String statementOperator = "([=><!][=])";
+    private static String statementOperator = "([=><!][=]|[<>])";
     private static String value = "([\\d])";
     private static String clauseOperator = "(&|\\|)";
 
