@@ -355,9 +355,17 @@ public class OperationData extends Data {
         return addAnd(new SeqCond(id, state));
     }
 
+   public boolean addPAnd(int id, int state) {
+      return addPAnd(new SeqCond(id, state));
+   }
+
     public boolean removeAnd(int id, int state) {
         return removeAnd(new SeqCond(id, state));
     }
+
+   public boolean removePAnd(int id, int state) {
+      return removePAnd(new SeqCond(id, state));
+   }
 
     public boolean removeAnd(SeqCond and) {
         for (Iterator<LinkedList<SeqCond>> it = sequenceCondition.iterator(); it.hasNext();) {
@@ -370,6 +378,17 @@ public class OperationData extends Data {
         return false;
     }
 
+   public boolean removePAnd(SeqCond and) {
+      for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
+         LinkedList<SeqCond> list = it.next();
+         if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
+            pSequenceCondition.remove(list);
+            return true;
+         }
+      }
+      return false;
+   }
+   
     public boolean addAnd(SeqCond and) {
         for (Iterator<LinkedList<SeqCond>> it = sequenceCondition.iterator(); it.hasNext();) {
             LinkedList<SeqCond> list = it.next();
@@ -384,10 +403,29 @@ public class OperationData extends Data {
         return true;
     }
 
+   public boolean addPAnd(SeqCond and) {
+      for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
+         LinkedList<SeqCond> list = it.next();
+         if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
+            return false;
+         }
+      }
+      LinkedList<SeqCond> s = new LinkedList<SeqCond>();
+      s.add(and);
+
+      pSequenceCondition.add(s);
+      return true;
+   }
+   
     public boolean addOr(LinkedList<SeqCond> or) {
         sequenceCondition.add(or);
         return true;
     }
+
+   public boolean addPOr(LinkedList<SeqCond> or) {
+      pSequenceCondition.add(or);
+      return true;
+   }
 
     public boolean addResourceBooking(int resource) {
         if (!isResourceBooked(resource)) {
@@ -395,6 +433,13 @@ public class OperationData extends Data {
         }
         return false;
     }
+
+   public boolean addPResourceBooking(int resource) {
+      if (!isResourceBooked(resource)) {
+         pResourceBooking.add(new Integer[]{resource, RESOURCE_BOOK});
+      }
+      return false;
+   }
 
     public boolean removeResourceBooking(int resource) {
         Integer[] rem = null;
@@ -410,6 +455,21 @@ public class OperationData extends Data {
 
         return false;
     }
+
+   public boolean removePResourceBooking(int resource) {
+      Integer[] rem = null;
+
+      for (Integer[] bo : pResourceBooking) {
+         if (bo[0] == resource && bo[1] == RESOURCE_BOOK) {
+            rem = bo;
+            break;
+         }
+      }
+
+      pResourceBooking.remove(rem);
+
+      return false;
+   }
 
     public boolean isResourceBooked(int resource) {
 

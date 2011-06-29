@@ -140,4 +140,10 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public void setConditionString(String conditionString){
         expresionTextField.setText(conditionString);
     }
+    public boolean getPreButtonStatus (){
+        return preRadioButton.isSelected();
+    }
+    public boolean getGuardButtonStatus (){
+        return guardRadioButton.isSelected();
+    }
 }

@@ -127,7 +127,7 @@ public class AttributePanel extends JPanel {
     public void addEditorSaveListener(ActionListener l) {
         operationAttributeEditor.addSaveButtonListener(l);
     }
-
+   
     /**
      * Method for getting the inner {@link OperationAttributeeEditor}
      * @return 

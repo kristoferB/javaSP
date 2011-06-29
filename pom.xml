@@ -39,6 +39,12 @@
             <artifactId>jxl</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--For graph-->        
+        <dependency>
+            <groupId>jgrapht</groupId>
+            <artifactId>jgrapht</artifactId>
+            <version>0.8.2</version>
+        </dependency>
         
 	<!-- Test -->
         <dependency>
@@ -93,11 +99,9 @@
         </plugins>
     </build>
 
-
   <repositories>
     <repository>
       <id>my-remote-local-site</id>
-      <!--<url>http://www.ohlson.be/maven/releases/</url>-->
       <url>http://129.16.80.161/</url>
     </repository>
   </repositories>

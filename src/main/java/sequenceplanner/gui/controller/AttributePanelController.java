@@ -25,7 +25,8 @@ public class AttributePanelController implements ActionListener, Observer {
     private AttributePanel attributePanel;
     private OperationData model;
     private OperationAttributeEditor attributeEditor;
-
+    private boolean preRadioButton;
+    private boolean guardRadioButton;
     /**
      * Creates an AttributePanelController with two views and one model
      * @param model
@@ -41,6 +42,11 @@ public class AttributePanelController implements ActionListener, Observer {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
+            
+            System.out.println("pre: "+attributeEditor.getPreButtonStatus());
+            System.out.println("guard: "+attributeEditor.getGuardButtonStatus());
+            preRadioButton = attributeEditor.getPreButtonStatus();
+            guardRadioButton = attributeEditor.getGuardButtonStatus();
             setCondition(attributeEditor.getConditionString());
         } else if(e.getActionCommand().equalsIgnoreCase("edit")){
             attributeEditor.opendToEdit(e.getSource());
@@ -64,7 +70,7 @@ public class AttributePanelController implements ActionListener, Observer {
         //ConditionType should be selected from the choises of the radiobuttons
         final Condition condition = new Condition();
 
-        if (true) {//radiobutton==guard) {
+        if (guardRadioButton==true) {//Guard
             final AStringToConditionParser parser = new GuardAsTextInputToConditionParser();
             final ConditionExpression ce = new ConditionExpression();
             if (parser.run(conditionString, ce)) {
@@ -85,7 +91,7 @@ public class AttributePanelController implements ActionListener, Observer {
             }
         }
 
-        if (true) {//radiobutton==pre) {
+        if(preRadioButton==true) {
             model.getConditions().put(ConditionType.PRE, condition);
         } else { //post
             model.getConditions().put(ConditionType.POST, condition);
