@@ -356,7 +356,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *
      */
 
-    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization;
+    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
