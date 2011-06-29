@@ -50,7 +50,7 @@ public class ConvertToXML {
       project.setIdCounter(model.getCounter());
 
       //Liason
-      project.setLiasons(getLiasonRoot());
+//      project.setLiasons(getLiasonRoot());
 
       //Resource
       project.setResources(getResourceRoot());
@@ -120,6 +120,8 @@ public class ConvertToXML {
 
       if (!data.getDescription().isEmpty()) {
          dataX.setDescription(data.getDescription());
+      } else {
+          dataX.setDescription("");
       }
       
       dataX.setCost(data.getCost());
