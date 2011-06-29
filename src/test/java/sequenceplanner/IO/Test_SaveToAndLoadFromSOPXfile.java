@@ -48,8 +48,6 @@ public class Test_SaveToAndLoadFromSOPXfile {
 
         for (final TreeNode tn : operationList) {
             final Data data = tn.getNodeData();
-            final ResourceData rd = (ResourceData) data;
-            rd.
             System.out.println("name: " + data.getName());
         }
 
