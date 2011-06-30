@@ -4,6 +4,7 @@
  */
 package sequenceplanner.gui.view.attributepanel;
 
+import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
 
 /**
@@ -11,7 +12,7 @@ import sequenceplanner.condition.Condition;
  * 
  * @author Qw4z1
  */
-public interface IConditionListPanel {
+public interface IConditionListPanel{
 
     /**
      * Adds a condition to the list of conditions.
@@ -36,4 +37,11 @@ public interface IConditionListPanel {
      * @throws NullPointerException if no Condtion exists in place i
      */
     public void removeCondition(int i) throws NullPointerException;
+
+    /**
+     * Checks if the panel contains a Condition
+     * @param condition the Condition
+     * @return true if it contains the Condition
+     */
+    public boolean contains(Condition condition);
 }

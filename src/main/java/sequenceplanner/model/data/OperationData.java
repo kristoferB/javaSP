@@ -925,6 +925,7 @@ public class OperationData extends Data {
     public Map<String, Map<ConditionType, Condition>> getGlobalConditions() {
         return globalConditions;
     }
+    
 
     //************************************************************************
     // Se Model.getVariabelCheck for state info on variables

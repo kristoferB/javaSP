@@ -88,7 +88,7 @@ public class TestOfConditionPackage {
     public void method2() {
         String supremicaGuard = "(T2_P1 != 0 | ((R1_P1 != 0 & R1_P1 != 4) | ((M2 != 0 | (R1 != 1 | ((T2 != 0 | (cP2 != 0 | R1_F2 == 3)) & (T2 != 1 | (T2_P2 != 0 | cP2 != 0))))) & (M2 != 1 | (R1 != 1 | ((((cP1 != 0 | R1_F2 == 3) & (cP1 != 2 | ((M1_P1 == 1 | R1_F2 == 3) & (M1_P1 != 1 | ((T2 != 0 | R1_F2 == 3) & T2 != 1))))) & (cP1 != 1 | ((M1_P1 == 1 | ((T2 != 0 | R1_F2 == 3) & T2 != 1)) & (M1_P1 != 1 | R1_F2 == 3)))) & (cP1 != 3 | ((T2 != 0 | R1_F2 == 3) & T2 != 1))))))))";
         String guard = "(id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)";
-        String action = "(id1234=100&id1002+=2&&(id1003=123&id1004=2))&&id1005-=2&id1006+=99&&id1007=7";
+        String action = "(id1234=100;id1002+=2;(id1003=123;id1004=2));id1005-=2;id1006+=99;id1007=7";
 
         AStringToConditionParser parser;
         ConditionExpression ce;

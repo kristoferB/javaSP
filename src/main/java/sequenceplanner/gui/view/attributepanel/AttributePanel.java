@@ -7,9 +7,7 @@ package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.event.ActionListener;
 import java.util.Map;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -31,10 +29,8 @@ public class AttributePanel extends JPanel {
     private JSeparator jSeparator2;
     private OperationAttributeEditor operationAttributeEditor;
     private JLabel operationIdLabel;
-    private JList postCondList;
-    private JList preCondList;
-    private final DefaultListModel preCondModel = new DefaultListModel();
-    private final DefaultListModel postCondModel = new DefaultListModel();
+    private ConditionListPanel postCondListPanel;
+    private ConditionListPanel preCondListPanel;
     /**OperationData object, acting as model for the view**/
     private OperationData model;
 
@@ -51,26 +47,19 @@ public class AttributePanel extends JPanel {
 
         jSeparator1 = new JSeparator();
         operationIdLabel = new JLabel();
-        jLabel1 = new JLabel();
 
-        preCondList = new JList(preCondModel);
-        postCondList = new JList(postCondModel);
-
-        jLabel2 = new JLabel();
-        jScrollPane1 = new JScrollPane(preCondList);
-        jScrollPane2 = new JScrollPane(postCondList);
-
+        preCondListPanel = new ConditionListPanel();
+        postCondListPanel = new ConditionListPanel();
+        jLabel1 = new JLabel("Preconditions");
+        jLabel2 = new JLabel("Postconditions");
+        jScrollPane1 = new JScrollPane(preCondListPanel);
+        jScrollPane2 = new JScrollPane(postCondListPanel);
 
         jSeparator2 = new JSeparator();
         operationAttributeEditor = new OperationAttributeEditor();
 
         operationIdLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         operationIdLabel.setText("Operation ID: ");
-
-        jLabel1.setText("Preconditions");
-
-
-        jLabel2.setText("Postconditions");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -100,12 +89,16 @@ public class AttributePanel extends JPanel {
                 //Split conditions into post and pre
                 for (Object key : conditionMap.keySet()) {
                     System.out.println("due");
-                    if (key == ConditionType.PRE && !preCondModel.contains(conditionMap.get(key.toString()))) {
-                        preCondModel.addElement(conditionMap.get(key).toString());
+
+                    if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key.toString()))) {
+                        preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
+
                         System.out.println("pre");
-                    } else if (key == ConditionType.POST && !postCondModel.contains(conditionMap.get(key.toString()))) {
+                    } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key.toString()))) {
                         System.out.println("post");
-                        postCondModel.addElement(conditionMap.get(key).toString());
+
+                        preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
+
                     }
 
                 }
