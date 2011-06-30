@@ -45,7 +45,7 @@ public class ConvertFromXML {
 
       model.setCounter(project.getIdCounter());
 
-      setLiasonRoot(project.getLiasons());
+//      setLiasonRoot(project.getLiasons());
 
       setResourceRoot(project.getResources());
 

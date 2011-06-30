@@ -244,6 +244,8 @@ public abstract class AStringToConditionParser {
             return ConditionOperator.Type.AND;
         } else if (iOperator.equals("||") || iOperator.equals("|") || iOperator.equals("or")) {
             return ConditionOperator.Type.OR;
+        } else if (iOperator.equals(";")) {
+            return ConditionOperator.Type.SEMIKOLON;
         }
         return null;
     }

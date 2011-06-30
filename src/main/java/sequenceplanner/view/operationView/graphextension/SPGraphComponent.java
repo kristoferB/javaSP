@@ -159,14 +159,17 @@ public class SPGraphComponent extends mxGraphComponent {
                int rot = e.getWheelRotation();
                Double zoom = zoomFactor;
                zoomFactor *= zoomFactor * Math.abs(rot);
-               //SPGraphComponent.this.setCenterZoom(true);
                 System.out.println("Zoom: "+rot + "Counter: " + zoomCounter );
-               if (rot > 0 && zoomCounter <5 ) {
+               if (rot > 0 && zoomCounter <2 ) {
                   SPGraphComponent.this.zoomOut();
                   zoomCounter++;
-               } else if (rot < 0 && zoomCounter > 0) {
+               } else if (rot < 0 && zoomCounter > -5) {
                   SPGraphComponent.this.zoomIn();
                   zoomCounter--;
+               //zoomIn function is broken, this is a modification that
+               //resets the zoom when it is close enough to seem natural
+               }else if(zoomCounter <=-5){
+                   SPGraphComponent.this.zoomActual();
                }
                zoomFactor = zoom;
             } else {
