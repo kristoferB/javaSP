@@ -4,6 +4,8 @@ import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
@@ -23,7 +25,7 @@ import sequenceplanner.model.data.OperationData;
 public class AttributePanelController implements ActionListener, Observer {
 
     private AttributePanel attributePanel;
-    private OperationData model;
+    private OperationData opData;
     private OperationAttributeEditor attributeEditor;
     private boolean preRadioButton;
     private boolean guardRadioButton;
@@ -34,7 +36,7 @@ public class AttributePanelController implements ActionListener, Observer {
      * @param editor 
      */
     public AttributePanelController(OperationData model, AttributePanel panel, OperationAttributeEditor editor) {
-        this.model = model;
+        this.opData = model;
         this.attributePanel = panel;
         this.attributeEditor = editor;
     }
@@ -92,9 +94,13 @@ public class AttributePanelController implements ActionListener, Observer {
         }
 
         if(preRadioButton==true) {
-            model.getConditions().put(ConditionType.PRE, condition);
+            Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
+            map.put(ConditionType.PRE, condition);
+            opData.getGlobalConditions().put("Algebraic ",map);
         } else { //post
-            model.getConditions().put(ConditionType.POST, condition);
+            Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
+            map.put(ConditionType.POST, condition);
+            opData.getGlobalConditions().put("Algebraic ",map);
         }
     }
 }
