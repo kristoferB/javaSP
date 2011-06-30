@@ -25,7 +25,7 @@ import sequenceplanner.model.data.OperationData;
 public class AttributePanelController implements ActionListener, Observer {
 
     private AttributePanel attributePanel;
-    private OperationData model;
+    private OperationData opData;
     private OperationAttributeEditor attributeEditor;
     private boolean preRadioButton;
     private boolean guardRadioButton;
@@ -36,7 +36,7 @@ public class AttributePanelController implements ActionListener, Observer {
      * @param editor 
      */
     public AttributePanelController(OperationData model, AttributePanel panel, OperationAttributeEditor editor) {
-        this.model = model;
+        this.opData = model;
         this.attributePanel = panel;
         this.attributeEditor = editor;
     }
@@ -92,14 +92,15 @@ public class AttributePanelController implements ActionListener, Observer {
                         "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
             }
         }
-//        
-//        Map conditionMap = new HashMap<ConditionType, Condition>();
-//        if(preRadioButton==true) {
-//            conditionMap.put(ConditionType.PRE, condition);
-//            model.getGlobalConditions().put("manual",new HashMap<ConditionType,Condition>(ConditionType.PRE, condition));
-//        } else { //post
-//            model.getGlobalConditions().put(ConditionType.POST, condition);
-//        }
-//        attributePanel.updateModel(model);
+
+        if(preRadioButton==true) {
+            Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
+            map.put(ConditionType.PRE, condition);
+            opData.getGlobalConditions().put("Algebraic ",map);
+        } else { //post
+            Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
+            map.put(ConditionType.POST, condition);
+            opData.getGlobalConditions().put("Algebraic ",map);
+        }
     }
 }
