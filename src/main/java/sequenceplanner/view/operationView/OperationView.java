@@ -49,6 +49,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -312,6 +313,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             removeConditions();
             data = setConditions(data);
+            OperationData data2 = (OperationData) data[1].getNodeData();
+            System.out.println("data2"+data2.getGlobalConditions().toString());
+            ;
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());
@@ -337,8 +341,13 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         final String viewLabel = this.startName;
         final List<TreeNode> allOperationsList = model.getAllOperations();
         for (final TreeNode tn : allOperationsList) {
+            
             final OperationData opData = (OperationData) tn.getNodeData();
-            opData.getGlobalConditions().remove(viewLabel);
+            System.out.println("removecon1"+ opData.getGlobalConditions().toString());
+            if(opData.getGlobalConditions().get(viewLabel) != null)
+                opData.getGlobalConditions().get(viewLabel).clear();
+            System.out.println("removecon2"+ opData.getGlobalConditions().toString());
+           ;
         }
     }
 
@@ -350,17 +359,27 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
         //Get new conditions from SOP--------------------------------------------
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
-        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);//Blir null om det inte finns något condition att sätta.
         //-----------------------------------------------------------------------
-
+        
         //Add new conditions from SOP--------------------------------------------
         for (TreeNode node : data) {
-            if (node.getNodeData() instanceof OperationData) {
+            if (node.getNodeData() instanceof OperationData){
                 OperationData d = (OperationData) node.getNodeData();
+                if(operationConditionMap.isEmpty()){
+                    Map<ConditionType,Condition> emptyMap = new HashMap<ConditionType,Condition>();
+                    emptyMap.put(ConditionType.PRE, null);
+                    emptyMap.put(ConditionType.POST, null);
+                    d.setConditions(emptyMap, this.startName);
+                    node.setNodeData(d);
+                }
                 for (OperationData operation : operationConditionMap.keySet()) {
+                    System.out.println("3setornoset");
 
                     if (operation.getName().equalsIgnoreCase(d.getName())) {
+                        System.out.println("4setornoset");
                         d.setConditions(operationConditionMap.get(operation), this.startName);
+                        System.out.println("setconditions"+operationConditionMap.get(operation).values().toString());
                         node.setNodeData(d);
                     }
                 }

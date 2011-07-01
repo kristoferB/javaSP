@@ -1,5 +1,8 @@
 package sequenceplanner.gui.view.attributepanel;
 
+import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,35 +30,45 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     @Override
-    public void addCondition(String key, Condition condition) throws NullPointerException {
-        if (condition == null) {
-            throw new NullPointerException();
-        } else {
-            conditionList.put(key, condition);
-            updateList();
-        }
+    public void addCondition(String key, Condition condition) {
+        conditionList.remove(key);
+        conditionList.put(key, condition);
+        updateList();
+
     }
 
     private void updateList() {
-        if (!conditionList.isEmpty()) {
+        System.out.println("updateList CLP");
+        if (conditionList != null) {
             this.removeAll();
             for (String key : conditionList.keySet()) {
-                JPanel internalPanel = new JPanel();
-                internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
-                JLabel conditionLabel = new JLabel(key +" "+ conditionList.get(key).toString());
-                conditionLabel.setVisible(true);
-                if (key.equals("manual")) {
-                    JButton editButton = new JButton("Edit");
-                    internalPanel.add(editButton);
-                    JButton deleteButton = new JButton("Delete");
-                    internalPanel.add(deleteButton);
+                if (conditionList.get(key) != null) {
+                    System.out.println("panel");
+                    JPanel internalPanel = new JPanel();
+                    internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
+                    JLabel conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
+                    conditionLabel.setVisible(true);
+                    if (key.equals("manual")) {
+                        JButton editButton = new JButton("Edit");
+                        internalPanel.add(editButton);
+                        JButton deleteButton = new JButton("Delete");
+                        internalPanel.add(deleteButton);
+                    }
+
+                    internalPanel.add(conditionLabel);
+                    this.add(internalPanel);
+                    internalPanel.setVisible(true);
+                } else {
+                    this.removeAll();
+                    
                 }
-
-                internalPanel.add(conditionLabel);
-                this.add(internalPanel);
-
+                this.repaint();
 
             }
+
+        } else {
+            System.out.println("removeall");
+            this.removeAll();
             this.repaint();
         }
     }
@@ -73,5 +86,11 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     @Override
     public boolean contains(Condition condition) {
         return conditionList.containsValue(condition);
+    }
+
+    void clear() {
+        System.out.println("clear2");
+        this.removeAll();
+        this.repaint();
     }
 }

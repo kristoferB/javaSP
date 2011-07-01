@@ -90,19 +90,22 @@ public class AttributePanel extends JPanel {
                 for (Object key : conditionMap.keySet()) {
                     System.out.println("due");
 
-                    if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key.toString()))) {
+                    if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key))) {
+                        System.out.println("pre");
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
                         System.out.println("pre");
-                    } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key.toString()))) {
+                    } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key))) {
                         System.out.println("post");
 
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
-                    }
-
+                    } 
                 }
             }
+        } else {
+            System.out.println("Clear");
+            preCondListPanel.clear();
         }
     }
 

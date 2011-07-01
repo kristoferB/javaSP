@@ -16,12 +16,12 @@ public interface IConditionListPanel{
 
     /**
      * Adds a condition to the list of conditions.
-     * Does not accept null conditions.
-     * @throws nullPointerException
+     * Does accept null conditions.
+     * 
      * @param String a string describing the conditions location or parent.
      * @param {@link Conditon} the condition
      */
-    public void addCondition(String key, Condition condition) throws NullPointerException;
+    public void addCondition(String key, Condition condition);
 
     /**
      * Removes the specified {@link Condition} from the panel.
