@@ -38,7 +38,7 @@ public class GUIModel {
      */
     public GUIModel() {
         this.model = new Model();
-        createNewOpView();
+//        createNewOpView();
     }
 
     public Model getModel() {
@@ -53,12 +53,16 @@ public class GUIModel {
         return operationViews;
     }
 
-    public void createNewOpView() {
-        operationViews.addLast(new OperationView(this.model, "Opereration view " + (operationViews.size() + 1)));
+    public OperationView createNewOpView() {
+        final OperationView opView = new OperationView(this.model, "Opereration view " + (operationViews.size() + 1));
+        operationViews.addLast(opView);
+        return opView;
     }
 
-    public void createNewOpView(ViewData toOpen) {
-        operationViews.addLast(new OperationView(this.model, toOpen));
+    public OperationView createNewOpView(ViewData toOpen) {
+        final OperationView opView = new OperationView(this.model, toOpen);
+        operationViews.addLast(opView);
+        return opView;
     }
 
     public void createNewReView() {
@@ -82,10 +86,11 @@ public class GUIModel {
     /**
      * Adds all current operations to a new OperationView
      */
-    public void addAllOperations() {
+    public OperationView addAllOperations() {
         OperationView ov = new OperationView(this.model, "Operation View");
         ov.open(this.model.getChildren(model.getOperationRoot()));
         operationViews.addLast(ov);
+        return ov;
     }
 
     public ResourceView getResourceView() {

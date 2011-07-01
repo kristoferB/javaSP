@@ -87,8 +87,9 @@ public class OperationData extends Data {
 
     public void setConditions(Map<ConditionType, Condition> conditionMap, String operationViewName) {
         this.globalConditions.put(operationViewName, conditionMap);
+        System.out.println(globalConditions);
         //this.setChanged();
-        //this.notifyObservers(this);
+//        this.notifyObservers(this);
     }
 
 

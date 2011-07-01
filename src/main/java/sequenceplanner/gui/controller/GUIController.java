@@ -20,6 +20,7 @@ import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.Model;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -47,16 +48,16 @@ public class GUIController {
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
+        //Turned off by Patrik 2011 - 06 - 31
         //Set observer on model
-        opViewController = new OperationViewController();
-        guiModel.getModel().addObserver(opViewController);
-        //Add first operation view to opViewController
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
+//        opViewController = new OperationViewController();
+//        guiModel.getModel().addObserver(opViewController);
 
-        //  addNewOpTab();
         addListeners();
 
+        //Add a new empty operation view
+        final OperationView opView = guiModel.createNewOpView();
+        addNewOpTab(opView);
 
     }
 
@@ -98,12 +99,16 @@ public class GUIController {
     }
 
     //private methods
-    private void addNewOpTab() {
-        guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+    /**
+     * To add a {@link OperationView} to a operation tab in the operationRootView
+     * @param iOperationView the view to add.
+     */
+    private void addNewOpTab(final OperationView iOperationView) {
+        guiView.addNewOpTab(iOperationView.toString(), iOperationView);
+//        opViewController.addOperationView(iOperationView);
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
 
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
+        iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
 
     }
 
@@ -116,8 +121,8 @@ public class GUIController {
      */
     public void addNewOpTab(ViewData data) {
         if (!isOpened(data)) {
-            guiModel.createNewOpView(data);
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView(data);
+            addNewOpTab(opView);
 
         } else {
             guiView.setFocusedOperationView(data);
@@ -134,8 +139,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView();
+            addNewOpTab(opView);
         }
     }
 
@@ -170,8 +175,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.addAllOperations();
-            addNewOpTab();
+            final OperationView opView = guiModel.addAllOperations();
+            addNewOpTab(opView);
         }
     }
     //Project menu listeners
@@ -295,7 +300,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
             export.save();
@@ -308,7 +315,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             Reduction reduce = new Reduction(parser.getSpEFAutomata());
             DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
@@ -352,12 +361,10 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            final OperationView opView = guiModel.getOperationViews().getLast();
-            opView.setName("Projection" + guiModel.getModel().getCounter());
+            final OperationView opView = guiModel.createNewOpView();
+            opView.setName("Projection" + Model.newId());
             new UserInteractionForVisualization(opView, guiModel.getModel());
-            addNewOpTab();
-
+            addNewOpTab(opView);
         }
     }
 
@@ -374,6 +381,7 @@ public class GUIController {
             }
         }
     }
+
     class AddShortCommandsListener implements ActionListener {
 
         @Override
@@ -381,16 +389,16 @@ public class GUIController {
             HelpPanes hp = new HelpPanes("Short Commands");
 
         }
-
     }
+
     class AddAboutListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("Soon implemented");
         }
-
     }
+
     /**
      * Class for listening on clicks in an OperationView.
      */
@@ -420,8 +428,9 @@ public class GUIController {
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
                     if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
                         clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    }else 
+                    } else {
                         clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    }
 
 
                 }

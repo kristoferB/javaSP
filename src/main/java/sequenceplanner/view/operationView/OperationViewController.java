@@ -34,6 +34,7 @@ public class OperationViewController implements Observer {
         System.out.println("OVC"+o.toString());
         if (arg instanceof OperationData) {
             OperationData od = (OperationData) arg;
+            System.out.println("update operation "+od.getName());
             for (OperationView operationView : views) {
                 //if operation view contains od with this id, update od
                 Hashtable cells = operationView.getGraphModel().getCells();

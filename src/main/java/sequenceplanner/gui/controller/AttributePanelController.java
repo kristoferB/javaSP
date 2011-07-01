@@ -89,7 +89,7 @@ public class AttributePanelController implements ActionListener, Observer {
                 condition.setAction(ce);
             } else {
                 JOptionPane.showMessageDialog(null, "This is not a correct action!\n" +
-                        "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
+                        "This is: (id1234=100;id1002+=2;(id1003=123;id1004=2));id1005-=2;id1006+=99;id1007=7");
             }
         }
 
