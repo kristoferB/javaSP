@@ -62,8 +62,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     this.removeAll();
                     
                 }
-                this.repaint();
-
+                this.updateUI();
             }
 
         } else {
