@@ -43,18 +43,10 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             this.removeAll();
             for (String key : conditionList.keySet()) {
                 if (conditionList.get(key) != null) {
-                    System.out.println("panel");
                     JPanel internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
                     JLabel conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
-                    conditionLabel.setVisible(true);
-                    if (key.equals("manual")) {
-                        JButton editButton = new JButton("Edit");
-                        internalPanel.add(editButton);
-                        JButton deleteButton = new JButton("Delete");
-                        internalPanel.add(deleteButton);
-                    }
-
+                    conditionLabel.setVisible(true);           
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);

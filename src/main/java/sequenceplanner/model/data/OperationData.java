@@ -27,6 +27,7 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
  */
 public class OperationData extends Data {
 
+    private int algebraicCounter;
     public static final String OPERATION_NAME = "name";
     public static final String OP_PRECONDITION = "precond";
     public static final String OP_POSTCONDITION = "postcond";
@@ -63,6 +64,7 @@ public class OperationData extends Data {
     //OperationData newOp = new OperationData(OP,model.getNewId());
     public OperationData(String name, int id) {
         super(name, id);
+        algebraicCounter = 1;
         preference = Collections.synchronizedMap(new HashMap<String, String>());
 
         globalConditions = Collections.synchronizedMap(new HashMap<String, Map<ConditionType, Condition>>());
@@ -87,10 +89,7 @@ public class OperationData extends Data {
 
     public void setConditions(Map<ConditionType, Condition> conditionMap, String operationViewName) {
         this.globalConditions.put(operationViewName, conditionMap);
-        //this.setChanged();
-        //this.notifyObservers(this);
     }
-
 
     private void setValue(String key, String value) {
         if (key != null && value != null) {
@@ -102,6 +101,14 @@ public class OperationData extends Data {
 
     public Map<String, String> getPreferences() {
         return preference;
+    }
+
+    public int getAlgebraicCounter() {
+        return algebraicCounter;
+    }
+
+    public void setAlgebraicCounter(int algebraicCounter) {
+        this.algebraicCounter = algebraicCounter;
     }
 
     private String getValue(String key) {
@@ -348,17 +355,17 @@ public class OperationData extends Data {
         return addAnd(new SeqCond(id, state));
     }
 
-   public boolean addPAnd(int id, int state) {
-      return addPAnd(new SeqCond(id, state));
-   }
+    public boolean addPAnd(int id, int state) {
+        return addPAnd(new SeqCond(id, state));
+    }
 
     public boolean removeAnd(int id, int state) {
         return removeAnd(new SeqCond(id, state));
     }
 
-   public boolean removePAnd(int id, int state) {
-      return removePAnd(new SeqCond(id, state));
-   }
+    public boolean removePAnd(int id, int state) {
+        return removePAnd(new SeqCond(id, state));
+    }
 
     public boolean removeAnd(SeqCond and) {
         for (Iterator<LinkedList<SeqCond>> it = sequenceCondition.iterator(); it.hasNext();) {
@@ -371,17 +378,17 @@ public class OperationData extends Data {
         return false;
     }
 
-   public boolean removePAnd(SeqCond and) {
-      for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
-         LinkedList<SeqCond> list = it.next();
-         if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
-            pSequenceCondition.remove(list);
-            return true;
-         }
-      }
-      return false;
-   }
-   
+    public boolean removePAnd(SeqCond and) {
+        for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
+            LinkedList<SeqCond> list = it.next();
+            if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
+                pSequenceCondition.remove(list);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean addAnd(SeqCond and) {
         for (Iterator<LinkedList<SeqCond>> it = sequenceCondition.iterator(); it.hasNext();) {
             LinkedList<SeqCond> list = it.next();
@@ -396,29 +403,29 @@ public class OperationData extends Data {
         return true;
     }
 
-   public boolean addPAnd(SeqCond and) {
-      for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
-         LinkedList<SeqCond> list = it.next();
-         if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
-            return false;
-         }
-      }
-      LinkedList<SeqCond> s = new LinkedList<SeqCond>();
-      s.add(and);
+    public boolean addPAnd(SeqCond and) {
+        for (Iterator<LinkedList<SeqCond>> it = pSequenceCondition.iterator(); it.hasNext();) {
+            LinkedList<SeqCond> list = it.next();
+            if (list.size() == 1 && list.getFirst().id == and.id && list.getFirst().state == and.state) {
+                return false;
+            }
+        }
+        LinkedList<SeqCond> s = new LinkedList<SeqCond>();
+        s.add(and);
 
-      pSequenceCondition.add(s);
-      return true;
-   }
-   
+        pSequenceCondition.add(s);
+        return true;
+    }
+
     public boolean addOr(LinkedList<SeqCond> or) {
         sequenceCondition.add(or);
         return true;
     }
 
-   public boolean addPOr(LinkedList<SeqCond> or) {
-      pSequenceCondition.add(or);
-      return true;
-   }
+    public boolean addPOr(LinkedList<SeqCond> or) {
+        pSequenceCondition.add(or);
+        return true;
+    }
 
     public boolean addResourceBooking(int resource) {
         if (!isResourceBooked(resource)) {
@@ -427,12 +434,12 @@ public class OperationData extends Data {
         return false;
     }
 
-   public boolean addPResourceBooking(int resource) {
-      if (!isResourceBooked(resource)) {
-         pResourceBooking.add(new Integer[]{resource, RESOURCE_BOOK});
-      }
-      return false;
-   }
+    public boolean addPResourceBooking(int resource) {
+        if (!isResourceBooked(resource)) {
+            pResourceBooking.add(new Integer[]{resource, RESOURCE_BOOK});
+        }
+        return false;
+    }
 
     public boolean removeResourceBooking(int resource) {
         Integer[] rem = null;
@@ -449,20 +456,20 @@ public class OperationData extends Data {
         return false;
     }
 
-   public boolean removePResourceBooking(int resource) {
-      Integer[] rem = null;
+    public boolean removePResourceBooking(int resource) {
+        Integer[] rem = null;
 
-      for (Integer[] bo : pResourceBooking) {
-         if (bo[0] == resource && bo[1] == RESOURCE_BOOK) {
-            rem = bo;
-            break;
-         }
-      }
+        for (Integer[] bo : pResourceBooking) {
+            if (bo[0] == resource && bo[1] == RESOURCE_BOOK) {
+                rem = bo;
+                break;
+            }
+        }
 
-      pResourceBooking.remove(rem);
+        pResourceBooking.remove(rem);
 
-      return false;
-   }
+        return false;
+    }
 
     public boolean isResourceBooked(int resource) {
 
@@ -917,7 +924,6 @@ public class OperationData extends Data {
     public Map<String, Map<ConditionType, Condition>> getGlobalConditions() {
         return globalConditions;
     }
-    
 
     //************************************************************************
     // Se Model.getVariabelCheck for state info on variables

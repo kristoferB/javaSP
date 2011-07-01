@@ -47,7 +47,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
         actionGuardButtonGroup.add(guardRadioButton);
         actionGuardButtonGroup.add(actionRadioButton);
 
-        expresionTextField.setText("Enter SP condtition...");
+        expresionTextField.setText("Enter SP condtition");
         expresionTextField.setToolTipText("Enter SP condition");
         expresionTextField.setActionCommand("save");
 
@@ -119,6 +119,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 
     public void addSaveButtonListener(ActionListener l){
         saveButton.addActionListener(l);
+        expresionTextField.addActionListener(l);
     }
     
     /**
@@ -146,5 +147,9 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     }
     public boolean getGuardButtonStatus (){
         return guardRadioButton.isSelected();
+    }
+
+    public void clearTextField() {
+        expresionTextField.setText("");
     }
 }
