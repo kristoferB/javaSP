@@ -1,11 +1,7 @@
 package sequenceplanner.gui.view.attributepanel;
 
-import java.awt.Color;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
@@ -38,7 +34,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void updateList() {
-        System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
             for (String key : conditionList.keySet()) {
@@ -58,7 +53,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             }
 
         } else {
-            System.out.println("removeall");
             this.removeAll();
             this.repaint();
         }
@@ -80,7 +74,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     void clear() {
-        System.out.println("clear2");
         this.removeAll();
         this.repaint();
     }

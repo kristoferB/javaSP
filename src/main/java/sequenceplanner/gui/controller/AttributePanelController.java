@@ -46,7 +46,8 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
     public void actionPerformed(ActionEvent e) {
         
         if (e.getActionCommand().equalsIgnoreCase("save")) {
-            setCondition(attributeEditor.getConditionString());
+            if(!attributeEditor.getConditionString().isEmpty())
+               setCondition(attributeEditor.getConditionString());
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
             attributeEditor.opendToEdit(e.getSource());
         }
@@ -57,7 +58,6 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
         OperationData od = (OperationData) arg;
         if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
             attributePanel.updateModel(od);
-            System.out.println("APC" + o.toString());
         }
     }
 

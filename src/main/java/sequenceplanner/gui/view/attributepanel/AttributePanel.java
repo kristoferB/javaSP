@@ -84,27 +84,18 @@ public class AttributePanel extends JPanel {
         if (model.getGlobalConditions() != null) {
             //Extract each set of condition sets
             for (Object viewKey : model.getGlobalConditions().keySet()) {
-                System.out.println("uno");
                 Map<ConditionType, Condition> conditionMap = model.getGlobalConditions().get(viewKey);
                 //Split conditions into post and pre
                 for (Object key : conditionMap.keySet()) {
-                    System.out.println("due");
-
                     if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key))) {
-                        System.out.println("pre");
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
-
-                        System.out.println("pre");
                     } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key))) {
-                        System.out.println("post");
-
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
                     } 
                 }
             }
         } else {
-            System.out.println("Clear");
             preCondListPanel.clear();
         }
     }
