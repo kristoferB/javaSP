@@ -178,12 +178,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         propertyView = new PropertyView(guiModel.getGlobalProperties());
 
-        //Create first opview
-        opViewIndex++;
-        opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
-
         //Sets all inner root windows
-
         operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
@@ -191,11 +186,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 
         rootViewMap.addView(1, operationRootView);
-
-        guiModel.getOperationViews().getFirst().addmxIEventListener(this);
-        selectedOperationView = guiModel.getOperationViews().getFirst();
-        propertyView.setOpView(guiModel.getOperationViews().getFirst());
-
 
         //Create consoltreeRoote
         consoleViewMap.addView(1, new View("console", null, new JScrollPane(console = new JTextArea())));
@@ -229,7 +219,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectViewMap.addView(1, objectMenu);
         objectViewMap.addView(2, new View("Property view", null, propertyView));
 
-        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
+//        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
+        objectRoot.setWindow(objectDocks = new TabWindow(objectViewMap.getView(2)));
 
         objectRootView.getViewProperties().setAlwaysShowTitle(false);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
