@@ -20,7 +20,7 @@ public class StringConditionParser {
     //private String test = "id1007!=0&&id1008<i&&id1009>=e";
     private static String guard = "([=><!][=]|[><])";
     private static String action = "([+-]=)"; //Fixa för =
-    private static String id = "(id\\d{4})";
+    private static String id = "(id\\d+)";
     private static String value = "([012ief])";
     private static String type = "(&&|&|and|or|\\|\\||\\|)";
     private Map<String, Operator> operators = new HashMap<String, Operator>();

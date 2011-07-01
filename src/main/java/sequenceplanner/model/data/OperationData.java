@@ -58,14 +58,15 @@ public class OperationData extends Data {
     //Properties (Key = id, value = selected for operation)
     HashMap<Integer, Boolean> propertySettings;
     private Map<String, Map<ConditionType, Condition>> globalConditions;
-    private Map<ConditionType, Condition> conditions;
+    private Map<ConditionType, Condition> localConditions;
 
+    //OperationData newOp = new OperationData(OP,model.getNewId());
     public OperationData(String name, int id) {
         super(name, id);
         preference = Collections.synchronizedMap(new HashMap<String, String>());
 
         globalConditions = Collections.synchronizedMap(new HashMap<String, Map<ConditionType, Condition>>());
-        conditions = new HashMap<ConditionType, Condition>();
+        localConditions = new HashMap<ConditionType, Condition>();
         //Resource booking
         sequenceCondition = new LinkedList<LinkedList<SeqCond>>();
         resourceBooking = new LinkedList<Integer[]>();
