@@ -365,11 +365,18 @@ public class GUIController {
         public OperationIdTextFieldListener(int id){
             super();
         }
+        
         @Override
         public void keyTyped(KeyEvent e) {
+            System.out.println("gltt");
+            System.out.println("get keycode"+e.getKeyCode());
+            System.out.println("keyevent keycode"+KeyEvent.VK_ENTER);
             if(e.getKeyCode()== KeyEvent.VK_ENTER){
+                
                 JTextField field = (JTextField) e.getSource();
+                System.out.println(guiModel.getModel().getOperation(id).getNodeData().getName());
                 guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                System.out.println(guiModel.getModel().getOperation(id).getNodeData().getName());
             }
         }
 

@@ -20,22 +20,22 @@ import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**
-* Listens to changes in the OperationData object connected to the AttributePanel
-* and updates the panel accordingly
-* @author Qw4z1
-*/
-public class AttributePanelController implements ActionListener, Observer ,KeyListener{
+ * Listens to changes in the OperationData object connected to the AttributePanel
+ * and updates the panel accordingly
+ * @author Qw4z1
+ */
+public class AttributePanelController implements ActionListener, Observer, KeyListener {
 
     private AttributePanel attributePanel;
     private OperationData opData;
     private OperationAttributeEditor attributeEditor;
 
     /**
-* Creates an AttributePanelController with two views and one model
-* @param model
-* @param panel
-* @param editor
-*/
+     * Creates an AttributePanelController with two views and one model
+     * @param model
+     * @param panel
+     * @param editor
+     */
     public AttributePanelController(OperationData model, AttributePanel panel, OperationAttributeEditor editor) {
         this.opData = model;
         this.attributePanel = panel;
@@ -46,8 +46,9 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
     public void actionPerformed(ActionEvent e) {
 
         if (e.getActionCommand().equalsIgnoreCase("save")) {
-            if(!attributeEditor.getConditionString().isEmpty())
-               setCondition(attributeEditor.getConditionString());
+            if (!attributeEditor.getConditionString().isEmpty()) {
+                setCondition(attributeEditor.getConditionString());
+            }
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
             attributeEditor.opendToEdit(e.getSource());
         }
@@ -62,9 +63,9 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
     }
 
     /**
-* Adds a set of conditions to the OperationData object acting as model
-* @param conditionString String conditions as a string in the SP form.
-*/
+     * Adds a set of conditions to the OperationData object acting as model
+     * @param conditionString String conditions as a string in the SP form.
+     */
     private void setCondition(String conditionString) {
         //ConditionType should be selected from the choises of the radiobuttons
         final Condition condition = new Condition();
@@ -95,8 +96,8 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
         } else { //post
             map.put(ConditionType.POST, condition);
         }
-     
-        opData.setConditions(map, "Algebraic "+ opData.getAlgebraicCounter());
+
+        opData.setConditions(map, "Algebraic " + opData.getAlgebraicCounter());
         opData.increaseAlgebraicCounter();
 
         this.attributePanel.setConditions();
@@ -105,7 +106,9 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyCode()== KeyEvent.VK_ENTER){
+        System.out.println("get keycode" + e.getKeyCode());
+        System.out.println("keyevent keycode" + KeyEvent.VK_ENTER);
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             setCondition(attributeEditor.getConditionString());
         }
 
@@ -113,13 +116,12 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
 
     @Override
     public void keyPressed(KeyEvent e) {
-       //
+        //
         // throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 }
