@@ -2,9 +2,12 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import sequenceplanner.IO.ReadFromVolvoFile;
@@ -348,6 +351,29 @@ public class GUIController {
         }
     }
 
+    class OperationIdTextFieldListener implements KeyListener{
+        int id;
+        public OperationIdTextFieldListener(int id){
+            super();
+        }
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if(e.getKeyCode()== KeyEvent.VK_ENTER){
+                JTextField field = (JTextField) e.getSource();
+                guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
+        
+        
+    }
     class BruteForceVisualizationListener implements ActionListener {
 
         @Override
@@ -486,6 +512,7 @@ public class GUIController {
         if (guiView.addAttributePanelView(panel)) {
             AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
             panel.addEditorSaveListener(ctrl);
+            panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId()));
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {

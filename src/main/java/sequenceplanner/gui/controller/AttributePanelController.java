@@ -96,16 +96,17 @@ public class AttributePanelController implements ActionListener, Observer ,KeyLi
             map.put(ConditionType.POST, condition);
         }
         
-        opData.setConditions(map, "Algebraic ");
+        opData.setConditions(map, "Algebraic "+ opData.getAlgebraicCounter());
+        opData.increaseAlgebraicCounter();
         this.attributePanel.setConditions();
         this.attributeEditor.clearTextField();
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyCode()== KeyEvent.VK_ENTER)
+        if(e.getKeyCode()== KeyEvent.VK_ENTER){
             setCondition(attributeEditor.getConditionString());
-            
+        }
     }
 
     @Override

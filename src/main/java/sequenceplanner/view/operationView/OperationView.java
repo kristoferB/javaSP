@@ -313,9 +313,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             removeConditions();
             data = setConditions(data);
-            OperationData data2 = (OperationData) data[1].getNodeData();
-            System.out.println("data2"+data2.getGlobalConditions().toString());
-            ;
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
                 model.saveView(viewData.removeFirst());

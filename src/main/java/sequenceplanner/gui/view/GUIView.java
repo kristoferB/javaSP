@@ -716,7 +716,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             if (data.getName().equals(opViewMap.getView(i).getTitle())) {
                 TabWindow parent = (TabWindow) opViewMap.getView(i).getWindowParent();
                 //Set the tab containing the View selected
-                parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
+                if(parent != null)
+                    parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
+                else
+                    opViewMap.getView(i).restore();
             }
         }
 
@@ -747,13 +750,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();
-
-                //Get the TabWindow containing the view
                 TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
-
+                //Get the TabWindow containing the view
+                if(parent != null)
+                    parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
+                else
+                    opViewMap.getView(i).restore();
                 //Set the tab containing the View selected
-                parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
-
+                
 
                 return false;
 
