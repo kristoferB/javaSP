@@ -107,8 +107,8 @@ public class OperationData extends Data {
         return algebraicCounter;
     }
 
-    public void setAlgebraicCounter(int algebraicCounter) {
-        this.algebraicCounter = algebraicCounter;
+    public void increaseAlgebraicCounter() {
+        this.algebraicCounter++;
     }
 
     private String getValue(String key) {
