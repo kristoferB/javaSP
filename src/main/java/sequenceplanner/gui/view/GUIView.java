@@ -293,9 +293,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             }
             opViewMap.removeView(i);
         }
-        
-        for(int i =3; objectViewMap.getViewCount() != 2; i++){
-            if(objectViewMap.getView(i) != null){
+
+        for (int i = 3; objectViewMap.getViewCount() != 2; i++) {
+            if (objectViewMap.getView(i) != null) {
                 objectViewMap.getView(i).close();
             }
             objectViewMap.removeView(i);
@@ -359,12 +359,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Reduced-order EFA
      *
      */
-
     private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
-            normalEFA, reduceEFA, about, shortCommands;;
+            normalEFA, reduceEFA, about, shortCommands;
+
+    ;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -548,10 +549,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addAddOperationsFromFileL(ActionListener l) {
         addOperationsFromFile.addActionListener(l);
     }
-    public void addShortCommandsL(ActionListener l){
+
+    public void addShortCommandsL(ActionListener l) {
         shortCommands.addActionListener(l);
     }
-    public void addAboutL(ActionListener l){
+
+    public void addAboutL(ActionListener l) {
         about.addActionListener(l);
     }
 //End listeners 
@@ -723,10 +726,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             if (data.getName().equals(opViewMap.getView(i).getTitle())) {
                 TabWindow parent = (TabWindow) opViewMap.getView(i).getWindowParent();
                 //Set the tab containing the View selected
-                if(parent != null)
+                if (parent != null) {
                     parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
-                else
+                } else {
                     opViewMap.getView(i).restore();
+                }
             }
         }
 
@@ -759,12 +763,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 //objectViewMap.getView(i).requestFocusInWindow();
                 TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
                 //Get the TabWindow containing the view
-                if(parent != null)
+                if (parent != null) {
                     parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
-                else
+                } else {
                     objectViewMap.getView(i).restore();
+                }
                 //Set the tab containing the View selected
-                
+
 
                 return false;
 
@@ -792,4 +797,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 consoleRootView));
     }
 
+    public void loadEmptyProject() {
+    }
+
+    public void setModel(GUIModel guiModel) {
+        this.guiModel = guiModel;
+    }
+
+    public void resetView(GUIModel guiModel) {
+        this.removeAll();
+        this.guiModel = guiModel;
+        initJFrame();
+        createRootWindow();
+        setStartingWindowsProperties();
+        setRootDropDisabled();
+    }
 }

@@ -205,7 +205,9 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            guiModel = new GUIModel();
+            guiView.resetView(guiModel);
+            guiView.closeAllViews();
         }
     }
 
