@@ -48,6 +48,7 @@ public class AttributePanel extends JPanel {
 
         jSeparator1 = new JSeparator();
         operationIdTextField = new JTextField();
+        operationIdTextField.setActionCommand("set name");
 
         preCondListPanel = new ConditionListPanel();
         postCondListPanel = new ConditionListPanel();

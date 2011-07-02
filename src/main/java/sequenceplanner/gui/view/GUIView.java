@@ -755,7 +755,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 if(parent != null)
                     parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
                 else
-                    opViewMap.getView(i).restore();
+                    objectViewMap.getView(i).restore();
                 //Set the tab containing the View selected
                 
 

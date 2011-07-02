@@ -106,7 +106,6 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup actionGuardButtonGroup;
     private javax.swing.JRadioButton actionRadioButton;
     private javax.swing.ButtonGroup conditionButtonGroup;
@@ -115,7 +114,6 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     private javax.swing.JRadioButton postRadioButton;
     private javax.swing.JRadioButton preRadioButton;
     private javax.swing.JButton saveButton;
-    // End of variables declaration//GEN-END:variables
 
     public void addSaveButtonListener(ActionListener l){
         saveButton.addActionListener(l);

@@ -358,6 +358,7 @@ public class GUIController {
         }
         @Override
         public void keyTyped(KeyEvent e) {
+            System.out.println("code: "+e.getKeyCode() + " event: " + KeyEvent.VK_ENTER);
             if(e.getKeyCode()== KeyEvent.VK_ENTER){
                 JTextField field = (JTextField) e.getSource();
                 guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
