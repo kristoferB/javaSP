@@ -293,6 +293,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             }
             opViewMap.removeView(i);
         }
+        
+        for(int i =3; objectViewMap.getViewCount() != 2; i++){
+            if(objectViewMap.getView(i) != null){
+                objectViewMap.getView(i).close();
+            }
+            objectViewMap.removeView(i);
+        }
 
         //operationRoot.remove(mainDocks);
         mainDocks = new TabWindow();

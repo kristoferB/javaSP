@@ -31,7 +31,7 @@ public class OperationViewController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("OVC"+o.toString());
+        System.out.println("OVC");
         if (arg instanceof OperationData) {
             OperationData od = (OperationData) arg;
             for (OperationView operationView : views) {

@@ -1,11 +1,9 @@
 package sequenceplanner.gui.controller;
 
-import java.awt.event.KeyEvent;
 import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -44,7 +42,6 @@ public class AttributePanelController implements ActionListener, Observer {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("code: " + e.getID() + " event: " + KeyEvent.VK_ENTER + "   " + e.paramString());
         if (e.getActionCommand().equalsIgnoreCase("save")) {
             if (!attributeEditor.getConditionString().isEmpty()) {
                 setCondition(attributeEditor.getConditionString());
@@ -105,5 +102,14 @@ public class AttributePanelController implements ActionListener, Observer {
             this.attributePanel.setConditions();
             this.attributeEditor.clearTextField();
         }
+    }
+
+    public void setName(String text) {
+        opData.setName(text);
+        attributePanel.updateModel(opData);
+    }
+    
+    public OperationData getModel(){
+        return opData;
     }
 }

@@ -2,8 +2,6 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
@@ -298,7 +296,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
             export.save();
@@ -311,7 +311,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             Reduction reduce = new Reduction(parser.getSpEFAutomata());
             DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
@@ -351,30 +353,34 @@ public class GUIController {
         }
     }
 
-    class OperationIdTextFieldListener implements KeyListener{
+    class OperationIdTextFieldListener implements ActionListener {
+
         int id;
-        public OperationIdTextFieldListener(int id){
+        AttributePanelController ctrl;
+
+        public OperationIdTextFieldListener(int id , AttributePanelController ctrl) {
             super();
+            this.id = id;
+            this.ctrl = ctrl;
         }
+
         @Override
-        public void keyTyped(KeyEvent e) {
-            System.out.println("code: "+e.getKeyCode() + " event: " + KeyEvent.VK_ENTER);
-            if(e.getKeyCode()== KeyEvent.VK_ENTER){
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equalsIgnoreCase("set name")) {
                 JTextField field = (JTextField) e.getSource();
-                guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                
+                System.out.println("setname");
+                if (guiModel.getModel().getOperation(id) != null) {
+                    guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                    opViewController.update(null, ctrl.getModel());
+                    System.out.println("setname");
+                    
+                }   
+                opViewController.update(null, ctrl.getModel());
             }
         }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-        }
-        
-        
     }
+
     class BruteForceVisualizationListener implements ActionListener {
 
         @Override
@@ -401,6 +407,7 @@ public class GUIController {
             }
         }
     }
+
     class AddShortCommandsListener implements ActionListener {
 
         @Override
@@ -408,16 +415,16 @@ public class GUIController {
             HelpPanes hp = new HelpPanes("Short Commands");
 
         }
-
     }
+
     class AddAboutListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("Soon implemented");
         }
-
     }
+
     /**
      * Class for listening on clicks in an OperationView.
      */
@@ -447,8 +454,9 @@ public class GUIController {
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
                     if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
                         clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    }else 
+                    } else {
                         clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    }
 
 
                 }
@@ -513,7 +521,7 @@ public class GUIController {
         if (guiView.addAttributePanelView(panel)) {
             AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
             panel.addEditorSaveListener(ctrl);
-            panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId()));
+            panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {

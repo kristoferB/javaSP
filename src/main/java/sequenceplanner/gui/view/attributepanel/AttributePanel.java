@@ -118,11 +118,11 @@ public class AttributePanel extends JPanel {
     }
     
     /**
-     * Adds a KeyListener to the OperationIdTextField
-     * @param l the KeyListener
+     * Adds an ActionListener to the OperationIdTextField
+     * @param l the ActionListener
      */
-    public void addOperationIdTextFieldListener(KeyListener l){
-        operationIdTextField.addKeyListener(l);
+    public void addOperationIdTextFieldListener(ActionListener l){
+        operationIdTextField.addActionListener(l);
     }
    
     /**
@@ -137,9 +137,10 @@ public class AttributePanel extends JPanel {
      * Sets model to a new OperationData and updates the conditions.
      * @param od 
      */
-    public void updateModel(OperationData od) {
+    public OperationData updateModel(OperationData od) {
         this.model = od;
         setConditions();
+        return this.model;
     }
 
     public JTextField getOperationIdTextField() {
