@@ -22,7 +22,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     private HashMap<String, Condition> conditionList;
     private JPanel internalPanel;
     JLabel conditionLabel;
-    private String mapValuePattern = "([a-z]||)";
     public ConditionListPanel() {
         conditionList = new HashMap<String, Condition>();
         init();
@@ -47,13 +46,15 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             this.removeAll();
             for (String key : conditionList.keySet()) {
                 if (conditionList.get(key) != null) {
-                    JPanel internalPanel = new JPanel();
+                    System.out.println("kommer hit");
+                    internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
-                    JLabel conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
-                    conditionLabel.setVisible(true);           
+                    conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
+                    conditionLabel.setVisible(true);
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
+                    addConditionListener(new AttributeMouseAdapter());
                 } else {
                     this.removeAll();
                     
@@ -68,18 +69,19 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     @Override
-    public void deleteCondition(Component conditionLabel){
+    public void deleteCondition(String conditionValue){
+            System.out.println("Delete: "+ conditionValue);
+            //opData.removeCondition();
+        
+    }
+    @Override
+    public String getConditionValue(Component conditionLabel){
         JLabel condition = (JLabel)conditionLabel;
-        System.out.println("Mamumu: "+condition.getText());
         Pattern conditionValuePattern = Pattern.compile("Algebraic "+"(\\d)");
         Matcher m1 = conditionValuePattern.matcher(condition.getText());
         if(m1.find()){
-            //OperationData.removeCondition();
-            System.out.println("Group: "+m1.group());
-        }
-
-
-
+            return m1.group();
+        }else return "";
     }
 
     @Override

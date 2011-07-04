@@ -51,5 +51,7 @@ public interface IConditionListPanel{
      * @param The JLabel that displays the Condition
      * @throws NullPointerException if no Condtion exists in place i
      */
-    public void deleteCondition(Component conditionLabel)throws NullPointerException;
+    public void deleteCondition(String conditionLabel)throws NullPointerException;
+
+    public String getConditionValue(Component conditionLabel);
 }
