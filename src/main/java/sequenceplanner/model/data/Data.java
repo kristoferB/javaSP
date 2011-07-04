@@ -2,6 +2,7 @@ package sequenceplanner.model.data;
 
 import java.util.Hashtable;
 import java.util.Observable;
+import sequenceplanner.model.Model;
 
 /**
  *
@@ -20,6 +21,8 @@ public class Data  extends Observable implements Cloneable {
     private int id;
     private int type;
 
+    public int mUniqueId;
+
     private boolean copy = false;
 
     Hashtable<String, String> attributes;
@@ -32,6 +35,8 @@ public class Data  extends Observable implements Cloneable {
         this.name = name;
         this.id = id;
         attributes = new Hashtable<String, String>();
+        mUniqueId = Model.newId();
+
     }
 
     public String getName() {

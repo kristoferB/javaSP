@@ -19,7 +19,7 @@ import sequenceplanner.model.data.OperationData;
 
 /**
  * Listens to changes in the OperationData object connected to the AttributePanel
- * and updates the panel accordingly 
+ * and updates the panel accordingly
  * @author Qw4z1
  */
 public class AttributePanelController implements ActionListener, Observer {
@@ -32,7 +32,7 @@ public class AttributePanelController implements ActionListener, Observer {
      * Creates an AttributePanelController with two views and one model
      * @param model
      * @param panel
-     * @param editor 
+     * @param editor
      */
     public AttributePanelController(OperationData model, AttributePanel panel, OperationAttributeEditor editor) {
         this.opData = model;
@@ -56,6 +56,7 @@ public class AttributePanelController implements ActionListener, Observer {
         OperationData od = (OperationData) arg;
         if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
             attributePanel.updateModel(od);
+            System.out.println("APC" + o.toString());
         }
     }
 
@@ -102,6 +103,7 @@ public class AttributePanelController implements ActionListener, Observer {
             this.attributePanel.setConditions();
             this.attributeEditor.clearTextField();
         }
+
     }
 
     public void setName(String text) {
