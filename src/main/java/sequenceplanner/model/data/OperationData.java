@@ -1020,4 +1020,7 @@ public class OperationData extends Data {
             return new Action(id, state, value);
         }
     }
+    public void removeCondition(String condKey){
+        globalConditions.remove(condKey);
+    }
 }

@@ -4,7 +4,7 @@
  */
 package sequenceplanner.gui.view.attributepanel;
 
-import javax.swing.JPanel;
+import java.awt.Component;
 import sequenceplanner.condition.Condition;
 
 /**
@@ -44,4 +44,12 @@ public interface IConditionListPanel{
      * @return true if it contains the Condition
      */
     public boolean contains(Condition condition);
+
+
+    /**
+     * Removes the condition that's in the Label.
+     * @param The JLabel that displays the Condition
+     * @throws NullPointerException if no Condtion exists in place i
+     */
+    public void deleteCondition(Component conditionLabel)throws NullPointerException;
 }
