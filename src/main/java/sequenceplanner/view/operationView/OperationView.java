@@ -341,8 +341,10 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             
             final OperationData opData = (OperationData) tn.getNodeData();
             System.out.println("removecon1"+ opData.getGlobalConditions().toString());
-            if(opData.getGlobalConditions().get(viewLabel) != null)
+            if(opData.getGlobalConditions().get(viewLabel) != null){
                 opData.getGlobalConditions().get(viewLabel).clear();
+            }
+                
             System.out.println("removecon2"+ opData.getGlobalConditions().toString());
            ;
         }

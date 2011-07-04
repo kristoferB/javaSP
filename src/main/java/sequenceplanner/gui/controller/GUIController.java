@@ -131,7 +131,7 @@ public class GUIController {
         return this.guiView;
     }
 
-    Object getModel() {
+    public Object getModel() {
         return guiModel.getModel();
     }
 
@@ -523,6 +523,10 @@ public class GUIController {
         return false;
     }
     
+    /**
+     * Saves an OperationData object to the main project model.
+     * @param data 
+     */
     public void saveOperationToModel(OperationData data){
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
