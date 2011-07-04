@@ -74,8 +74,6 @@ public class Model extends Observable implements IModel{
       //treeRoot.insert(liasonRoot);
 
       resourceRoot = new TreeNode(new FolderData("Resources", newId()));
-
-
       treeRoot.insert(resourceRoot);
 
       viewRoot = new TreeNode(new FolderData("View", newId()));
@@ -217,6 +215,7 @@ public class Model extends Observable implements IModel{
     *  Just saveOperation but accepts an arrayinput and do an extra check of inputed data;
     * @param data
     */
+   //OperationData newOp = new OperationData(OP,model.getNewId());
    public void saveOperationData(TreeNode[] data) {
 
       for (int i = 0; i < data.length; i++) {

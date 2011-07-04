@@ -2,9 +2,12 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import sequenceplanner.IO.ReadFromVolvoFile;
@@ -16,9 +19,11 @@ import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
 import sequenceplanner.efaconverter2.reduction.Reduction;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.Model;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -46,16 +51,16 @@ public class GUIController {
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
+        //Turned off by Patrik 2011 - 06 - 31
         //Set observer on model
-        opViewController = new OperationViewController();
-        guiModel.getModel().addObserver(opViewController);
-        //Add first operation view to opViewController
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
+//        opViewController = new OperationViewController();
+//        guiModel.getModel().addObserver(opViewController);
 
-        //  addNewOpTab();
         addListeners();
 
+        //Add a new empty operation view
+        final OperationView opView = guiModel.createNewOpView();
+        addNewOpTab(opView);
 
     }
 
@@ -87,6 +92,8 @@ public class GUIController {
         guiView.addSavePropViewL(new SavePropViewListener());
         guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
         guiView.addAddOperationsFromFileL(new AddOperationsFromFileListener());
+        guiView.addShortCommandsL(new AddShortCommandsListener());
+        guiView.addAboutL(new AddAboutListener());
     }
     //Listener classes
 
@@ -95,12 +102,16 @@ public class GUIController {
     }
 
     //private methods
-    private void addNewOpTab() {
-        guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+    /**
+     * To add a {@link OperationView} to a operation tab in the operationRootView
+     * @param iOperationView the view to add.
+     */
+    private void addNewOpTab(final OperationView iOperationView) {
+        guiView.addNewOpTab(iOperationView.toString(), iOperationView);
+//        opViewController.addOperationView(iOperationView);
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
 
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
+        iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
 
     }
 
@@ -113,8 +124,8 @@ public class GUIController {
      */
     public void addNewOpTab(ViewData data) {
         if (!isOpened(data)) {
-            guiModel.createNewOpView(data);
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView(data);
+            addNewOpTab(opView);
 
         } else {
             guiView.setFocusedOperationView(data);
@@ -131,8 +142,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView();
+            addNewOpTab(opView);
         }
     }
 
@@ -167,8 +178,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.addAllOperations();
-            addNewOpTab();
+            final OperationView opView = guiModel.addAllOperations();
+            addNewOpTab(opView);
         }
     }
     //Project menu listeners
@@ -292,7 +303,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
             export.save();
@@ -305,7 +318,9 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if(parser.getSpEFAutomata().getAutomatons().isEmpty()) return;
+            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
+                return;
+            }
             Reduction reduce = new Reduction(parser.getSpEFAutomata());
             DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
             DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
@@ -345,16 +360,44 @@ public class GUIController {
         }
     }
 
+    class OperationIdTextFieldListener implements KeyListener{
+        int id;
+        public OperationIdTextFieldListener(int id){
+            super();
+        }
+        
+        @Override
+        public void keyTyped(KeyEvent e) {
+            System.out.println("gltt");
+            System.out.println("get keycode"+e.getKeyCode());
+            System.out.println("keyevent keycode"+KeyEvent.VK_ENTER);
+            if(e.getKeyCode()== KeyEvent.VK_ENTER){
+                
+                JTextField field = (JTextField) e.getSource();
+                System.out.println(guiModel.getModel().getOperation(id).getNodeData().getName());
+                guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                System.out.println(guiModel.getModel().getOperation(id).getNodeData().getName());
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
+        
+        
+    }
     class BruteForceVisualizationListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            final OperationView opView = guiModel.getOperationViews().getLast();
-            opView.setName("Projection" + guiModel.getModel().getCounter());
+            final OperationView opView = guiModel.createNewOpView();
+            opView.setName("Projection" + Model.newId());
             new UserInteractionForVisualization(opView, guiModel.getModel());
-            addNewOpTab();
-
+            addNewOpTab(opView);
         }
     }
 
@@ -369,6 +412,23 @@ public class GUIController {
                 final ReadFromVolvoFile r = new ReadFromVolvoFile(path, null, guiModel.getModel());
                 r.run();
             }
+        }
+    }
+
+    class AddShortCommandsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            HelpPanes hp = new HelpPanes("Short Commands");
+
+        }
+    }
+
+    class AddAboutListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Soon implemented");
         }
     }
 
@@ -399,9 +459,13 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    
-                    
+                    if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
+                        clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    } else {
+                        clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                    }
+
+
                 }
             }
         }
@@ -462,8 +526,9 @@ public class GUIController {
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data,panel,panel.getEditor());
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
             panel.addEditorSaveListener(ctrl);
+            panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId()));
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {

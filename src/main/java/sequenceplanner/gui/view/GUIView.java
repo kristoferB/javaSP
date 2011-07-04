@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.ScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.Iterator;
@@ -22,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JViewport;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 import net.infonode.docking.DockingWindow;
@@ -44,7 +42,6 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.objectattribute.PropertyView;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
-import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -181,12 +178,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         propertyView = new PropertyView(guiModel.getGlobalProperties());
 
-        //Create first opview
-        opViewIndex++;
-        opViewMap.addView(opViewIndex, new View(guiModel.getOperationViews().getFirst().toString(), null, guiModel.getOperationViews().getFirst()));
-
         //Sets all inner root windows
-
         operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
         operationRootView.getViewProperties().setAlwaysShowTitle(false);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
@@ -194,11 +186,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
 
         rootViewMap.addView(1, operationRootView);
-
-        guiModel.getOperationViews().getFirst().addmxIEventListener(this);
-        selectedOperationView = guiModel.getOperationViews().getFirst();
-        propertyView.setOpView(guiModel.getOperationViews().getFirst());
-
 
         //Create consoltreeRoote
         consoleViewMap.addView(1, new View("console", null, new JScrollPane(console = new JTextArea())));
@@ -232,7 +219,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectViewMap.addView(1, objectMenu);
         objectViewMap.addView(2, new View("Property view", null, propertyView));
 
-        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
+//        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
+        objectRoot.setWindow(objectDocks = new TabWindow(objectViewMap.getView(2)));
 
         objectRootView.getViewProperties().setAlwaysShowTitle(false);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
@@ -355,11 +343,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Reduced-order EFA
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization;
+
+    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
-            normalEFA, reduceEFA;
+            normalEFA, reduceEFA, about, shortCommands;;
 
     private JMenuBar createMenu() {
         JMenuBar mb = new JMenuBar();
@@ -416,6 +405,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         windows.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(windows);
 
+        //Help
+        help = new JMenu("Help");
+        help.add(shortCommands = new JMenuItem("Short commands"));
+        help.add(about = new JMenuItem("About"));
+        this.add(help);
+
         //Add menues to menubar
         mb.add(fileMenu);
         mb.add(edit);
@@ -425,6 +420,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         mb.add(em);
         mb.add(windows);
         mb.add(visualization);
+        mb.add(help);
         return mb;
 
 
@@ -535,6 +531,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public void addAddOperationsFromFileL(ActionListener l) {
         addOperationsFromFile.addActionListener(l);
+    }
+    public void addShortCommandsL(ActionListener l){
+        shortCommands.addActionListener(l);
+    }
+    public void addAboutL(ActionListener l){
+        about.addActionListener(l);
     }
 //End listeners 
     //</editor-fold>
@@ -705,7 +707,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             if (data.getName().equals(opViewMap.getView(i).getTitle())) {
                 TabWindow parent = (TabWindow) opViewMap.getView(i).getWindowParent();
                 //Set the tab containing the View selected
-                parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
+                if(parent != null)
+                    parent.setSelectedTab(parent.getChildWindowIndex(opViewMap.getView(i)));
+                else
+                    opViewMap.getView(i).restore();
             }
         }
 
@@ -736,13 +741,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();
-
-                //Get the TabWindow containing the view
                 TabWindow parent = (TabWindow) objectViewMap.getView(i).getWindowParent();
-
+                //Get the TabWindow containing the view
+                if(parent != null)
+                    parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
+                else
+                    opViewMap.getView(i).restore();
                 //Set the tab containing the View selected
-                parent.setSelectedTab(parent.getChildWindowIndex(objectViewMap.getView(i)));
-
+                
 
                 return false;
 

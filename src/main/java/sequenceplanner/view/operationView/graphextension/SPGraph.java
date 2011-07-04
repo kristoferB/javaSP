@@ -982,8 +982,8 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
-        Cell edge1 = CellFactory.getInstance().getEdge(true, false);
-        Cell edge2 = CellFactory.getInstance().getEdge(true, false);
+        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
+        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
 
 //      Object[] cells = new Object[3];
 

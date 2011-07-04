@@ -118,8 +118,10 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
-        final Integer count = mModel.getCounter();
-        return insertOperation("OP" + count);
+        final OperationData opData = insertOperation("OP");
+        int count = opData.getId();
+        opData.setName("OP" + count);
+        return opData;
     }
 
     /**
@@ -128,21 +130,10 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation(final String iName) {
-        Integer idCounter = getUpdatedIdCount();
-        OperationData opData = new OperationData(iName, idCounter);
+        OperationData opData = new OperationData(iName, Model.newId());
         TreeNode[] toAdd = new TreeNode[1];
         toAdd[0] = new TreeNode(opData);
         mModel.saveOperationData(toAdd);
         return opData;
-    }
-
-    /**
-     * Updates idcounter with one and returns this new value.
-     * @return the new value
-     */
-    public Integer getUpdatedIdCount() {
-        Integer idCount = mModel.getCounter();
-        mModel.setCounter(idCount + 1);
-        return idCount;
     }
 }
