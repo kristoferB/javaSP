@@ -307,7 +307,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
-                model.saveView(viewData.removeFirst());
+                model.saveView(viewData.getFirst());
             }
 
 //            model.saveOperationViews(viewData.toArray(new ViewData[0]));

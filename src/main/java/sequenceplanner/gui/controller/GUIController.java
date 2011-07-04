@@ -23,11 +23,8 @@ import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
-<<<<<<< HEAD
 import sequenceplanner.model.Model;
-=======
 import sequenceplanner.model.TreeNode;
->>>>>>> origin/finalweek
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;

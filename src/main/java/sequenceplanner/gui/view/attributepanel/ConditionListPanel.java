@@ -1,6 +1,7 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -87,9 +88,18 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         return conditionList.containsValue(condition);
     }
 
+    @Override
+    public void deleteCondition(Component conditionLabel) throws NullPointerException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+
     void clear() {
         System.out.println("clear2");
         this.removeAll();
         this.repaint();
     }
+
+
 }
