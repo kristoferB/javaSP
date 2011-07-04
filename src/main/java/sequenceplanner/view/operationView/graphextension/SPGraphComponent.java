@@ -134,7 +134,7 @@ public class SPGraphComponent extends mxGraphComponent {
 
          private void insert(boolean before) {
             SPGraph SPgraph = (SPGraph) getGraph();
-
+             System.out.println("insert 1");
             if (SPgraph.getSelectionCount() == 1 && SPgraph.getSelectionCell() instanceof Cell) {
                Cell cell = (Cell) SPgraph.getSelectionCell();
 
@@ -284,7 +284,6 @@ public class SPGraphComponent extends mxGraphComponent {
 
    @Override
    public Object[] importCells(Object[] cells, double dx, double dy, Object target, Point location) {
-
 
 
       if (cells != null && cells.length == 1 && cells[0] instanceof Cell) {

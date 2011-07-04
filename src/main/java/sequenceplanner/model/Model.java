@@ -80,9 +80,6 @@ public class Model extends Observable implements IModel {
         operationRoot = new TreeNode(new FolderData("Operations", newId()));
         treeRoot.insert(operationRoot);
 
-        sopNodeRootsRoot = new TreeNode(new FolderData("sops", newId()));
-        treeRoot.insert(sopNodeRootsRoot);
-
         //liasonRoot = new TreeNode(new FolderData("Liasons", newId()));
         //treeRoot.insert(liasonRoot);
 
@@ -608,15 +605,15 @@ public class Model extends Observable implements IModel {
 
         s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constants.AND + " ";
 
-        for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
-            Integer[] integers = it.next();
-            String[] out = cache.get(integers[0]);
-            s =
-                    s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
+      for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
+         Integer[] integers = it.next();
+         String[] out = cache.get(integers[0]);
+         s =
+               s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
 
-            if (it.hasNext()) {
-                s = s + " " + Constants.AND + " ";
-            }
+         if (it.hasNext()) {
+            s = s + " " + Constants.AND + " ";
+         }
 
         }
 
@@ -724,11 +721,11 @@ public class Model extends Observable implements IModel {
     private ArrayList<Integer> getListIds(ArrayList<TreeNode> nodes) {
         ArrayList<Integer> result = new ArrayList<Integer>();
 
-        for (TreeNode node : nodes) {
-            result.add(node.getId());
-        }
+      for (TreeNode node : nodes) {
+         result.add(node.getId());
+      }
 
-        return result;
+      return result;
 
     }
 

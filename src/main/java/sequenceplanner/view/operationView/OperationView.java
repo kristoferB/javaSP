@@ -307,7 +307,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
-                model.saveView(viewData.getFirst());
+                model.saveView(viewData.removeFirst());
             }
 
 //            model.saveOperationViews(viewData.toArray(new ViewData[0]));
@@ -320,12 +320,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             setChanged(false);
             updateName();
-
-            final List<TreeNode> allOperationsList2 = model.getAllOperations();
-            for (final TreeNode tn : allOperationsList2) {
-                final OperationData opData = (OperationData) tn.getNodeData();
-                System.out.println("operation: " + opData.getName() + " " + opData.mUniqueId);
-            }
 
         } else {
             logger.debug("Save was called but with a empty name");

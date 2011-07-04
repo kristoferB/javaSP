@@ -51,6 +51,7 @@ public class OperationViewTransferhandler extends mxGraphTransferHandler {
                ResourceData res = (ResourceData) t.getTransferData(TransferableNode.resource);
 
                if (cell != null && (cell.isSOP() || cell.isOperation() )) {
+                   System.out.println("transferable1");
                   OperationData d = (OperationData) cell.getValue();
                   d.setRealizedBy(res.getId());
                   ((SPGraph)graphComponent.getGraph()).setPreferenceValue(cell, d);
@@ -61,6 +62,7 @@ public class OperationViewTransferhandler extends mxGraphTransferHandler {
                LiasonData li = (LiasonData) t.getTransferData(TransferableNode.liason);
 
                if (cell != null && (cell.isSOP() || cell.isOperation() ) ) {
+                   System.out.println("transferable2");
                   OperationData d = (OperationData) cell.getValue();
                   d.setAccomplishes(li.getId());
                   ((SPGraph)graphComponent.getGraph()).setPreferenceValue(cell, d);
