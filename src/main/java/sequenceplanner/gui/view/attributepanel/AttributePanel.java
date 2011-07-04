@@ -6,7 +6,7 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.gui.controller.AttributeMouseAdapter;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 

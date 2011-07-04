@@ -557,6 +557,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addAboutL(ActionListener l) {
         about.addActionListener(l);
     }
+    
 //End listeners 
     //</editor-fold>
 

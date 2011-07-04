@@ -21,8 +21,10 @@ public class HelpPanes extends JFrame{
     public HelpPanes(String window){
         try{
         if(window.equals("Short Commands")){
+            String url = "C:\\Users\\Peter\\Sequence-Planner\\src\\main\\resources\\sequenceplanner\\resources";
             JEditorPane ep = new JEditorPane();
-            ep.setPage("/resources/ShortCommands.html");
+            ep.setContentType("text/html");
+            ep.setPage(url);
             ep.setEditable(false);
             this.setVisible(true);
             //ep.setPage("/ShortCommands.html");
@@ -30,6 +32,6 @@ public class HelpPanes extends JFrame{
         else if(window.equals("About")){
             //ep.setPage("\\About.xhtml");
         }
-        }catch(IOException e){System.out.println("IOException: Wrong folder adress");}
+        }catch(IOException e){System.out.println("IOException: Wrong folder adress" + e);}
     }
 }
