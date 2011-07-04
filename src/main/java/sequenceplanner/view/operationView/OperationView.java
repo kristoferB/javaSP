@@ -358,11 +358,14 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(theSopNode);//Blir null om det inte finns något condition att sätta.
         //-----------------------------------------------------------------------
-        
+        System.out.println("operationConditionMap =" + operationConditionMap.size());
         //Add new conditions from SOP--------------------------------------------
         for (TreeNode node : data) {
             if (node.getNodeData() instanceof OperationData){
                 OperationData d = (OperationData) node.getNodeData();
+                
+                //if there is no condition present for this view the new conditions are set 
+                //to null.
                 if(operationConditionMap.isEmpty()){
                     Map<ConditionType,Condition> emptyMap = new HashMap<ConditionType,Condition>();
                     emptyMap.put(ConditionType.PRE, null);
@@ -370,9 +373,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                     d.setConditions(emptyMap, this.startName);
                     node.setNodeData(d);
                 }
+                //Goes through all operationviews where the operation
+                //is present and sets the new condition.
                 for (OperationData operation : operationConditionMap.keySet()) {
                     System.out.println("3setornoset");
-
+                    System.out.println(operation.getName());
                     if (operation.getName().equalsIgnoreCase(d.getName())) {
                         System.out.println("4setornoset");
                         d.setConditions(operationConditionMap.get(operation), this.startName);

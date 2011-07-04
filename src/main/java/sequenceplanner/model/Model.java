@@ -523,7 +523,7 @@ public class Model extends Observable implements IModel{
          LinkedList<LinkedList<SeqCond>> sequenceCondition,
          LinkedList<Integer[]> resources, boolean showPath) {
       String s = "";
-
+/*
 
       for (LinkedList<SeqCond> linkedList : sequenceCondition) {
          if (linkedList.size() == 1) {
@@ -593,7 +593,7 @@ public class Model extends Observable implements IModel{
          }
 
       }
-
+             */
       return s;
    }
 

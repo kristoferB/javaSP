@@ -21,6 +21,7 @@ import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -128,6 +129,10 @@ public class GUIController {
 
     public GUIView getView() {
         return this.guiView;
+    }
+
+    Object getModel() {
+        return guiModel.getModel();
     }
 
     //File menu listenrs
@@ -517,11 +522,15 @@ public class GUIController {
         }
         return false;
     }
-
+    
+    public void saveOperationToModel(OperationData data){
+        TreeNode dataNode = new TreeNode(data);
+        guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
+    }
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(),this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
             guiModel.getModel().addObserver(ctrl);
