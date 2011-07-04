@@ -28,7 +28,6 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
-import sequenceplanner.model.data.SopNodeData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.multiProduct.OperationNode;
 import sequenceplanner.view.operationView.Constants;
