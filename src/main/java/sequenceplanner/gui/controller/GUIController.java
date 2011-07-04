@@ -51,10 +51,9 @@ public class GUIController {
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
 
-        //Turned off by Patrik 2011 - 06 - 31
         //Set observer on model
-//        opViewController = new OperationViewController();
-//        guiModel.getModel().addObserver(opViewController);
+        opViewController = new OperationViewController();
+        guiModel.getModel().addObserver(opViewController);
 
         addListeners();
 

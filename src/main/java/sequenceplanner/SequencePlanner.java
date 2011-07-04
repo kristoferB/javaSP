@@ -27,24 +27,6 @@ public class SequencePlanner {
         initiateLogger();
 
     }
-    /**
-     * Show splash.
-     *
-     * @param r the r
-     */
-    private void showSplash(final Rectangle r) {
-        Thread splash = new Thread() {
-
-            @Override
-            public void run() {
-                SplashScreen ss = new SplashScreen();
-                ss.showSplash(r);
-
-            }
-        };
-        splash.start();
-
-    }
 
     /**
      * The main method.

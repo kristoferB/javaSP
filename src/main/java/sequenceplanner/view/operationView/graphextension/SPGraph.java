@@ -508,8 +508,8 @@ public class SPGraph extends mxGraph {
                 OperationData d = (OperationData) value;
 
                 getModel().setValue(cell, value);
-                d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
-                        d.getSequenceCondition(), d.getResourceBooking()));
+//                d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
+//                        d.getSequenceCondition(), d.getResourceBooking()));
                 updateCellSize(cell, true);
 
 

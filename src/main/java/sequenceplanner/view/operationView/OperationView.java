@@ -300,9 +300,11 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             LinkedList<ViewData> viewData = convertToViewData(cell);
             TreeNode[] data = convertToTreeData(cell);
 
-            //comment by Patrik
-//            removeConditions();
-//            data = setConditions(data);
+            System.out.println("start remove");
+            removeConditions();
+            System.out.println("start set conditions");
+            data = setConditions(data);
+            System.out.println("end set conditions");
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
@@ -311,12 +313,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
             model.saveOperationData(data);
-
-            System.out.println("start remove");
-            removeConditions();
-            System.out.println("start set conditions");
-            data = setConditions(data);
-            System.out.println("end set conditions");
 
             setChanged(false);
             updateName();
@@ -370,14 +366,18 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                 System.out.println("add conditions for operation: " + d.getName());
 
                 //Why is this part added?---
-                if(operationConditionMap.isEmpty()){
-                    Map<ConditionType,Condition> emptyMap = new HashMap<ConditionType,Condition>();
-                    emptyMap.put(ConditionType.PRE, null);
-                    emptyMap.put(ConditionType.POST, null);
-                    d.setConditions(emptyMap, this.startName);
-                    node.setNodeData(d);
-                }//------------------
-                
+//                if(operationConditionMap.isEmpty()){
+//                    Map<ConditionType,Condition> emptyMap = new HashMap<ConditionType,Condition>();
+//                    emptyMap.put(ConditionType.PRE, null);
+//                    emptyMap.put(ConditionType.POST, null);
+//                    d.setConditions(emptyMap, this.startName);
+//                    node.setNodeData(d);
+//                }//------------------
+
+                if(operationConditionMap.containsKey(d)) {
+                    System.out.println(d.getName() + " is in condition map as key");
+                }
+
                 for (OperationData operation : operationConditionMap.keySet()) {
                     System.out.println("3setornoset");
 
