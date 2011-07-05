@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.OperationData;
 
 /**
  *
@@ -39,21 +40,26 @@ public class Actions {
             this.parent = parent;
         }
     }
-    
-    public static class InsertOperation implements ActionListener{
+
+    public static class InsertOperation implements ActionListener {
+
         private int child = -1;
         private TreeNode parent = null;
-        
-        public InsertOperation(TreeNode parent, int type){
+
+        public InsertOperation(TreeNode parent, int type) {
             this.parent = parent;
             this.child = type;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            Model m = getAbstractView(e).getModel();
+            int id = Model.newId();
+            OperationData opData = new OperationData("OP " + id, id);
+            TreeNode[] toAdd = new TreeNode[1];
+            toAdd[0] = new TreeNode(opData);
+            m.saveOperationData(toAdd);
         }
-        
     }
 
     /**
