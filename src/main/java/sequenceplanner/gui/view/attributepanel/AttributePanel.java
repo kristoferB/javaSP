@@ -50,16 +50,16 @@ public class AttributePanel extends JPanel {
         jSeparator1 = new JSeparator();
         operationIdTextField = new JTextField();
         operationIdTextField.setActionCommand("set name");
-
-        preCondListPanel = new ConditionListPanel();
-        postCondListPanel = new ConditionListPanel();
+        operationAttributeEditor = new OperationAttributeEditor();
+        preCondListPanel = new ConditionListPanel(operationAttributeEditor);
+        postCondListPanel = new ConditionListPanel(operationAttributeEditor);
         jLabel1 = new JLabel("Preconditions");
         jLabel2 = new JLabel("Postconditions");
         jScrollPane1 = new JScrollPane(preCondListPanel);
         jScrollPane2 = new JScrollPane(postCondListPanel);
 
         jSeparator2 = new JSeparator();
-        operationAttributeEditor = new OperationAttributeEditor();
+        
 
         operationIdTextField.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         operationIdTextField.setText("Operation ID: ");

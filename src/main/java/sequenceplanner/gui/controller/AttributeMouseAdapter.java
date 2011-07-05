@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package sequenceplanner.gui.controller;
 
 import java.awt.Component;
@@ -10,32 +9,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import sequenceplanner.gui.view.AttributeClickMenu;
 import sequenceplanner.gui.view.attributepanel.ConditionListPanel;
+import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 
 /**
  *
  * @author Peter
  */
-public class AttributeMouseAdapter  extends MouseAdapter{
+public class AttributeMouseAdapter extends MouseAdapter {
 
-    private ConditionListPanel condList = new ConditionListPanel();
+    //private ConditionListPanel condList = new ConditionListPanel();
     private Component clickedComponent;
+    private String conditionValue;
+    private String conditionKey;
+    private AttributeClickMenu menu;
+    private OperationAttributeEditor editor;
 
-    public AttributeMouseAdapter( /*Map<String, Map<ConditionType, Condition>> condMap*/){
-        //pull out condition
+    public AttributeMouseAdapter(OperationAttributeEditor editor) {
+        this.editor = editor;
         System.out.println("XxXXxXxXXXxXXXxx");
     }
 
-/*    @Override
+    /*    @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("TTT");
-        popup(e);
+    System.out.println("TTT");
+    popup(e);
     }*/
-
     @Override
     public void mouseReleased(MouseEvent e) {
         System.out.println("RRRR");
@@ -43,7 +47,7 @@ public class AttributeMouseAdapter  extends MouseAdapter{
     }
 
     /**
-     * Creates a EditorClickMenu for clicked node
+     * Creates a AttributeClickMenu for clicked node
      *
      * @param e a MouseEvent
      */
@@ -51,18 +55,21 @@ public class AttributeMouseAdapter  extends MouseAdapter{
         System.out.println("OOO");
         //Also need to check if pre or post panel
         if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-            System.out.println("Click: "+e.getX()+e.getY());
+            System.out.println("Click: " + e.getX() + e.getY());
 
-            JLabel panel = (JLabel)e.getSource();
+            clickedComponent = (JLabel) e.getSource();
+            getConditionValue(clickedComponent);
 
-            clickedComponent = panel;
-            if(clickedComponent != null){
-                System.out.println("hurrum: "+panel.toString());
-                AttributeClickMenu menu = new AttributeClickMenu(clickedComponent,  new MenuListener());
-                if(clickedComponent instanceof JLabel){
+
+            if (clickedComponent != null) {
+                if (clickedComponent instanceof JLabel) {
+                    if (!conditionValue.equals("")) {
+                        menu = new AttributeClickMenu(clickedComponent, new MenuListener(), true);
                         System.out.println("The click is on condition panel");
-                        menu.showAttributePanelMenu(e);
-
+                    }else{
+                        menu = new AttributeClickMenu(clickedComponent, new MenuListener(), false);
+                    }
+                    menu.showAttributePanelMenu(e);
                 }
             }
         }
@@ -71,27 +78,37 @@ public class AttributeMouseAdapter  extends MouseAdapter{
     /**
      * Listens for actions in AttributeClickMenu
      */
-    public class MenuListener implements ActionListener{
+    public class MenuListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
-            if(command.equals("DELETE_VALUE")){
+            if (command.equals("DELETE_VALUE")) {
                 System.out.println("DELETE_VALUE");
                 //AttrController.delete(cond)& delete panel
-                condList.deleteCondition(clickedComponent);
+                //condList.deleteCondition(conditionValue);
+                //flytta delete hit..
             }
-            if(command.equals("EDIT_VALUE")){
+            if (command.equals("EDIT_VALUE")) {
                 System.out.println("EDIT_VALUE");
                 //AttrController.displayCondInField(Cond)
-                //Issue: Delete cond before or after? If after -> need to flag
-                //that its edited, and delete after.
-                //If before -> need check so a cond is saved.
+                System.out.println("Edit: "+ conditionKey + " Ed: " + editor.toString());
+                editor.setConditionString(conditionKey);
+
             }
         }
-
     }
 
+    public void getConditionValue(Component conditionLabel){
+        JLabel condition = (JLabel)conditionLabel;
+        Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
+        Matcher m1 = conditionValuePattern.matcher(condition.getText());
+        if(m1.find()){
+            conditionValue = m1.group();
+            conditionKey = condition.getText().substring(m1.end());
+            System.out.println("Deeeee: " + conditionKey);
+            //Note: måste hämta keyn från modellen, får inte med den riktiga uppsättningen annars
+
+        }else conditionValue = "";
+    }
 }
-
-

@@ -430,7 +430,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Soon implemented");
+            HelpPanes hp = new HelpPanes("About");
         }
     }
 

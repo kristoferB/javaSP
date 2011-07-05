@@ -6,6 +6,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.gui.controller.AttributeMouseAdapter;
 
 /**
  * Panel showing a list of Conditions. 
@@ -14,8 +15,12 @@ import sequenceplanner.condition.Condition;
 public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
     private HashMap<String, Condition> conditionList;
+    private JPanel internalPanel;
+    JLabel conditionLabel;
+    OperationAttributeEditor editor;
 
-    public ConditionListPanel() {
+    public ConditionListPanel(OperationAttributeEditor editor) {
+        this.editor = editor;
         conditionList = new HashMap<String, Condition>();
         init();
     }
@@ -40,14 +45,15 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             this.removeAll();
             for (String key : conditionList.keySet()) {
                 if (conditionList.get(key) != null) {
-                    System.out.println("panel");
-                    JPanel internalPanel = new JPanel();
+                    System.out.println("kommer hit");
+                    internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
-                    JLabel conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
+                    conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
                     conditionLabel.setVisible(true);
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
+                    addConditionListener(new AttributeMouseAdapter(editor));
                 } else {
                     this.removeAll();
                     
@@ -61,6 +67,14 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             this.repaint();
         }
     }
+
+    @Override
+    public void deleteCondition(String conditionValue){
+            System.out.println("Delete: "+ conditionValue);
+            //opData.removeCondition();
+        
+    }
+
 
     @Override
     public void removeCondition(Condition condition) throws NullPointerException {
@@ -77,7 +91,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         return conditionList.containsValue(condition);
     }
 
-    @Override
     public void deleteCondition(Component conditionLabel) throws NullPointerException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -88,5 +101,12 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         System.out.println("clear2");
         this.removeAll();
         this.repaint();
-    }
+
+}
+    /*
+     * Adds ActionListener to the conditions that are listed
+     */
+     public void addConditionListener(AttributeMouseAdapter l){
+         conditionLabel.addMouseListener(l);
+     }
 }
