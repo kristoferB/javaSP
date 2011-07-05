@@ -25,7 +25,9 @@ import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import sequenceplanner.editor.IGlobalProperty;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.xml.GlobalProperty;
 
 /**
@@ -159,10 +161,41 @@ public class ConvertToXML {
       if (!data.getPResourceBooking().isEmpty()) {
          dataX.setPostResurceBooking(getBookings(data.getPResourceBooking()));
       }
+      if(!data.getGlobalConditions().isEmpty()){
+          dataX.getPreCondition().addAll(getPreConditions(data));
+      }
 
+      if(!data.getGlobalConditions().isEmpty()){
+          dataX.getPostCondition().addAll(getPostConditions(data));
+      }
       return dataX;
    }
  
+      private LinkedList<String> getPostConditions(sequenceplanner.model.data.OperationData data){
+       LinkedList<String> list = new LinkedList<String>();
+       data.getGlobalConditions().entrySet();
+       for(Entry string: data.getGlobalConditions().entrySet()){
+           System.out.println("save"+string.toString());
+           if(string.toString().matches(null))
+               if(string.getKey().equals(ConditionType.PRE))
+                   list.add((String)string.getValue());
+       }
+       return list;
+   }
+      
+   private LinkedList<String> getPreConditions(sequenceplanner.model.data.OperationData data){
+       LinkedList<String> list = new LinkedList<String>();
+       data.getGlobalConditions().entrySet();
+       System.out.println("save stuffffff");
+       for(Entry string: data.getGlobalConditions().entrySet()){
+           System.out.println("save stuffffff"+string.toString());
+           if(string.toString().matches(null))
+               if(string.getKey().equals(ConditionType.PRE))
+                   list.add((String)string.getValue());
+       }
+       return list;
+   }
+   
    private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
        SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
        LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();

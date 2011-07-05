@@ -101,7 +101,7 @@ public class AttributePanelController implements ActionListener, Observer {
             } else { //post
                 map.put(ConditionType.POST, condition);
             }
-
+            
             opData.setConditions(map, "Algebraic " + opData.getAlgebraicCounter());
             opData.increaseAlgebraicCounter();
             System.out.println(opData.getGlobalConditions().size());

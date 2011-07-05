@@ -1,12 +1,8 @@
 package sequenceplanner.gui.view.attributepanel;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
@@ -49,13 +45,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
                     JLabel conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
                     conditionLabel.setVisible(true);
-                    if (key.equals("manual")) {
-                        JButton editButton = new JButton("Edit");
-                        internalPanel.add(editButton);
-                        JButton deleteButton = new JButton("Delete");
-                        internalPanel.add(deleteButton);
-                    }
-
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
@@ -100,6 +89,4 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         this.removeAll();
         this.repaint();
     }
-
-
 }

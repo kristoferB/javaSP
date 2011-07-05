@@ -234,8 +234,8 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
-//                setChanged();
-//                notifyObservers(od);
+                setChanged();
+                notifyObservers(od);
             } else {
                 logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
             }
@@ -1234,7 +1234,7 @@ public class Model extends Observable implements IModel {
             return false;
         }
         //-----------------------------------------------------------------------
-
+        System.out.println(sopNodeRoot.toString());
         //Get new conditions from SOP--------------------------------------------
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);

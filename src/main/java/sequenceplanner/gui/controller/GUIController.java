@@ -533,6 +533,8 @@ public class GUIController {
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }
+        
+        
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
