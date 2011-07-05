@@ -107,6 +107,7 @@ public class AttributePanelController implements ActionListener, Observer {
             System.out.println(opData.getGlobalConditions().size());
             this.attributePanel.setConditions();
             this.attributeEditor.clearTextField();
+            System.out.println("entryset "+opData.getGlobalConditions().entrySet().toString());
             controller.saveOperationToModel(opData);
         }
 

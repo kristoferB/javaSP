@@ -530,6 +530,7 @@ public class GUIController {
      * @param data 
      */
     public void saveOperationToModel(OperationData data){
+        System.out.println("guic entryset "+data.getGlobalConditions().entrySet().toString());
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }

@@ -119,7 +119,7 @@ public class ConvertToXML {
     }
 
     private OperationData getOperationData(sequenceplanner.model.data.OperationData data) {
-
+        System.out.println("ctx entryset "+data.getGlobalConditions().entrySet().toString());
         OperationData dataX = new OperationData();
 
         if (!data.getDescription().isEmpty()) {

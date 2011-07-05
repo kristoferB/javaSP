@@ -12,6 +12,7 @@ import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.utils.SPFileFilter;
 import sequenceplanner.view.operationView.Constants;
@@ -228,6 +229,8 @@ public class GUIModel {
 
     public boolean saveModelToFile(File file) {
         System.out.println("");
+        OperationData data = (OperationData) model.getOperation(15).getNodeData();
+        System.out.println("ctx entryset " +  data.getGlobalConditions().entrySet().toString());
         ConvertToXML converter = new ConvertToXML(getModel());
         SequencePlannerProjectFile project = converter.convert();
 

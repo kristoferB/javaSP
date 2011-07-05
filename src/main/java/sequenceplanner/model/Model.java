@@ -232,12 +232,13 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
+                System.out.println("entryset "+((OperationData) this.getOperation(15).getNodeData()).getGlobalConditions().entrySet().toString());
                 setChanged();
                 notifyObservers(od);
             } else {
                 logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
             }
-
+            System.out.println(this.getOperation(15).getNodeData().getName());
         }
 
         reloadNamesCache();
@@ -1214,6 +1215,7 @@ public class Model extends Observable implements IModel {
             }
         }
         iViewData.mSopNodeRoot = iSopNode;
+        
     }
 
     /**
@@ -1240,7 +1242,7 @@ public class Model extends Observable implements IModel {
 
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
-//            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
+            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
             operation.setConditions(operationConditionMap.get(operation), iLabel);
         }
         //-----------------------------------------------------------------------
