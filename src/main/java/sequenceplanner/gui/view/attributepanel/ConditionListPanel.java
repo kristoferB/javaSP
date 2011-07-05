@@ -1,15 +1,12 @@
 package sequenceplanner.gui.view.attributepanel;
 
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
+import java.awt.Component;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
-import sequenceplanner.gui.controller.AttributePanelController;
 
 /**
  * Panel showing a list of Conditions. 
@@ -109,6 +106,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     /*
      * Adds ActionListener to the conditions that are listed
      */
-
+     public void addConditionListener(AttributeMouseAdapter l){
+         conditionLabel.addMouseListener(l);
+     }
 
 }
