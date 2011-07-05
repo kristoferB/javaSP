@@ -2,6 +2,8 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
@@ -21,6 +23,8 @@ import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.Model;
+import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
@@ -51,13 +55,11 @@ public class GUIController {
         //Set observer on model
         opViewController = new OperationViewController();
         guiModel.getModel().addObserver(opViewController);
-        //Add first operation view to opViewController
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
 
-        //  addNewOpTab();
         addListeners();
 
+        final OperationView opView = new OperationView(guiModel.getModel(), "View" + Model.newId());
+        addNewOpTab(opView);
 
     }
 
@@ -99,13 +101,16 @@ public class GUIController {
     }
 
     //private methods
-    private void addNewOpTab() {
-        guiView.addNewOpTab(guiModel.getOperationViews().getLast().toString(), guiModel.getOperationViews().getLast());
-        opViewController.addOperationView(guiModel.getOperationViews().getLast());
+    /**
+     * To add a {@link OperationView} to a operation tab in the operationRootView
+     * @param iOperationView the view to add.
+     */
+    private void addNewOpTab(final OperationView iOperationView) {
+        guiView.addNewOpTab(iOperationView.toString(), iOperationView);
+        opViewController.addOperationView(iOperationView);
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
 
-        guiModel.getOperationViews().getLast().addGraphComponentListener(new OperationViewGraphicsListener(guiModel.getOperationViews().getLast()));
-
+        iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
     }
 
     /**
@@ -117,8 +122,8 @@ public class GUIController {
      */
     public void addNewOpTab(ViewData data) {
         if (!isOpened(data)) {
-            guiModel.createNewOpView(data);
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView(data);
+            addNewOpTab(opView);
 
         } else {
             guiView.setFocusedOperationView(data);
@@ -130,13 +135,17 @@ public class GUIController {
         return this.guiView;
     }
 
+    public Object getModel() {
+        return guiModel.getModel();
+    }
+
     //File menu listenrs
     private class CreateOpListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            addNewOpTab();
+            final OperationView opView = guiModel.createNewOpView();
+            addNewOpTab(opView);
         }
     }
 
@@ -171,8 +180,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.addAllOperations();
-            addNewOpTab();
+            final OperationView opView = guiModel.addAllOperations();
+            addNewOpTab(opView);
         }
     }
     //Project menu listeners
@@ -387,12 +396,10 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewOpView();
-            final OperationView opView = guiModel.getOperationViews().getLast();
-            opView.setName("Projection" + guiModel.getModel().getCounter());
+            final OperationView opView = guiModel.createNewOpView();
+            opView.setName("Projection" + Model.newId());
             new UserInteractionForVisualization(opView, guiModel.getModel());
-            addNewOpTab();
-
+            addNewOpTab(opView);
         }
     }
 
@@ -517,11 +524,19 @@ public class GUIController {
         }
         return false;
     }
-
+    
+    /**
+     * Saves an OperationData object to the main project model.
+     * @param data 
+     */
+    public void saveOperationToModel(OperationData data){
+        TreeNode dataNode = new TreeNode(data);
+        guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
+    }
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor());
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(),this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
             guiModel.getModel().addObserver(ctrl);

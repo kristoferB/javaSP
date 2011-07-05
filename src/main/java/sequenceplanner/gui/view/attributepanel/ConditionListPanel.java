@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
@@ -28,7 +29,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void init() {
-        this.setBackground(Color.white);
+
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
     }
@@ -42,6 +43,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void updateList() {
+        System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
             for (String key : conditionList.keySet()) {
@@ -63,6 +65,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             }
 
         } else {
+            System.out.println("removeall");
             this.removeAll();
             this.repaint();
         }
@@ -91,8 +94,15 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         return conditionList.containsValue(condition);
     }
 
+    @Override
+    public void deleteCondition(Component conditionLabel) throws NullPointerException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
 
     void clear() {
+        System.out.println("clear2");
         this.removeAll();
         this.repaint();
 }
@@ -100,8 +110,5 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
      * Adds ActionListener to the conditions that are listed
      */
 
-    public void addConditionListener(MouseAdapter l){
-        conditionLabel.addMouseListener(l);
 
-    }
 }

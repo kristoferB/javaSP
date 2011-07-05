@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import com.mxgraph.model.mxGeometry;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 
 
 /**
@@ -14,6 +16,8 @@ import com.mxgraph.model.mxGeometry;
  */
 public class ViewData extends Data {
     static Logger logger = Logger.getLogger(ViewData.class);
+
+    public ISopNode mSopNodeRoot = new SopNode();
 
     private boolean isClosed;
 

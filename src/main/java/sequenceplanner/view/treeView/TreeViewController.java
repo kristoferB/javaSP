@@ -55,7 +55,6 @@ public class TreeViewController {
                 if (path != null) {
                     TreeNode t = (TreeNode) path.getLastPathComponent();
                     if (Model.isView(t.getNodeData())) {
-                        //TODO q... fix controller to check for illegal multiple views
                         controller.addNewOpTab((ViewData) t.getNodeData());
                     } else if (Model.isOperation(t.getNodeData())) {
                         OperationData data = (OperationData) t.getNodeData();

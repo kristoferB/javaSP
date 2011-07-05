@@ -167,7 +167,6 @@ public class OperationActions {
                     insertedCell.getGeometry().setY(clickPoint.getY());
                     graph.addCell(insertedCell);
                 }
-                getView(e).updateSopNode();
             } finally {
                 graph.getModel().endUpdate();
             }
@@ -182,7 +181,6 @@ public class OperationActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             getView(e).getGraphComponent().getUndoManager().undo();
-            getView(e).updateSopNode();
         }
     }
 
@@ -194,7 +192,6 @@ public class OperationActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             getView(e).getGraphComponent().getUndoManager().redo();
-            getView(e).updateSopNode();
         }
     }
 
@@ -279,8 +276,6 @@ public class OperationActions {
             } else if (toRemove.isEdge()) {
                 getGraph(e).removeCells(new Object[]{toRemove});
             }
-
-            getView(e).updateSopNode();
         }
     }
 }
