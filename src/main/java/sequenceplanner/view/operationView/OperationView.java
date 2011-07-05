@@ -249,6 +249,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         Object[] o = SPGraphModel.getChildren(getGraphModel(), opRoot);
 
         for (int i = 0; i < o.length; i++) {
+            System.out.println("operation: " + o[i].toString());
             cell.insert((mxICell) o[i]);
         }
 
@@ -310,7 +311,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                 model.saveView(viewData.getFirst());
             }
 
-//            model.saveOperationViews(viewData.toArray(new ViewData[0]));
+            model.saveOperationViews(viewData.toArray(new ViewData[0]));
             model.saveOperationData(data);
             model.saveSopNode(viewData.getFirst(), getSopNodeForGraph());
 

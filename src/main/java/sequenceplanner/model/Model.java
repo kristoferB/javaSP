@@ -59,8 +59,6 @@ public class Model extends Observable implements IModel {
     private TreeNode treeRoot;
     // Holds the root to the operation folder, to enhance redability of code.
     private TreeNode operationRoot;
-    // Holds the root to the sopNodeRoot folder, to enhance redability of code.
-    private TreeNode sopNodeRootsRoot;
     // Holds the root to the Liason folder, to enhance redability of code.
     private TreeNode liasonRoot;
     // Holds the root to the Resource folder, to enhance redability of code.
@@ -234,8 +232,8 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
-//                setChanged();
-//                notifyObservers(od);
+                setChanged();
+                notifyObservers(od);
             } else {
                 logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
             }
@@ -319,7 +317,7 @@ public class Model extends Observable implements IModel {
 //
 //        fireSyncBigChangeEvent(getPath(parent));
 //
-//        reloadNamesCache();
+        reloadNamesCache();
 //        if (newNode.getNodeData() instanceof OperationData) {
 //            OperationData od = (OperationData) newNode.getNodeData();
 //        }
