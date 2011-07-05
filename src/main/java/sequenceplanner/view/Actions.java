@@ -39,6 +39,22 @@ public class Actions {
             this.parent = parent;
         }
     }
+    
+    public static class InsertOperation implements ActionListener{
+        private int child = -1;
+        private TreeNode parent = null;
+        
+        public InsertOperation(TreeNode parent, int type){
+            this.parent = parent;
+            this.child = type;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
+    }
 
     /**
      *

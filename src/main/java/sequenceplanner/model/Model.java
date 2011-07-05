@@ -1054,6 +1054,10 @@ public class Model extends Observable implements IModel {
     public boolean isResourceRoot(TreeNode node) {
         return node == getResourceRoot();
     }
+    
+    public boolean isOperationRoot(TreeNode node){
+        return node == getOperationRoot();
+    }
 
     public boolean isLiasonRoot(TreeNode node) {
         return node == getLiasonRoot();
