@@ -9,11 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import sequenceplanner.gui.view.AttributeClickMenu;
 import sequenceplanner.gui.view.attributepanel.ConditionListPanel;
+import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 
 /**
  *
@@ -21,12 +23,15 @@ import sequenceplanner.gui.view.attributepanel.ConditionListPanel;
  */
 public class AttributeMouseAdapter extends MouseAdapter {
 
-    private ConditionListPanel condList = new ConditionListPanel();
+    //private ConditionListPanel condList = new ConditionListPanel();
     private Component clickedComponent;
     private String conditionValue;
+    private String conditionKey;
     private AttributeClickMenu menu;
-    public AttributeMouseAdapter( /*Map<String, Map<ConditionType, Condition>> condMap*/) {
-        //pull out condition
+    private OperationAttributeEditor editor;
+
+    public AttributeMouseAdapter(OperationAttributeEditor editor) {
+        this.editor = editor;
         System.out.println("XxXXxXxXXXxXXXxx");
     }
 
@@ -42,7 +47,7 @@ public class AttributeMouseAdapter extends MouseAdapter {
     }
 
     /**
-     * Creates a EditorClickMenu for clicked node
+     * Creates a AttributeClickMenu for clicked node
      *
      * @param e a MouseEvent
      */
@@ -53,7 +58,8 @@ public class AttributeMouseAdapter extends MouseAdapter {
             System.out.println("Click: " + e.getX() + e.getY());
 
             clickedComponent = (JLabel) e.getSource();
-            conditionValue = condList.getConditionValue(clickedComponent);
+            getConditionValue(clickedComponent);
+
 
             if (clickedComponent != null) {
                 if (clickedComponent instanceof JLabel) {
@@ -80,15 +86,29 @@ public class AttributeMouseAdapter extends MouseAdapter {
             if (command.equals("DELETE_VALUE")) {
                 System.out.println("DELETE_VALUE");
                 //AttrController.delete(cond)& delete panel
-                condList.deleteCondition(conditionValue);
+                //condList.deleteCondition(conditionValue);
+                //flytta delete hit..
             }
             if (command.equals("EDIT_VALUE")) {
                 System.out.println("EDIT_VALUE");
                 //AttrController.displayCondInField(Cond)
-                //Issue: Delete cond before or after? If after -> need to flag
-                //that its edited, and delete after.
-                //If before -> need check so a cond is saved.
+                System.out.println("Edit: "+ conditionKey + " Ed: " + editor.toString());
+                editor.setConditionString(conditionKey);
+
             }
         }
+    }
+
+    public void getConditionValue(Component conditionLabel){
+        JLabel condition = (JLabel)conditionLabel;
+        Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
+        Matcher m1 = conditionValuePattern.matcher(condition.getText());
+        if(m1.find()){
+            conditionValue = m1.group();
+            conditionKey = condition.getText().substring(m1.end());
+            System.out.println("Deeeee: " + conditionKey);
+            //Note: måste hämta keyn från modellen, får inte med den riktiga uppsättningen annars
+
+        }else conditionValue = "";
     }
 }

@@ -53,5 +53,4 @@ public interface IConditionListPanel{
      */
     public void deleteCondition(String conditionLabel)throws NullPointerException;
 
-    public String getConditionValue(Component conditionLabel);
 }

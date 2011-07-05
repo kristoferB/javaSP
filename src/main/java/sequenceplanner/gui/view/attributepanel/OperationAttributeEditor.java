@@ -137,6 +137,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
      * @param conditionString the input String
      */
     public void setConditionString(String conditionString){
+        System.out.println("kaönfpawnfa");
         expresionTextField.setText(conditionString);
     }
     

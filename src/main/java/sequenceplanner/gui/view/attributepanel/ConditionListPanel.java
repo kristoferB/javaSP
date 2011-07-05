@@ -1,17 +1,14 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
-import sequenceplanner.model.data.OperationData;
+import sequenceplanner.gui.controller.AttributePanelController;
 
 /**
  * Panel showing a list of Conditions. 
@@ -22,7 +19,10 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     private HashMap<String, Condition> conditionList;
     private JPanel internalPanel;
     JLabel conditionLabel;
-    public ConditionListPanel() {
+    OperationAttributeEditor editor;
+
+    public ConditionListPanel(OperationAttributeEditor editor) {
+        this.editor = editor;
         conditionList = new HashMap<String, Condition>();
         init();
     }
@@ -54,7 +54,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
-                    addConditionListener(new AttributeMouseAdapter());
+                    addConditionListener(new AttributeMouseAdapter(editor));
                 } else {
                     this.removeAll();
                     
@@ -74,15 +74,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             //opData.removeCondition();
         
     }
-    @Override
-    public String getConditionValue(Component conditionLabel){
-        JLabel condition = (JLabel)conditionLabel;
-        Pattern conditionValuePattern = Pattern.compile("Algebraic "+"(\\d)");
-        Matcher m1 = conditionValuePattern.matcher(condition.getText());
-        if(m1.find()){
-            return m1.group();
-        }else return "";
-    }
+
 
     @Override
     public void removeCondition(Condition condition) throws NullPointerException {
@@ -104,8 +96,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         this.removeAll();
         this.repaint();
 }
-        /*
-     * Adds ActionListener to
+    /*
+     * Adds ActionListener to the conditions that are listed
      */
 
     public void addConditionListener(MouseAdapter l){
