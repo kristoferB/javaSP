@@ -110,6 +110,9 @@ public class OperationData extends Data {
     public void increaseAlgebraicCounter() {
         this.algebraicCounter++;
     }
+    public void decreaseAlgebraicCounter() {
+        this.algebraicCounter--;
+    }
 
     private String getValue(String key) {
         String s = preference.get(key);

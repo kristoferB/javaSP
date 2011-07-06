@@ -215,8 +215,10 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             guiModel = new GUIModel();
+            //guiView = new GUIView(guiModel);
+            
+            //guiView.closeAllViews();
             guiView.resetView(guiModel);
-            guiView.closeAllViews();
         }
     }
 

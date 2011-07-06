@@ -24,21 +24,6 @@ public interface IConditionListPanel{
     public void addCondition(String key, Condition condition);
 
     /**
-     * Removes the specified {@link Condition} from the panel.
-     * @throws NullPointerException if condition is null or if the Condition
-     * does not exist in the list.
-     * @param Condition the Condition
-     */
-    public void removeCondition(Condition condition) throws NullPointerException;
-
-    /**
-     * Removes the condition in place i.
-     * @param i index of the Condition
-     * @throws NullPointerException if no Condtion exists in place i
-     */
-    public void removeCondition(int i) throws NullPointerException;
-
-    /**
      * Checks if the panel contains a Condition
      * @param condition the Condition
      * @return true if it contains the Condition
@@ -52,5 +37,6 @@ public interface IConditionListPanel{
      * @throws NullPointerException if no Condtion exists in place i
      */
     public void deleteCondition(String conditionLabel)throws NullPointerException;
+    public void editCondition(String conditionLabel)throws NullPointerException;
 
 }

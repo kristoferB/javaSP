@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Panel showing a list of Conditions. 
@@ -18,9 +20,13 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     private JPanel internalPanel;
     JLabel conditionLabel;
     OperationAttributeEditor editor;
+    OperationData opData;
+    ConditionType type;
 
-    public ConditionListPanel(OperationAttributeEditor editor) {
+    public ConditionListPanel(OperationAttributeEditor editor, OperationData opData, ConditionType type) {
         this.editor = editor;
+        this.opData = opData;
+        this.type = type;
         conditionList = new HashMap<String, Condition>();
         init();
     }
@@ -53,10 +59,10 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
-                    addConditionListener(new AttributeMouseAdapter(editor));
+                    addConditionListener(new AttributeMouseAdapter(editor, this));
                 } else {
                     this.removeAll();
-                    
+
                 }
                 this.updateUI();
             }
@@ -65,25 +71,69 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             System.out.println("removeall");
             this.removeAll();
             this.repaint();
+            this.updateUI();
         }
+        this.updateUI();
     }
 
     @Override
-    public void deleteCondition(String conditionValue){
-            System.out.println("Delete: "+ conditionValue);
-            //opData.removeCondition();
-        
-    }
-
-
-    @Override
-    public void removeCondition(Condition condition) throws NullPointerException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void deleteCondition(String conditionKey) {
+        opData.getGlobalConditions().remove(conditionKey);
+        conditionList.remove(conditionKey);
+        opData.decreaseAlgebraicCounter();
+        this.updateList();
     }
 
     @Override
-    public void removeCondition(int i) throws NullPointerException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void editCondition(String conditionKey) throws NullPointerException {
+        String conditionString = "";
+
+        //To extract the original input string
+        if (type == ConditionType.PRE) {
+            if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
+                System.out.println("Muu");
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
+
+            } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
+//                Action is not yet supported in the condition parser, but prepared here:
+//                conditionString = conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString();
+//                conditionString = "id"+conditionString.substring(1,conditionString.length()-1);
+            }
+        } else if (type == ConditionType.POST) {
+            if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
+
+            } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
+//                Action is not yet supported in the condition parser, but prepared here:
+//                conditionString = conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString();
+//                conditionString = "id"+conditionString.substring(1,conditionString.length()-1);
+            }
+        }
+        //Place the String in the input text window
+        editor.setConditionString(conditionString);
+        deleteCondition(conditionKey);
+    }
+
+    public String stringTrim(String conditionString) {
+        String conditionString2 = "";
+        String[] st = conditionString.split("and");
+
+        st[0] = st[0].substring(1);
+        for (String x : st) {
+            conditionString2 = conditionString2 + "id" + x + "and";
+        }
+        //Remove the last )and
+        conditionString = conditionString2.substring(0, conditionString2.length() - 4);
+
+        String[] st2 = conditionString.split("or");
+        conditionString2 = "";
+        for (String x : st2) {
+            conditionString2 = conditionString2 + "id" + x + "or";
+        }
+        //Remove the last or and the double "id"
+        conditionString = conditionString2.substring(2, conditionString2.length() - 2);
+
+        return conditionString;
     }
 
     @Override
@@ -91,23 +141,16 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         return conditionList.containsValue(condition);
     }
 
-    @Override
-    public void deleteCondition(Component conditionLabel) throws NullPointerException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
-
     void clear() {
         System.out.println("clear2");
         this.removeAll();
         this.repaint();
-}
+    }
     /*
      * Adds ActionListener to the conditions that are listed
      */
-     public void addConditionListener(AttributeMouseAdapter l){
-         conditionLabel.addMouseListener(l);
-     }
 
+    public void addConditionListener(AttributeMouseAdapter l) {
+        conditionLabel.addMouseListener(l);
+    }
 }
