@@ -1,6 +1,9 @@
 package sequenceplanner.model.SOP;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.Model;
@@ -22,10 +25,9 @@ public class DrawSopNode {
 
     private SPGraph mGraph = null;
     private ISopNode mRoot = null;
+    private Map<ISopNode, Cell> mSopNodeCellMap = null;
     private Map<ISopNode, CellData2> mNodeCellDataMap = null;
-
     private Set<CellData2> mCellDataSet = null;
-
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
     private boolean doAutoLayout = true;
 
@@ -55,29 +57,36 @@ public class DrawSopNode {
      */
     private void addNodesToGraph() {
 
-        if(mCellDataSet != null) {
-            if(mNodeCellDataMap == null) {
-                mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
-            } else {
-            mNodeCellDataMap.clear();
-            }
-            for(final ViewData.CellData2 cellData : mCellDataSet) {
-                mNodeCellDataMap.put(cellData.mSopNode, cellData);
-            }
-        }
+        init();
 
         //Create Cells and a map between cells and nodes.
-        final Map<ISopNode, Cell> nodeCellMap = new HashMap<ISopNode, Cell>();
+        mSopNodeCellMap = new HashMap<ISopNode, Cell>();
         final Set<ISopNode> nodeSet = mSNToolbox.getNodes(mRoot, true);
         for (final ISopNode node : nodeSet) {
-            nodeCellMap.put(node, getCellForNode(node));
+            mSopNodeCellMap.put(node, getCellForNode(node));
         }
 
-        recursiveCallToAllNodes(mRoot, nodeCellMap);
+        recursiveCallToAllNodes(mRoot);
 
         //Get Proper layout
         if (doAutoLayout) {
             mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
+        }
+    }
+
+    /**
+     * Fill map, have had problems with pointers otherwise...
+     */
+    private void init() {
+        if (mCellDataSet != null) {
+            if (mNodeCellDataMap == null) {
+                mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
+            } else {
+                mNodeCellDataMap.clear();
+            }
+            for (final ViewData.CellData2 cellData : mCellDataSet) {
+                mNodeCellDataMap.put(cellData.mSopNode, cellData);
+            }
         }
     }
 
@@ -87,16 +96,26 @@ public class DrawSopNode {
      * @param iRoot
      * @param iNodeCellMap What type of {@link Cell} each {@link ISopNode} is
      */
-    private void recursiveCallToAllNodes(final ISopNode iRoot, final Map<ISopNode, Cell> iNodeCellMap) {
-        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+    private void recursiveCallToAllNodes(final ISopNode iRoot) {
+        //Problems to get a good layout if cells are not sorted from left to right.
+        final List<ISopNode> sortedList = sortSequenceSetBasedOnGeometry(iRoot.getFirstNodesInSequencesAsSet());
+
+        for (ISopNode node : sortedList) {
+            System.out.println("node to work with: " + node.typeToString());
             //First node---------------------------------------------------------
             //Especially first nodes are strange...
             if (iRoot == mRoot) {
-                mGraph.addCell(iNodeCellMap.get(node));
+                mGraph.addCell(mSopNodeCellMap.get(node));
             } else {
-                mGraph.insertGroupNode(iNodeCellMap.get(iRoot), null, iNodeCellMap.get(node));
-                if (iNodeCellMap.get(iRoot).getType() == Constants.SOP) {
-                    Object[] oSet = mGraph.getEdges(iNodeCellMap.get(node));
+
+                if (doAutoLayout) {
+                    mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), null, mSopNodeCellMap.get(node));
+                } else {
+                    mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), mSopNodeCellMap.get(node));
+                }
+
+                if (mSopNodeCellMap.get(iRoot).getType() == Constants.SOP) {
+                    Object[] oSet = mGraph.getEdges(mSopNodeCellMap.get(node));
                     for (Object o : oSet) {
                         Cell c = (Cell) o;
                         c.removeFromParent();
@@ -105,15 +124,15 @@ public class DrawSopNode {
             }//------------------------------------------------------------------
 
             //Children to first node---------------------------------------------
-            recursiveCallToAllNodes(node, iNodeCellMap);
+            recursiveCallToAllNodes(node);
             //-------------------------------------------------------------------
 
             //Successor(s)-------------------------------------------------------
             while (node.getSuccessorNode() != null) {
                 final ISopNode successorNode = node.getSuccessorNode();
-                drawSequenceWithRespectToRelation(node, successorNode, iNodeCellMap);
+                drawSequenceWithRespectToRelation(node, successorNode, mSopNodeCellMap);
                 //Children to successor node
-                recursiveCallToAllNodes(successorNode, iNodeCellMap);
+                recursiveCallToAllNodes(successorNode);
                 //Update for next round
                 node = successorNode;
             }//------------------------------------------------------------------
@@ -133,8 +152,11 @@ public class DrawSopNode {
         final Cell cellPred = iNodeCellMap.get(iPredNode);
         final Cell cellSucc = iNodeCellMap.get(iSuccNode);
 
-        mGraph.insertNewCell(cellPred, cellSucc, false);
-
+        if (doAutoLayout) {
+            mGraph.insertNewCell(cellPred, cellSucc, false);
+        } else {
+            mGraph.insertSuccessorCell(cellSucc, cellPred);
+        }
 
 //        if (predSuccRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12) {
 //            mGraph.insertNewCell(cellPred, cellSucc, false);
@@ -177,9 +199,6 @@ public class DrawSopNode {
                 //SOP Operation
                 returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
             }
-//            final Data newOpData = (Data) opData; //new OperationData(opData.getName(), -1);
-//            Model.giveId(newOpData);
-//            returnCell.setValue(newOpData);
             returnCell.setValue(opData);
 
         } else if (iNode instanceof SopNode) {
@@ -196,15 +215,10 @@ public class DrawSopNode {
             returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
         }
 
-        
-
         //Set celldata if such exists
         if (!returnCell.equals(null) && !mNodeCellDataMap.equals(null)) {
             if (mNodeCellDataMap.containsKey(iNode)) {
-                
                 final ViewData.CellData2 cellData = mNodeCellDataMap.get(iNode);
-
-                System.out.println(iNode.typeToString() + " geo " + cellData.mGeo.getRectangle().toString());
 
                 returnCell.setGeometry(cellData.mGeo);
                 returnCell.setCollapsed(!cellData.mExpanded);
@@ -214,6 +228,47 @@ public class DrawSopNode {
         }
 
         return returnCell;
+    }
+
+    /**
+     * Sorts parameter <p>iSet</p> with method getTopLeftSopNode(...).<br/>
+     * @param iSet
+     * @return the set sorted as a {@link List}
+     */
+    private List<ISopNode> sortSequenceSetBasedOnGeometry(final Set<ISopNode> iSet) {
+        final List<ISopNode> sortedList = new ArrayList<ISopNode>();
+
+        final Set<ISopNode> removeSet = new HashSet<ISopNode>(iSet);
+
+        while (!removeSet.isEmpty()) {
+            final ISopNode node = getTopLeftSopNode(removeSet);
+            removeSet.remove(node);
+            sortedList.add(node);
+        }
+
+        return sortedList;
+    }
+
+    /**
+     * Returns the leftmost {@link Cell} in parameter <p>iSet</p>.<br/>
+     * @param iSet
+     * @return
+     */
+    private ISopNode getTopLeftSopNode(final Set<ISopNode> iSet) {
+        //get start node
+        ISopNode bestNode = iSet.iterator().next();
+
+        //Find top left
+        for (final ISopNode otherNode : iSet) {
+            final Cell bestCell = mSopNodeCellMap.get(bestNode);
+            final Cell otherCell = mSopNodeCellMap.get(otherNode);
+
+            if (otherCell.getGeometry().getX() < bestCell.getGeometry().getX()) {
+                bestNode = otherNode;
+            }
+        }
+
+        return bestNode;
     }
 
     /**

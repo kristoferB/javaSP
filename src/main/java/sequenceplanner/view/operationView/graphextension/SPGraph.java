@@ -887,6 +887,52 @@ public class SPGraph extends mxGraph {
         return output.toArray();
     }
 
+    /**
+     * To use when {@link mxGeometry} is known for both parameters.<br/>
+     * Eg when graph is taken from xml file.<br/>
+     * @param iSuccessorCell
+     * @param iPredecessorCell
+     */
+    public void insertSuccessorCell(final Cell iSuccessorCell, final Cell iPredecessorCell) {
+        getModel().beginUpdate();
+        try {
+            getModel().beginUpdate();
+            try {
+                Cell arch = null;
+                arch = getEdge(iPredecessorCell, iPredecessorCell.getParent(), false);
+
+                final mxGeometry predecessorGeo = iPredecessorCell.getGeometry();
+                final mxPoint p = new mxPoint();
+
+                p.setX(predecessorGeo.getCenterX() - iSuccessorCell.getGeometry().getWidth() / 2);
+
+                Object[] cells = new Object[2];
+
+                final Cell edge = CellFactory.getInstance().getEdge(true, false);
+
+                getModel().add(iPredecessorCell.getParent(), edge, 0);
+                getModel().setTerminal(edge, iSuccessorCell, false);
+                getModel().setTerminal(edge, iPredecessorCell, true);
+
+                //Allways set iSuccessorCell as a terminal.
+                //Is set as source if !before else as target.
+                if (arch != null) {
+                    getModel().setTerminal(arch, iSuccessorCell, true);
+                }
+
+                cells[0] = ((SPGraphModel) getModel()).add(iPredecessorCell.getParent(), iSuccessorCell, 0);
+
+
+            } finally {
+                getModel().endUpdate();
+            }
+            updateCellSize(iSuccessorCell);
+            updateParentSize(iPredecessorCell.getParent());
+        } finally {
+            getModel().endUpdate();
+        }
+    }
+
     public void insertNewCell(Cell oldCell, Cell newCell, boolean before) {
         getModel().beginUpdate();
         try {
@@ -979,6 +1025,26 @@ public class SPGraph extends mxGraph {
 
     }
 
+    /**
+     * To insert parameter <p>insertCell</p> into parameter <p>parent</p> as a child.<br/>
+     * @param parent
+     * @param insertCell
+     */
+    public void insertGroupNode(Cell parent, Cell insertCell) {
+        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
+        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
+
+        model.beginUpdate();
+        try {
+            addCell(insertCell, parent);
+            addCell(edge2, parent, 0, insertCell, parent);
+            addCell(edge1, parent, 0, parent, insertCell);
+            
+        } finally {
+            model.endUpdate();
+        }
+    }
+
     public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
         Cell edge1 = CellFactory.getInstance().getEdge(false, false);
         Cell edge2 = CellFactory.getInstance().getEdge(false, false);
@@ -993,6 +1059,7 @@ public class SPGraph extends mxGraph {
         } finally {
             model.endUpdate();
         }
+
         updateCellSize(insertCell);
     }
 
@@ -1770,7 +1837,6 @@ public class SPGraph extends mxGraph {
         this.majorUpdate();
     }
 
-
     private void createSeqConnection(Cell op, Cell pred) {
         if (op != null && pred != null) {
             if (this.getAlwaysNextCell(op, true) == null && getAlwaysNextCell(pred, false) == null && noCircularSeq(op, pred)) {
@@ -1788,8 +1854,6 @@ public class SPGraph extends mxGraph {
         }
     }
 
-
-
     /**
      * Returns true if a cell prevOP, that should be added into seq,
      * is not already present in seq with c
@@ -1806,5 +1870,4 @@ public class SPGraph extends mxGraph {
         }
         return true;
     }
-
 }
