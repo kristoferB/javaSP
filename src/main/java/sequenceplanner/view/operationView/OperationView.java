@@ -302,9 +302,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             TreeNode[] data = convertToTreeData(cell);
 
             System.out.println("start remove");
-            removeConditions();
+            model.removeConditions(startName);
             System.out.println("end remove");
-            
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
@@ -327,24 +326,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         }
 
 
-    }
-
-    /**
-     * Removes the {@link Condition}s that are related to this SOP/view.
-     */
-    private void removeConditions() {
-        final String viewLabel = this.startName;
-        final List<TreeNode> allOperationsList = model.getAllOperations();
-        for (final TreeNode tn : allOperationsList) {
-
-            final OperationData opData = (OperationData) tn.getNodeData();
-            System.out.println("operation: " + opData.getName());
-            System.out.println("removecon1" + opData.getGlobalConditions().toString());
-            if (opData.getGlobalConditions().get(viewLabel) != null) {
-                opData.getGlobalConditions().remove(viewLabel);
-            }
-            System.out.println("removecon2" + opData.getGlobalConditions().toString());
-        }
     }
 
     /**
