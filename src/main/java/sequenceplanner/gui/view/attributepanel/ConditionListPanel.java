@@ -96,8 +96,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
 //                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString();
-//                conditionString = "id"+conditionString.substring(1,conditionString.length()-1);
+//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
             }
         } else if (type == ConditionType.POST) {
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
@@ -105,13 +104,13 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
 //                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString();
-//                conditionString = "id"+conditionString.substring(1,conditionString.length()-1);
+//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                
             }
         }
         //Place the String in the input text window
         editor.setConditionString(conditionString);
-        deleteCondition(conditionKey);
+        //deleteCondition(conditionKey);
     }
 
     public String stringTrim(String conditionString) {
