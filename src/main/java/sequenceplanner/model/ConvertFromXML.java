@@ -27,6 +27,11 @@ import sequenceplanner.editor.IGlobalProperty;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import java.util.HashMap;
+import sequenceplanner.condition.AStringToConditionParser;
+import sequenceplanner.condition.ActionAsTextInputToConditionParser;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.GuardAsTextInputToConditionParser;
 
 /**
  *
@@ -127,7 +132,7 @@ public class ConvertFromXML {
         }
 
         if (!dataX.getOperationData().getPostCondition().isEmpty()) {
-            data = getPostcondtions(data);
+            data = getPostcondtions(data, dataX.getOperationData().getPreCondition());
         }
         return data;
     }
@@ -167,6 +172,7 @@ public class ConvertFromXML {
 
         return output;
     }
+
 
     private HashMap<Integer, Boolean> getProperties(Properties propX) {
         HashMap<Integer, Boolean> output = new HashMap<Integer, Boolean>();
@@ -235,6 +241,7 @@ public class ConvertFromXML {
             li.insert(getLiason(childX));
         }
 
+
         return li;
     }
 
@@ -301,5 +308,20 @@ public class ConvertFromXML {
         
         
         return data;
+    }
+    public Condition conditionFromString(String savedCondition) {
+        Condition condition = new Condition();
+        AStringToConditionParser guardParser = new GuardAsTextInputToConditionParser();
+        ConditionExpression ce = new ConditionExpression();
+        AStringToConditionParser actionParser = new ActionAsTextInputToConditionParser();
+
+        if (guardParser.run(savedCondition, ce)) {
+            condition.setGuard(ce);
+        } else if (actionParser.run(savedCondition, ce)) {
+            condition.setAction(ce);
+        } else {
+            System.out.println("Wrong expression");
+        }
+        return condition;
     }
 }
