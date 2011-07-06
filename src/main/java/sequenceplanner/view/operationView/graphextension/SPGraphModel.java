@@ -79,8 +79,8 @@ public class SPGraphModel extends mxGraphModel {
       for (int i = 0; i < sops.length; i++) {
          OperationData d = ((OperationData) sops[i].getValue());
 
-         d.setPrecondition(Model.updateCondition(nameCache,
-               d.getSequenceCondition(), d.getResourceBooking(), showPath));
+//         d.setPrecondition(Model.updateCondition(nameCache,
+//               d.getSequenceCondition(), d.getResourceBooking(), showPath));
          
          updatePreconditions(sops[i], showPath);
       }

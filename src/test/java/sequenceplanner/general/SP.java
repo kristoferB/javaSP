@@ -130,10 +130,8 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation(final String iName) {
-        OperationData opData = new OperationData(iName, Model.newId());
-        TreeNode[] toAdd = new TreeNode[1];
-        toAdd[0] = new TreeNode(opData);
-        mModel.saveOperationData(toAdd);
+        final TreeNode tn = mModel.createModelOperationNode();
+        final OperationData opData = (OperationData) tn.getNodeData();
         return opData;
     }
 }

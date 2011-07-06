@@ -44,8 +44,8 @@ public class TreeView extends AbstractView {
 
     protected final JTree tree;
     private TreeDragSource drag;
-    public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0, 0), "ResPointer");
-    public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0, 0), "ResPointer");
+//    public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0, 0), "ResPointer");
+//    public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0, 0), "ResPointer");
 
     public TreeView(final Model model) {
         super(model, "ProjectView");
@@ -220,9 +220,9 @@ public class TreeView extends AbstractView {
             ddd.getDragSourceContext().getCursor();
 
             if (Model.isResource(node.getNodeData())) {
-                ddd.getDragSourceContext().setCursor(resPointer);
+//                ddd.getDragSourceContext().setCursor(resPointer);
             } else if (Model.isLiason(node.getNodeData())) {
-                ddd.getDragSourceContext().setCursor(productPointer);
+//                ddd.getDragSourceContext().setCursor(productPointer);s
             }
         }
 

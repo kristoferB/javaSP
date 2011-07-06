@@ -40,6 +40,21 @@ public class Actions {
         }
     }
 
+    public static class InsertOperation implements ActionListener {
+
+        private TreeNode toRemove = null;
+
+        public InsertOperation() {
+//            this.toRemove = toRemove;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Model m = getAbstractView(e).getModel();
+            m.createModelOperationNode();
+        }
+    }
+
     /**
      *
      */
@@ -72,7 +87,7 @@ public class Actions {
         @Override
         public void actionPerformed(ActionEvent e) {
             // getAbstractView(e).getSPContainer().createResourceView(root);
-        }
+            }
     }
 
     //TODO : get this working again!

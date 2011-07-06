@@ -1,5 +1,6 @@
 package sequenceplanner.model.SOP;
 
+import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -52,8 +53,8 @@ public class DrawSopNode {
 
         recursiveCallToAllNodes(iRoot, nodeCellMap);
 
-        //Get Proper layout
-        mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
+//        //Get Proper layout
+//        mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
     }
 
     /**
@@ -151,11 +152,12 @@ public class DrawSopNode {
             } else {
                 //SOP Operation
                 cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+                cell.setCollapsed(true);
             }
             final Data newOpData = new OperationData(opData.getName(), -1);
             Model.giveId(newOpData);
-            addDescriptionAsCondition(newOpData, opData);
             cell.setValue(newOpData);
+            cell.setGeometry(new mxGeometry(81.35, 81.35, opData.getId(), opData.getId()));
             return cell;
         } else if (iNode instanceof SopNode) {
             cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
@@ -172,36 +174,6 @@ public class DrawSopNode {
         }
         
         return null;
-    }
-
-    /**
-     * Ad hoc in order to enable that signlas/variables written in an operation description to appear in precon in the projection.
-     * @param iOpData
-     * @param iOldOperation
-     */
-    private void addDescriptionAsCondition(final Data iOpData, final OperationData iOldOperation) {
-        final OperationData opData = (OperationData) iOpData;
-        opData.setDescription(iOldOperation.getDescription());
-        final String description = opData.getDescription();
-
-        if (description.length() <= 1) {
-            return;
-        }
-
-        final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
-        final String[] conjunctionSplit = description.split("AND");
-
-        for (final String idAsString : conjunctionSplit) {
-            final int idAsInt = Integer.parseInt(idAsString);
-
-            final OperationData.SeqCond sq = new OperationData.SeqCond(idAsInt, 0, 1);
-
-            final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
-            llOR.add(sq);
-            llAND.add(llOR);
-        }
-
-        opData.setSequenceCondition(llAND);
     }
 
     /**

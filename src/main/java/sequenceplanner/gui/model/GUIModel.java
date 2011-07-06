@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import javax.swing.JFileChooser;
 import javax.swing.event.TreeModelListener;
-import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
@@ -72,14 +71,6 @@ public class GUIModel {
     //Crude exit method?
     public void exit() {
         System.exit(0);
-    }
-
-    public EditorTreeModel getGlobalProperties() {
-        return model.getGlobalProperties();
-    }
-
-    public void addTreeModelListener(TreeModelListener l) {
-        model.addTreeModelListener(l);
     }
 
     /**

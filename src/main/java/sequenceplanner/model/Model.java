@@ -13,7 +13,6 @@ import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import sequenceplanner.condition.Condition;
-import sequenceplanner.editor.EditorTreeModel;
 
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
@@ -25,11 +24,10 @@ import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.FolderData;
 import sequenceplanner.model.data.LiasonData;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.multiProduct.OperationNode;
+
 import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -67,8 +65,6 @@ public class Model extends Observable implements IModel {
     private TreeNode variableRoot;
     // Holds the root to the View folder, to enhance redability of code.
     protected TreeNode viewRoot;
-    //Holds info about global properties
-    private EditorTreeModel globalProperties;
 
     public Model() {
         treeRoot = new TreeNode(new Data("root", newId()));
@@ -89,7 +85,6 @@ public class Model extends Observable implements IModel {
         // ---------------------
 
         //Initialize global properties
-        globalProperties = new EditorTreeModel();
 
         aSyncListeners = new LinkedList<AsyncModelListener>();
         syncListeners = new LinkedList<SyncModelListener>();
@@ -117,10 +112,6 @@ public class Model extends Observable implements IModel {
     @Override
     public void removeSyncModelListener(SyncModelListener l) {
         syncListeners.remove(l);
-    }
-
-    public void addTreeModelListener(TreeModelListener l) {
-        globalProperties.addTreeModelListener(l);
     }
 
     public TreeNode getRoot() {
@@ -195,10 +186,6 @@ public class Model extends Observable implements IModel {
         return out;
     }
 
-    public EditorTreeModel getGlobalProperties() {
-        return globalProperties;
-    }
-
     /**
      * If name of data is already present -> overwrite.
      * @param data
@@ -255,6 +242,17 @@ public class Model extends Observable implements IModel {
         final TreeNode newOpNode = new TreeNode(opData);
         insertChild(getOperationRoot(), newOpNode);
         return newOpNode;
+    }
+
+    /**
+     * Creates a new {@link OperationData}.<br/>
+     * @return The graphical representation of the operation
+     */
+    public TreeNode createModelOperationNode() {
+        final int id = newId();
+        System.out.println("id: " + id);
+        final String name = "mOP"+id;
+        return createModelOperationNode(name, id);
     }
 
     /**
@@ -522,153 +520,7 @@ public class Model extends Observable implements IModel {
         return result;
     }
 
-    protected void updatePreconditions(TreeNode node) {
 
-        for (int i = 0; i < node.getChildCount(); i++) {
-            OperationData d = ((OperationData) node.getChildAt(i).getNodeData());
-
-            d.setPrecondition(Model.updateCondition(nameCache, d.getSequenceCondition(), d.getResourceBooking()));
-            d.setPostcondition(Model.updateCondition(nameCache, d.getPSequenceCondition(), d.getPResourceBooking()));
-
-            updatePreconditions(node.getChildAt(i));
-        }
-    }
-
-    public static String updateCondition(NameCacheMap cache,
-            LinkedList<LinkedList<SeqCond>> sequenceCondition,
-            LinkedList<Integer[]> resources) {
-        return updateCondition(cache, sequenceCondition, resources, true);
-    }
-
-    public static String updateCondition(NameCacheMap cache,
-            LinkedList<LinkedList<SeqCond>> sequenceCondition,
-            LinkedList<Integer[]> resources, boolean showPath) {
-        String s = "";
-
-
-        for (LinkedList<SeqCond> linkedList : sequenceCondition) {
-            if (linkedList.size() == 1) {
-                s = s.isEmpty() ? s : s + " " + Constants.AND + " ";
-
-                String[] out = cache.get(linkedList.getFirst().id);
-
-                SeqCond seqCond = linkedList.getFirst();
-
-                s += showPath ? out[0] + "." : "";
-                s += out[1];
-                if (seqCond.isOperationCheck()) {
-                    s += getOperationEnding(seqCond.state);
-
-                } else if (seqCond.isVariableCheck()) {
-                    s += getVariabelCheck(seqCond.state) + Integer.toString(seqCond.value);
-                }
-
-
-
-            } else if (linkedList.size() > 1) {
-                s += s.isEmpty() ? s : " " + Constants.AND + " ";
-
-                boolean is = s.isEmpty();
-
-                s = is ? s : s + " (";
-                for (Iterator<SeqCond> it = linkedList.iterator(); it.hasNext();) {
-                    SeqCond seqCond = it.next();
-
-
-                    String[] out = cache.get(seqCond.id);
-
-
-                    s += showPath && !out[0].isEmpty() ? out[0] + "." : "";
-                    s += out[1];
-
-
-                    if (seqCond.isOperationCheck()) {
-                        s += getOperationEnding(seqCond.state);
-
-                    } else if (seqCond.isVariableCheck()) {
-                        s += getVariabelCheck(seqCond.state) + Integer.toString(seqCond.value);
-                    }
-
-
-                    if (it.hasNext()) {
-                        s = s + " " + Constants.OR + " ";
-                    }
-                }
-                s = is ? s : s + ") ";
-
-            }
-
-        }
-
-
-        s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constants.AND + " ";
-
-      for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
-         Integer[] integers = it.next();
-         String[] out = cache.get(integers[0]);
-         s =
-               s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
-
-         if (it.hasNext()) {
-            s = s + " " + Constants.AND + " ";
-         }
-
-        }
-
-        return s;
-    }
-
-    public static String getVariabelCheck(int equalType) {
-        if (equalType == 0) {
-            return "==";
-        } else if (equalType == 1) {
-            return "<=";
-        } else if (equalType == 2) {
-            return ">=";
-        } else if (equalType == 3) {
-            return "<";
-        } else if (equalType == 4) {
-            return ">";
-        }
-
-        return "";
-    }
-
-    public static String getActionSetType(int setType) {
-        if (setType == OperationData.ACTION_ADD) {
-            return "+=";
-        } else if (setType == OperationData.ACTION_DEC) {
-            return "-=";
-        } else if (setType == OperationData.ACTION_EQ) {
-            return "=";
-        }
-        return "";
-    }
-
-    public static String getOperationEnding(int state) {
-        String s = Constants.ENDING;
-
-        if (state == 0) {
-            s = s + "i";
-        } else if (state == 1) {
-            s = s + "e";
-        } else if (state == 2) {
-            s = s + "f";
-        }
-
-        return s;
-    }
-
-    public static String getResourceEnding(
-            int state) {
-        if (state == 0) {
-            return "-";
-        } else if (state == 1) {
-            return "+";
-        }
-
-        return "";
-    }
 
     /**
      *
@@ -696,25 +548,6 @@ public class Model extends Observable implements IModel {
         return n;
     }
 
-    public TreeNode[] getOperationRealizedBy(final int resource) {
-
-        PreferenceFilter f = new PreferenceFilter() {
-
-            @Override
-            public boolean approved(TreeNode node) {
-                if (node.getNodeData() instanceof OperationData) {
-                    OperationData d = (OperationData) node.getNodeData();
-
-                    if (d.getRealizedBy() == resource) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-
-        return getOperations(f, true);
-    }
 
     private ArrayList<Integer> getListIds(ArrayList<TreeNode> nodes) {
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -1050,8 +883,16 @@ public class Model extends Observable implements IModel {
         return (data instanceof ViewData);
     }
 
+    public boolean isOperationRoot(final TreeNode iNode) {
+        return iNode == getOperationRoot();
+    }
+
     public boolean isResourceRoot(TreeNode node) {
         return node == getResourceRoot();
+    }
+
+    public boolean isViewRoot(TreeNode node) {
+        return node == getViewRoot();
     }
 
     public boolean isLiasonRoot(TreeNode node) {

@@ -7,7 +7,7 @@ import sequenceplanner.model.data.OperationData;
  * Interface for a SOP node<br/>
  * @author patrik
  */
-public interface ISopNode {
+public interface ISopNode{
 
     OperationData getOperation();
 
@@ -42,5 +42,7 @@ public interface ISopNode {
      * @return
      */
     String inDepthToString(String prefix);
+
+
     
 }

@@ -11,129 +11,139 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
-import sequenceplanner.model.data.OperationData;
-import sequenceplanner.multiProduct.ExtendedData;
-import sequenceplanner.multiProduct.TypeVar;
+
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.Actions.InsertVariable;
 import sequenceplanner.view.Actions.OpenOperationsRealizedBy;
 import sequenceplanner.view.Actions.OpenResourceView;
 import sequenceplanner.view.Actions.RemoveNode;
+
 /**
- *
+ * Click menu for tree view.<br/>
  * @author Erik Ohlson
  */
 public class ClickMenu extends JPopupMenu {
 
-   protected TreeNode node;
-   protected Model model;
+    protected TreeNode node;
+    protected Model model;
+    protected GUIController mGUIController = null;
 
-   public ClickMenu(TreeNode node, Model model) {
-      this.node = node;
-      this.model = model;
-   }
+    public ClickMenu(TreeNode node, Model model) {
+        this.node = node;
+        this.model = model;
+    }
 
-   public void show(Component invoker, MouseEvent e) {
-      Point p =SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), invoker);
-      AbstractView av = (AbstractView) invoker;
+    public ClickMenu(TreeNode node, Model model, GUIController mGUIController) {
+        this(node, model);
+        this.mGUIController = mGUIController;
+    }
 
-      boolean draw = false;
+    public void show(Component invoker, MouseEvent e) {
+        Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), invoker);
+        AbstractView av = (AbstractView) invoker;
 
-       JMenuItem first = new JMenuItem("Insert") {
-         @Override
-         public void paint(Graphics g) {
-            super.paint(g);
-            ClickMenu.this.repaint();
-         }
-      };
+        boolean draw = false;
 
-      JMenuItem rem = new JMenuItem(av.createAction("Remove",
-         new RemoveNode(node), "resources/icons/variable.png") );
+        final JMenuItem rem = new JMenuItem(av.createAction("Remove",
+                new RemoveNode(node), "resources/icons/close.png"));
 
+        //Operations-------------------------------------------------------------
+        if (model.isOperationRoot(node)) {
+            add(new JMenuItem(av.createAction("Insert Operation",
+                    new TreeViewController.InsertOperation(model), "resources/icons/sop.png")));
+            draw = true;
+        }
+        if (Model.isOperation(node.getNodeData())) {
+            add(new JMenuItem(av.createAction("Get attributes",
+                    new TreeViewController.GetOperationAttributes(node, mGUIController), "resources/icons/op.png")));
+            add(new JMenuItem(av.createAction("Remove Operation",
+                    new TreeViewController.RemoveOperation(model, node), "resources/icons/close.png")));
+            draw = true;
+        }//----------------------------------------------------------------------
 
-      Data d = node.getNodeData();
-      
+        //Resources--------------------------------------------------------------
+        if (model.isResourceRoot(node)) {
+            add(new JMenuItem(av.createAction("Insert Resource",
+                    new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png")));
+            draw = true;
+        }
+        if (Model.isResource(node.getNodeData())) {
+            add(new JMenuItem(av.createAction("Insert Resource",
+                    new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png")));
 
-      if (model.isResourceRoot(node)) {
-         first.setAction(av.createAction("Insert Resource",
-               new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png"));
-         add(first,0);
-         draw = true;
-         
-        }/* else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
-         first.setAction(av.createAction("Insert Liason",
-               new InsertVariable(node, Data.LIASON), "resources/icons/min.png"));
-
-         add(first,0);
-         if (Model.isLiason(d)) {
+            add(new JMenuItem(av.createAction("Insert Variable",
+                    new InsertVariable(node, Data.RESOURCE_VARIABLE), "resources/icons/variable.png")));
             add(rem);
-         }
-            
-         draw = true;
+            draw = true;
+        }
+        if (Model.isVariable(node.getNodeData())) {
+            add(rem);
+            draw = true;
+        }//----------------------------------------------------------------------
 
-        }*/ else if (Model.isResource(d)) {
-         first.setAction(av.createAction("Insert Resource",
-               new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png") );
-
-         add(new JMenuItem(av.createAction("Insert Variable",
-               new InsertVariable(node, Data.RESOURCE_VARIABLE), "resources/icons/variable.png") ) );
-         add(rem);
-         add(first,0);
-         draw = true;
-
-      } else if (Model.isVariable(d)) {
-         add(rem,0);
-         draw = true;
-      }
-      else if (Model.isOperation(d) && d.getName().contains(TypeVar.SEPARATION+TypeVar.TRANSPORT+TypeVar.SEPARATION)) { //Added PM 101130
-          add(rem,0);
-          draw = true;
-      }
-      
-      
-      if (Model.isResource(d) || Model.isLiason(d)
-            || model.isResourceRoot(node) || model.isLiasonRoot(node) ) {
-         JMenu menu = new JMenu("Views");
-         menu.add(new JMenuItem(av.createAction("Open treeview",
-            new OpenResourceView(node), "resources/icons/res.png") ) );
-         add(menu);
-
-         if (Model.isResource(d)) {
-            menu.add(new JMenuItem(av.createAction("Open operations realized by",
-                  new OpenOperationsRealizedBy(node), "resources/icons/res.png") ) );
-         }
+        //Views------------------------------------------------------------------
+        if (model.isViewRoot(node)) {
+            add(new JMenuItem(av.createAction("Insert View",
+                    new TreeViewController.InsertOperationView(mGUIController), "resources/icons/sop_1.png")));
+            draw = true;
+        }
+        if (Model.isView(node.getNodeData())) {
+            add(new JMenuItem(av.createAction("Test Temp",
+                    new TreeViewController.TestTemp(model, node, mGUIController), "resources/icons/sop_1.png")));
+            add(rem);
+            draw = true;
+        }//----------------------------------------------------------------------
 
 
-      }
-      
+        //Extra------------------------------------------------------------------
+        if (Model.isResource(node.getNodeData()) || Model.isLiason(node.getNodeData()) || model.isResourceRoot(node) || model.isLiasonRoot(node)) {
+            JMenu innerMenu = new JMenu("Views");
+            innerMenu.add(new JMenuItem(av.createAction("Open treeview",
+                    new OpenResourceView(node), "resources/icons/res.png")));
+            add(innerMenu);
 
-      if (Model.isView(d)) {
-         add(rem);
-         draw = true;
-      }
-     
-      if (draw) {
-         show(invoker, p.x, p.y);
-      }
-   }
+            if (Model.isResource(node.getNodeData())) {
+                innerMenu.add(new JMenuItem(av.createAction("Open operations realized by",
+                        new OpenOperationsRealizedBy(node), "resources/icons/res.png")));
+            }
+        }//----------------------------------------------------------------------
 
-   @Override
-   public void show(Component invoker, int x, int y) {
-     
-      super.show(invoker, x, y);
-   }
+        //Liason-----------------------------------------------------------------
+        /*} else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
+        first.setAction(av.createAction("Insert Liason",
+        new InsertVariable(node, Data.LIASON), "resources/icons/min.png"));
 
-   @Override
-   public void paint(Graphics g) {
-      super.paint(g);
+        add(first,0);
+        if (Model.isLiason(d)) {
+        add(rem);
+        }
+        draw = true;
+         */
+        //-----------------------------------------------------------------------
 
-      int[] polX = { 0, 0, 14 };
-      int[] polY = { 0, 14, 0 };
+        if (draw) {
+            show(invoker, p.x, p.y);
+        }
+    }
 
-      g.setColor(Color.BLACK);
-      g.fillPolygon(polX, polY, 3);
-   }
+    @Override
+    public void show(Component invoker, int x, int y) {
+
+        super.show(invoker, x, y);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+
+        int[] polX = {0, 0, 14};
+        int[] polY = {0, 14, 0};
+
+        g.setColor(Color.BLACK);
+        g.fillPolygon(polX, polY, 3);
+    }
 }

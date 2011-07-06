@@ -22,8 +22,6 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constants;
-import sequenceplanner.view.operationView.autoSOP.SequenceCreator;
-import sequenceplanner.view.operationView.autoSOP.SopNode;
 
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.canvas.mxImageCanvas;
@@ -406,7 +404,7 @@ public class SPGraph extends mxGraph {
 
             double height = 0, width = 0;
 
-            String value = userFile.getPrecondition();
+            String value = "precondition"; //userFile.getPrecondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }
@@ -431,7 +429,7 @@ public class SPGraph extends mxGraph {
                 width = width < rlf.getWidth() ? rlf.getWidth() : width;
             }
 
-            value = userFile.getPostcondition();
+            value = "postcondition"; //userFile.getPostcondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }
@@ -508,8 +506,8 @@ public class SPGraph extends mxGraph {
                 OperationData d = (OperationData) value;
 
                 getModel().setValue(cell, value);
-                d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
-                        d.getSequenceCondition(), d.getResourceBooking()));
+//                d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
+//                        d.getSequenceCondition(), d.getResourceBooking()));
                 updateCellSize(cell, true);
 
 
@@ -1728,41 +1726,7 @@ public class SPGraph extends mxGraph {
      * Only unconnected in a sequence
      * @param Cell parent
      * @return true
-     */
-    public boolean autoSequence(Cell parent) {
-
-        this.getModel().beginUpdate();
-        try {
-
-            // Retrive all operations
-            Cell[] sops = getGraphModel().getChildSOP(parent);
-
-            // Find the operations last in Sequence, ie operations not
-            // in other operations sequence condition...
-            ArrayList<Cell> lastCells = new ArrayList<Cell>();
-            for (int i = 0; i < sops.length; i++) {
-                if (isLastInSOP(sops[i], sops)) {
-                    lastCells.add(sops[i]);
-                }
-            }
-
-
-            // Trace up in sequence from each last operation
-            // Will not handle if they merge!
-            for (Cell c : lastCells) {
-                addGraphicalPrecond(c, sops);
-            }
-
-            // this.autoArrange(parent);
-
-        } finally {
-            this.autoArrange(parent);
-            this.majorUpdate();
-            this.getModel().endUpdate();
-
-        }
-        return true;
-    }
+     *
 
     /**
      * Recursive autoconnector
@@ -1774,177 +1738,38 @@ public class SPGraph extends mxGraph {
      * @return true when complete
      */
     public void addGraphicalPrecond(Cell c, Cell[] sops) {
-        // Stop if operation already has connection.
-        // Will not trace further
-
-
-        // Test SopNode parser
-        System.out.println("NEW -----------------");
-        HashMap<Integer, OperationData> m = new HashMap<Integer, OperationData>();
-        SequenceCreator sc = new SequenceCreator();
-        for (int i = 0; i < sops.length; i++) {
-            if (sops[i].isOperation()) {
-                OperationData d = (OperationData) sops[i].getValue();
-                System.out.println("OP:" + d.getName());
-                m.put(d.getId(), d);
-            }
-        }
-
-        SopNode rootNode = null;
-
-        if (c.isOperation()) {
-            OperationData root = (OperationData) c.getValue();
-            rootNode = sc.getSequence(root, m);
-        }
-
-        HashMap<Integer, Cell> branches = new HashMap<Integer, Cell>();
-
-        System.out.println("Draw sequence -----------------");
-        sequenceDrawing(rootNode, sops, branches);
-        System.out.println("Completed Draw sequence -----------------");
+//        // Stop if operation already has connection.
+//        // Will not trace further
+//
+//
+//        // Test SopNode parser
+//        System.out.println("NEW -----------------");
+//        HashMap<Integer, OperationData> m = new HashMap<Integer, OperationData>();
+//        SequenceCreator sc = new SequenceCreator();
+//        for (int i = 0; i < sops.length; i++) {
+//            if (sops[i].isOperation()) {
+//                OperationData d = (OperationData) sops[i].getValue();
+//                System.out.println("OP:" + d.getName());
+//                m.put(d.getId(), d);
+//            }
+//        }
+//
+//        SopNode rootNode = null;
+//
+//        if (c.isOperation()) {
+//            OperationData root = (OperationData) c.getValue();
+//            rootNode = sc.getSequence(root, m);
+//        }
+//
+//        HashMap<Integer, Cell> branches = new HashMap<Integer, Cell>();
+//
+//        System.out.println("Draw sequence -----------------");
+//        sequenceDrawing(rootNode, sops, branches);
+//        System.out.println("Completed Draw sequence -----------------");
 
         this.majorUpdate();
     }
 
-    private boolean sequenceDrawing(SopNode n, Cell[] sops, HashMap<Integer, Cell> branches) {
-
-        /*       // Println
-        System.out.println("New SeqDraw---------------------------------" );
-        if (n==null) System.out.println("SopNode is null");
-        if (n!=null && n.getPred() == null) System.out.println("SopNode Pred is null");
-         */
-        if (n == null || sops == null) {
-            return true;
-        }
-        if (n.getPred() == null) {
-            return true;
-        }
-
-        /*
-        if (n.getData()!= null) System.out.println("SopNode name:" + n.getData().getName());
-        System.out.println(n.toString());
-        
-        
-        System.out.println("Seq Predecessor -----" );
-        System.out.println(n.getPred().toString());
-        if (n.getPred().getData()!= null) System.out.println("Pred node name:" + n.getPred().getData().getName());
-        
-         */
-
-
-        if (n.isOperation() || branches.containsKey(n.getId())) {
-            Cell nCell = (n.isOperation() ? getCell(n, sops) : branches.get(n.getId()));
-            if (n.getPred().isOperation()) {
-                createSeqConnection(nCell, getCell(n.getPred(), sops));
-                return sequenceDrawing(n.getPred(), sops, branches);
-            } else if (n.getPred().isBranch()) {
-                Cell br = createBranch(n.getPred(), sops, branches);
-                branches.put(n.getPred().getId(), br);
-                createSeqConnection(nCell, br);
-                return sequenceDrawing(n.getPred(), sops, branches);
-            }
-        }
-
-        return false;
-    }
-
-    private Cell createBranch(SopNode n, Cell[] sops, HashMap<Integer, Cell> branches) {
-
-        System.out.println("Create Branch -----");
-        if (n != null) {
-            System.out.println(n.toString());
-        }
-
-
-        Cell result = null;
-        if (n.isBranch()) {
-            if (n.isParallel()) {
-                result = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
-            } else if (n.isAlternative()) {
-                result = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
-                // Add arbitary when supportedf
-            } else {
-                result = null;
-            }
-
-
-            ArrayList<Cell> nBr = new ArrayList<Cell>();
-            for (SopNode br : n.getBranches()) {
-                if (br.isOperation()) {
-                    Cell brCell = getCell(br, sops);
-                    //this.updateCellSize(brCell);
-
-                    //this.insertGroupNode(result, minimumGraphSize, brCell);
-                    addCellToBranch(brCell, result);
-                    this.sequenceDrawing(br, sops, branches);
-
-                } else if (br.isBranch()) {
-                    if (!branches.containsKey(br.getId())) {
-                        Cell brCell = createBranch(br, sops, branches);
-                        branches.put(br.getId(), brCell);
-                        //this.insertGroupNode(result, minimumGraphSize, brCell);
-                        addCellToBranch(brCell, result);
-                        this.sequenceDrawing(br, sops, branches);
-                    }
-                }
-            }
-
-
-        } else {
-            result = null;
-        }
-
-
-        if (result != null) {
-            for (SopNode connectNode : n.getBranches()) {
-                System.out.println("CreateBranch!");
-                Cell edge1 = CellFactory.getInstance().getEdge(false, true);
-                Cell edge2 = CellFactory.getInstance().getEdge(false, true);
-
-                SopNode top = connectNode;
-                while (top.getPred() != null) {
-                    top = top.getPred();
-                }
-
-                if (connectNode.isOperation()) {
-                    this.addEdge(edge1, result, getCell(connectNode, sops), result, null);
-                } else {
-                    this.addEdge(edge1, result, branches.get(connectNode.getId()), result, null);
-                }
-
-                if (top.isOperation()) {
-                    this.addEdge(edge2, result, result, getCell(top, sops), null);
-                } else {
-                    this.addEdge(edge2, result, result, branches.get(top.getId()), null);
-                }
-
-                this.autoArrange(result);
-
-
-            }
-            //Cell edge1 = CellFactory.getInstance().getEdge(false);
-            //this.addEdge(edge1, result, getCell(n.getBranches().get(0), sops), result,0);
-        }
-
-
-
-
-        return result;
-    }
-
-    private Cell getCell(SopNode n, Cell[] sops) {
-
-        if (!n.isOperation()) {
-            return null;
-        }
-
-        for (int i = 0; i < sops.length; i++) {
-            if (n.getData().equals(sops[i].getValue())) {
-                return sops[i];
-            }
-        }
-        return null;
-    }
 
     private void createSeqConnection(Cell op, Cell pred) {
         if (op != null && pred != null) {
@@ -1963,37 +1788,7 @@ public class SPGraph extends mxGraph {
         }
     }
 
-    private boolean isOpInSeq(Cell c, Cell prev) {
-        if (c.isOperation() && prev.isOperation()) {
-            OperationData d = ((OperationData) c.getValue());
-            OperationData dPrev = ((OperationData) prev.getValue());
-            return d.isPredecessor(dPrev.getId());
-        }
-        return false;
-    }
 
-    private boolean isOpInSeq(OperationData d, Cell prev) {
-        if (prev.isOperation()) {
-            OperationData dPrev = ((OperationData) prev.getValue());
-            return d.isPredecessor(dPrev.getId());
-        }
-        return false;
-    }
-
-    /**
-     * Finds the last operations in a SOP
-     * @param Cell c
-     * @param Cell[] sops
-     * @return boolean
-     */
-    private boolean isLastInSOP(Cell c, Cell[] sops) {
-        for (int i = 0; i < sops.length; i++) {
-            if (this.isOpInSeq(sops[i], c)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * Returns true if a cell prevOP, that should be added into seq,
@@ -2012,32 +1807,4 @@ public class SPGraph extends mxGraph {
         return true;
     }
 
-    private ArrayList<Cell> getOpInSeq(Cell c, Cell[] sops) {
-        ArrayList<Cell> result = new ArrayList<Cell>();
-        if (this.getPreviousOperation(c) == null && c.isOperation()) {
-            OperationData cellData = (OperationData) c.getValue();
-            for (int i = 0; i < sops.length; i++) {
-                if (this.isOpInSeq(cellData, sops[i])) {
-
-                    // Stop if previous operation already have connections
-                    if (getAlwaysNextCell(sops[i], false) == null) {
-                        result.add(sops[i]);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    private ArrayList<ArrayList<Cell>> getOpTrace(Cell c, Cell[] sops) {
-
-        ArrayList<ArrayList<Cell>> result = new ArrayList<ArrayList<Cell>>();
-        ArrayList<Cell> seqCells = this.getOpInSeq(c, sops);
-
-        if (seqCells.size() == 1) {
-        }
-
-
-        return result;
-    }
 }

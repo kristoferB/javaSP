@@ -48,8 +48,17 @@ public class SopNodeFromSPGraphModel {
     }
 
     /**
-     * A {@link SPGraphModel} contains many different {@link Cell} typs.<br/>
-     * This method filters out the cells given bt mehtod getCorrectCells();
+     * Each {@link ISopNode} key has a corresponding {@link Cell} value.<br/>
+     * Could be used to get eg geometry info of cell object.<br/>
+     * @return
+     */
+    public Map<ISopNode, Cell> getNodeCellMap() {
+        return mSopNodeCellMap;
+    }
+
+    /**
+     * A {@link SPGraphModel} contains many different {@link Cell} types.<br/>
+     * This method filters out the cells given mehtod getCorrectCells();
      * @return always true
      */
     private boolean filterHashTable() {

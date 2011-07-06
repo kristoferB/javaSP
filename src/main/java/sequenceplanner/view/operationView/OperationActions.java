@@ -43,6 +43,11 @@ public class OperationActions {
             p = new Point(x, y);
         }
 
+        public InsertOperation(final Model iModel) {
+        }
+
+
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Object parent = (Cell) getView(e).getGraphComponent().getCellAt(p.x, p.y);
@@ -225,9 +230,9 @@ public class OperationActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (cell == null) {
-                getGraph(e).autoSequence((Cell) getGraph(e).getDefaultParent());
+//                getGraph(e).autoSequence((Cell) getGraph(e).getDefaultParent());
             } else if (cell instanceof Cell && ((cell).isGroup()) || (cell).isSOP()) {
-                getGraph(e).autoSequence(cell);
+//                getGraph(e).autoSequence(cell);
             } else if (cell instanceof Cell && ((cell).isOperation())) {
                 Cell[] sops = getGraph(e).getGraphModel().getChildSOP(getGraph(e).getDefaultParent());
                 getGraph(e).addGraphicalPrecond(cell, sops);

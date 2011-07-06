@@ -10,13 +10,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import sequenceplanner.IO.ReadFromVolvoFile;
+
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
-import sequenceplanner.editor.EditorMouseAdapter;
-import sequenceplanner.efaconverter2.export.DefaultExport;
-import sequenceplanner.efaconverter2.EFA.DefaultEFAConverter;
-import sequenceplanner.efaconverter2.SpEFA.DefaultModelParser;
-import sequenceplanner.efaconverter2.reduction.Reduction;
+
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.gui.view.HelpPanes;
@@ -58,9 +54,6 @@ public class GUIController {
 
         addListeners();
 
-        final OperationView opView = new OperationView(guiModel.getModel(), "View" + Model.newId());
-        addNewOpTab(opView);
-
     }
 
     private void addListeners() {
@@ -83,14 +76,9 @@ public class GUIController {
         guiView.addEFAForTransL(new EFAForTListener());
         guiView.addUpdateModelL(new UpdateModelListener());
         guiView.addEFAForMPL(new EFAForMPListener());
-        guiView.addNormalEFA(new NormalEFAListener());
-        guiView.addReducedEFA(new ReducedEFAListener());
-//        guiView.addEditorListener();
-        guiView.addEditorListener(new EditorMouseAdapter(guiView.getEditorView().getTree(), guiModel.getGlobalProperties()));
-        guiView.addTreeModelListener(new EditorTreeModelListener());
-        guiView.addSavePropViewL(new SavePropViewListener());
+        
+
         guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
-        guiView.addAddOperationsFromFileL(new AddOperationsFromFileListener());
         guiView.addShortCommandsL(new AddShortCommandsListener());
         guiView.addAboutL(new AddAboutListener());
     }
@@ -105,7 +93,7 @@ public class GUIController {
      * To add a {@link OperationView} to a operation tab in the operationRootView
      * @param iOperationView the view to add.
      */
-    private void addNewOpTab(final OperationView iOperationView) {
+    public void addNewOpTab(final OperationView iOperationView) {
         guiView.addNewOpTab(iOperationView.toString(), iOperationView);
         opViewController.addOperationView(iOperationView);
         guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
@@ -137,6 +125,10 @@ public class GUIController {
 
     public Object getModel() {
         return guiModel.getModel();
+    }
+
+    public GUIModel getGUIModel() {
+        return guiModel;
     }
 
     //File menu listenrs
@@ -302,67 +294,6 @@ public class GUIController {
         }
     }
 
-    class NormalEFAListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
-                return;
-            }
-            DefaultEFAConverter converter = new DefaultEFAConverter(parser.getSpEFAutomata());
-            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
-            export.save();
-            guiModel.setPath(export.getPath());
-        }
-    }
-
-    class ReducedEFAListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            DefaultModelParser parser = new DefaultModelParser(guiModel.getModel());
-            if (parser.getSpEFAutomata().getAutomatons().isEmpty()) {
-                return;
-            }
-            Reduction reduce = new Reduction(parser.getSpEFAutomata());
-            DefaultEFAConverter converter = new DefaultEFAConverter(reduce.getReducedModel());
-            DefaultExport export = new DefaultExport(converter.getModule(), guiModel.getPath());
-            export.save();
-            guiModel.setPath(export.getPath());
-        }
-    }
-
-    class EditorTreeModelListener implements TreeModelListener {
-
-        @Override
-        public void treeNodesChanged(TreeModelEvent e) {
-            guiView.updatePropertyView();
-        }
-
-        @Override
-        public void treeNodesInserted(TreeModelEvent e) {
-            guiView.updatePropertyView();
-        }
-
-        @Override
-        public void treeNodesRemoved(TreeModelEvent e) {
-            guiView.updatePropertyView();
-        }
-
-        @Override
-        public void treeStructureChanged(TreeModelEvent e) {
-            guiView.updatePropertyView();
-        }
-    }
-
-    class SavePropViewListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            guiView.getPropertyView().saveSettings();
-        }
-    }
 
     class OperationIdTextFieldListener implements ActionListener {
 
@@ -400,20 +331,6 @@ public class GUIController {
             opView.setName("Projection" + Model.newId());
             new UserInteractionForVisualization(opView, guiModel.getModel());
             addNewOpTab(opView);
-        }
-    }
-
-    class AddOperationsFromFileListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
-
-            if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final String path = dialog.getSelectedFile().getAbsolutePath();
-                final ReadFromVolvoFile r = new ReadFromVolvoFile(path, null, guiModel.getModel());
-                r.run();
-            }
         }
     }
 
@@ -488,8 +405,6 @@ public class GUIController {
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
-            guiView.updateEditorView();
-            guiView.updatePropertyView();
             for (OperationView o : guiModel.getOperationViews()) {
                 guiView.addNewOpTab(o.toString(), o);
                 if (o.isClosed()) {

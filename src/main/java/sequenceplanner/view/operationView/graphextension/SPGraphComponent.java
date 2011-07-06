@@ -293,7 +293,7 @@ public class SPGraphComponent extends mxGraphComponent {
          //Todo it will crash if this is a copy
          Cell cell = (Cell) cells[0];
          if (!copy) {
-            cell = view.open(view.getModel().getOperationView(cell.getUniqueId()), cell);
+//            cell = view.open(view.getModel().getOperationView(cell.getUniqueId()), cell);
          }
          view.getGraph().updateSizeOfOperations();
          view.getGraph().majorUpdate();

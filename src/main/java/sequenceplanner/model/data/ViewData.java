@@ -6,8 +6,11 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import com.mxgraph.model.mxGeometry;
+import java.util.HashMap;
+import java.util.Map;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.view.operationView.graphextension.Cell;
 
 
 /**
@@ -18,6 +21,7 @@ public class ViewData extends Data {
     static Logger logger = Logger.getLogger(ViewData.class);
 
     public ISopNode mSopNodeRoot = new SopNode();
+    public Map<ISopNode,CellData2> mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
 
     private boolean isClosed;
 
@@ -72,7 +76,34 @@ public class ViewData extends Data {
     public Iterator<CellData> getIterator() {
        return rows.iterator();
     }
+    
+    public void storeCellData(final Map<ISopNode,Cell> iMap) {
+        mNodeCellDataMap.clear();
+        int refIdCounter = 0;
 
+        for(final ISopNode node : iMap.keySet()) {
+            final Cell cell = iMap.get(node);
+            //Create new CellData
+            final CellData2 cellData= new CellData2(refIdCounter++, cell.getGeometry(), !cell.isCollapsed());
+            mNodeCellDataMap.put(node, cellData);
+        }
+    }
+
+    /**
+     * Inner class to extend {@link ISopNode} objects in view with GUI data
+     */
+    public static class CellData2 {
+
+        public final int mRefId;
+        public final mxGeometry mGeo;
+        public final boolean mExpanded;
+
+        public CellData2(int mRefId, mxGeometry mGeo, boolean mExpanded) {
+            this.mRefId = mRefId;
+            this.mGeo = mGeo;
+            this.mExpanded = mExpanded;
+        }
+    }
 
    /**
     * Inner class to describe each "row" in the table
@@ -114,7 +145,6 @@ public class ViewData extends Data {
                     + expanded + " | ";
       }      
    }
-
    @Override
    public boolean equals(Object obj) {
       return false;

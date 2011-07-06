@@ -29,7 +29,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.OperationData.SeqCond;
+
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.utils.SPToolBar;
 import sequenceplanner.view.AbstractView;
@@ -57,6 +57,7 @@ import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -226,47 +227,46 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             in = new OperationData("Bottom", view.getRoot());
         }
 
-        Cell opRoot = open(view, new Cell(in));
-        Cell root = new Cell("Root");
-        root.insert(opRoot, 0);
-
-        getGraphModel().setRoot(root);
+//        Cell opRoot = open(view, new Cell(in));
+//        Cell root = new Cell("Root");
+//        root.insert(opRoot, 0);
+//
+//        getGraphModel().setRoot(root);
         getGraph().majorUpdate();
         setChanged(false);
     }
 
-    public Cell open(ViewData view, Cell cell) {
-
-        if (view == null) {
-            return cell;
-        }
-
-        ConvertToCell c = new ConvertToCell();
-
-        c.ConvertToCell(view, model, this);
-        Cell opRoot = c.getRoot();
-
-        Object[] o = SPGraphModel.getChildren(getGraphModel(), opRoot);
-
-        for (int i = 0; i < o.length; i++) {
-            System.out.println("operation: " + o[i].toString());
-            cell.insert((mxICell) o[i]);
-        }
-
-        Cell[] cells = getGraphModel().getChildSOP(cell);
-
-        for (int i = 0; i < cells.length; i++) {
-            Cell child = cells[i];
-            if (child.isSOP()) {
-                ViewData data = model.getOperationView(child.getUniqueId());
-                open(data, child);
-            }
-        }
-
-
-        return cell;
-    }
-
+//    public Cell open(ViewData view, Cell cell) {
+//
+//        if (view == null) {
+//            return cell;
+//        }
+//
+//        ConvertToCell c = new ConvertToCell();
+//
+//        c.ConvertToCell(view, model, this);
+//        Cell opRoot = c.getRoot();
+//
+//        Object[] o = SPGraphModel.getChildren(getGraphModel(), opRoot);
+//
+//        for (int i = 0; i < o.length; i++) {
+//            System.out.println("operation: " + o[i].toString());
+//            cell.insert((mxICell) o[i]);
+//        }
+//
+//        Cell[] cells = getGraphModel().getChildSOP(cell);
+//
+//        for (int i = 0; i < cells.length; i++) {
+//            Cell child = cells[i];
+//            if (child.isSOP()) {
+//                ViewData data = model.getOperationView(child.getUniqueId());
+//                open(data, child);
+//            }
+//        }
+//
+//
+//        return cell;
+//    }
     @Override
     public boolean closeView() {
         if (isChanged()) {
@@ -304,7 +304,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             System.out.println("start remove");
             removeConditions();
             System.out.println("end remove");
-            
+
 
             if (viewData.getFirst().getRoot() == -1 && saveView) {
                 viewData.getFirst().setName(startName);
@@ -313,8 +313,15 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
             model.saveOperationData(data);
-            model.saveSopNode(viewData.getFirst(), getSopNodeForGraph());
+            
+            //Save sop nodes
+            final Map<ISopNode,Map<ISopNode,Cell>> map = getSopNodeForGraphPlus();
 
+            final ISopNode sopNodeRoot = map.keySet().iterator().next();
+            final Map<ISopNode,Cell> nodeCellMap = map.get(sopNodeRoot);
+            
+            model.saveSopNode(viewData.getFirst(), sopNodeRoot);
+            viewData.getFirst().storeCellData(nodeCellMap); //for xml
             System.out.println("start set conditions");
             model.setConditions(viewData.getFirst(), startName);
             System.out.println("end set conditions");
@@ -538,30 +545,28 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
                 if (previousCell.isParallel()) {
                     for (Iterator<Cell> it = cells.iterator(); it.hasNext();) {
                         Cell cg = it.next();
-                        d.addAnd(cg.getUniqueId(), 2);
+//                        d.addAnd(cg.getUniqueId(), 2);
                     }
 
                 } else if (previousCell.isAlternative()) {
-                    LinkedList<OperationData.SeqCond> cond = new LinkedList<OperationData.SeqCond>();
-
-                    for (Iterator<Cell> it = cells.iterator(); it.hasNext();) {
-                        Cell cg = it.next();
-                        cond.add(new SeqCond(cg.getUniqueId(), 2));
-                    }
-
-                    d.addOr(cond);
-
+//                    LinkedList<OperationData.SeqCond> cond = new LinkedList<OperationData.SeqCond>();
+//
+//                    for (Iterator<Cell> it = cells.iterator(); it.hasNext();) {
+//                        Cell cg = it.next();
+//                        cond.add(new SeqCond(cg.getUniqueId(), 2));
+//                    }
+//
+//                    d.addOr(cond);
                 }
             } else if (preGrpCell != null && preGrpCell.isAlternative()) {
                 getModel().createGroupVariable(preGrpCell.getUniqueId());
-                d.addResourceBooking(preGrpCell.getUniqueId());
-                if (previousOperation != null) {
-                    d.addAnd(previousOperation.getUniqueId(), 2);
-                }
+//                d.addResourceBooking(preGrpCell.getUniqueId());
+//                if (previousOperation != null) {
+//                    d.addAnd(previousOperation.getUniqueId(), 2);
+//                }
 
             } else if (previousOperation != null) {
-
-                d.addAnd(previousOperation.getUniqueId(), 2);
+//                d.addAnd(previousOperation.getUniqueId(), 2);
             }
 
         } catch (NullPointerException e) {
@@ -852,15 +857,29 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
      * @return the root {@link ISopNode}
      */
     public ISopNode getSopNodeForGraph() {
+        return getSopNodeForGraphPlus().keySet().iterator().next();
+    }
+
+    /**
+     * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
+     * @param ioMap key: {@link ISopNode} object, value: {@link Cell} for node
+     * @return the root {@link ISopNode}
+     */
+    public Map<ISopNode,Map<ISopNode,Cell>> getSopNodeForGraphPlus() {
         //Create a new sop node root aka theSopNode
         final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
         //get root sop
         final ISopNode rootSopNode = snfspgm.getSopNodeRoot();
+        //get Cell for each node
+        final Map<ISopNode,Cell> nodeCellMap = snfspgm.getNodeCellMap();
+        
         //Print out sop structure
         System.out.println("::::::::::\n");
         System.out.println(rootSopNode.toString());
         System.out.println("::::::::::");
         //return root root sop
-        return rootSopNode;
+        final Map<ISopNode,Map<ISopNode,Cell>> returnMap = new HashMap<ISopNode, Map<ISopNode, Cell>>();
+        returnMap.put(rootSopNode, nodeCellMap);
+        return returnMap;
     }
 }

@@ -53,7 +53,7 @@ public class OperationViewTransferhandler extends mxGraphTransferHandler {
                if (cell != null && (cell.isSOP() || cell.isOperation() )) {
                    System.out.println("transferable1");
                   OperationData d = (OperationData) cell.getValue();
-                  d.setRealizedBy(res.getId());
+//                  d.setRealizedBy(res.getId());
                   ((SPGraph)graphComponent.getGraph()).setPreferenceValue(cell, d);
                }
 
@@ -64,7 +64,7 @@ public class OperationViewTransferhandler extends mxGraphTransferHandler {
                if (cell != null && (cell.isSOP() || cell.isOperation() ) ) {
                    System.out.println("transferable2");
                   OperationData d = (OperationData) cell.getValue();
-                  d.setAccomplishes(li.getId());
+//                  d.setAccomplishes(li.getId());
                   ((SPGraph)graphComponent.getGraph()).setPreferenceValue(cell, d);
                }
 

@@ -37,9 +37,8 @@ import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
 
 import sequenceplanner.SequencePlanner;
-import sequenceplanner.editor.EditorView;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.objectattribute.PropertyView;
+
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.utils.IconHandler;
@@ -81,14 +80,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View objectRootView;
     private EventListenerList listeners;
     private View objectMenu;
-    private EditorView editorView;
     private TreeView treeView;
     private boolean resourceViewOpen = false;
 
     public TreeView getTreeView() {
         return treeView;
     }
-    private PropertyView propertyView;
     private OperationView selectedOperationView;
     private int opViewIndex;
 
@@ -167,7 +164,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         editorRoot = DockingUtil.createRootWindow(editorViewMap, true);
         consoleRoot = DockingUtil.createRootWindow(consoleViewMap, true);
         operationRoot.getPropertyChangeListeners();
-        editorView = new EditorView(guiModel.getGlobalProperties());
         treeView = new TreeView(guiModel.getModel());
 
         operationRootView = new View("Operation Views", null, operationRoot);
@@ -176,7 +172,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         editorRootView = new View("Editor Views", null, editorRoot);
         objectRootView = new View("Object Views", null, objectRoot);
 
-        propertyView = new PropertyView(guiModel.getGlobalProperties());
 
         //Sets all inner root windows
         operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(opViewIndex)));
@@ -203,13 +198,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         treeRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
         rootViewMap.addView(3, treeRootView);
 
-        editorViewMap.addView(1, new View("Editor view", null, editorView));
-        editorRoot.setWindow(new TabWindow(editorViewMap.getView(1)));
-        editorRootView.getViewProperties().setAlwaysShowTitle(false);
-        editorRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
-        editorRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
-        rootViewMap.addView(4, treeRootView);
-
         //Test (adding save button to object attribute window) should be cleaned up!!!!
         JPanel objectView = new JPanel();
         saveButton = new JButton(new ImageIcon(SequencePlanner.class.getResource("resources/icons/save.png")));
@@ -217,16 +205,15 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         objectMenu = new View("Object attribute view", null, objectView);
         objectViewMap.addView(1, objectMenu);
-        objectViewMap.addView(2, new View("Property view", null, propertyView));
 
 //        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
-        objectRoot.setWindow(objectDocks = new TabWindow(objectViewMap.getView(2)));
+        objectRoot.setWindow(objectDocks = new TabWindow(objectViewMap.getView(1)));
 
         objectRootView.getViewProperties().setAlwaysShowTitle(false);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
 
-        rootViewMap.addView(5, treeRootView);
+        rootViewMap.addView(4, treeRootView);
 
         //--------------------
 
@@ -304,16 +291,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    /**
-     *Updates the state of the property tree view
-     */
-    public void updatePropertyView() {
-        propertyView.updateTree();
-    }
 
-    public void updateEditorView() {
-        editorView.setEditorTreeModel(guiModel.getModel().getGlobalProperties());
-    }
+
     /**
      * Main menu bar for sequenceplanner.
      * Only graphical if used alone.
@@ -520,14 +499,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         reduceEFA.addActionListener(l);
     }
 
-    public void addEditorListener(MouseAdapter l) {
-        editorView.addMouseListener(l);
-    }
-
-    //Call the view to add a listener to the model? oO
-    public void addTreeModelListener(TreeModelListener l) {
-        guiModel.addTreeModelListener(l);
-    }
 
     public void addSavePropViewL(ActionListener l) {
         saveButton.addActionListener(l);
@@ -574,7 +545,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 //Should not be done here.. selectedOperationView is only updated when adding new tabs!
         opView.addmxIEventListener(this);
         selectedOperationView = opView;
-        propertyView.setOpView(opView);
+
 //----- 
         opViewIndex++;
         View newView = new View(name, null, opView);
@@ -601,22 +572,18 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         resourceViewOpen = true;
     }
 
-    @Override
-    public void invoke(Object source, mxEventObject evt) {
-        propertyView.setOperation();
-    }
 
     public void printToConsole(String text) {
         console.append(text + "\n");
     }
 
-    public EditorView getEditorView() {
-        return editorView;
+    @Override
+    public void invoke(Object arg0, mxEventObject arg1) {
+        System.out.println("arg0: " + arg0 + " arg1: " + arg1);
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public PropertyView getPropertyView() {
-        return propertyView;
-    }
+
 
     public void setWindowLayout() {
         System.out.println("Focus:" + operationRoot.getLastFocusedChildWindow() + " @ " + " :end");

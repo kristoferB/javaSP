@@ -192,8 +192,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 		g.fillRoundRect(x, y, w, h, 5, 5);
 
 		Stroke old = g.getStroke();
-		g.setStroke(value.isPreoperation() || value.isPostoperation() ? prePostOperation
-				: old);
+//		g.setStroke(value.isPreoperation() || value.isPostoperation() ? prePostOperation
+//				: old);
 
 		g.setColor(Color.black);
 		g.drawRoundRect(x, y, w, h, 5, 5);
@@ -215,7 +215,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 		label.put(TextAttribute.SIZE,
 				(int) Math.round(syncFont.getSize2D() * scale));
 
-		String v = value.getPrecondition();
+		String v = "precondition"; //value.getPrecondition();
 		if (v.length() > SPGraph.cutOff) {
 			v = v.substring(0, SPGraph.cutOff) + "...";
 		}
@@ -281,7 +281,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			g.drawString(v, (int) (x + (w - bounds.getWidth()) / 2),
 					(y + start));
 			g.setFont(small);
-			v = value.getPostcondition();
+			v = "postcondition"; //value.getPostcondition();
 			if (v.length() > SPGraph.cutOff) {
 				v = v.substring(0, SPGraph.cutOff) + "...";
 			}
@@ -386,8 +386,8 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 				(int) (y + r.getHeight()));
 
 		Stroke old = g.getStroke();
-		g.setStroke(data.isPreoperation() || data.isPostoperation() ? prePostOperation
-				: new BasicStroke((float) 0.5));
+//		g.setStroke(data.isPreoperation() || data.isPostoperation() ? prePostOperation
+//				: new BasicStroke((float) 0.5));
 		g.drawRoundRect(x, y, w, h, 20, 20);
 		g.setStroke(old);
 	}

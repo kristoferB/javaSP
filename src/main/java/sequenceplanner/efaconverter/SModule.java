@@ -108,24 +108,24 @@ public class SModule {
      * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118
      * @return true if IDs are ok else false
      */
-    public boolean testIDs(ModelParser iModelParser) {
-        String test = "";
-
-        for (OpNode opNode : iModelParser.getOperations()) {
-            if (test.contains(opNode.getStringId())) {
-                return false;
-            } else {
-                test = test + opNode.getStringId() + "_";
-            }
-        }
-        for (OpNode opNode : iModelParser.getOperations()) {
-            final String test2 = test.replaceFirst(opNode.getStringId(), "");
-            if (test2.contains(opNode.getStringId())) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    public boolean testIDs(ModelParser iModelParser) {
+//        String test = "";
+//
+//        for (OpNode opNode : iModelParser.getOperations()) {
+//            if (test.contains(opNode.getStringId())) {
+//                return false;
+//            } else {
+//                test = test + opNode.getStringId() + "_";
+//            }
+//        }
+//        for (OpNode opNode : iModelParser.getOperations()) {
+//            final String test2 = test.replaceFirst(opNode.getStringId(), "");
+//            if (test2.contains(opNode.getStringId())) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     /**
      * Method in this class can't handle IDs that are suffix or prefix to each other, e.g. 18 and 118

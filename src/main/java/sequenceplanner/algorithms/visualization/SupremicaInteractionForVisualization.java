@@ -91,7 +91,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             //Add transition to start execute operation--------------------------
             ega = new SEGA(EVENT_PREFIX + id + EVENT_UP);
             ega.andGuard(varName + "==0");
-            ega.addGuardBasedOnSPCondition(opData.getRawPrecondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
+//            ega.addGuardBasedOnSPCondition(opData.getRawPrecondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
             ega.addAction(varName + "=1");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
@@ -99,7 +99,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             //Add transition to finish execute operation-------------------------
             ega = new SEGA(EVENT_PREFIX + id + EVENT_DOWN);
             ega.andGuard(varName + "==1");
-            ega.addGuardBasedOnSPCondition(opData.getRawPostcondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
+//            ega.addGuardBasedOnSPCondition(opData.getRawPostcondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
             ega.addAction(varName + "=2");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------

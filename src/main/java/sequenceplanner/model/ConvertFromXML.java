@@ -5,7 +5,7 @@ import java.util.List;
 
 import sequenceplanner.model.data.LiasonData;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.OperationData.SeqCond;
+
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
@@ -22,7 +22,7 @@ import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
-import sequenceplanner.editor.IGlobalProperty;
+
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
@@ -54,7 +54,6 @@ public class ConvertFromXML {
       //Recreate operations and operationViews
       setOperationRoot(project.getOperations());
 
-      setGlobalProperties(project.getGlobalProperties());
 
       return this.model;
    }
@@ -87,58 +86,45 @@ public class ConvertFromXML {
       OperationData data = new OperationData(dataX.getName(), dataX.getId());
 
       data.setDescription(dataX.getOperationData().getDescription());
-      data.setCost(dataX.getOperationData().getCost());
-      data.setPreoperation(dataX.getOperationData().isIsPreoperation());
-      data.setPostoperation(dataX.getOperationData().isIsPostoperation());
-      data.setAccomplishes(dataX.getOperationData().getAccomplishes());
-      data.setRealizedBy(dataX.getOperationData().getRealizedBy());
+//      data.setCost(dataX.getOperationData().getCost());
+//      data.setPreoperation(dataX.getOperationData().isIsPreoperation());
+//      data.setPostoperation(dataX.getOperationData().isIsPostoperation());
+//      data.setAccomplishes(dataX.getOperationData().getAccomplishes());
+//      data.setRealizedBy(dataX.getOperationData().getRealizedBy());
 
       //Pre
       if (dataX.getOperationData().getPreSequenceCondtions() != null) {
-         data.setSequenceCondition(getCondition(dataX.getOperationData().getPreSequenceCondtions()));
+//         data.setSequenceCondition(getCondition(dataX.getOperationData().getPreSequenceCondtions()));
       }
       if (dataX.getOperationData().getPreActions() != null) {
-         data.setActions(getAction(dataX.getOperationData().getPreActions()));
+//         data.setActions(getAction(dataX.getOperationData().getPreActions()));
       }
       if (dataX.getOperationData().getPreResurceBooking() != null) {
-         data.setResourceBooking(getBooking(dataX.getOperationData().getPreResurceBooking()));
+//         data.setResourceBooking(getBooking(dataX.getOperationData().getPreResurceBooking()));
       }
 
       // Invariant
       if (dataX.getOperationData().getSequenceInvariants() != null) {
-         data.setSeqInvariant(getCondition(dataX.getOperationData().getSequenceInvariants()));
+//         data.setSeqInvariant(getCondition(dataX.getOperationData().getSequenceInvariants()));
       }
 
       //Properties
       if (dataX.getOperationData().getProperties() != null){
-         data.setProperties(getProperties(dataX.getOperationData().getProperties()));
+//         data.setProperties(getProperties(dataX.getOperationData().getProperties()));
       }
       
       //Post
       if (dataX.getOperationData().getPostSequenceCondtions() != null) {
-         data.setPSequenceCondition(getCondition(dataX.getOperationData().getPostSequenceCondtions()));
+//         data.setPSequenceCondition(getCondition(dataX.getOperationData().getPostSequenceCondtions()));
       }
       if (dataX.getOperationData().getPostResurceBooking() != null) {
-         data.setPResourceBooking(getBooking(dataX.getOperationData().getPostResurceBooking()));
+//         data.setPResourceBooking(getBooking(dataX.getOperationData().getPostResurceBooking()));
       }
 
       return data;
    }
 
-   private LinkedList<LinkedList<SeqCond>> getCondition(Conditions cond) {
-      LinkedList<LinkedList<SeqCond>> output = new LinkedList<LinkedList<SeqCond>>();
 
-      for (Conditions.Or or : cond.getOr()) {
-         LinkedList<SeqCond> in = new LinkedList<SeqCond>();
-
-         for (Conditions.Or.SequenceCondition seq : or.getSequenceCondition()) {
-            in.add(new SeqCond(seq.getOperation(), seq.getStatus()));
-         }
-         output.add(in);
-      }
-
-      return output;
-   }
 
    private LinkedList<Integer[]> getBooking(Bookings bookX) {
       LinkedList<Integer[]> output = new LinkedList<Integer[]>();
@@ -150,16 +136,6 @@ public class ConvertFromXML {
       return output;
    }
 
-   private LinkedList<OperationData.Action> getAction(Actions actX) {
-      LinkedList<OperationData.Action> output = new LinkedList<OperationData.Action>();
-
-      for (Actions.Action act : actX.getAction()) {
-         output.add(new OperationData.Action(act.getVariable(), act.getType(), act.getValue()));
-      }
-
-
-      return output;
-   }
    
    private HashMap<Integer, Boolean> getProperties(Properties propX){
       HashMap<Integer, Boolean> output = new HashMap<Integer, Boolean>();
@@ -195,7 +171,7 @@ public class ConvertFromXML {
 
       mxGeometry meo = getGeo(cdX.getGeo());
 
-      ViewData.CellData cd = new ViewData.CellData(cdX.getRefId(), cdX.getPreviousCell(), cdX.getType(), cdX.getRelation(), cdX.isLastInRelation(), meo, cdX.isExpanded());
+      ViewData.CellData cd = null; //new ViewData.CellData(cdX.getRefId(), cdX.getPreviousCell(), cdX.getType(), cdX.getRelation(), cdX.isLastInRelation(), meo, cdX.isExpanded());
 
 
       return cd;
@@ -262,22 +238,4 @@ public class ConvertFromXML {
       return res;
    }
 
-   private void setGlobalProperties(SequencePlannerProjectFile.GlobalProperties inputX){
-
-       LinkedList<IGlobalProperty> output = new LinkedList<IGlobalProperty>();
-
-       if(inputX !=null){
-           for(sequenceplanner.xml.GlobalProperty gpX : inputX.getGlobalProperty()){
-                sequenceplanner.editor.GlobalProperty gp = new sequenceplanner.editor.GlobalProperty(gpX.getId(), gpX.getName());
-
-                for(sequenceplanner.xml.Value v : gpX.getValue()){
-                    gp.addValue(new sequenceplanner.editor.Value(v.getId(), v.getName()));
-                }
-                output.add(gp);
-           }
-       }
-
-       model.getGlobalProperties().setProperties(output);
-
-   }
 }

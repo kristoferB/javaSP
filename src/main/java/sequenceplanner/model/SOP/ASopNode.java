@@ -10,7 +10,7 @@ import sequenceplanner.model.data.OperationData;
  *
  * @author patrik
  */
-public abstract class ASopNode implements ISopNode {
+public abstract class ASopNode implements ISopNode{
 
     private String mTypeAsString = "";
     /**
@@ -24,6 +24,7 @@ public abstract class ASopNode implements ISopNode {
         mSequenceSet = new HashSet<ISopNode>();
         this.mTypeAsString = iTypeAsString;
     }
+
     @Override
     public Set<ISopNode> getFirstNodesInSequencesAsSet() {
         return mSequenceSet;
@@ -51,7 +52,7 @@ public abstract class ASopNode implements ISopNode {
 
     @Override
     public void setSuccessorRelation(int iRelation) {
-        if(iRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 ||
+        if (iRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 ||
                 iRelation == IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12) {
             this.mSuccessorRelation = iRelation;
         }
@@ -59,7 +60,7 @@ public abstract class ASopNode implements ISopNode {
 
     @Override
     public boolean sequenceSetIsEmpty() {
-        if(getFirstNodesInSequencesAsSet().isEmpty()) {
+        if (getFirstNodesInSequencesAsSet().isEmpty()) {
             return true;
         }
         return false;
@@ -145,5 +146,4 @@ public abstract class ASopNode implements ISopNode {
         }
         return returnString;
     }
-
 }

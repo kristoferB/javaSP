@@ -21,7 +21,7 @@ public class Data  extends Observable implements Cloneable {
     private int id;
     private int type;
 
-    public int mUniqueId;
+//    public int mUniqueId;
 
     private boolean copy = false;
 
@@ -35,7 +35,7 @@ public class Data  extends Observable implements Cloneable {
         this.name = name;
         this.id = id;
         attributes = new Hashtable<String, String>();
-        mUniqueId = Model.newId();
+//        mUniqueId = Model.newId(); //To be removed!!!
 
     }
 
