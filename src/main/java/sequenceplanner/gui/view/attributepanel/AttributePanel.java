@@ -157,8 +157,8 @@ public class AttributePanel extends JPanel {
     public OperationData updateModel(OperationData od) {
         this.operationData = od;
         setConditions();
-        if(od.getDescription()!=null){
-            setDescription(od.getDescription());
+        if(operationData.getDescription()!=null){
+            setDescription(operationData.getDescription());
             System.out.println("setdesc");
         }
         return this.operationData;
