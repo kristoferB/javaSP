@@ -166,6 +166,7 @@ public class ConvertToXML {
         if (!data.getGlobalConditions().isEmpty()) {
             dataX.getPreCondition().addAll(getPreConditions(data));
         }
+        System.out.println(dataX.getPreCondition().toString());
 
         if (!data.getGlobalConditions().isEmpty()) {
             dataX.getPostCondition().addAll(getPostConditions(data));
@@ -177,9 +178,8 @@ public class ConvertToXML {
         LinkedList<String> list = new LinkedList<String>();
         data.getGlobalConditions().entrySet();
         for (Entry string : data.getGlobalConditions().entrySet()) {
-            System.out.println("save" + string.toString());
             if (string.toString().matches("Algebraic (\\d)")) {
-                if (string.getKey().equals(ConditionType.PRE)) {
+                if (string.getKey().equals(ConditionType.POST)) {
                     list.add((String) string.getValue());
                 }
             }
@@ -189,15 +189,17 @@ public class ConvertToXML {
 
     private LinkedList<String> getPreConditions(sequenceplanner.model.data.OperationData data) {
         LinkedList<String> list = new LinkedList<String>();
-        data.getGlobalConditions().entrySet();
-        System.out.println("save stuffffff");
+        
         Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
         for (Entry string : data.getGlobalConditions().entrySet()) {
             System.out.println("save stuffffff" + string.toString());
             Matcher m1 = conditionValuePattern.matcher(string.toString());
+            System.out.println("matcher    "+m1.find());
             if (m1.find()) {
+                System.out.println("string...."+string.getKey());
                 if (string.getKey().equals(ConditionType.PRE)) {
                     list.add((String) string.getValue());
+                    System.out.println("list.tostring   "+list.toString());
                 }
             }
         }

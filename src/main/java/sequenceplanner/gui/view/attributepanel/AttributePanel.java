@@ -74,8 +74,8 @@ public class AttributePanel extends JPanel {
      * Sets the ID label to display the id of the {@link OperationData} object.
      * @param id 
      */
-    public void setID(int id) {
-        this.operationIdTextField.setText("Operation ID: " + id);
+    public void setOperationName(String name) {
+        this.operationIdTextField.setText(name);
     }
 
     /**
@@ -115,7 +115,7 @@ public class AttributePanel extends JPanel {
         setConditions();
         this.setName(od.getName());
         this.setDescription(od.getDescription());
-        setID(operationData.getId());
+        setOperationName(operationData.getName());
     }
 
     /**
@@ -156,6 +156,7 @@ public class AttributePanel extends JPanel {
      */
     public OperationData updateModel(OperationData od) {
         this.operationData = od;
+        setOperationName(od.getName());
         setConditions();
         if(operationData.getDescription()!=null){
             setDescription(operationData.getDescription());

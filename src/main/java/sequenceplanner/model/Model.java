@@ -18,7 +18,6 @@ import sequenceplanner.editor.EditorTreeModel;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
-import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.Data;
@@ -29,9 +28,7 @@ import sequenceplanner.model.data.OperationData.SeqCond;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.multiProduct.OperationNode;
 import sequenceplanner.view.operationView.Constants;
-import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
@@ -770,6 +767,17 @@ public class Model extends Observable implements IModel {
 
 
         return result.toArray(new TreeNode[0]);
+    }
+
+    /**
+     * Sets a new name for an Operation
+     * @param text new name
+     * @param id of Operation
+     */
+    public void setOperationName(String text,int id) {
+        getOperation(id).getNodeData().setName(text);
+        setChanged();
+        notifyObservers((OperationData) getOperation(id).getNodeData());
     }
 
     protected interface PreferenceFilter {

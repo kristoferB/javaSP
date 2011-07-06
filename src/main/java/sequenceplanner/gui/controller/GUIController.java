@@ -216,7 +216,7 @@ public class GUIController {
         public void actionPerformed(ActionEvent e) {
             guiModel = new GUIModel();
             //guiView = new GUIView(guiModel);
-            
+
             //guiView.closeAllViews();
             guiView.resetView(guiModel);
         }
@@ -382,11 +382,21 @@ public class GUIController {
             if (e.getActionCommand().equalsIgnoreCase("set name")) {
                 JTextField field = (JTextField) e.getSource();
                 System.out.println("setname");
+                String oldName;
+                final String newName = field.getText();
                 if (guiModel.getModel().getOperation(id) != null) {
-                    guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
-                    opViewController.update(null, ctrl.getModel());
+                    oldName = guiModel.getModel().getOperation(id).getNodeData().getName();
+                    guiModel.getModel().setOperationName(newName, id);
 
+                } else {
+                    oldName = "OP" + id;
+                    OperationData opData = new OperationData(newName, id);
+                    TreeNode[] toAdd = new TreeNode[1];
+                    toAdd[0] = new TreeNode(opData);
+                    guiModel.getModel().saveOperationData(toAdd);
                 }
+
+                guiView.setAttributePanelName(oldName, newName);
             }
         }
     }

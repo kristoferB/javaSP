@@ -548,10 +548,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addAboutL(ActionListener l) {
         about.addActionListener(l);
     }
-    
+
 //End listeners 
     //</editor-fold>
-
     /**
      * Opens a new window with a preference pane in it.
      */
@@ -803,5 +802,23 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         createRootWindow();
         setStartingWindowsProperties();
         setRootDropDisabled();
+    }
+
+    /**
+     * Changes the name of an {@link AttrubutePanel} tab.
+     * @param oldName
+     * @param newName 
+     */
+    public void setAttributePanelName(String oldName, String newName) {
+        //TODO create containsView method
+        for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
+
+            if (objectViewMap.getView(i).getComponent() != null
+                    && oldName.equals(objectViewMap.getView(i).getTitle())) {
+                objectViewMap.getView(i).setName(newName);
+            }
+        }
+
+
     }
 }
