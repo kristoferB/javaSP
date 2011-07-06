@@ -53,7 +53,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     System.out.println("kommer hit");
                     internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
-                    conditionLabel = new JLabel(key + " " + conditionList.get(key).toString());
+                    conditionLabel = new JLabel(key + ": " + conditionList.get(key).toString());
                     conditionLabel.setVisible(true);
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
