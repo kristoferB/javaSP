@@ -404,14 +404,14 @@ public class GUIController {
      */
     private void openModel() {
         if (guiModel.openModel()) {
-            guiView.closeAllViews();
-            for (OperationView o : guiModel.getOperationViews()) {
-                guiView.addNewOpTab(o.toString(), o);
-                if (o.isClosed()) {
-                    guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
-                }
-
-            }
+            System.out.println("open was ok");
+//            guiView.closeAllViews(); //BIG PROBLEM WITH METHOD, BLOCKS SP
+//            for (OperationView o : guiModel.getOperationViews()) {
+//                guiView.addNewOpTab(o.toString(), o);
+//                if (o.isClosed()) {
+//                    guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
+//                }
+//            }
 
         }
         printToConsole("New model opened!");

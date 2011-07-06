@@ -7,7 +7,9 @@ import org.apache.log4j.Logger;
 
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -22,6 +24,7 @@ public class ViewData extends Data {
 
     public ISopNode mSopNodeRoot = new SopNode();
     public Map<ISopNode,CellData2> mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
+    public Set<CellData2> mCellDataSet = new HashSet<CellData2>();
 
     private boolean isClosed;
 
@@ -84,8 +87,9 @@ public class ViewData extends Data {
         for(final ISopNode node : iMap.keySet()) {
             final Cell cell = iMap.get(node);
             //Create new CellData
-            final CellData2 cellData= new CellData2(refIdCounter++, cell.getGeometry(), !cell.isCollapsed());
+            final CellData2 cellData= new CellData2(node, refIdCounter++, cell.getGeometry(), !cell.isCollapsed());
             mNodeCellDataMap.put(node, cellData);
+            mCellDataSet.add(cellData);
         }
     }
 
@@ -94,11 +98,13 @@ public class ViewData extends Data {
      */
     public static class CellData2 {
 
+        public ISopNode mSopNode;
         public final int mRefId;
         public final mxGeometry mGeo;
         public final boolean mExpanded;
 
-        public CellData2(int mRefId, mxGeometry mGeo, boolean mExpanded) {
+        public CellData2(ISopNode iSopNode, int mRefId, mxGeometry mGeo, boolean mExpanded) {
+            this.mSopNode = iSopNode;
             this.mRefId = mRefId;
             this.mGeo = mGeo;
             this.mExpanded = mExpanded;

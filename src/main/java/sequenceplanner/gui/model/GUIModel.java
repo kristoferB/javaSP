@@ -100,32 +100,39 @@ public class GUIModel {
         
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
-        removeAllOpViews();
+//        removeAllOpViews();
         
         path = fc.getCurrentDirectory().getPath();
                 
         if (answer == JFileChooser.APPROVE_OPTION) {
             openModel(fc.getSelectedFile());
             getModel().reloadNamesCache();
-            try {
 
-                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
-                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
-                        ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
-                        createNewOpView(toOpen);
-                        if(toOpen.isClosed())
-                            operationViews.getLast().setClosed(true);
-                    }
-            }
-
-            } catch (ClassCastException e) {
-                System.out.println("Could not cast first child of viewroot to viewData");
-            }
+            //This code makes it impossible to click after reopen
+//            try {
+//
+//                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+//                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
+//                        ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
+//                        createNewOpView(toOpen);
+//                        if(toOpen.isClosed())
+//                            operationViews.getLast().setClosed(true);
+//                    }
+//            }
+//
+//            } catch (ClassCastException e) {
+//                System.out.println("Could not cast first child of viewroot to viewData");
+//            }
             return true;
         }
         return false;
     }
 
+    /**
+     * Read from xml
+     * @param inputFile
+     * @return
+     */
     public boolean openModel(File inputFile) {
 
         SequencePlannerProjectFile project = null;

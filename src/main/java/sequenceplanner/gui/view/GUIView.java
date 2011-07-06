@@ -263,6 +263,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     /**
      * Empties the opViewMap and removes all tabs from mainDocks.
+     * BIG PROBLEM WITH THIS CLASS... SP WILL BLOCK!
      */
     public void closeAllViews() {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
