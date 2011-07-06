@@ -47,7 +47,6 @@ public class AttributePanelController implements ActionListener, Observer {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
             System.out.println("save");
             if (!attributeEditor.getConditionString().isEmpty()) {
-                System.out.println(attributeEditor.getConditionString());
                 setCondition(attributeEditor.getConditionString());
             }
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
@@ -58,9 +57,9 @@ public class AttributePanelController implements ActionListener, Observer {
     @Override
     public void update(Observable o, Object arg) {
         OperationData od = (OperationData) arg;
-        if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
+        if (od.getName() != null && od.getName().equalsIgnoreCase(attributePanel.getName())) {
+            this.opData = od;
             attributePanel.updateModel(od);
-            System.out.println("APC" + o.toString());
         }
     }
 
@@ -104,7 +103,6 @@ public class AttributePanelController implements ActionListener, Observer {
             
             opData.setConditions(map, "Algebraic " + opData.getAlgebraicCounter());
             opData.increaseAlgebraicCounter();
-            System.out.println(opData.getGlobalConditions().size());
             this.attributePanel.setConditions();
             this.attributeEditor.clearTextField();
             System.out.println("entryset "+opData.getGlobalConditions().entrySet().toString());

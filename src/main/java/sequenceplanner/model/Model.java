@@ -232,7 +232,9 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
-                System.out.println("entryset "+((OperationData) this.getOperation(15).getNodeData()).getGlobalConditions().entrySet().toString());
+
+                od = (OperationData) node.getNodeData();
+                System.out.println("entryset saveOperationData" + od.getGlobalConditions().toString());
                 setChanged();
                 notifyObservers(od);
             } else {
@@ -379,8 +381,8 @@ public class Model extends Observable implements IModel {
     }
 
     protected void reloadNameChache(TreeNode node, String path) {
-        for (int i = 0; i <
-                node.getChildCount(); i++) {
+        for (int i = 0; i
+                < node.getChildCount(); i++) {
             TreeNode child = node.getChildAt(i);
             String name = child.getNodeData().getName();
             nameCache.put(child.getId(), path, name);
@@ -495,8 +497,8 @@ public class Model extends Observable implements IModel {
             if (!exclude.contains(node.getId())) {
                 tId.add(node.getId());
 
-                for (int i = 0; i <
-                        node.getChildCount(); i++) {
+                for (int i = 0; i
+                        < node.getChildCount(); i++) {
                     nodes.push(node.getChildAt(i));
                 }
 
@@ -604,15 +606,15 @@ public class Model extends Observable implements IModel {
 
         s = s.isEmpty() || resources.isEmpty() ? s : s + " " + Constants.AND + " ";
 
-      for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
-         Integer[] integers = it.next();
-         String[] out = cache.get(integers[0]);
-         s =
-               s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
+        for (Iterator<Integer[]> it = resources.iterator(); it.hasNext();) {
+            Integer[] integers = it.next();
+            String[] out = cache.get(integers[0]);
+            s =
+                    s + out[0] + "." + out[1] + getResourceEnding(integers[1]);
 
-         if (it.hasNext()) {
-            s = s + " " + Constants.AND + " ";
-         }
+            if (it.hasNext()) {
+                s = s + " " + Constants.AND + " ";
+            }
 
         }
 
@@ -720,11 +722,11 @@ public class Model extends Observable implements IModel {
     private ArrayList<Integer> getListIds(ArrayList<TreeNode> nodes) {
         ArrayList<Integer> result = new ArrayList<Integer>();
 
-      for (TreeNode node : nodes) {
-         result.add(node.getId());
-      }
+        for (TreeNode node : nodes) {
+            result.add(node.getId());
+        }
 
-      return result;
+        return result;
 
     }
 
@@ -910,6 +912,10 @@ public class Model extends Observable implements IModel {
 
     public void setValue(TreeNode node, Data d) {
         node.setNodeData(d);
+        if (d instanceof OperationData) {
+            setChanged();
+            notifyObservers((OperationData) d);
+        }
         fireSyncNodeChangeEvent(node, getPath(node.getParent()), node.getParent().getIndex(node));
 
     }
@@ -924,8 +930,8 @@ public class Model extends Observable implements IModel {
         TreeNode parent = !isParent ? cell.getParent() : cell;
 
         if (parent != null) {
-            for (int i = 0; i <
-                    parent.getChildCount(); i++) {
+            for (int i = 0; i
+                    < parent.getChildCount(); i++) {
                 TreeNode node = parent.getChildAt(i);
 
                 if (node != cell && node.getNodeData().getName().equals(name)) {
@@ -1012,8 +1018,8 @@ public class Model extends Observable implements IModel {
 
     public TreeNode[] getChildren(TreeNode parent) {
         TreeNode[] children = new TreeNode[parent.getChildCount()];
-        for (int i = 0; i <
-                parent.getChildCount(); i++) {
+        for (int i = 0; i
+                < parent.getChildCount(); i++) {
             children[i] = parent.getChildAt(i);
         }
 
@@ -1054,8 +1060,8 @@ public class Model extends Observable implements IModel {
     public boolean isResourceRoot(TreeNode node) {
         return node == getResourceRoot();
     }
-    
-    public boolean isOperationRoot(TreeNode node){
+
+    public boolean isOperationRoot(TreeNode node) {
         return node == getOperationRoot();
     }
 
@@ -1219,7 +1225,7 @@ public class Model extends Observable implements IModel {
             }
         }
         iViewData.mSopNodeRoot = iSopNode;
-        
+
     }
 
     /**
@@ -1243,14 +1249,17 @@ public class Model extends Observable implements IModel {
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);
         //-----------------------------------------------------------------------
-
+        System.out.println("model setconditions : " +operationConditionMap.keySet().toString());
         //Add new conditions from SOP--------------------------------------------
-        for (final OperationData operation : operationConditionMap.keySet()) {
-            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
-            operation.setConditions(operationConditionMap.get(operation), iLabel);
-            //TODO q Add observer !?
+
+        for (final OperationData operation : operationConditionMap.keySet()) { 
+            System.out.println("model setconditions " + operation.getName()); 
+            operation.setConditions(operationConditionMap.get(operation), iLabel); 
+            setChanged();
+            notifyObservers(operation);
         }
         //-----------------------------------------------------------------------
+
         return true;
     }
 
@@ -1263,13 +1272,14 @@ public class Model extends Observable implements IModel {
         for (final TreeNode tn : allOperationsList) {
 
             final OperationData opData = (OperationData) tn.getNodeData();
-            System.out.println("operation: " + opData.getName());
-            System.out.println("removecon1" + opData.getGlobalConditions().toString());
+
             if (opData.getGlobalConditions().containsKey(iViewLabel)) {
                 opData.getGlobalConditions().remove(iViewLabel);
-                //TODO q Add observer !?
+
+                setChanged();
+                notifyObservers(opData);
             }
-            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+
         }
     }
 }

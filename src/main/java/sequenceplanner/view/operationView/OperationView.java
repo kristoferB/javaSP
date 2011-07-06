@@ -49,15 +49,10 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import sequenceplanner.condition.Condition;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
@@ -311,7 +306,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
-            model.saveOperationData(data);
+            //model.saveOperationData(data);
             model.saveSopNode(viewData.getFirst(), getSopNodeForGraph());
 
             System.out.println("start set conditions");
