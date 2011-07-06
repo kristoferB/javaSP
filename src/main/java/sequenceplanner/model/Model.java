@@ -256,7 +256,7 @@ public class Model extends Observable implements IModel {
     }
 
     /**
-     *
+     * Only used for operations
      * @param id
      * @param root search for TreeNode with id from root
      * @return
