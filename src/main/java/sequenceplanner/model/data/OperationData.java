@@ -67,7 +67,7 @@ public class OperationData extends Data {
         algebraicCounter = 1;
         preference = Collections.synchronizedMap(new HashMap<String, String>());
 
-        globalConditions = Collections.synchronizedMap(new HashMap<String, Map<ConditionType, Condition>>());
+        globalConditions = new HashMap<String, Map<ConditionType, Condition>>();
         localConditions = new HashMap<ConditionType, Condition>();
         //Resource booking
         sequenceCondition = new LinkedList<LinkedList<SeqCond>>();

@@ -1256,9 +1256,10 @@ public class Model extends Observable implements IModel {
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);
         //-----------------------------------------------------------------------
         //Add new conditions from SOP--------------------------------------------
-
+        
         for (final OperationData operation : operationConditionMap.keySet()) {
-            System.out.println("model setconditions " + operation.getName());
+            System.out.println("model SETconditions " + operation.getName());
+            
             operation.setConditions(operationConditionMap.get(operation), iLabel);
             setChanged();
             notifyObservers(operation);
