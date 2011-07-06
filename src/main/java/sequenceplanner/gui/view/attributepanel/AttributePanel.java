@@ -37,7 +37,7 @@ public class AttributePanel extends JPanel {
 
     /** Creates new form AttributePanel */
     public AttributePanel(OperationData od) {
-        this.model = od;
+        this.operationData = od;
         initComponents();
         initVariables(od);
 
@@ -49,8 +49,8 @@ public class AttributePanel extends JPanel {
         operationIdTextField = new JTextField();
         operationIdTextField.setActionCommand("set name");
         operationAttributeEditor = new OperationAttributeEditor();
-        preCondListPanel = new ConditionListPanel(operationAttributeEditor, model,ConditionType.PRE);
-        postCondListPanel = new ConditionListPanel(operationAttributeEditor, model,ConditionType.POST);
+        preCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData,ConditionType.PRE);
+        postCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData,ConditionType.POST);
         jLabel1 = new JLabel("Preconditions");
         jLabel2 = new JLabel("Postconditions");
         jScrollPane1 = new JScrollPane(preCondListPanel);

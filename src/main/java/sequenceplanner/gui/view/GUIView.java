@@ -797,9 +797,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public void resetView(GUIModel guiModel) {
-        this.removeAll();
+        //this.removeAll();
         this.guiModel = guiModel;
-        //initJFrame();
+        initJFrame();
         createRootWindow();
         setStartingWindowsProperties();
         setRootDropDisabled();
