@@ -525,10 +525,10 @@ public class GUIController {
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
-            guiView.updateEditorView();
-            guiView.updatePropertyView();
+//            guiView.updateEditorView();
+//            guiView.updatePropertyView();
             for (OperationView o : guiModel.getOperationViews()) {
-                guiView.addNewOpTab(o.toString(), o);
+                addNewOpTab(o);
                 if (o.isClosed()) {
                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
                 }
