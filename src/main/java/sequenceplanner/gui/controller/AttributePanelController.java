@@ -60,7 +60,6 @@ public class AttributePanelController implements ActionListener, Observer {
         OperationData od = (OperationData) arg;
         if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
             attributePanel.updateModel(od);
-            System.out.println("APC" + o.toString());
         }
     }
 

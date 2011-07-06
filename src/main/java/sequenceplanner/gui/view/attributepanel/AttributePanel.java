@@ -5,6 +5,7 @@
  */
 package sequenceplanner.gui.view.attributepanel;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -32,7 +33,7 @@ public class AttributePanel extends JPanel {
     private JTextField operationIdTextField;
     private ConditionListPanel postCondListPanel;
     private ConditionListPanel preCondListPanel;
-    /**OperationData object, acting as operationData for the view**/
+    private DescriptionPanel descriptionPanel;
     private OperationData operationData;
 
     /** Creates new form AttributePanel */
@@ -55,19 +56,18 @@ public class AttributePanel extends JPanel {
         jLabel2 = new JLabel("Postconditions");
         jScrollPane1 = new JScrollPane(preCondListPanel);
         jScrollPane2 = new JScrollPane(postCondListPanel);
-
+        descriptionPanel = new DescriptionPanel();
         jSeparator2 = new JSeparator();
-        
 
         operationIdTextField.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         operationIdTextField.setText("Operation ID: ");
-
+        operationAttributeEditor.setPreferredSize(new Dimension(300, 100));
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jLabel1).addContainerGap(137, Short.MAX_VALUE)).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE).addContainerGap()).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jLabel2).addContainerGap(132, Short.MAX_VALUE)).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE).addContainerGap()).addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE).addComponent(operationAttributeEditor, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addGap(39, 39, 39).addComponent(operationIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE).addContainerGap(25, Short.MAX_VALUE)));
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jLabel1).addContainerGap(137, Short.MAX_VALUE)).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE).addContainerGap()).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jLabel2).addContainerGap(132, Short.MAX_VALUE)).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE).addContainerGap()).addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE).addComponent(operationAttributeEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, Short.MAX_VALUE).addComponent(descriptionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addGap(39, 39, 39).addComponent(operationIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE).addContainerGap(25, Short.MAX_VALUE)));
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(operationIdTextField).addGap(18, 18, 18).addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel1).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel2).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(operationAttributeEditor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addContainerGap(30, Short.MAX_VALUE)));
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(operationIdTextField).addGap(18, 18, 18).addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel1).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel2).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(operationAttributeEditor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addContainerGap(30, Short.MAX_VALUE).addComponent(descriptionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)));
     }
 
     /**
@@ -101,7 +101,7 @@ public class AttributePanel extends JPanel {
 
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
-                    } 
+                    }
                 }
             }
         } else {
@@ -114,6 +114,7 @@ public class AttributePanel extends JPanel {
         this.operationData = od;
         setConditions();
         this.setName(od.getName());
+        this.setDescription(od.getDescription());
         setID(operationData.getId());
     }
 
@@ -124,15 +125,23 @@ public class AttributePanel extends JPanel {
     public void addEditorSaveListener(ActionListener l) {
         operationAttributeEditor.addSaveButtonListener(l);
     }
-    
+
     /**
      * Adds an ActionListener to the OperationIdTextField
      * @param l the ActionListener
      */
-    public void addOperationIdTextFieldListener(ActionListener l){
+    public void addOperationIdTextFieldListener(ActionListener l) {
         operationIdTextField.addActionListener(l);
     }
-   
+
+    /**
+     * Adds an ActionListener to the DescriptionTextField
+     * @param l the ActionListener
+     */
+    public void addDescriptionTextFieldListener(ActionListener l) {
+        descriptionPanel.addTextFieldListener(l);
+    }
+
     /**
      * Method for getting the inner {@link OperationAttributeeEditor}
      * @return 
@@ -148,10 +157,22 @@ public class AttributePanel extends JPanel {
     public OperationData updateModel(OperationData od) {
         this.operationData = od;
         setConditions();
+        if(od.getDescription()!=null){
+            setDescription(od.getDescription());
+            System.out.println("setdesc");
+        }
         return this.operationData;
     }
 
     public JTextField getOperationIdTextField() {
         return operationIdTextField;
+    }
+    
+    /**
+     * 
+     * @param description 
+     */
+    private void setDescription(String description){
+        descriptionPanel.setDescription(description);
     }
 }

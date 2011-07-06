@@ -369,7 +369,7 @@ public class GUIController {
         int id;
         AttributePanelController ctrl;
 
-        public OperationIdTextFieldListener(int id , AttributePanelController ctrl) {
+        public OperationIdTextFieldListener(int id, AttributePanelController ctrl) {
             super();
             this.id = id;
             this.ctrl = ctrl;
@@ -379,15 +379,39 @@ public class GUIController {
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equalsIgnoreCase("set name")) {
                 JTextField field = (JTextField) e.getSource();
-                
                 System.out.println("setname");
                 if (guiModel.getModel().getOperation(id) != null) {
                     guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
                     opViewController.update(null, ctrl.getModel());
-                    System.out.println("setname");
-                    
-                }   
-                opViewController.update(null, ctrl.getModel());
+
+                }
+            }
+        }
+    }
+
+    class DescriptionTextFieldListener implements ActionListener {
+
+        int id;
+        AttributePanelController ctrl;
+
+        public DescriptionTextFieldListener(int id, AttributePanelController ctrl) {
+            super();
+            this.id = id;
+            this.ctrl = ctrl;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equalsIgnoreCase("set description")) {
+                JTextField field = (JTextField) e.getSource();
+                System.out.println("setdecctrl");
+                if (guiModel.getModel().getOperation(id) != null) {
+                    OperationData data = (OperationData) guiModel.getModel().getOperation(id).getNodeData();
+                    data.setDescription(field.getText());
+                    guiModel.getModel().setValue(guiModel.getModel().getOperation(id), data);
+                    //opViewController.update(null, ctrl.getModel());
+
+                }
             }
         }
     }
@@ -524,24 +548,24 @@ public class GUIController {
         }
         return false;
     }
-    
+
     /**
      * Saves an OperationData object to the main project model.
      * @param data 
      */
-    public void saveOperationToModel(OperationData data){
-        System.out.println("guic entryset "+data.getGlobalConditions().entrySet().toString());
+    public void saveOperationToModel(OperationData data) {
+        System.out.println("guic entryset " + data.getGlobalConditions().entrySet().toString());
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }
-        
-        
+
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(),this);
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(), this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
+            panel.addDescriptionTextFieldListener(new DescriptionTextFieldListener(data.getId(), ctrl));
             guiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {
