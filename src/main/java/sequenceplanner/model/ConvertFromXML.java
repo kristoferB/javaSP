@@ -32,6 +32,7 @@ import sequenceplanner.condition.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.GuardAsTextInputToConditionParser;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 
 /**
  *
@@ -296,16 +297,28 @@ public class ConvertFromXML {
     }
 
     private OperationData getPreconditions(OperationData data, List<String> prelist) {
-        for(String string: prelist){
-            
+        HashMap<ConditionType, Condition> map;
+        for(int i =1; prelist.size()>i; i++){
+            map = new HashMap<ConditionType,Condition>();
+            map.put(ConditionType.PRE, conditionFromString(prelist.get(i)));
+            data.setConditions(map, "Algebraic: " +data.getAlgebraicCounter());
+            data.increaseAlgebraicCounter();
         }
         
         
         return data;
     }
 
-    private OperationData getPostcondtions(OperationData data, List prelist) {
+    private OperationData getPostcondtions(OperationData data, List<String> postlist) {
+        HashMap<ConditionType, Condition> map;
+        for(int i =1; postlist.size()>i; i++){
+            map = new HashMap<ConditionType,Condition>();
+            map.put(ConditionType.POST, conditionFromString(postlist.get(i)));
+            data.setConditions(map, "Algebraic: "+data.getAlgebraicCounter());
+            data.increaseAlgebraicCounter();
+        }
         
+                
         
         return data;
     }
