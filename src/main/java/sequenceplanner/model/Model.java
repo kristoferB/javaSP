@@ -1248,8 +1248,28 @@ public class Model extends Observable implements IModel {
         for (final OperationData operation : operationConditionMap.keySet()) {
             System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
             operation.setConditions(operationConditionMap.get(operation), iLabel);
+            //TODO q Add observer !?
         }
         //-----------------------------------------------------------------------
         return true;
+    }
+
+    /**
+     * Removes {@link Condition}s related to parameter <p>iViewLabel</p>.<br/>
+     * @param iViewLabel
+     */
+    public void removeConditions(final String iViewLabel) {
+        final List<TreeNode> allOperationsList = getAllOperations();
+        for (final TreeNode tn : allOperationsList) {
+
+            final OperationData opData = (OperationData) tn.getNodeData();
+            System.out.println("operation: " + opData.getName());
+            System.out.println("removecon1" + opData.getGlobalConditions().toString());
+            if (opData.getGlobalConditions().containsKey(iViewLabel)) {
+                opData.getGlobalConditions().remove(iViewLabel);
+                //TODO q Add observer !?
+            }
+            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+        }
     }
 }

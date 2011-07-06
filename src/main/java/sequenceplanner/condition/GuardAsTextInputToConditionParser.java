@@ -6,7 +6,7 @@ package sequenceplanner.condition;
  */
 public class GuardAsTextInputToConditionParser extends AStringToConditionParser {
 
-    private static String variablePrefix = "id";
+    private static String variablePrefix = "op|var|id"; //"id";
     private static String variable = "(" + variablePrefix + "\\d{1,})";
     private static String statementOperator = "([=><!][=]|[><])";
     private static String value = "(\\d{1,}|i|e|f)";
