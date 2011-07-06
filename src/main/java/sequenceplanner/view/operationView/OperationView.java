@@ -319,7 +319,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
             final ISopNode sopNodeRoot = map.keySet().iterator().next();
             final Map<ISopNode,Cell> nodeCellMap = map.get(sopNodeRoot);
-            
+
+            System.out.println("save nodeCellMap: " + nodeCellMap);
+
             model.saveSopNode(viewData.getFirst(), sopNodeRoot);
             viewData.getFirst().storeCellData(nodeCellMap); //for xml
             System.out.println("start set conditions");

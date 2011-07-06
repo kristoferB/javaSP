@@ -31,6 +31,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 
 /**
@@ -54,10 +55,12 @@ public class ConvertFromXML {
 
 //      setResourceRoot(project.getResources());
 
-      setViewRoot(project.getViews());
+        getOperationData(project.getOperations());
+
+        setViewRoot(project.getViews()); //Has to be after gerOperationData
 
         //Recreate operations and operationViews
-        getOperationData(project.getOperations());
+
 //        setOperationRoot(project.getOperations());
 
 
@@ -168,42 +171,58 @@ public class ConvertFromXML {
     }
 
     private ViewData getView(ViewType viX) {
-        ViewData data = new ViewData(viX.getName(), -1);
-        data.setRoot(viX.getRoot());
+        final ViewData viewData = new ViewData(viX.getName(), -1);
+        viewData.setRoot(viX.getRoot());
 
         for (CellData cellData : viX.getCellData()) {
-            data.getData().add(getCellData(cellData));
+            viewData.mCellDataSet.add(getCellData(cellData));
         }
 
-
-
-
-        return data;
+        return viewData;
     }
 
-    private ViewData.CellData getCellData(CellData cdX) {
+    private ViewData.CellData2 getCellData(CellData cdX) {
 
-        //Create SopNode
+        //Create SopNode---------------------------------------------------------
         final int type = cdX.getType();
-        ISopNode node = null;
-        
-        if(type == 0) {
-            node = new SopNode();
-        } else if(type == -2) {
-            node = new SopNodeAlternative();
-        } else if(type == -3) {
-            node = new SopNodeArbitrary();
-        } else if(type == -4) {
-            node = new SopNodeParallel();
-        } 
+        ISopNode newSopNode = null;
+
+        if (type == 0) {
+            newSopNode = new SopNode();
+        } else if (type == -2) {
+            newSopNode = new SopNodeAlternative();
+        } else if (type == -3) {
+            newSopNode = new SopNodeArbitrary();
+        } else if (type == -4) {
+            newSopNode = new SopNodeParallel();
+        } else {
+            final TreeNode tn = model.getOperation(type);
+            if (tn != null) {
+                if (Model.isOperation(tn.getNodeData())) {
+                    final OperationData opData = (OperationData) tn.getNodeData();
+                    newSopNode = new SopNodeOperation(opData);
+                }
+            } else {
+                System.out.println("Could not import: " + cdX.toString());
+            }
+        }//----------------------------------------------------------------------
+
+        //Get Sequence set-------------------------------------------------------
+        final List<Integer> sequenceSet = cdX.getSequenceSet().getChildId();
+        //-----------------------------------------------------------------------
+
+        //Get Successor----------------------------------------------------------
+        final Integer successor = cdX.getSuccessor();
+        //-----------------------------------------------------------------------
 
 
-        mxGeometry meo = getGeo(cdX.getGeo());
+        //Get geometry info------------------------------------------------------
+        final mxGeometry meo = getGeo(cdX.getGeo());
+        //-----------------------------------------------------------------------
 
-        ViewData.CellData cd = null; //new ViewData.CellData(cdX.getRefId(), cdX.getPreviousCell(), cdX.getType(), cdX.getRelation(), cdX.isLastInRelation(), meo, cdX.isExpanded());
-
-
-        return cd;
+        //Add as CellData object in ViewData-------------------------------------
+        final ViewData.CellData2 newCellData = new ViewData.CellData2(newSopNode, sequenceSet, successor, cdX.getRefId(), meo, cdX.isExpanded());
+        return newCellData;
     }
 
     private mxGeometry getGeo(CellData.Geo geoX) {

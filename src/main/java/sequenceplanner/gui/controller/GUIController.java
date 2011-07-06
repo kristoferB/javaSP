@@ -20,6 +20,11 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeFromViewData;
+import sequenceplanner.model.SOP.SopNodeOperation;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.operationView.ClickMenu;
 import sequenceplanner.view.operationView.OperationView;
@@ -123,7 +128,7 @@ public class GUIController {
         return this.guiView;
     }
 
-    public Object getModel() {
+    public Model getModel() {
         return guiModel.getModel();
     }
 
@@ -405,6 +410,35 @@ public class GUIController {
     private void openModel() {
         if (guiModel.openModel()) {
             System.out.println("open was ok");
+
+            try {
+
+                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
+                        final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
+                        System.out.println("viewData to open: " + viewData.getName());
+                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData);
+                        final OperationView opView = guiModel.createNewOpView(viewData);
+                        new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
+
+                        
+                        addNewOpTab(opView);
+
+                        
+
+
+//                        final OperationView opView = guiModel.createNewOpView(viewData);
+//                        createNewOpView(viewData);
+//                        if (viewData.isClosed()) {
+//                            operationViews.getLast().setClosed(true);
+//                        }
+                    }
+                }
+
+            } catch (ClassCastException e) {
+                System.out.println("Could not cast first child of viewroot to viewData");
+            }
+
 //            guiView.closeAllViews(); //BIG PROBLEM WITH METHOD, BLOCKS SP
 //            for (OperationView o : guiModel.getOperationViews()) {
 //                guiView.addNewOpTab(o.toString(), o);

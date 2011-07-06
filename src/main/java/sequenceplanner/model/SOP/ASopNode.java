@@ -10,7 +10,7 @@ import sequenceplanner.model.data.OperationData;
  *
  * @author patrik
  */
-public abstract class ASopNode implements ISopNode{
+public abstract class ASopNode implements ISopNode {
 
     private String mTypeAsString = "";
     /**

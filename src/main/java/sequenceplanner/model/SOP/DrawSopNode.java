@@ -1,13 +1,13 @@
 package sequenceplanner.model.SOP;
 
-import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ViewData;
+import sequenceplanner.model.data.ViewData.CellData2;
 import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
@@ -22,7 +22,12 @@ public class DrawSopNode {
 
     private SPGraph mGraph = null;
     private ISopNode mRoot = null;
+    private Map<ISopNode, CellData2> mNodeCellDataMap = null;
+
+    private Set<CellData2> mCellDataSet = null;
+
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
+    private boolean doAutoLayout = true;
 
     /**
      * Dummy constructor just for test
@@ -33,28 +38,47 @@ public class DrawSopNode {
         drawExampleSequence();
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph) {
+    public DrawSopNode(final ISopNode iRoot, final SPGraph iGraph) {
+        this(iRoot, iGraph, null);
+    }
+
+    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Set<CellData2> iCellDataSet) {
         this.mRoot = iRoot;
         this.mGraph = mGraph;
-        addNodesToGraph(iRoot);
+        this.mCellDataSet = iCellDataSet;
+        addNodesToGraph();
     }
 
     /**
      * Adds a {@link ISopNode}s in parameter iRoot to {@link SPGraph}.<br/>
      * @param iRoot container for nodes
      */
-    private void addNodesToGraph(final ISopNode iRoot) {
+    private void addNodesToGraph() {
+
+        if(mCellDataSet != null) {
+            if(mNodeCellDataMap == null) {
+                mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
+            } else {
+            mNodeCellDataMap.clear();
+            }
+            for(final ViewData.CellData2 cellData : mCellDataSet) {
+                mNodeCellDataMap.put(cellData.mSopNode, cellData);
+            }
+        }
+
         //Create Cells and a map between cells and nodes.
         final Map<ISopNode, Cell> nodeCellMap = new HashMap<ISopNode, Cell>();
-        final Set<ISopNode> nodeSet = mSNToolbox.getNodes(iRoot, true);
+        final Set<ISopNode> nodeSet = mSNToolbox.getNodes(mRoot, true);
         for (final ISopNode node : nodeSet) {
             nodeCellMap.put(node, getCellForNode(node));
         }
 
-        recursiveCallToAllNodes(iRoot, nodeCellMap);
+        recursiveCallToAllNodes(mRoot, nodeCellMap);
 
-//        //Get Proper layout
-//        mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
+        //Get Proper layout
+        if (doAutoLayout) {
+            mGraph.recursiveAutoArrange((Cell) mGraph.getDefaultParent());
+        }
     }
 
     /**
@@ -143,37 +167,53 @@ public class DrawSopNode {
      */
     private Cell getCellForNode(final ISopNode iNode) {
 
-        Cell cell;
+        Cell returnCell = null;
         if (iNode instanceof SopNodeOperation) {
             final OperationData opData = iNode.getOperation();
             if (iNode.sequenceSetIsEmpty()) {
                 //Operation
-                cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION);
+                returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_OPERATION);
             } else {
                 //SOP Operation
-                cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
-                cell.setCollapsed(true);
+                returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
             }
-            final Data newOpData = new OperationData(opData.getName(), -1);
-            Model.giveId(newOpData);
-            cell.setValue(newOpData);
-            cell.setGeometry(new mxGeometry(81.35, 81.35, opData.getId(), opData.getId()));
-            return cell;
+//            final Data newOpData = (Data) opData; //new OperationData(opData.getName(), -1);
+//            Model.giveId(newOpData);
+//            returnCell.setValue(newOpData);
+            returnCell.setValue(opData);
+
         } else if (iNode instanceof SopNode) {
-            cell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
+            returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
             final Data newOpData = new OperationData("", -1);
             Model.giveId(newOpData);
-            cell.setValue(newOpData);
-            return cell;
+            returnCell.setValue(newOpData);
+
         } else if (iNode instanceof SopNodeAlternative) {
-            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
+            returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ALTERNATIVE);
         } else if (iNode instanceof SopNodeArbitrary) {
-            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
+            returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_ARBITRARY);
         } else if (iNode instanceof SopNodeParallel) {
-            return CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
+            returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_PARALLEL);
         }
+
         
-        return null;
+
+        //Set celldata if such exists
+        if (!returnCell.equals(null) && !mNodeCellDataMap.equals(null)) {
+            if (mNodeCellDataMap.containsKey(iNode)) {
+                
+                final ViewData.CellData2 cellData = mNodeCellDataMap.get(iNode);
+
+                System.out.println(iNode.typeToString() + " geo " + cellData.mGeo.getRectangle().toString());
+
+                returnCell.setGeometry(cellData.mGeo);
+                returnCell.setCollapsed(!cellData.mExpanded);
+
+                doAutoLayout = false;
+            }
+        }
+
+        return returnCell;
     }
 
     /**

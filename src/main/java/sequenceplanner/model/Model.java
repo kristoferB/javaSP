@@ -1081,7 +1081,6 @@ public class Model extends Observable implements IModel {
 
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
-//            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
             operation.setConditions(operationConditionMap.get(operation), iLabel);
         }
         //-----------------------------------------------------------------------

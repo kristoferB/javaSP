@@ -58,7 +58,7 @@ public class GUIModel {
     }
 
     public OperationView createNewOpView(ViewData toOpen) {
-        final OperationView opView = new OperationView(this.model, toOpen);
+        final OperationView opView = new OperationView(this.model, toOpen.getName());
         operationViews.addLast(opView);
         return opView;
     }

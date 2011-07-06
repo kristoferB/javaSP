@@ -6,6 +6,7 @@ import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ViewData.CellData2;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -15,6 +16,11 @@ import sequenceplanner.view.operationView.OperationView;
  * @author patrik
  */
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
+
+
+    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData2> iCellDataSet) {
+        new DrawSopNode(iRootNode, iView.getGraph(), iCellDataSet);
+    }
 
     @Override
     public void drawNode(ISopNode iRootNode, OperationView iView) {

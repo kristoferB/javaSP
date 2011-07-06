@@ -264,6 +264,8 @@ public class ConvertToXML {
         for (final ISopNode node : nodeCellMap.keySet()) {
             final ViewData.CellData2 cellData = nodeCellMap.get(node);
 
+            System.out.println("start with node: " + node.typeToString());
+
             final CellData dataX = new CellData();
 
             //Ref id

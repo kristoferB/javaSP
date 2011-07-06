@@ -1,6 +1,7 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
+import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -21,6 +22,10 @@ public interface ISopNode{
 
     int getSuccessorRelation();
 
+    /**
+     * See {@link IRelateTwoOperations} for parameter <p>iRelation</p>.<br/>
+     * @param iRelation
+     */
     void setSuccessorRelation(int iRelation);
 
     boolean sequenceSetIsEmpty();
