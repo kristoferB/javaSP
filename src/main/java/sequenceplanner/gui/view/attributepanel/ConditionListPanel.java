@@ -95,16 +95,14 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
 
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
             }
         } else if (type == ConditionType.POST) {
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
 
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
                 
             }
         }
