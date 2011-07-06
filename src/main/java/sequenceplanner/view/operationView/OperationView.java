@@ -306,7 +306,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
 
             model.saveOperationViews(viewData.toArray(new ViewData[0]));
-            model.saveOperationData(data);
+            //model.saveOperationData(data);
             model.saveSopNode(viewData.getFirst(), getSopNodeForGraph());
 
             System.out.println("start set conditions");
