@@ -111,7 +111,10 @@ public class DrawSopNode {
                 if (doAutoLayout) {
                     mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), null, mSopNodeCellMap.get(node));
                 } else {
+
+                    System.out.println(node.typeToString() + " bgeo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
                     mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), mSopNodeCellMap.get(node));
+                    System.out.println(node.typeToString() + " ageo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
                 }
 
                 if (mSopNodeCellMap.get(iRoot).getType() == Constants.SOP) {
