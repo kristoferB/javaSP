@@ -18,6 +18,7 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.multiProduct.ExtendedData;
 import sequenceplanner.multiProduct.TypeVar;
 import sequenceplanner.view.AbstractView;
+import sequenceplanner.view.Actions.InsertOperation;
 import sequenceplanner.view.Actions.InsertVariable;
 import sequenceplanner.view.Actions.OpenOperationsRealizedBy;
 import sequenceplanner.view.Actions.OpenResourceView;
@@ -63,7 +64,14 @@ public class ClickMenu extends JPopupMenu {
          add(first,0);
          draw = true;
          
-        }/* else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
+         //If clicked node is OperationRoot create new InsertOperation Action
+        } else if (model.isOperationRoot(node)){
+            first.setAction(av.createAction("Insert Operation",
+               new InsertOperation(node, Data.OPERATION), "resources/icons/robot.png"));
+            add(first,0);
+            draw = true;
+        }
+         /* else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
          first.setAction(av.createAction("Insert Liason",
                new InsertVariable(node, Data.LIASON), "resources/icons/min.png"));
 

@@ -6,7 +6,6 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,7 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import sequenceplanner.condition.Condition;
-import sequenceplanner.gui.controller.AttributeMouseAdapter;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
@@ -34,8 +32,8 @@ public class AttributePanel extends JPanel {
     private JTextField operationIdTextField;
     private ConditionListPanel postCondListPanel;
     private ConditionListPanel preCondListPanel;
-    /**OperationData object, acting as model for the view**/
-    private OperationData model;
+    /**OperationData object, acting as operationData for the view**/
+    private OperationData operationData;
 
     /** Creates new form AttributePanel */
     public AttributePanel(OperationData od) {
@@ -84,11 +82,11 @@ public class AttributePanel extends JPanel {
      * Sets the listobjects to display the conditions in the OperationData class.
      */
     public void setConditions() {
-        if (model.getGlobalConditions() != null) {
+        if (operationData.getGlobalConditions() != null) {
             //Extract each set of condition sets
-            for (Object viewKey : model.getGlobalConditions().keySet()) {
+            for (Object viewKey : operationData.getGlobalConditions().keySet()) {
                 System.out.println("uno");
-                Map<ConditionType, Condition> conditionMap = model.getGlobalConditions().get(viewKey);
+                Map<ConditionType, Condition> conditionMap = operationData.getGlobalConditions().get(viewKey);
                 //Split conditions into post and pre
                 for (Object key : conditionMap.keySet()) {
                     System.out.println("due");
@@ -113,10 +111,10 @@ public class AttributePanel extends JPanel {
     }
 
     private void initVariables(OperationData od) {
-        
+        this.operationData = od;
         setConditions();
         this.setName(od.getName());
-        setID(model.getId());
+        setID(operationData.getId());
     }
 
     /**
@@ -144,13 +142,13 @@ public class AttributePanel extends JPanel {
     }
 
     /**
-     * Sets model to a new OperationData and updates the conditions.
+     * Sets operationData to a new OperationData and updates the conditions.
      * @param od 
      */
     public OperationData updateModel(OperationData od) {
-        this.model = od;
+        this.operationData = od;
         setConditions();
-        return this.model;
+        return this.operationData;
     }
 
     public JTextField getOperationIdTextField() {

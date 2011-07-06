@@ -25,7 +25,11 @@ import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import sequenceplanner.editor.IGlobalProperty;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.xml.GlobalProperty;
 
 /**
@@ -34,249 +38,286 @@ import sequenceplanner.xml.GlobalProperty;
  */
 public class ConvertToXML {
 
-   //TODO : Thread this
-   private Model model;
+    //TODO : Thread this
+    private Model model;
 
-   public ConvertToXML(Model model) {
-      this.model = model;
-   }
+    public ConvertToXML(Model model) {
+        this.model = model;
+    }
 
-   public SequencePlannerProjectFile convert() {
-      ObjectFactory f = new ObjectFactory();
-      f.createSequencePlannerProjectFileLiasons();
-      SequencePlannerProjectFile project = f.createSequencePlannerProjectFile();
+    public SequencePlannerProjectFile convert() {
+        ObjectFactory f = new ObjectFactory();
+        f.createSequencePlannerProjectFileLiasons();
+        SequencePlannerProjectFile project = f.createSequencePlannerProjectFile();
 
-      //ID counter
-      project.setIdCounter(model.getCounter());
+        //ID counter
+        project.setIdCounter(model.getCounter());
 
-      //Liason
+        //Liason
 //      project.setLiasons(getLiasonRoot());
 
-      //Resource
-      project.setResources(getResourceRoot());
+        //Resource
+        project.setResources(getResourceRoot());
 
-      //Views
-      project.setViews(getViewRoot());
+        //Views
+        project.setViews(getViewRoot());
 
-      //Operations
-      project.setOperations(getOperationRoot());
+        //Operations
+        project.setOperations(getOperationRoot());
 
-      //Global properties
-      project.setGlobalProperties(getGlobalProperties());
-
-
-      return project;
-   }
-
-   private SequencePlannerProjectFile.Operations getOperationRoot() {
-      TreeNode node = model.getOperationRoot();
-
-      SequencePlannerProjectFile.Operations result = new SequencePlannerProjectFile.Operations();
-
-      for (int i = 0; i < node.getChildCount(); i++) {
-         TreeNode child = node.getChildAt(i);
-         sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) child.getNodeData();
-         result.getOperation().add(getOperation(child));
-      }
-
-      TreeMap<Integer, ViewData> views = model.getOperationsWithViews();
-      Set<Integer> keys = views.keySet();
-
-      for (Integer i : keys) {
-         ViewData d = views.get(i);
-
-         if (d != null && model.isOperationPresent(i)) {
-            result.getOperationViews().add(getView(d));
-         }
-      }
+        //Global properties
+        project.setGlobalProperties(getGlobalProperties());
 
 
-      return result;
-   }
+        return project;
+    }
 
-   private Operation getOperation(TreeNode node) {
-      Operation op = new Operation();
+    private SequencePlannerProjectFile.Operations getOperationRoot() {
+        TreeNode node = model.getOperationRoot();
 
-      if (Model.isOperation(node.getNodeData())) {
-         op.setId(node.getId());
-         op.setName(node.getNodeData().getName());
+        SequencePlannerProjectFile.Operations result = new SequencePlannerProjectFile.Operations();
 
-         sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) node.getNodeData();
-         op.setOperationData(getOperationData(in));
-
-         for (int i = 0; i < node.getChildCount(); i++) {
+        for (int i = 0; i < node.getChildCount(); i++) {
             TreeNode child = node.getChildAt(i);
-            op.getOperation().add(getOperation(child));
+            sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) child.getNodeData();
+            result.getOperation().add(getOperation(child));
+        }
 
-         }
-         return op;
-      }
-      return null;
-   }
+        TreeMap<Integer, ViewData> views = model.getOperationsWithViews();
+        Set<Integer> keys = views.keySet();
 
-   private OperationData getOperationData(sequenceplanner.model.data.OperationData data) {
+        for (Integer i : keys) {
+            ViewData d = views.get(i);
 
-      OperationData dataX = new OperationData();
+            if (d != null && model.isOperationPresent(i)) {
+                result.getOperationViews().add(getView(d));
+            }
+        }
 
-      if (!data.getDescription().isEmpty()) {
-         dataX.setDescription(data.getDescription());
-      } else {
-          dataX.setDescription("");
-      }
-      
-      dataX.setCost(data.getCost());
-      dataX.setIsPostoperation(data.isPostoperation());
-      dataX.setIsPreoperation(data.isPreoperation());
-      dataX.setAccomplishes(data.getAccomplishes());
-      dataX.setRealizedBy(data.getRealizedBy());
 
-      //Preconditions
-      if (!data.getSequenceCondition().isEmpty()) {
-         dataX.setPreSequenceCondtions(getConditions(data.getSequenceCondition()));
-      }
-      if (!data.getResourceBooking().isEmpty()) {
-         dataX.setPreResurceBooking(getBookings(data.getResourceBooking()));
-      }
+        return result;
+    }
 
-      if (!data.getActions().isEmpty()) {
-         dataX.setPreActions(getActions(data.getActions()));
-      }
+    private Operation getOperation(TreeNode node) {
+        Operation op = new Operation();
 
-      //Invariant
-      if (!data.getSeqInvariant().isEmpty()) {
-         dataX.setSequenceInvariants(getConditions(data.getSeqInvariant()));
-      }
+        if (Model.isOperation(node.getNodeData())) {
+            op.setId(node.getId());
+            op.setName(node.getNodeData().getName());
 
-      //Properties
-      if (!data.getProperties().isEmpty()){
-        dataX.setProperties(getProperties(data.getProperties()));
-      }
+            sequenceplanner.model.data.OperationData in = (sequenceplanner.model.data.OperationData) node.getNodeData();
+            op.setOperationData(getOperationData(in));
 
-      //PostConditions
-      if (!data.getPSequenceCondition().isEmpty()) {
-         dataX.setPostSequenceCondtions(getConditions(data.getPSequenceCondition()));
-      }
-      if (!data.getPResourceBooking().isEmpty()) {
-         dataX.setPostResurceBooking(getBookings(data.getPResourceBooking()));
-      }
+            for (int i = 0; i < node.getChildCount(); i++) {
+                TreeNode child = node.getChildAt(i);
+                op.getOperation().add(getOperation(child));
 
-      return dataX;
-   }
- 
-   private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
-       SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
-       LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();
-       
-       for(IGlobalProperty gp : data){
+            }
+            return op;
+        }
+        return null;
+    }
+
+    private OperationData getOperationData(sequenceplanner.model.data.OperationData data) {
+        System.out.println("ctx entryset "+data.getGlobalConditions().entrySet().toString());
+        OperationData dataX = new OperationData();
+
+        if (!data.getDescription().isEmpty()) {
+            dataX.setDescription(data.getDescription());
+        } else {
+            dataX.setDescription("");
+        }
+
+        dataX.setCost(data.getCost());
+        dataX.setIsPostoperation(data.isPostoperation());
+        dataX.setIsPreoperation(data.isPreoperation());
+        dataX.setAccomplishes(data.getAccomplishes());
+        dataX.setRealizedBy(data.getRealizedBy());
+
+        //Preconditions
+        if (!data.getSequenceCondition().isEmpty()) {
+            dataX.setPreSequenceCondtions(getConditions(data.getSequenceCondition()));
+        }
+        if (!data.getResourceBooking().isEmpty()) {
+            dataX.setPreResurceBooking(getBookings(data.getResourceBooking()));
+        }
+
+        if (!data.getActions().isEmpty()) {
+            dataX.setPreActions(getActions(data.getActions()));
+        }
+
+        //Invariant
+        if (!data.getSeqInvariant().isEmpty()) {
+            dataX.setSequenceInvariants(getConditions(data.getSeqInvariant()));
+        }
+
+        //Properties
+        if (!data.getProperties().isEmpty()) {
+            dataX.setProperties(getProperties(data.getProperties()));
+        }
+
+        //PostConditions
+        if (!data.getPSequenceCondition().isEmpty()) {
+            dataX.setPostSequenceCondtions(getConditions(data.getPSequenceCondition()));
+        }
+        if (!data.getPResourceBooking().isEmpty()) {
+            dataX.setPostResurceBooking(getBookings(data.getPResourceBooking()));
+        }
+        if (!data.getGlobalConditions().isEmpty()) {
+            dataX.getPreCondition().addAll(getPreConditions(data));
+        }
+
+        if (!data.getGlobalConditions().isEmpty()) {
+            dataX.getPostCondition().addAll(getPostConditions(data));
+        }
+        return dataX;
+    }
+
+    private LinkedList<String> getPostConditions(sequenceplanner.model.data.OperationData data) {
+        LinkedList<String> list = new LinkedList<String>();
+        data.getGlobalConditions().entrySet();
+        for (Entry string : data.getGlobalConditions().entrySet()) {
+            System.out.println("save" + string.toString());
+            if (string.toString().matches("Algebraic (\\d)")) {
+                if (string.getKey().equals(ConditionType.PRE)) {
+                    list.add((String) string.getValue());
+                }
+            }
+        }
+        return list;
+    }
+
+    private LinkedList<String> getPreConditions(sequenceplanner.model.data.OperationData data) {
+        LinkedList<String> list = new LinkedList<String>();
+        data.getGlobalConditions().entrySet();
+        System.out.println("save stuffffff");
+        Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
+        for (Entry string : data.getGlobalConditions().entrySet()) {
+            System.out.println("save stuffffff" + string.toString());
+            Matcher m1 = conditionValuePattern.matcher(string.toString());
+            if (m1.find()) {
+                if (string.getKey().equals(ConditionType.PRE)) {
+                    list.add((String) string.getValue());
+                }
+            }
+        }
+        return list;
+    }
+
+    private SequencePlannerProjectFile.GlobalProperties getGlobalProperties() {
+        SequencePlannerProjectFile.GlobalProperties dataX = new SequencePlannerProjectFile.GlobalProperties();
+        LinkedList<IGlobalProperty> data = model.getGlobalProperties().getAllProperties();
+
+        for (IGlobalProperty gp : data) {
             GlobalProperty gpX = new GlobalProperty();
             gpX.setId(gp.getId());
             gpX.setName(gp.getName());
-            for(int i = 0; i < gp.getNumberOfValues(); i++){
+            for (int i = 0; i < gp.getNumberOfValues(); i++) {
                 sequenceplanner.xml.Value vX = new sequenceplanner.xml.Value();
                 vX.setId(gp.getValue(i).getId());
                 vX.setName(gp.getValue(i).getName());
                 gpX.getValue().add(vX);
             }
             dataX.getGlobalProperty().add(gpX);
-       }
-       
-
-       return dataX;
-   }
-
-   private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
-      Conditions dataX = new Conditions();
-
-      for (LinkedList<SeqCond> one : data) {
-         Conditions.Or inOr = new Conditions.Or();
+        }
 
 
-         for (SeqCond seqCond : one) {
-            Conditions.Or.SequenceCondition sc = new Conditions.Or.SequenceCondition();
-            sc.setOperation(seqCond.id);
-            sc.setStatus(seqCond.state);
-            inOr.getSequenceCondition().add(sc);
-         }
+        return dataX;
+    }
 
-         dataX.getOr().add(inOr);
-      }
-      return dataX;
-   }
+    private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
+        Conditions dataX = new Conditions();
 
-   private Properties getProperties(HashMap<Integer, Boolean> data){
+        for (LinkedList<SeqCond> one : data) {
+            Conditions.Or inOr = new Conditions.Or();
 
-      Properties dataX = new Properties();
 
-      for(Integer id : data.keySet()){
-        Properties.Property p = new Properties.Property();
-        p.setId(id);
-        p.setValue(data.get(id));
-        dataX.getProperty().add(p);
-      }
+            for (SeqCond seqCond : one) {
+                Conditions.Or.SequenceCondition sc = new Conditions.Or.SequenceCondition();
+                sc.setOperation(seqCond.id);
+                sc.setStatus(seqCond.state);
+                inOr.getSequenceCondition().add(sc);
+            }
 
-      return dataX;
-   }
+            dataX.getOr().add(inOr);
+        }
+        return dataX;
+    }
 
-   private Bookings getBookings(LinkedList<Integer[]> data) {
-      Bookings dataX = new Bookings();
+    private Properties getProperties(HashMap<Integer, Boolean> data) {
 
-      for (Integer[] in : data) {
-         Bookings.ResourceBooking b = new Bookings.ResourceBooking();
-         b.setResource(in[0]);
-         b.setType(in[1]);
-         dataX.getResourceBooking().add(b);
-      }
+        Properties dataX = new Properties();
 
-      return dataX;
-   }
+        for (Integer id : data.keySet()) {
+            Properties.Property p = new Properties.Property();
+            p.setId(id);
+            p.setValue(data.get(id));
+            dataX.getProperty().add(p);
+        }
 
-   private Actions getActions(LinkedList<Action> data) {
-      Actions dataX = new Actions();
+        return dataX;
+    }
 
-      for (Action action : data) {
-         Actions.Action a = new Actions.Action();
-         a.setVariable(action.id);
-         a.setValue(action.value);
-         a.setType(action.state);
-         dataX.getAction().add(a);
-      }
-      return dataX;
-   }
+    private Bookings getBookings(LinkedList<Integer[]> data) {
+        Bookings dataX = new Bookings();
 
-   private SequencePlannerProjectFile.Views getViewRoot() {
-      TreeNode node = model.getViewRoot();
+        for (Integer[] in : data) {
+            Bookings.ResourceBooking b = new Bookings.ResourceBooking();
+            b.setResource(in[0]);
+            b.setType(in[1]);
+            dataX.getResourceBooking().add(b);
+        }
 
-      SequencePlannerProjectFile.Views result = new SequencePlannerProjectFile.Views();
+        return dataX;
+    }
 
-      for (int i = 0; i < node.getChildCount(); i++) {
-         TreeNode child = node.getChildAt(i);
-         if (model.isView(child.getNodeData())) {
-            result.getView().add(getView((ViewData)child.getNodeData()));
-         }
-      }
+    private Actions getActions(LinkedList<Action> data) {
+        Actions dataX = new Actions();
 
-      return result;
-   }
+        for (Action action : data) {
+            Actions.Action a = new Actions.Action();
+            a.setVariable(action.id);
+            a.setValue(action.value);
+            a.setType(action.state);
+            dataX.getAction().add(a);
+        }
+        return dataX;
+    }
 
-   /**
-    *
-    * @param node, has to be an liason root
-    * @return
-    */
-   private ViewType getView(ViewData view) {
-      ViewType viewX = new ViewType();
+    private SequencePlannerProjectFile.Views getViewRoot() {
+        TreeNode node = model.getViewRoot();
 
-      
-         
-         viewX.setName(view.getName());
-         viewX.setRoot(view.getRoot());
+        SequencePlannerProjectFile.Views result = new SequencePlannerProjectFile.Views();
 
-         viewX.setIsClosed(view.isClosed());
-         viewX.setIsHidden(view.isHidden());
-       
-         LinkedList<ViewData.CellData> list = view.getData();
+        for (int i = 0; i < node.getChildCount(); i++) {
+            TreeNode child = node.getChildAt(i);
+            if (model.isView(child.getNodeData())) {
+                result.getView().add(getView((ViewData) child.getNodeData()));
+            }
+        }
 
-         for (ViewData.CellData data : list) {
+        return result;
+    }
+
+    /**
+     *
+     * @param node, has to be an liason root
+     * @return
+     */
+    private ViewType getView(ViewData view) {
+        ViewType viewX = new ViewType();
+
+
+
+        viewX.setName(view.getName());
+        viewX.setRoot(view.getRoot());
+
+        viewX.setIsClosed(view.isClosed());
+        viewX.setIsHidden(view.isHidden());
+
+        LinkedList<ViewData.CellData> list = view.getData();
+
+        for (ViewData.CellData data : list) {
             CellData dataX = new CellData();
             dataX.setRefId(data.id);
             dataX.setPreviousCell(data.previousCell);
@@ -286,116 +327,116 @@ public class ConvertToXML {
             dataX.setGeo(getGeo(data.geo));
             dataX.setExpanded(data.expanded);
             viewX.getCellData().add(dataX);
-         }
-
-      
-      return viewX;
-   }
-
-   private CellData.Geo getGeo(mxGeometry geo) {
-      CellData.Geo geoX = new CellData.Geo();
-
-      Rectangle prim = new Rectangle();
-      Rectangle alt = new Rectangle();
-
-      prim.setX(geo.getX());
-      prim.setY(geo.getY());
-      prim.setW(geo.getWidth());
-      prim.setH(geo.getHeight());
-
-      if (geo.getAlternateBounds() != null) {
-         alt.setX(geo.getAlternateBounds().getX());
-         alt.setY(geo.getAlternateBounds().getY());
-         alt.setW(geo.getAlternateBounds().getWidth());
-         alt.setH(geo.getAlternateBounds().getHeight());
-
-         geoX.setAlternateGeometry(alt);
-      }
+        }
 
 
-      geoX.setGeometry(prim);
+        return viewX;
+    }
+
+    private CellData.Geo getGeo(mxGeometry geo) {
+        CellData.Geo geoX = new CellData.Geo();
+
+        Rectangle prim = new Rectangle();
+        Rectangle alt = new Rectangle();
+
+        prim.setX(geo.getX());
+        prim.setY(geo.getY());
+        prim.setW(geo.getWidth());
+        prim.setH(geo.getHeight());
+
+        if (geo.getAlternateBounds() != null) {
+            alt.setX(geo.getAlternateBounds().getX());
+            alt.setY(geo.getAlternateBounds().getY());
+            alt.setW(geo.getAlternateBounds().getWidth());
+            alt.setH(geo.getAlternateBounds().getHeight());
+
+            geoX.setAlternateGeometry(alt);
+        }
 
 
-      return geoX;
-   }
-
-   private SequencePlannerProjectFile.Liasons getLiasonRoot() {
-      TreeNode node = model.getLiasonRoot();
-      Liason li = getLiason(node);
-
-      SequencePlannerProjectFile.Liasons result = new SequencePlannerProjectFile.Liasons();
-      result.getLiason().addAll(li.getLiason());
-
-      return result;
-   }
-
-   /**
-    *
-    * @param node, has to be an liason root
-    * @return
-    */
-   private Liason getLiason(TreeNode node) {
-      Liason li = new Liason();
+        geoX.setGeometry(prim);
 
 
-      if (Model.isLiason(node.getNodeData()) || node == model.getLiasonRoot()) {
-         li.setId(node.getId());
-         li.setName(node.getNodeData().getName());
+        return geoX;
+    }
 
-         for (int i = 0; i < node.getChildCount(); i++) {
-            TreeNode child = node.getChildAt(i);
-            li.getLiason().add(getLiason(child));
+    private SequencePlannerProjectFile.Liasons getLiasonRoot() {
+        TreeNode node = model.getLiasonRoot();
+        Liason li = getLiason(node);
 
-         }
-         return li;
-      }
-      return null;
-   }
+        SequencePlannerProjectFile.Liasons result = new SequencePlannerProjectFile.Liasons();
+        result.getLiason().addAll(li.getLiason());
 
-   private SequencePlannerProjectFile.Resources getResourceRoot() {
-      TreeNode node = model.getResourceRoot();
-      Resource res = getResource(node);
+        return result;
+    }
 
-      SequencePlannerProjectFile.Resources result = new SequencePlannerProjectFile.Resources();
-      result.getResource().addAll(res.getResource());
+    /**
+     *
+     * @param node, has to be an liason root
+     * @return
+     */
+    private Liason getLiason(TreeNode node) {
+        Liason li = new Liason();
 
-      return result;
-   }
 
-   /**
-    *
-    * @param node, has to be an liason root
-    * @return
-    */
-   private Resource getResource(TreeNode node) {
-      Resource res = new Resource();
+        if (Model.isLiason(node.getNodeData()) || node == model.getLiasonRoot()) {
+            li.setId(node.getId());
+            li.setName(node.getNodeData().getName());
 
-      if (Model.isResource(node.getNodeData()) || node == model.getResourceRoot()) {
-         res.setId(node.getId());
-         res.setName(node.getNodeData().getName());
+            for (int i = 0; i < node.getChildCount(); i++) {
+                TreeNode child = node.getChildAt(i);
+                li.getLiason().add(getLiason(child));
 
-         for (int i = 0; i < node.getChildCount(); i++) {
-            TreeNode child = node.getChildAt(i);
-
-            if (Model.isVariable(child.getNodeData())) {
-               ResourceVariableData var = (ResourceVariableData) child.getNodeData();
-
-               Variable varX = new Variable();
-
-               varX.setId(child.getId());
-               varX.setName(child.getNodeData().getName());
-               varX.setIntialValue(var.getInitialValue());
-               varX.setMaxValue(var.getMax());
-               varX.setMinValue(var.getMin());
-               res.getVariable().add(varX);
-            } else if (Model.isResource(child.getNodeData())) {
-
-               res.getResource().add(getResource(child));
             }
+            return li;
+        }
+        return null;
+    }
 
-         }
-         return res;
-      }
-      return null;
-   }
+    private SequencePlannerProjectFile.Resources getResourceRoot() {
+        TreeNode node = model.getResourceRoot();
+        Resource res = getResource(node);
+
+        SequencePlannerProjectFile.Resources result = new SequencePlannerProjectFile.Resources();
+        result.getResource().addAll(res.getResource());
+
+        return result;
+    }
+
+    /**
+     *
+     * @param node, has to be an liason root
+     * @return
+     */
+    private Resource getResource(TreeNode node) {
+        Resource res = new Resource();
+
+        if (Model.isResource(node.getNodeData()) || node == model.getResourceRoot()) {
+            res.setId(node.getId());
+            res.setName(node.getNodeData().getName());
+
+            for (int i = 0; i < node.getChildCount(); i++) {
+                TreeNode child = node.getChildAt(i);
+
+                if (Model.isVariable(child.getNodeData())) {
+                    ResourceVariableData var = (ResourceVariableData) child.getNodeData();
+
+                    Variable varX = new Variable();
+
+                    varX.setId(child.getId());
+                    varX.setName(child.getNodeData().getName());
+                    varX.setIntialValue(var.getInitialValue());
+                    varX.setMaxValue(var.getMax());
+                    varX.setMinValue(var.getMin());
+                    res.getVariable().add(varX);
+                } else if (Model.isResource(child.getNodeData())) {
+
+                    res.getResource().add(getResource(child));
+                }
+
+            }
+            return res;
+        }
+        return null;
+    }
 }

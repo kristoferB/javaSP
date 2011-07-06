@@ -532,9 +532,12 @@ public class GUIController {
      * @param data 
      */
     public void saveOperationToModel(OperationData data){
+        System.out.println("guic entryset "+data.getGlobalConditions().entrySet().toString());
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }
+        
+        
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (guiView.addAttributePanelView(panel)) {

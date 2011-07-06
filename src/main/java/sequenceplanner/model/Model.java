@@ -232,12 +232,13 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
+                System.out.println("entryset "+((OperationData) this.getOperation(15).getNodeData()).getGlobalConditions().entrySet().toString());
                 setChanged();
                 notifyObservers(od);
             } else {
                 logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
             }
-
+            System.out.println(this.getOperation(15).getNodeData().getName());
         }
 
         reloadNamesCache();
@@ -1053,6 +1054,10 @@ public class Model extends Observable implements IModel {
     public boolean isResourceRoot(TreeNode node) {
         return node == getResourceRoot();
     }
+    
+    public boolean isOperationRoot(TreeNode node){
+        return node == getOperationRoot();
+    }
 
     public boolean isLiasonRoot(TreeNode node) {
         return node == getLiasonRoot();
@@ -1214,6 +1219,7 @@ public class Model extends Observable implements IModel {
             }
         }
         iViewData.mSopNodeRoot = iSopNode;
+        
     }
 
     /**
@@ -1232,7 +1238,7 @@ public class Model extends Observable implements IModel {
             return false;
         }
         //-----------------------------------------------------------------------
-
+        System.out.println(sopNodeRoot.toString());
         //Get new conditions from SOP--------------------------------------------
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);
@@ -1240,10 +1246,30 @@ public class Model extends Observable implements IModel {
 
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
-//            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
+            System.out.println("Add condition for: " + operation.getName() + " uId: " + operation.mUniqueId + " cond: " + operationConditionMap.get(operation));
             operation.setConditions(operationConditionMap.get(operation), iLabel);
+            //TODO q Add observer !?
         }
         //-----------------------------------------------------------------------
         return true;
+    }
+
+    /**
+     * Removes {@link Condition}s related to parameter <p>iViewLabel</p>.<br/>
+     * @param iViewLabel
+     */
+    public void removeConditions(final String iViewLabel) {
+        final List<TreeNode> allOperationsList = getAllOperations();
+        for (final TreeNode tn : allOperationsList) {
+
+            final OperationData opData = (OperationData) tn.getNodeData();
+            System.out.println("operation: " + opData.getName());
+            System.out.println("removecon1" + opData.getGlobalConditions().toString());
+            if (opData.getGlobalConditions().containsKey(iViewLabel)) {
+                opData.getGlobalConditions().remove(iViewLabel);
+                //TODO q Add observer !?
+            }
+            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+        }
     }
 }
