@@ -83,6 +83,7 @@ public class AttributePanel extends JPanel {
      */
     public void setConditions() {
         preCondListPanel.clear();
+        System.out.println("");
         if (operationData.getGlobalConditions() != null) {
             //Extract each set of condition sets
             for (Object viewKey : operationData.getGlobalConditions().keySet()) {
@@ -94,13 +95,14 @@ public class AttributePanel extends JPanel {
 
                     if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key))) {
                         System.out.println("pre");
+                        System.out.println(conditionMap.get(key).toString());
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
                         System.out.println("pre");
                     } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key))) {
                         System.out.println("post");
 
-                        preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
+                        postCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
 
                     }
                 }

@@ -33,7 +33,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
     @Override
     public void addCondition(String key, Condition condition) {
-        conditionList.remove(key);
         conditionList.put(key, condition);
         updateList();
 
@@ -64,6 +63,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         } else {
             System.out.println("removeall");
             this.removeAll();
+            conditionList.clear();
             this.repaint();
         }
     }
@@ -98,7 +98,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
 
     void clear() {
-        System.out.println("clear2");
+        conditionList.clear();
         this.removeAll();
         this.repaint();
 
