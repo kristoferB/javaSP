@@ -217,7 +217,6 @@ public class GUIController {
             guiModel = new GUIModel();
 
             guiView = new GUIView(guiModel);
-            new GUIController(guiModel,guiView);
 
             //guiView.closeAllViews();
             //guiView.resetView(guiModel);

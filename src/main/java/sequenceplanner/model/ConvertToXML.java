@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import sequenceplanner.condition.Condition;
 import sequenceplanner.editor.IGlobalProperty;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.xml.GlobalProperty;
@@ -173,32 +174,28 @@ public class ConvertToXML {
         return dataX;
     }
 
-    private LinkedList<String> getPostConditions(sequenceplanner.model.data.OperationData data) {
+    private LinkedList<String> getPreConditions(sequenceplanner.model.data.OperationData data) {
         LinkedList<String> list = new LinkedList<String>();
-        data.getGlobalConditions().entrySet();
+        Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
         for (Entry string : data.getGlobalConditions().entrySet()) {
-            if (string.toString().matches("Algebraic (\\d)")) {
-                if (string.getKey().equals(ConditionType.POST)) {
-                    list.add((String) string.getValue());
+            Matcher m1 = conditionValuePattern.matcher(string.toString());
+            if (m1.find()) {
+                if (data.getGlobalConditions().get(string.getKey().toString()).containsKey(ConditionType.PRE)) {
+                    list.add(data.getGlobalConditions().get(string.getKey().toString()).get(ConditionType.PRE).toString());
                 }
             }
         }
         return list;
     }
 
-    private LinkedList<String> getPreConditions(sequenceplanner.model.data.OperationData data) {
+    private LinkedList<String> getPostConditions(sequenceplanner.model.data.OperationData data) {
         LinkedList<String> list = new LinkedList<String>();
-        
         Pattern conditionValuePattern = Pattern.compile("Algebraic (\\d)");
         for (Entry string : data.getGlobalConditions().entrySet()) {
-            System.out.println("save stuffffff" + string.toString());
             Matcher m1 = conditionValuePattern.matcher(string.toString());
-            System.out.println("matcher    "+m1.find());
             if (m1.find()) {
-                System.out.println("string...."+string.getKey());
-                if (string.getKey().equals(ConditionType.PRE)) {
-                    list.add((String) string.getValue());
-                    System.out.println("list.tostring   "+list.toString());
+                if (data.getGlobalConditions().get(string.getKey().toString()).containsKey(ConditionType.POST)) {
+                    list.add(data.getGlobalConditions().get(string.getKey().toString()).get(ConditionType.POST).toString());
                 }
             }
         }
