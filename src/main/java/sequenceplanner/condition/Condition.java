@@ -31,7 +31,7 @@ public class Condition {
     }
 
     public boolean hasAction(){
-        return action != null;
+        return !action.isEmpty();
     }
 
     public ConditionExpression getGuard() {
@@ -43,7 +43,7 @@ public class Condition {
     }
 
     public boolean hasGuard(){
-        return guard != null;
+        return !guard.isEmpty();
     }
 
     public boolean evaluateGuard(Map<String,String> variableValues){

@@ -1,9 +1,8 @@
 package sequenceplanner.gui.controller;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
@@ -214,11 +213,14 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            guiView.dispose();
             guiModel = new GUIModel();
-            //guiView = new GUIView(guiModel);
+
+            guiView = new GUIView(guiModel);
+            new GUIController(guiModel,guiView);
 
             //guiView.closeAllViews();
-            guiView.resetView(guiModel);
+            //guiView.resetView(guiModel);
         }
     }
 

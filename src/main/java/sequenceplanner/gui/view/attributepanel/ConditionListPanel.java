@@ -90,27 +90,28 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
         //To extract the original input string
         if (type == ConditionType.PRE) {
+            editor.setPreButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
                 System.out.println("Muu");
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
-
+                editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                editor.setActionButtonStatus(true);
             }
         } else if (type == ConditionType.POST) {
+            editor.setPostButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
-
+                editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
-                
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                editor.setActionButtonStatus(true);
             }
         }
         //Place the String in the input text window
         editor.setConditionString(conditionString);
-        //deleteCondition(conditionKey);
+        deleteCondition(conditionKey);
     }
 
     public String stringTrim(String conditionString) {
