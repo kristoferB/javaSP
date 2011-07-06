@@ -96,9 +96,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
-//                editor.setActionButtonStatus(true);
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                editor.setActionButtonStatus(true);
             }
         } else if (type == ConditionType.POST) {
             editor.setPostButtonStatus(true);
@@ -106,9 +105,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                 conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-//                Action is not yet supported in the condition parser, but prepared here:
-//                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
-//                editor.setActionButtonStatus(true);
+                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                editor.setActionButtonStatus(true);
             }
         }
         //Place the String in the input text window
