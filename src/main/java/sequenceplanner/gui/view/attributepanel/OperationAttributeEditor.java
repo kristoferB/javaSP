@@ -144,10 +144,23 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public boolean getPreButtonStatus (){
         return preRadioButton.isSelected();
     }
+    
     public boolean getGuardButtonStatus (){
         return guardRadioButton.isSelected();
     }
+    public void setGuardButtonStatus(boolean on){
+        guardRadioButton.setSelected(on);
+    }
+    public void setActionButtonStatus(boolean on){
+        actionRadioButton.setSelected(on);
+    }
 
+    public void setPreButtonStatus(boolean on){
+        preRadioButton.setSelected(on);
+    }
+    public void setPostButtonStatus(boolean on){
+        postRadioButton.setSelected(on);
+    }
     public void clearTextField() {
         expresionTextField.setText("");
     }
