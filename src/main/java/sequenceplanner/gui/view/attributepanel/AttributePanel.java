@@ -82,6 +82,7 @@ public class AttributePanel extends JPanel {
      * Sets the listobjects to display the conditions in the OperationData class.
      */
     public void setConditions() {
+        preCondListPanel.clear();
         if (operationData.getGlobalConditions() != null) {
             //Extract each set of condition sets
             for (Object viewKey : operationData.getGlobalConditions().keySet()) {
@@ -104,9 +105,6 @@ public class AttributePanel extends JPanel {
                     }
                 }
             }
-        } else {
-            System.out.println("Clear");
-            preCondListPanel.clear();
         }
     }
 
