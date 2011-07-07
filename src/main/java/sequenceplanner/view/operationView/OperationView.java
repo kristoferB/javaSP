@@ -50,8 +50,6 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Iterator;
-import java.util.List;
-import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.graphextension.Cell;

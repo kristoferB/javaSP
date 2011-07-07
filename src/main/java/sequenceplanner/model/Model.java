@@ -40,6 +40,7 @@ import sequenceplanner.view.operationView.Constants;
  */
 public class Model extends Observable implements IModel {
 
+    private static final double VERSION_NUMBER = 2.0;
     public static final String VARIABLE_ROOT_NAME = "Variables";
     static Logger logger = Logger.getLogger(Model.class);
     private static int idConter = 5;
