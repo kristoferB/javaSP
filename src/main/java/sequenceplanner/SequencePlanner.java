@@ -52,7 +52,7 @@ public class SequencePlanner {
      * @param args the args
      */
     public static void main(String[] args) {
-// Docking windwos should be run in the Swing thread
+// Docking windwos should allways be run in the Swing thread
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override

@@ -1,6 +1,5 @@
 package sequenceplanner.gui.controller;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -529,7 +528,7 @@ public class GUIController {
             guiView.updateEditorView();
             guiView.updatePropertyView();
             for (OperationView o : guiModel.getOperationViews()) {
-                guiView.addNewOpTab(o.toString(), o);
+                addNewOpTab(o);
                 if (o.isClosed()) {
                     guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
                 }
@@ -568,7 +567,7 @@ public class GUIController {
      * @param data 
      */
     public void saveOperationToModel(OperationData data) {
-        System.out.println("guic entryset " + data.getGlobalConditions().entrySet().toString());
+        
         TreeNode dataNode = new TreeNode(data);
         guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }

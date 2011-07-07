@@ -42,6 +42,7 @@ import sequenceplanner.view.operationView.Constants;
  */
 public class Model extends Observable implements IModel {
 
+    private static final double VERSION_NUMBER = 2.0;
     public static final String VARIABLE_ROOT_NAME = "Variables";
     static Logger logger = Logger.getLogger(Model.class);
     private static int idConter = 5;
@@ -241,13 +242,11 @@ public class Model extends Observable implements IModel {
                 saveNode(data[i], operationRoot);
 
                 od = (OperationData) node.getNodeData();
-                System.out.println("entryset saveOperationData" + od.getGlobalConditions().toString());
                 setChanged();
                 notifyObservers(od);
             } else {
                 logger.debug("An none operationdata was inserted to saveData(TreeNode[] data)");
             }
-            System.out.println(this.getOperation(15).getNodeData().getName());
         }
 
         reloadNamesCache();
@@ -784,7 +783,7 @@ public class Model extends Observable implements IModel {
      * @param text new name
      * @param id of Operation
      */
-    public void setOperationName(String text,int id) {
+    public void setOperationName(String text, int id) {
         getOperation(id).getNodeData().setName(text);
         setChanged();
         notifyObservers((OperationData) getOperation(id).getNodeData());
@@ -1267,12 +1266,12 @@ public class Model extends Observable implements IModel {
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
         final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);
         //-----------------------------------------------------------------------
-        System.out.println("model setconditions : " +operationConditionMap.keySet().toString());
         //Add new conditions from SOP--------------------------------------------
-
-        for (final OperationData operation : operationConditionMap.keySet()) { 
-            System.out.println("model setconditions " + operation.getName()); 
-            operation.setConditions(operationConditionMap.get(operation), iLabel); 
+        
+        for (final OperationData operation : operationConditionMap.keySet()) {
+            System.out.println("model SETconditions " + operation.getName());
+            
+            operation.setConditions(operationConditionMap.get(operation), iLabel);
             setChanged();
             notifyObservers(operation);
         }
@@ -1290,7 +1289,7 @@ public class Model extends Observable implements IModel {
         for (final TreeNode tn : allOperationsList) {
 
             final OperationData opData = (OperationData) tn.getNodeData();
-
+            System.out.println("entryset 2 " + opData.getGlobalConditions().entrySet().toString());
             if (opData.getGlobalConditions().containsKey(iViewLabel)) {
                 opData.getGlobalConditions().remove(iViewLabel);
 

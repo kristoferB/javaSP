@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import sequenceplanner.condition.Condition;
 import sequenceplanner.editor.IGlobalProperty;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.xml.GlobalProperty;
@@ -166,8 +165,7 @@ public class ConvertToXML {
         if (!data.getGlobalConditions().isEmpty()) {
             dataX.getPreCondition().addAll(getPreConditions(data));
         }
-        System.out.println(dataX.getPreCondition().toString());
-
+        
         if (!data.getGlobalConditions().isEmpty()) {
             dataX.getPostCondition().addAll(getPostConditions(data));
         }
