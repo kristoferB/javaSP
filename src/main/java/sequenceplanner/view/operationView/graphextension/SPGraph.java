@@ -183,9 +183,7 @@ public class SPGraph extends mxGraph {
             @Override
             public void removeCells(Object[] cells) {
                 LinkedList<Object> tCells = new LinkedList<Object>();
-
                 for (int i = 0; i < cells.length; i++) {
-
 
                     Cell cell = ((Cell) cells[i]);
 

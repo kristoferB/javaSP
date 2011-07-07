@@ -47,6 +47,7 @@ public class GUIController {
 
     public GUIController(GUIModel m, GUIView v) {
         guiModel = m;
+        guiModel.getModel().setGUIModel(guiModel);
         guiView = v;
 
         treeViewController = new TreeViewController(this, guiView.getTreeView());
@@ -586,5 +587,8 @@ public class GUIController {
 
         }
         return data;
+    }
+    public GUIModel getGUIModel(){
+        return guiModel;
     }
 }

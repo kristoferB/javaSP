@@ -183,7 +183,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         }
     }
 
-    private Cell nodeToCell(TreeNode node) {
+    public Cell nodeToCell(TreeNode node) {
 
         Cell cell = null;
         if (node.getNodeData() instanceof OperationData) {

@@ -14,10 +14,9 @@ import javax.swing.SwingUtilities;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
-import sequenceplanner.model.data.OperationData;
-import sequenceplanner.multiProduct.ExtendedData;
 import sequenceplanner.multiProduct.TypeVar;
 import sequenceplanner.view.AbstractView;
+import sequenceplanner.view.Actions.DeleteOperation;
 import sequenceplanner.view.Actions.InsertOperation;
 import sequenceplanner.view.Actions.InsertVariable;
 import sequenceplanner.view.Actions.OpenOperationsRealizedBy;
@@ -68,6 +67,11 @@ public class ClickMenu extends JPopupMenu {
         } else if (model.isOperationRoot(node)){
             first.setAction(av.createAction("Insert Operation",
                new InsertOperation(node, Data.OPERATION), "resources/icons/robot.png"));
+            add(first,0);
+            draw = true;
+        }else if (model.isOperationRoot(node.getParent())){
+            first.setAction(av.createAction("Delete Operation",
+               new DeleteOperation(node), "resources/icons/robot.png"));
             add(first,0);
             draw = true;
         }

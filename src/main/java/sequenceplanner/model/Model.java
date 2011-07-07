@@ -14,6 +14,8 @@ import javax.swing.event.TreeModelListener;
 import org.apache.log4j.Logger;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.editor.EditorTreeModel;
+import sequenceplanner.gui.controller.GUIController;
+import sequenceplanner.gui.model.GUIModel;
 
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
@@ -66,6 +68,8 @@ public class Model extends Observable implements IModel {
     protected TreeNode viewRoot;
     //Holds info about global properties
     private EditorTreeModel globalProperties;
+    //Holds the guiModel
+    private GUIModel guiModel;
 
     public Model() {
         treeRoot = new TreeNode(new Data("root", newId()));
@@ -146,6 +150,12 @@ public class Model extends Observable implements IModel {
 
     public TreeNode getViewRoot() {
         return viewRoot;
+    }
+    public void setGUIModel(GUIModel guiModel){
+        this.guiModel = guiModel;
+    }
+    public GUIModel getGUIModel(){
+        return this.guiModel;
     }
 
     public static int newId() {
@@ -1290,4 +1300,5 @@ public class Model extends Observable implements IModel {
 
         }
     }
+
 }

@@ -39,6 +39,7 @@ public class GUIModel {
      */
     public GUIModel() {
         this.model = new Model();
+
     }
 
     public Model getModel() {
