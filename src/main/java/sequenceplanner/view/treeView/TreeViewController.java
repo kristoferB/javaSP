@@ -6,7 +6,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
+import net.infonode.docking.View;
 import sequenceplanner.gui.controller.GUIController;
+import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.DrawSopNode;
 import sequenceplanner.model.TreeNode;
@@ -80,14 +83,26 @@ public class TreeViewController {
 
         private Model mModel;
         private TreeNode mTreeNode;
+        private GUIController mGUIController;
 
-        public RemoveOperation(final Model iModel, final TreeNode iNode) {
-            this.mModel = iModel;
+        public RemoveOperation(final TreeNode iNode, final GUIController iGUIController) {
+            this.mModel = iGUIController.getModel();
             this.mTreeNode = iNode;
+            this.mGUIController = iGUIController;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            //Remove attribute tab
+            if(!mGUIController.getView().removeOperationObjectView(mTreeNode)) {
+                return;
+            }
+
+            //Loop views and remove operation if present
+
+            //Remove operation from model
+            mModel.removeChild(mModel.getOperationRoot(), mTreeNode);
+
             System.out.println("Remove operation: " + mTreeNode.toString());
         }
     }
@@ -111,7 +126,7 @@ public class TreeViewController {
                 final OperationView opView = mGUIController.getGUIModel().createNewOpView();
                 mGUIController.addNewOpTab(opView);
                 final ViewData vd = (ViewData) mTreeNode.getNodeData();
-                
+
                 new DrawSopNode(vd.mSopNodeRoot, opView.getGraph());
 
             }

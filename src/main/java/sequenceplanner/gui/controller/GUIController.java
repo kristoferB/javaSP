@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFileChooser;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -41,56 +42,56 @@ import sequenceplanner.view.treeView.TreeViewController;
 public class GUIController {
 
     //Instances of the model and view.
-    private GUIModel guiModel;
-    private GUIView guiView;
+    private GUIModel mGuiModel;
+    private GUIView mGuiView;
     //TreeviewListener
-    private TreeViewController treeViewController;
-    private OperationViewController opViewController;
+    private TreeViewController mTreeViewController;
+    private OperationViewController mOpViewController;
 
     public GUIController(GUIModel m, GUIView v) {
-        guiModel = m;
-        guiView = v;
+        mGuiModel = m;
+        mGuiView = v;
 
-        treeViewController = new TreeViewController(this, guiView.getTreeView());
+        mTreeViewController = new TreeViewController(this, mGuiView.getTreeView());
 
         //Set observer on model
-        opViewController = new OperationViewController();
-        guiModel.getModel().addObserver(opViewController);
+        mOpViewController = new OperationViewController();
+        mGuiModel.getModel().addObserver(mOpViewController);
 
         addListeners();
 
     }
 
     private void addListeners() {
-        guiView.addCreateOPL(new CreateOpListener());
-        guiView.addCreateRVL(new CreateRVListener());
-        guiView.addExitL(new ExitListener());
-        guiView.addPrefL(new PrefListener());
-        guiView.addAddCellsL(new AddAllListener());
-        guiView.addOpenL(new OpenListener());
-        guiView.addSaveL(new SaveListener());
-        guiView.addSaveAsL(new SaveAsListener());
-        guiView.addCloseL(new CloseListener());
-        guiView.addDefWindL(new DefaultListener());
-        guiView.addSaveEFAoL(new SaveEFAoListener());
-        guiView.addSaveEFArL(new SaveEFArListener());
-        guiView.addSaveCostL(new SaveCostListener());
-        guiView.addSaveOptAutomataL(new SaveOptimalListener());
-        guiView.addIdentifyRL(new IdentifyListener());
-        guiView.addPrintProdTypesL(new PrintProductListener());
-        guiView.addEFAForTransL(new EFAForTListener());
-        guiView.addUpdateModelL(new UpdateModelListener());
-        guiView.addEFAForMPL(new EFAForMPListener());
+        mGuiView.addCreateOPL(new CreateOpListener());
+        mGuiView.addCreateRVL(new CreateRVListener());
+        mGuiView.addExitL(new ExitListener());
+        mGuiView.addPrefL(new PrefListener());
+        mGuiView.addAddCellsL(new AddAllListener());
+        mGuiView.addOpenL(new OpenListener());
+        mGuiView.addSaveL(new SaveListener());
+        mGuiView.addSaveAsL(new SaveAsListener());
+        mGuiView.addCloseL(new CloseListener());
+        mGuiView.addDefWindL(new DefaultListener());
+        mGuiView.addSaveEFAoL(new SaveEFAoListener());
+        mGuiView.addSaveEFArL(new SaveEFArListener());
+        mGuiView.addSaveCostL(new SaveCostListener());
+        mGuiView.addSaveOptAutomataL(new SaveOptimalListener());
+        mGuiView.addIdentifyRL(new IdentifyListener());
+        mGuiView.addPrintProdTypesL(new PrintProductListener());
+        mGuiView.addEFAForTransL(new EFAForTListener());
+        mGuiView.addUpdateModelL(new UpdateModelListener());
+        mGuiView.addEFAForMPL(new EFAForMPListener());
         
 
-        guiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
-        guiView.addShortCommandsL(new AddShortCommandsListener());
-        guiView.addAboutL(new AddAboutListener());
+        mGuiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
+        mGuiView.addShortCommandsL(new AddShortCommandsListener());
+        mGuiView.addAboutL(new AddAboutListener());
     }
     //Listener classes
 
     public void printToConsole(String text) {
-        guiView.printToConsole(text);
+        mGuiView.printToConsole(text);
     }
 
     //private methods
@@ -99,9 +100,9 @@ public class GUIController {
      * @param iOperationView the view to add.
      */
     public void addNewOpTab(final OperationView iOperationView) {
-        guiView.addNewOpTab(iOperationView.toString(), iOperationView);
-        opViewController.addOperationView(iOperationView);
-        guiView.getOpViewMap().getView(guiView.getOpViewIndex()).addListener(new OperationWindowListener(this.guiView));
+        mGuiView.addNewOpTab(iOperationView.toString(), iOperationView);
+        mOpViewController.addOperationView(iOperationView);
+        mGuiView.getOpViewMap().getView(mGuiView.getOpViewIndex()).addListener(new OperationWindowListener(this.mGuiView));
 
         iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
     }
@@ -115,25 +116,25 @@ public class GUIController {
      */
     public void addNewOpTab(ViewData data) {
         if (!isOpened(data)) {
-            final OperationView opView = guiModel.createNewOpView(data);
+            final OperationView opView = mGuiModel.createNewOpView(data);
             addNewOpTab(opView);
 
         } else {
-            guiView.setFocusedOperationView(data);
+            mGuiView.setFocusedOperationView(data);
             printToConsole("Already open!");
         }
     }
 
     public GUIView getView() {
-        return this.guiView;
+        return this.mGuiView;
     }
 
     public Model getModel() {
-        return guiModel.getModel();
+        return mGuiModel.getModel();
     }
 
     public GUIModel getGUIModel() {
-        return guiModel;
+        return mGuiModel;
     }
 
     //File menu listenrs
@@ -141,7 +142,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = guiModel.createNewOpView();
+            final OperationView opView = mGuiModel.createNewOpView();
             addNewOpTab(opView);
         }
     }
@@ -150,8 +151,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.createNewReView();
-            guiView.addResourceView();
+            mGuiModel.createNewReView();
+            mGuiView.addResourceView();
         }
     }
 
@@ -159,7 +160,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel.exit();
+            mGuiModel.exit();
         }
     }
     //Edit menu listeners
@@ -168,7 +169,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.showPrefPane();
+            mGuiView.showPrefPane();
 
         }
     }
@@ -177,7 +178,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = guiModel.addAllOperations();
+            final OperationView opView = mGuiModel.addAllOperations();
             addNewOpTab(opView);
         }
     }
@@ -211,9 +212,9 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiModel = new GUIModel();
-            guiView.resetView(guiModel);
-            guiView.closeAllViews();
+            mGuiModel = new GUIModel();
+            mGuiView.resetView(mGuiModel);
+            mGuiView.closeAllViews();
         }
     }
 
@@ -230,7 +231,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -238,7 +239,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -246,7 +247,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -254,7 +255,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -262,7 +263,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -271,7 +272,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -279,7 +280,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -287,7 +288,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -295,7 +296,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            guiView.printToConsole("Not supported yet.");
+            mGuiView.printToConsole("Not supported yet.");
         }
     }
 
@@ -317,13 +318,13 @@ public class GUIController {
                 JTextField field = (JTextField) e.getSource();
                 
                 System.out.println("setname");
-                if (guiModel.getModel().getOperation(id) != null) {
-                    guiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
-                    opViewController.update(null, ctrl.getModel());
+                if (mGuiModel.getModel().getOperation(id) != null) {
+                    mGuiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                    mOpViewController.update(null, ctrl.getModel());
                     System.out.println("setname");
                     
                 }   
-                opViewController.update(null, ctrl.getModel());
+                mOpViewController.update(null, ctrl.getModel());
             }
         }
     }
@@ -332,9 +333,9 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = guiModel.createNewOpView();
+            final OperationView opView = mGuiModel.createNewOpView();
             opView.setName("Projection" + Model.newId());
-            new UserInteractionForVisualization(opView, guiModel.getModel());
+            new UserInteractionForVisualization(opView, mGuiModel.getModel());
             addNewOpTab(opView);
         }
     }
@@ -383,8 +384,8 @@ public class GUIController {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    if (guiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
-                        clickedCell.setValue(addPropertyPanelView((OperationData) guiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
+                    if (mGuiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
+                        clickedCell.setValue(addPropertyPanelView((OperationData) mGuiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
                     } else {
                         clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
                     }
@@ -408,7 +409,7 @@ public class GUIController {
      * Tells the model to open a new project and adds all open views as tabs.
      */
     private void openModel() {
-        if (guiModel.openModel()) {
+        if (mGuiModel.openModel()) {
             System.out.println("open was ok");
 
             try {
@@ -418,13 +419,14 @@ public class GUIController {
                         final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         System.out.println("viewData to open: " + viewData.getName());
                         final SopNodeFromViewData trans = new SopNodeFromViewData(viewData);
-                        final OperationView opView = guiModel.createNewOpView(viewData);
+                        final OperationView opView = mGuiModel.createNewOpView(viewData);
                         new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
 
-                        
-                        addNewOpTab(opView);
+                        //Set conditions
+                        mGuiModel.getModel().setConditions(viewData, viewData.getName());
 
-                        
+                        //Include tab for view
+                        addNewOpTab(opView);
 
 
 //                        final OperationView opView = guiModel.createNewOpView(viewData);
@@ -452,11 +454,11 @@ public class GUIController {
     }
 
     private void saveModel(boolean saveAs) {
-        guiModel.saveModel(saveAs);
+        mGuiModel.saveModel(saveAs);
     }
 
     private void defaultWindows() {
-        guiView.setWindowLayout();
+        mGuiView.setWindowLayout();
 
     }
 
@@ -466,7 +468,7 @@ public class GUIController {
      * @return true if the SOP is already opened else false
      */
     public boolean isOpened(ViewData data) {
-        for (OperationView op : guiModel.getOperationViews()) {
+        for (OperationView op : mGuiModel.getOperationViews()) {
             if (op.getName().equals(data.getName())) {
                 return true;
             }
@@ -480,15 +482,15 @@ public class GUIController {
      */
     public void saveOperationToModel(OperationData data){
         TreeNode dataNode = new TreeNode(data);
-        guiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
+        mGuiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
-        if (guiView.addAttributePanelView(panel)) {
+        if (mGuiView.addAttributePanelView(panel)) {
             AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(),this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
-            guiModel.getModel().addObserver(ctrl);
+            mGuiModel.getModel().addObserver(ctrl);
             printToConsole("Operation " + data.getName() + " opened.");
         } else {
             printToConsole("Operation already opened.");

@@ -9,9 +9,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -41,6 +43,9 @@ import sequenceplanner.model.data.ViewData;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.Model;
+import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.treeView.TreeView;
@@ -94,6 +99,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
     private JTextArea console;
     private JButton saveButton;
+    /**
+     * These views are for {@link OperationData} compare views based on operation id.
+     */
+    private Map<View, Integer> mAttributePanelViewOperationIdMap = new HashMap<View, Integer>();
 
     /**
      * Constructor for the GUIView class
@@ -111,6 +120,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     public ViewMap getOpViewMap() {
         return opViewMap;
+    }
+
+    public ViewMap getObjectViewMap() {
+        return objectViewMap;
     }
 
     /**
@@ -204,7 +217,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectView.add(saveButton);
 
         objectMenu = new View("Object attribute view", null, objectView);
-        objectViewMap.addView(1, objectMenu);
+        addToObjectViewMap(objectMenu, null);
 
 //        objectRoot.setWindow(new SplitWindow(false, 0.2f, objectViewMap.getView(1), objectDocks = new TabWindow(objectViewMap.getView(2))));
         objectRoot.setWindow(objectDocks = new TabWindow(objectViewMap.getView(1)));
@@ -286,14 +299,56 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     /**
+     * Removes {@link View} for operation given in parameter <p>iTreeNode</p>
+     * @param iTreeNode
+     * @return true if {@link View} was closed else false (A view for operation
+     * might not have been opened, so false is not bad in this case).
+     */
+    public boolean removeOperationObjectView(final TreeNode iTreeNode) {
+        //init
+        if (!Model.isOperation(iTreeNode.getNodeData())) {
+            return false;
+        }
+        final OperationData opData = (OperationData) iTreeNode.getNodeData();
+        final String opId = Integer.toString(opData.getId());
+
+        //do check
+        for (int i = 1; i <= getObjectViewMap().getViewCount(); i++) {
+            final View view = getObjectViewMap().getView(i);
+            final Integer id = mAttributePanelViewOperationIdMap.get(view);
+            if (id != null) {
+                if (opId.equals(id.toString())) {
+                    removeView(getObjectViewMap(), i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Removes {@link View} if view exists.
+     * @param iViewMap map to look in
+     * @param iId id for view in map
+     * @return true if ok  else false
+     */
+    public static boolean removeView(final ViewMap iViewMap, final Integer iId) {
+        if (iId < 1 || iId > iViewMap.getViewCount()) {
+            return false;
+        }
+        if (iViewMap.getView(iId) != null) {
+            iViewMap.getView(iId).close();
+        }
+        iViewMap.removeView(iId);
+        return true;
+    }
+
+    /**
      * Not yet implemented
      */
     public void updateViews() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-
-
-
     /**
      * Main menu bar for sequenceplanner.
      * Only graphical if used alone.
@@ -500,7 +555,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         reduceEFA.addActionListener(l);
     }
 
-
     public void addSavePropViewL(ActionListener l) {
         saveButton.addActionListener(l);
     }
@@ -520,10 +574,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void addAboutL(ActionListener l) {
         about.addActionListener(l);
     }
-    
+
 //End listeners 
     //</editor-fold>
-
     /**
      * Opens a new window with a preference pane in it.
      */
@@ -573,7 +626,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         resourceViewOpen = true;
     }
 
-
     public void printToConsole(String text) {
         console.append(text + "\n");
     }
@@ -583,8 +635,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         System.out.println("arg0: " + arg0 + " arg1: " + arg1);
 //        throw new UnsupportedOperationException("Not supported yet.");
     }
-
-
 
     public void setWindowLayout() {
         System.out.println("Focus:" + operationRoot.getLastFocusedChildWindow() + " @ " + " :end");
@@ -712,12 +762,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
     public boolean addAttributePanelView(AttributePanel toInsert) {
+        final Integer operationId = toInsert.getOperationData().getId();
+
         // Check if view exists.
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
 
-            if (objectViewMap.getView(i).getComponent() != null
-                    && toInsert.getName().equals(objectViewMap.getView(i).getTitle())) {
+            final Integer currentId = mAttributePanelViewOperationIdMap.get(objectViewMap.getView(i));
 
+            if (objectViewMap.getView(i).getComponent() != null && operationId.toString().equals(currentId.toString())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();
@@ -730,19 +782,34 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 }
                 //Set the tab containing the View selected
 
-
                 return false;
-
 
             }
         }
         View newView = new View(toInsert.getName(), null, new JScrollPane(toInsert));
-        objectViewMap.addView(objectViewMap.getViewCount() + 1, newView);
+        addToObjectViewMap(newView, operationId);
         objectDocks.addTab(newView);
         objectDocks.restore();
 
-
         return true;
+    }
+
+    /**
+     * To add {@link View}s to objectViewMap.<br/>
+     * An extra {@link Integer} parameter is included to compare different views
+     * in the map based on unique ids.
+     * @param iViewToAdd
+     * @param iId {@link OperationData} id or null if the view is not for an operation.
+     */
+    private void addToObjectViewMap(final View iViewToAdd, Integer iId) {
+        if (iViewToAdd == null) {
+            return;
+        }
+        if (iId == null) {
+            iId = -1;
+        }
+        mAttributePanelViewOperationIdMap.put(iViewToAdd, iId);
+        objectViewMap.addView(objectViewMap.getViewCount() + 1, iViewToAdd);
     }
 
     /**

@@ -61,7 +61,7 @@ public class ClickMenu extends JPopupMenu {
             add(new JMenuItem(av.createAction("Get attributes",
                     new TreeViewController.GetOperationAttributes(node, mGUIController), "resources/icons/op.png")));
             add(new JMenuItem(av.createAction("Remove Operation",
-                    new TreeViewController.RemoveOperation(model, node), "resources/icons/close.png")));
+                    new TreeViewController.RemoveOperation(node, mGUIController), "resources/icons/close.png")));
             draw = true;
         }//----------------------------------------------------------------------
 

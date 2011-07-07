@@ -156,4 +156,8 @@ public class AttributePanel extends JPanel {
     public JTextField getOperationIdTextField() {
         return operationIdTextField;
     }
+
+    public OperationData getOperationData() {
+        return model;
+    }
 }
