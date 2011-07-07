@@ -306,7 +306,7 @@ public class ConvertFromXML {
             map = new HashMap<ConditionType,Condition>();
             map.put(ConditionType.PRE, conditionFromString(prelist.get(i)));
             System.out.println("CFXML getPre   " + map.entrySet());
-            data.setConditions(map, "Algebraic: " +data.getAlgebraicCounter());
+            data.setConditions(map, "Algebraic " +data.getAlgebraicCounter());
             data.increaseAlgebraicCounter();
         }
         
@@ -327,7 +327,7 @@ public class ConvertFromXML {
             map = new HashMap<ConditionType,Condition>();
             map.put(ConditionType.POST, conditionFromString(postlist.get(i)));
             System.out.println("CFXML getpre  "+map.entrySet());
-            data.setConditions(map, "Algebraic: "+data.getAlgebraicCounter());
+            data.setConditions(map, "Algebraic "+data.getAlgebraicCounter());
             data.increaseAlgebraicCounter();
         }
         
