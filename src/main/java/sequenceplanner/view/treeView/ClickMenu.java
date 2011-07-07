@@ -14,8 +14,6 @@ import javax.swing.SwingUtilities;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
-import sequenceplanner.model.data.OperationData;
-import sequenceplanner.multiProduct.ExtendedData;
 import sequenceplanner.multiProduct.TypeVar;
 import sequenceplanner.view.AbstractView;
 import sequenceplanner.view.Actions.InsertOperation;

@@ -1,6 +1,5 @@
 package sequenceplanner.gui.view.attributepanel;
 
-import java.awt.Component;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -9,6 +8,7 @@ import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.utils.StringTrimmer;
 
 /**
  * Panel showing a list of Conditions. 
@@ -92,20 +92,19 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         if (type == ConditionType.PRE) {
             editor.setPreButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
-                System.out.println("Muu");
-                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
+                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
                 editor.setActionButtonStatus(true);
             }
         } else if (type == ConditionType.POST) {
             editor.setPostButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
-                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
+                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-                conditionString = stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
                 editor.setActionButtonStatus(true);
             }
         }
@@ -114,27 +113,6 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         deleteCondition(conditionKey);
     }
 
-    public String stringTrim(String conditionString) {
-        String conditionString2 = "";
-        String[] st = conditionString.split("and");
-
-        st[0] = st[0].substring(1);
-        for (String x : st) {
-            conditionString2 = conditionString2 + "id" + x + "and";
-        }
-        //Remove the last )and
-        conditionString = conditionString2.substring(0, conditionString2.length() - 4);
-
-        String[] st2 = conditionString.split("or");
-        conditionString2 = "";
-        for (String x : st2) {
-            conditionString2 = conditionString2 + "id" + x + "or";
-        }
-        //Remove the last or and the double "id"
-        conditionString = conditionString2.substring(2, conditionString2.length() - 2);
-
-        return conditionString;
-    }
 
     @Override
     public boolean contains(Condition condition) {

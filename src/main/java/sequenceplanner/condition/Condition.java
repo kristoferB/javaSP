@@ -107,7 +107,15 @@ public class Condition {
 
     @Override
     public String toString(){
-        return this.guard.toString() + '/' + this.action.toString();
+        String returnString ="";
+        if(this.hasAction() && this.hasGuard()){
+            returnString = this.guard.toString() + '/' + this.action.toString();
+        } else if (this.hasAction()){
+            returnString = this.action.toString();
+        } else{
+            returnString = this.guard.toString();
+        }
+        return returnString;
     }
 
 

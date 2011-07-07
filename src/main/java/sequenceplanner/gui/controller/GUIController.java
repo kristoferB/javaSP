@@ -525,8 +525,8 @@ public class GUIController {
     private void openModel() {
         if (guiModel.openModel()) {
             guiView.closeAllViews();
-//            guiView.updateEditorView();
-//            guiView.updatePropertyView();
+            guiView.updateEditorView();
+            guiView.updatePropertyView();
             for (OperationView o : guiModel.getOperationViews()) {
                 addNewOpTab(o);
                 if (o.isClosed()) {

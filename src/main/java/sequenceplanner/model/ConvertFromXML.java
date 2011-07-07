@@ -33,6 +33,7 @@ import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.GuardAsTextInputToConditionParser;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.utils.StringTrimmer;
 
 /**
  *
@@ -130,6 +131,8 @@ public class ConvertFromXML {
 
         if (!dataX.getOperationData().getPreCondition().isEmpty()) {
             data = getPreconditions(data, dataX.getOperationData().getPreCondition());
+            System.out.println("get  " + dataX.getOperationData().getPreCondition().toString());
+            System.out.println("global  "+data.getGlobalConditions().entrySet());
         }
 
         if (!dataX.getOperationData().getPostCondition().isEmpty()) {
@@ -297,10 +300,12 @@ public class ConvertFromXML {
     }
 
     private OperationData getPreconditions(OperationData data, List<String> prelist) {
+        System.out.println(prelist.size());
         HashMap<ConditionType, Condition> map;
-        for(int i =1; prelist.size()>i; i++){
+        for(int i =0; prelist.size()>i; i++){
             map = new HashMap<ConditionType,Condition>();
             map.put(ConditionType.PRE, conditionFromString(prelist.get(i)));
+            System.out.println("CFXML getPre   " + map.entrySet());
             data.setConditions(map, "Algebraic: " +data.getAlgebraicCounter());
             data.increaseAlgebraicCounter();
         }
@@ -308,12 +313,20 @@ public class ConvertFromXML {
         
         return data;
     }
-
+    /**
+     * 
+     * @param data
+     * @param postlist
+     * @return 
+     * @SupressWarnings
+     */
     private OperationData getPostcondtions(OperationData data, List<String> postlist) {
         HashMap<ConditionType, Condition> map;
         for(int i =1; postlist.size()>i; i++){
+            
             map = new HashMap<ConditionType,Condition>();
             map.put(ConditionType.POST, conditionFromString(postlist.get(i)));
+            System.out.println("CFXML getpre  "+map.entrySet());
             data.setConditions(map, "Algebraic: "+data.getAlgebraicCounter());
             data.increaseAlgebraicCounter();
         }
@@ -323,14 +336,17 @@ public class ConvertFromXML {
         return data;
     }
     public Condition conditionFromString(String savedCondition) {
+        System.out.println("preparse " +savedCondition);
+        String formatstring = StringTrimmer.getInstance().stringTrim(savedCondition);
+        System.out.println("postparse " +formatstring);
         Condition condition = new Condition();
         AStringToConditionParser guardParser = new GuardAsTextInputToConditionParser();
         ConditionExpression ce = new ConditionExpression();
         AStringToConditionParser actionParser = new ActionAsTextInputToConditionParser();
 
-        if (guardParser.run(savedCondition, ce)) {
+        if (guardParser.run(formatstring, ce)) {
             condition.setGuard(ce);
-        } else if (actionParser.run(savedCondition, ce)) {
+        } else if (actionParser.run(formatstring, ce)) {
             condition.setAction(ce);
         } else {
             System.out.println("Wrong expression");
