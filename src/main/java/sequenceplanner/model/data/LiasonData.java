@@ -7,12 +7,8 @@ package sequenceplanner.model.data;
  */
 public class LiasonData extends Data {
 
-   public LiasonData( String name, int type, int id ) {
-      super( name, type, id );
-   }
-
-   public LiasonData( String name, int id ) {
-      this( name, Data.LIASON, id );
+   public LiasonData( String name, int id) {
+       super(name,id);
    }
    
 }

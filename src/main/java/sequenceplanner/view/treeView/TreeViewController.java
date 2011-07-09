@@ -12,6 +12,8 @@ import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.DrawSopNode;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
@@ -94,42 +96,22 @@ public class TreeViewController {
         @Override
         public void actionPerformed(ActionEvent e) {
             //Remove attribute tab
-            if(!mGUIController.getView().removeOperationObjectView(mTreeNode)) {
-                return;
-            }
+            mGUIController.getView().removeOperationObjectView(mTreeNode);
 
             //Loop views and remove operation if present
+            for(final OperationView opView : mGUIController.getGUIModel().getOperationViews()) {
+                if(opView.removeOperationInGraph(mTreeNode.getId())) {
+                    //Operation was removed
+//                    final ISopNode rootSopNode = opView.getSopNodeForGraph();
+//                    new SopNodeToolboxSetOfOperations().drawNode(rootSopNode, opView);
+//                    System.out.println("opView name: " + opView.getName());
+                }
+            }
 
             //Remove operation from model
             mModel.removeChild(mModel.getOperationRoot(), mTreeNode);
 
             System.out.println("Remove operation: " + mTreeNode.toString());
-        }
-    }
-
-    public static class TestTemp implements ActionListener {
-
-        private Model mModel;
-        private TreeNode mTreeNode;
-        private GUIController mGUIController;
-
-        public TestTemp(final Model iModel, final TreeNode iNode, final GUIController iGUIController) {
-            this.mModel = iModel;
-            this.mTreeNode = iNode;
-            this.mGUIController = iGUIController;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (Model.isView(mTreeNode.getNodeData())) {
-                //Add new view
-                final OperationView opView = mGUIController.getGUIModel().createNewOpView();
-                mGUIController.addNewOpTab(opView);
-                final ViewData vd = (ViewData) mTreeNode.getNodeData();
-
-                new DrawSopNode(vd.mSopNodeRoot, opView.getGraph());
-
-            }
         }
     }
 
@@ -149,8 +131,9 @@ public class TreeViewController {
             if (mGUIController == null) {
                 return;
             }
-            final OperationView opView = mGUIController.getGUIModel().createNewOpView();
-            mGUIController.addNewOpTab(opView);
+            mGUIController.mOpViewController.createOperationView();
+//            final OperationView opView = mGUIController.getGUIModel().createNewOpView();
+//            mGUIController.addNewOpTab(opView);
         }
     }
 

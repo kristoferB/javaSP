@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import sequenceplanner.model.Model;
 import sequenceplanner.model.NameCacheMap;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;

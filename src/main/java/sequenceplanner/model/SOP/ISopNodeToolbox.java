@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ViewData.CellData2;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -13,17 +14,25 @@ import sequenceplanner.view.operationView.OperationView;
 public interface ISopNodeToolbox {
 
     /**
-     * Removes a node and all sequence nodes to this node.<br/>
+     * Removes a {@link ISopNode} and child nodes to this node.<br/>
      * E.g.:---------------<br/>
      * node1 has sequence set {node2,node3} and node6 as predecessor.<br/>
      * node2 has sequecne set {node4} and node5 as successor.<br/>
      * removeNode(node2) gives:<br/>
      * node1 has sequence set {node5,node3} and node6 as prececessor.<br/>
      * --------------------<br/>
+     * E.g.:---------------<br/>
+     * node1 has sequence set {node2,node3} and node6 as predecessor.<br/>
+     * node2 has sequecne set {node4} and node5 as successor.<br/>
+     * removeNode(node4) gives:<br/>
+     * node1 has sequence set {node2,node3} and node6 as prececessor.<br/>
+     * node2 has sequecne set {} and node5 as successor.<br/>
+     * --------------------<br/>
      * @param iNodeToRemove node to remove
      * @param iRootNode container for sequences where node can be found
+     * @return true if node was removed else false
      */
-    public void removeNode(ISopNode iNodeToRemove, ISopNode iRootNode);
+    boolean removeNode(ISopNode iNodeToRemove, ISopNode iRootNode);
 
     /**
      * Draw all nodes that are in any of iRootNode's sequences and iteratively sequences for nodes in the sequences.<br/>
@@ -33,6 +42,8 @@ public interface ISopNodeToolbox {
      * @param iView a view already exists or null if a new view should be created.
      */
     public void drawNode(ISopNode iRootNode, OperationView iView);
+
+    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData2> iCellDataSet);
 
     /**
      * Remove unnecessary nodes recursively in sequences to iRootNode.<br/>
@@ -133,4 +144,14 @@ public interface ISopNodeToolbox {
      * @return Predecessor as {@link ISopNode} or null if no predecessor exists
      */
     ISopNode getPredecessor(ISopNode iSuccessorNode, ISopNode iRootNode);
+
+    /**
+     * To get parent {@link ISopNode} for parameter <p>iNode</p>.<br/>
+     * A node <p>P</p> is defined parent to parameter <p>iNode</p> if <p>iNode</p> is in
+     * the sequence set for <p>P</p>
+     * @param iNode node to find parent for
+     * @param iRoot root node to bound the search
+     * @return parent node if such exists else null
+     */
+    ISopNode getParentIfNodeIsInSequenceSet(ISopNode iNode, ISopNode iRoot);
 }

@@ -46,7 +46,7 @@ public class GUIController {
     private GUIView mGuiView;
     //TreeviewListener
     private TreeViewController mTreeViewController;
-    private OperationViewController mOpViewController;
+    public OperationViewController mOpViewController;
 
     public GUIController(GUIModel m, GUIView v) {
         mGuiModel = m;
@@ -55,7 +55,7 @@ public class GUIController {
         mTreeViewController = new TreeViewController(this, mGuiView.getTreeView());
 
         //Set observer on model
-        mOpViewController = new OperationViewController();
+        mOpViewController = new OperationViewController(this);
         mGuiModel.getModel().addObserver(mOpViewController);
 
         addListeners();
@@ -101,9 +101,14 @@ public class GUIController {
      */
     public void addNewOpTab(final OperationView iOperationView) {
         mGuiView.addNewOpTab(iOperationView.toString(), iOperationView);
+
+        //Listener function unclear
         mOpViewController.addOperationView(iOperationView);
+
+        //Listener related to Infonode
         mGuiView.getOpViewMap().getView(mGuiView.getOpViewIndex()).addListener(new OperationWindowListener(this.mGuiView));
 
+        //Listener for mouse click related operations
         iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
     }
 
@@ -418,15 +423,17 @@ public class GUIController {
                     if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
                         final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         System.out.println("viewData to open: " + viewData.getName());
-                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData);
-                        final OperationView opView = mGuiModel.createNewOpView(viewData);
-                        new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
 
-                        //Set conditions
-                        mGuiModel.getModel().setConditions(viewData, viewData.getName());
-
-                        //Include tab for view
-                        addNewOpTab(opView);
+//                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData);
+//                        final OperationView opView = mGuiModel.createNewOpView(viewData);
+//
+//                        new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
+//
+//                        //Set conditions
+//                        mGuiModel.getModel().setConditions(viewData, viewData.getName());
+//
+//                        //Include tab for view
+//                        addNewOpTab(opView);
 
 
 //                        final OperationView opView = guiModel.createNewOpView(viewData);

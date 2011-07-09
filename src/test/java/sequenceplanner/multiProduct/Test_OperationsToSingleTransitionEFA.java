@@ -10,8 +10,8 @@ import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.multiProduct.summer2011.ASupervisorFromOperationsBasedOnSingleTransition;
-import sequenceplanner.multiProduct.summer2011.SupervisorFromOperationsBasedOnSingleTransition;
+//import sequenceplanner.multiProduct.summer2011.ASupervisorFromOperationsBasedOnSingleTransition;
+//import sequenceplanner.multiProduct.summer2011.SupervisorFromOperationsBasedOnSingleTransition;
 import sequenceplanner.view.operationView.OperationView;
 import static org.junit.Assert.*;
 
@@ -37,7 +37,7 @@ public class Test_OperationsToSingleTransitionEFA {
 //        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/TwoSimpleProducts.sopx");
 
-        new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
+//        new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
 
     }    
 }

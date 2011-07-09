@@ -275,20 +275,20 @@ public class testVisualization {
         sop.addNodeToSequenceSet(firstOpNode);
 
         //Include nbrOfOperations nbr of operations.
-        for (; nbrOfOperations > 0; --nbrOfOperations) {
-            final OperationData opData = mSP.insertOperation();
-            if (withSequencePrecondition) {
-                //Add precondition that operation with id-1 has to be finished
-                final OperationData.SeqCond sq = new OperationData.SeqCond(opData.getId() - 1, 2);
-                final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
-                final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
-                llOR.add(sq);
-                llAND.add(llOR);
-                opData.setSequenceCondition(llAND);
-            }
-            final ISopNode opDataNode = new SopNodeOperation(opData);
-            sop.addNodeToSequenceSet(opDataNode);
-        }
+//        for (; nbrOfOperations > 0; --nbrOfOperations) {
+//            final OperationData opData = mSP.insertOperation();
+//            if (withSequencePrecondition) {
+//                //Add precondition that operation with id-1 has to be finished
+//                final OperationData.SeqCond sq = new OperationData.SeqCond(opData.getId() - 1, 2);
+//                final LinkedList<LinkedList<OperationData.SeqCond>> llAND = new LinkedList<LinkedList<OperationData.SeqCond>>();
+//                final LinkedList<OperationData.SeqCond> llOR = new LinkedList<OperationData.SeqCond>();
+//                llOR.add(sq);
+//                llAND.add(llOR);
+//                opData.setSequenceCondition(llAND);
+//            }
+//            final ISopNode opDataNode = new SopNodeOperation(opData);
+//            sop.addNodeToSequenceSet(opDataNode);
+//        }
 
         mVisualization.addOset(sop);
         assertTrue(mVisualization.addOsubset(sop)); //View all operations

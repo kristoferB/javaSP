@@ -13,19 +13,22 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 /**
  *
- * @author Erik
+ * @author Erik, Patrik
  */
 public class ViewData extends Data {
 
     static Logger logger = Logger.getLogger(ViewData.class);
-    public ISopNode mSopNodeRoot = new SopNode();
-
-    public Map<ISopNode,CellData2> mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
+//    public ISopNode mRootSopNode;
+    public SopNodeForGraphPlus mSopNodeForGraphPlus;
+    public Map<ISopNode, CellData3> mNodeCellDat3aMap = new HashMap<ISopNode, CellData3>();
+    public Map<ISopNode, CellData2> mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
     /**
      * To store data from xml file
      */
@@ -57,7 +60,12 @@ public class ViewData extends Data {
         setHidden(false);
         setClosed(false);
         rows = new LinkedList<CellData>();
+        
+//        mRootSopNode = new SopNode();
+    }
 
+    public void setSpGraph(final SPGraphModel iSPGraphModel) {
+        mSopNodeForGraphPlus = new SopNodeForGraphPlus(iSPGraphModel);
     }
 
     public void setRoot(int root) {
@@ -86,13 +94,17 @@ public class ViewData extends Data {
      * Called when a {@link OperationView} is saved.<br/>
      * @param iMap
      */
-    public void storeCellData(final Map<ISopNode, Cell> iMap) {
+    public void storeCellData() {
+        if(mSopNodeForGraphPlus == null) {
+            return;
+        }
+        final Map<ISopNode, Cell> map = mSopNodeForGraphPlus.getNodeCellMap(false);
         mCellDataSet.clear();
         mNodeCellDataMap.clear();
         Integer refIdCounter = 0;
 
-        for (final ISopNode node : iMap.keySet()) {
-            final Cell cell = iMap.get(node);
+        for (final ISopNode node : map.keySet()) {
+            final Cell cell = map.get(node);
 
             System.out.println("cell.getGeometry(): " + cell.getGeometry() != null);
             System.out.println("cell.isCollapsed(): " + cell.isCollapsed() != null);
@@ -101,6 +113,17 @@ public class ViewData extends Data {
             final CellData2 cellData = new CellData2(node, refIdCounter++, cell.getGeometry(), !cell.isCollapsed());
             mCellDataSet.add(cellData);
             mNodeCellDataMap.put(node, cellData);
+        }
+    }
+
+    public static class CellData3 {
+
+        public final mxGeometry mGeo;
+        public final boolean mExpanded;
+
+        public CellData3(mxGeometry mGeo, boolean mExpanded) {
+            this.mGeo = mGeo;
+            this.mExpanded = mExpanded;
         }
     }
 
@@ -113,6 +136,7 @@ public class ViewData extends Data {
         public final List<Integer> mSequenceSet;
         public final Integer mSuccessor;
         public final Integer mRefId;
+        public final CellData3 mCellData;
         public final mxGeometry mGeo;
         public final boolean mExpanded;
 
@@ -129,12 +153,13 @@ public class ViewData extends Data {
             this.mSequenceSet = mSequenceSet;
             this.mSuccessor = mSuccessor;
             this.mRefId = mRefId;
+            mCellData = new CellData3(mGeo, mExpanded);
             this.mGeo = mGeo;
             this.mExpanded = mExpanded;
         }
 
         /**
-         * Used when xml file is created
+         * Used when save to Model
          * @param mSopNode
          * @param mRefId
          * @param mGeo
@@ -145,6 +170,7 @@ public class ViewData extends Data {
             this.mSequenceSet = null;
             this.mSuccessor = null;
             this.mRefId = mRefId;
+            mCellData = new CellData3(mGeo, mExpanded);
             this.mGeo = mGeo;
             this.mExpanded = mExpanded;
         }
@@ -230,5 +256,48 @@ public class ViewData extends Data {
         output += "\n====================================================================D";
 
         return output;
+    }
+
+    /**
+     * To store {@link ISopNode} structure info for this {@link OperationView}
+     */
+    public class SopNodeForGraphPlus {
+
+        private ISopNode mRootSopNode = null;
+        private Map<ISopNode, Cell> mNodeCellMap = null;
+        private SPGraphModel mSPGraphModel;
+
+        public SopNodeForGraphPlus(final SPGraphModel iSPGraphModel) {
+            this.mSPGraphModel = iSPGraphModel;
+            this.getSopNodeForGraphPlus();
+        }
+
+        public ISopNode getRootSopNode(final boolean iUpDateBeforeReturn) {
+            if (iUpDateBeforeReturn) {
+                this.getSopNodeForGraphPlus();
+            }
+            return mRootSopNode;
+        }
+
+        public Map<ISopNode, Cell> getNodeCellMap(final boolean iUpDateBeforeReturn) {
+            if (iUpDateBeforeReturn) {
+                this.getSopNodeForGraphPlus();
+            }
+            return mNodeCellMap;
+        }
+
+        /**
+         * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
+         * @param ioMap key: {@link ISopNode} object, value: {@link Cell} for node
+         * @return the root {@link ISopNode}
+         */
+        private void getSopNodeForGraphPlus() {
+            //Create a new sop node root aka theSopNode
+            final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(mSPGraphModel, new SopNode());
+            //get root sop
+            mRootSopNode = snfspgm.getSopNodeRoot();
+            //get Cell for each node
+            mNodeCellMap = snfspgm.getNodeCellMap();
+        }
     }
 }

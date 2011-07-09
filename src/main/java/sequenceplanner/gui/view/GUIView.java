@@ -298,6 +298,10 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     }
 
+    public boolean removeOperationView() {
+        return true;
+    }
+
     /**
      * Removes {@link View} for operation given in parameter <p>iTreeNode</p>
      * @param iTreeNode
@@ -769,7 +773,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
             final Integer currentId = mAttributePanelViewOperationIdMap.get(objectViewMap.getView(i));
 
-            if (objectViewMap.getView(i).getComponent() != null && operationId.toString().equals(currentId.toString())) {
+            if (objectViewMap.getView(i).getComponent() != null && currentId != null && operationId.toString().equals(currentId.toString())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();

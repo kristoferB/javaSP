@@ -29,9 +29,9 @@ public class SopNodeFromSPGraphModel {
      *
      * @param iSPGraphModel the graph to work with
      */
-    public SopNodeFromSPGraphModel(final SPGraphModel iSPGraphModel) {
+    public SopNodeFromSPGraphModel(final SPGraphModel iSPGraphModel, final ISopNode iSopNodeRoot) {
         mSPGraphModel = iSPGraphModel;
-        mSopNodeRoot = new SopNode();
+        mSopNodeRoot = iSopNodeRoot;
         mSopNodeCellMap = new HashMap<ISopNode, Cell>();
         filterHashTable();
         getChildCells();

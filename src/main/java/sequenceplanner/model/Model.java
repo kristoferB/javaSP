@@ -43,7 +43,7 @@ public class Model extends Observable implements IModel {
 
     public static final String VARIABLE_ROOT_NAME = "Variables";
     static Logger logger = Logger.getLogger(Model.class);
-    private static int idConter = 5;
+    private static int idConter = 0;
     private static int propertyIdCounter = 0;
     //Holds a cache for easy access to all operations names and paths
     private NameCacheMap nameCache;
@@ -298,7 +298,7 @@ public class Model extends Observable implements IModel {
 //// oModelTree - newTree = is any cells in the old tree removed.
 //// FIXME:
 ////Insert new node
-//        TreeNode parent = node.getParent();
+//        TreeNode parent = node.getParentIfNodeIsInSequenceSet();
 //        parent.remove(node);
 //        parent.insert(newNode);
 //
@@ -1033,11 +1033,9 @@ public class Model extends Observable implements IModel {
     /**
      * Exchange of {@link OperationData} objects in parameter <p>iSopNode</p>
      * to the corresponding {@link OperationData} objects in this model.<br/>
-     * The parameter <p>iSopNode</p> is thereafter saved to parameter <p>iViewData</p>.<br/>
-     * @param iViewData
      * @param iSopNode
      */
-    public void saveSopNode(final ViewData iViewData, final ISopNode iSopNode) {
+    public void updateSopNodeStructureWithObjectsInModel(final ISopNode iSopNode) {
         //Update sopNode with the operation objects in model.
         final Set<ISopNode> nodeSet = new SopNodeToolboxSetOfOperations().getNodes(iSopNode, true);
         for (final ISopNode node : nodeSet) {
@@ -1054,7 +1052,6 @@ public class Model extends Observable implements IModel {
                 sopNodeInView.setOperation(opDataInModel);
             }
         }
-        iViewData.mSopNodeRoot = iSopNode;
     }
 
     /**
@@ -1066,25 +1063,51 @@ public class Model extends Observable implements IModel {
      * @param iLabel
      * @return true if ok else false
      */
-    public boolean setConditions(final ViewData iViewData, final String iLabel) {
-        //Get sopNode------------------------------------------------------------
-        final ISopNode sopNodeRoot = iViewData.mSopNodeRoot;
-        if (sopNodeRoot == null) {
+    public boolean setConditions(final ISopNode iSopNodeRoot, final String iLabel) {
+        //Check sopNode----------------------------------------------------------
+        if (iSopNodeRoot == null) {
             return false;
         }
         //-----------------------------------------------------------------------
 
         //Get new conditions from SOP--------------------------------------------
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
-        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(sopNodeRoot);
+        final Map<OperationData, Map<ConditionType, Condition>> operationConditionMap = snToolbox.relationsToSelfContainedOperations(iSopNodeRoot);
         //-----------------------------------------------------------------------
 
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
             operation.setConditions(operationConditionMap.get(operation), iLabel);
+            setChanged();
+            notifyObservers(operation);
         }
         //-----------------------------------------------------------------------
         return true;
     }
 
+    public boolean removeOperationFromView(final TreeNode iTreeNodeOperationToRemove, final ViewData iViewData) {
+        removeConditions(iViewData.getName());
+        return false;
+    }
+
+    /**
+     * Removes the {@link Condition}s that are based on {@link ViewData} with
+     * label/name parameter <p>iLabel</p>.<br/>
+     * @param iLabel
+     */
+    public void removeConditions(final String iLabel) {
+        final List<TreeNode> allOperationsList = getAllOperations();
+        for (final TreeNode tn : allOperationsList) {
+            final OperationData opData = (OperationData) tn.getNodeData();
+            System.out.println("operation: " + opData.getName());
+            System.out.println("removecon1" + opData.getGlobalConditions().toString());
+            if (opData.getGlobalConditions().containsKey(iLabel)) {
+                opData.getGlobalConditions().remove(iLabel);
+
+                setChanged();
+                notifyObservers(opData);
+            }
+            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+        }
+    }
 }

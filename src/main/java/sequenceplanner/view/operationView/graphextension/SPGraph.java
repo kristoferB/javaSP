@@ -404,7 +404,7 @@ public class SPGraph extends mxGraph {
 
             double height = 0, width = 0;
 
-            String value = "precondition"; //userFile.getPrecondition();
+            String value = "preconSPGraph"; //userFile.getPrecondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }
@@ -429,7 +429,7 @@ public class SPGraph extends mxGraph {
                 width = width < rlf.getWidth() ? rlf.getWidth() : width;
             }
 
-            value = "postcondition"; //userFile.getPostcondition();
+            value = "postconSPGraph"; //userFile.getPostcondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }

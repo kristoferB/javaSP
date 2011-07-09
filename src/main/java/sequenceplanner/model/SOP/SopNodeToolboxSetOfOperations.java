@@ -3,6 +3,7 @@ package sequenceplanner.model.SOP;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
@@ -10,14 +11,12 @@ import sequenceplanner.model.data.ViewData.CellData2;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
- * DOES NOT FOLLOW DESCRIPTIONS FOR METHOD "REMOVE NODE" GIVEN IN INTERFACE!!!<br/>
- * To store operation sets with a SOP.<br/>
- * Each operation is added as first node in sequence set.<br/>
+ * 
  * @author patrik
  */
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
-
+    @Override
     public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData2> iCellDataSet) {
         new DrawSopNode(iRootNode, iView.getGraph(), iCellDataSet);
     }
@@ -58,10 +57,34 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void removeNode(ISopNode iNodeToRemove, ISopNode iRootNode) {
-        if (iNodeToRemove != null && iRootNode != null) {
-            iRootNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+    public boolean removeNode(ISopNode iNodeToRemove, ISopNode iRootNode) {
+        //Init relations for node to remove
+        final ISopNode parentNode = getParentIfNodeIsInSequenceSet(iNodeToRemove, iRootNode);
+        final ISopNode predecessorNode = getPredecessor(iNodeToRemove, iRootNode);
+        final ISopNode successorNode = iNodeToRemove.getSuccessorNode();
+
+        //Has a parent
+        if (parentNode != null) {
+            parentNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+            if (successorNode != null) {
+                parentNode.addNodeToSequenceSet(successorNode);
+            }
+            return true;
         }
+
+        //Has a predecessor
+        if (predecessorNode != null) {
+            predecessorNode.setSuccessorNode(null);
+            predecessorNode.setSuccessorRelation(-1);
+            if (successorNode != null) {
+                predecessorNode.setSuccessorNode(successorNode);
+                predecessorNode.setSuccessorRelation(IRelateTwoOperations.OTHER);
+            }
+            return true;
+        }
+
+        //Had nothing
+        return false;
     }
 
     @Override
@@ -118,6 +141,30 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
                     return node;
                 }
             }
+        }
+        return null;
+    }
+
+    @Override
+    public ISopNode getParentIfNodeIsInSequenceSet(ISopNode iNode, ISopNode iRoot) {
+        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+            //Check node, childnode to root
+            if (node.equals(iNode)) {
+                return iRoot;
+            }
+
+            //Go trough successor (first node included)
+            while (node != null) {
+
+                //Check children to childnode
+                final ISopNode possibleReturnNode = getParentIfNodeIsInSequenceSet(iNode, node);
+                if (possibleReturnNode != null) {
+                    return possibleReturnNode;
+                }
+
+                node = node.getSuccessorNode(); //Successor to node
+            }
+
         }
         return null;
     }

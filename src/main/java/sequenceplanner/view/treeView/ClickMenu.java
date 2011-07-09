@@ -92,8 +92,6 @@ public class ClickMenu extends JPopupMenu {
             draw = true;
         }
         if (Model.isView(node.getNodeData())) {
-            add(new JMenuItem(av.createAction("Test Temp",
-                    new TreeViewController.TestTemp(model, node, mGUIController), "resources/icons/sop_1.png")));
             add(rem);
             draw = true;
         }//----------------------------------------------------------------------

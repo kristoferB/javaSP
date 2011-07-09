@@ -101,7 +101,7 @@ public class DrawSopNode {
         final List<ISopNode> sortedList = sortSequenceSetBasedOnGeometry(iRoot.getFirstNodesInSequencesAsSet());
 
         for (ISopNode node : sortedList) {
-            System.out.println("node to work with: " + node.typeToString());
+//            System.out.println("node to work with: " + node.typeToString());
             //First node---------------------------------------------------------
             //Especially first nodes are strange...
             if (iRoot == mRoot) {
@@ -112,9 +112,9 @@ public class DrawSopNode {
                     mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), null, mSopNodeCellMap.get(node));
                 } else {
 
-                    System.out.println(node.typeToString() + " bgeo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
+//                    System.out.println(node.typeToString() + " bgeo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
                     mGraph.insertGroupNode(mSopNodeCellMap.get(iRoot), mSopNodeCellMap.get(node));
-                    System.out.println(node.typeToString() + " ageo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
+//                    System.out.println(node.typeToString() + " ageo: " + mSopNodeCellMap.get(node).getGeometry().getRectangle());
                 }
 
                 if (mSopNodeCellMap.get(iRoot).getType() == Constants.SOP) {
@@ -219,8 +219,11 @@ public class DrawSopNode {
         }
 
         //Set celldata if such exists
-        if (!returnCell.equals(null) && !mNodeCellDataMap.equals(null)) {
+        if (returnCell != null && mNodeCellDataMap != null) {
             if (mNodeCellDataMap.containsKey(iNode)) {
+
+//                System.out.println("DrawSopNode: extra cell data for " + iNode.typeToString());
+
                 final ViewData.CellData2 cellData = mNodeCellDataMap.get(iNode);
 
                 returnCell.setGeometry(cellData.mGeo);

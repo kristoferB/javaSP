@@ -20,9 +20,9 @@ public class SopNodeFromViewData {
     private Map<Integer, ISopNode> mIdSopNodeMap;
     private Set<ISopNode> mInSequenceSetForRootSopNode;
 
-    public SopNodeFromViewData(ViewData mViewData) {
+    public SopNodeFromViewData(ViewData mViewData, ISopNode iSopNode) {
         this.mViewData = mViewData;
-        this.mRootSopNode = mViewData.mSopNodeRoot;
+        this.mRootSopNode = iSopNode;
         run();
     }
 

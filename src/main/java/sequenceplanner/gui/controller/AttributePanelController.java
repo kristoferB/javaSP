@@ -58,7 +58,8 @@ public class AttributePanelController implements ActionListener, Observer {
     @Override
     public void update(Observable o, Object arg) {
         OperationData od = (OperationData) arg;
-        if (od.getName().equalsIgnoreCase(attributePanel.getName())) {
+        if (od.getName() != null && od.getName().equalsIgnoreCase(attributePanel.getName())) {
+            this.opData = od;
             attributePanel.updateModel(od);
             System.out.println("APC" + o.toString());
         }
@@ -105,7 +106,7 @@ public class AttributePanelController implements ActionListener, Observer {
             opData.setConditions(map, "Algebraic " + opData.getAlgebraicCounter());
             opData.increaseAlgebraicCounter();
             System.out.println(opData.getGlobalConditions().size());
-            this.attributePanel.setConditions();
+//            this.attributePanel.setConditions();
             this.attributeEditor.clearTextField();
             controller.saveOperationToModel(opData);
         }

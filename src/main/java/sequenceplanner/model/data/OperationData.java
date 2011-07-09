@@ -35,7 +35,6 @@ public class OperationData extends Data {
     public static final int ACTION_DEC = 1;
     public static final int ACTION_EQ = 2;
     //Maps the pre and post conditions according to ConditionType, Condition
-
     private Map<String, Map<ConditionType, Condition>> mConditionMap;
 
     //OperationData newOp = new OperationData(OP,model.getNewId());
@@ -71,30 +70,33 @@ public class OperationData extends Data {
         this.algebraicCounter++;
     }
 
+    public void decreaseAlgebraicCounter() {
+        this.algebraicCounter--;
+    }
+
     private String getValue(String key) {
         String s = preference.get(key);
 
         return s == null ? "" : s;
     }
 
-    public void setDescription(String value) {
-        setValue(OP_DESCRIPTION, value);
-    }
-
-    public String getDescription() {
-        return getValue(OP_DESCRIPTION);
-    }
-
+//    public void setDescription(String value) {
+//        setValue(OP_DESCRIPTION, value);
+//    }
+//
+//    public String getDescription() {
+//        return getValue(OP_DESCRIPTION);
+//    }
     @Override
     public String toString() {
         return getValue(OPERATION_NAME);
     }
- 
+
     public Map<String, Map<ConditionType, Condition>> getGlobalConditions() {
         return mConditionMap;
     }
- 
-    public void removeCondition(String condKey){
+
+    public void removeCondition(String condKey) {
         mConditionMap.remove(condKey);
     }
 }
