@@ -1,5 +1,6 @@
 package sequenceplanner.view.operationView.graphextension;
 
+import com.mxgraph.model.mxCell;
 import java.awt.Point;
 
 import sequenceplanner.model.Model;
@@ -32,22 +33,15 @@ public class CellFactory {
      * @param regular
      * @return 
      */
-    public Cell getEdge(boolean regular,boolean arrow) {
-        String style = "";
-        if (arrow) {
-            style = regular ? "strokeColor=#000000;strokeWidth=2;"
-                    + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
-                    : ";strokeColor=#000000;strokeWidth=2;arrow=ARROW_BLACK;";
-        } else {
-            style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;"
-                    + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1;"
-                    : ";strokeColor=#000000;strokeWidth=2;endArrow=mxConstants.ARROW_OVAL;";
-        }
-        Cell edge = new Cell("edge", new mxGeometry(), style);
-        edge.setId("-2");
+    public mxCell getEdge(boolean regular) {
+        String style = regular ? "strokeColor=#000000;strokeWidth=2;endArrow=;" + "edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical;rounded=1"
+                : "strokeColor=#000000;strokeWidth=2;endArrow=";
+        mxCell edge = new Cell("edge", new mxGeometry(), style);
+
         edge.setEdge(true);
         edge.setConnectable(false);
         edge.getGeometry().setRelative(true);
+
         return edge;
 
     }
@@ -68,7 +62,7 @@ public class CellFactory {
                 20), "perimeter=custom.operationPerimeter;fillColor=red");
 
         cell.setType(Constants.OP);
-        cell.setId("operation "+d.getId());
+        cell.setId("operation " + d.getId());
         cell.setVertex(true);
         cell.setConnectable(false);
 
@@ -88,7 +82,7 @@ public class CellFactory {
         Cell cell = new Cell(d, geo, "perimeter=custom.parallelPerimeter;");
 
         cell.setType(Constants.PARALLEL);
-        cell.setId("paralll "+d.getId());
+        cell.setId("paralll " + d.getId());
         cell.setVertex(true);
         cell.setConnectable(false);
 

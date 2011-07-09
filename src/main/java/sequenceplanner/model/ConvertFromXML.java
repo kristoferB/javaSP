@@ -53,7 +53,7 @@ public class ConvertFromXML {
 
 //      setLiasonRoot(project.getLiasons());
 
-//      setResourceRoot(project.getResources());
+        setResourceRoot(project.getResources());
 
         getOperationData(project.getOperations());
 
@@ -171,20 +171,25 @@ public class ConvertFromXML {
     }
 
     private ViewData getView(ViewType viX) {
-        final ViewData viewData = new ViewData(viX.getName(), -1);
-        viewData.setRoot(viX.getRoot());
+        final ViewData viewData = new ViewData(viX.getName(), Model.newId());
+
+        viewData.setClosed(viX.isIsClosed());
+        viewData.setHidden(viX.isIsHidden());
 
         for (CellData cellData : viX.getCellData()) {
-            viewData.mCellDataSet.add(getCellData(cellData));
+            final ISopNode sopNode = getSopNode(cellData);
+            //Data related to relations
+            viewData.mNodeCellDataMap.put(sopNode, getCellDataRelations(cellData));
+
+            //Data related to layout
+            viewData.mNodeCellDataLayoutMap.put(sopNode, getCellDataLayout(cellData));
         }
 
         return viewData;
     }
 
-    private ViewData.CellData2 getCellData(CellData cdX) {
-
-        //Create SopNode---------------------------------------------------------
-        final int type = cdX.getType();
+    private ISopNode getSopNode(final CellData iCdX) {
+        final int type = iCdX.getType();
         ISopNode newSopNode = null;
 
         if (type == 0) {
@@ -203,9 +208,14 @@ public class ConvertFromXML {
                     newSopNode = new SopNodeOperation(opData);
                 }
             } else {
-                System.out.println("Could not import: " + cdX.toString());
+                System.out.println("Could not import: " + iCdX.toString());
             }
-        }//----------------------------------------------------------------------
+        }
+
+        return newSopNode;
+    }
+
+    private ViewData.CellData getCellDataRelations(CellData cdX) {
 
         //Get Sequence set-------------------------------------------------------
         final List<Integer> sequenceSet = cdX.getSequenceSet().getChildId();
@@ -215,13 +225,21 @@ public class ConvertFromXML {
         final Integer successor = cdX.getSuccessor();
         //-----------------------------------------------------------------------
 
+        //Add as CellData object in ViewData-------------------------------------
+        final ViewData.CellData newCellData = new ViewData.CellData(sequenceSet, successor, cdX.getRefId());
+
+        return newCellData;
+    }
+
+    private ViewData.CellDataLayout getCellDataLayout(CellData cdX) {
 
         //Get geometry info------------------------------------------------------
         final mxGeometry meo = getGeo(cdX.getGeo());
         //-----------------------------------------------------------------------
 
         //Add as CellData object in ViewData-------------------------------------
-        final ViewData.CellData2 newCellData = new ViewData.CellData2(newSopNode, sequenceSet, successor, cdX.getRefId(), meo, cdX.isExpanded());
+        final ViewData.CellDataLayout newCellData = new ViewData.CellDataLayout(meo, !cdX.isExpanded());
+
         return newCellData;
     }
 

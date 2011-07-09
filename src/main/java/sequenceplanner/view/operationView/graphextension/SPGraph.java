@@ -25,6 +25,7 @@ import sequenceplanner.view.operationView.Constants;
 
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.canvas.mxImageCanvas;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
@@ -239,10 +240,10 @@ public class SPGraph extends mxGraph {
 
             @Override
             public mxEdgeStyleFunction getEdgeStyle(mxCellState edgeState, List points, Object source, Object target) {
-                if (source instanceof Cell && target instanceof Cell) {
-                    Cell s = (Cell) source;
-                    Cell t = (Cell) target;
-                    Cell e = (Cell) edgeState.getCell();
+                if (source instanceof mxCell && target instanceof mxCell) {
+                    mxCell s = (mxCell) source;
+                    mxCell t = (mxCell) target;
+                    mxCell e = (mxCell) edgeState.getCell();
 
                     if ((((Cell) s).isGroup() && e.getParent() == s) || ((Cell) t).isGroup() && e.getParent() == t) {
                         return super.getEdgeStyle(edgeState, points, source, target);
@@ -908,7 +909,7 @@ public class SPGraph extends mxGraph {
 
                 Object[] cells = new Object[2];
 
-                final Cell edge = CellFactory.getInstance().getEdge(true, false);
+                final mxCell edge = CellFactory.getInstance().getEdge(true);
 
                 getModel().add(iPredecessorCell.getParent(), edge, 0);
                 getModel().setTerminal(edge, iSuccessorCell, false);
@@ -938,7 +939,7 @@ public class SPGraph extends mxGraph {
         try {
             getModel().beginUpdate();
             try {
-                Cell arch = null;
+                mxCell arch = null;
                 arch = getEdge(oldCell, oldCell.getParent(), before);
 
                 mxGeometry oldGeo = oldCell.getGeometry();
@@ -968,27 +969,27 @@ public class SPGraph extends mxGraph {
                 newCell.getGeometry().setX(p.getX());
                 newCell.getGeometry().setY(p.getY());
 
-                Cell edge;
+                mxCell edge;
                 if (newCell.isOperation()) {
                     if (before && !oldCell.isOperation() && !oldCell.isSOP()) {
-                        edge = CellFactory.getInstance().getEdge(true, false);
+                        edge = CellFactory.getInstance().getEdge(true);
                     } else {
-                        edge = CellFactory.getInstance().getEdge(true, false);
+                        edge = CellFactory.getInstance().getEdge(true);
                     }
                 } else {//If inserted cell, newCell, is not an operation
                     if (before) {//if placed before oldCell
 
-                        edge = CellFactory.getInstance().getEdge(true, false);//Create new edge with arrow. Will be pointing at oldCell
+                        edge = CellFactory.getInstance().getEdge(true);
 
                         //Get previous cell and OpViewroot
-                        Cell previousCell = (Cell) arch.getTerminal(true);
+                        mxCell previousCell = (mxCell) arch.getTerminal(true);
                         Cell root = (Cell) oldCell.getParent();
 
                         //Remove the edge going from previous cell and oldCell
                         getModel().remove(arch);
 
                         //Create new edge with no arrow
-                        arch = CellFactory.getInstance().getEdge(true, false);
+                        arch = CellFactory.getInstance().getEdge(true);
 
                         //Add new edge to goot
                         getModel().add(root, arch, 0);
@@ -998,7 +999,7 @@ public class SPGraph extends mxGraph {
                         getModel().setTerminal(arch, previousCell, before);
 
                     } else {
-                        edge = CellFactory.getInstance().getEdge(true, false);
+                        edge = CellFactory.getInstance().getEdge(true);
                     }
                 }
                 getModel().add(oldCell.getParent(), edge, 0);
@@ -1031,8 +1032,8 @@ public class SPGraph extends mxGraph {
      * @param insertCell
      */
     public void insertGroupNode(Cell parent, Cell insertCell) {
-        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
-        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
+        mxCell edge1 = CellFactory.getInstance().getEdge(false);
+        mxCell edge2 = CellFactory.getInstance().getEdge(false);
 
         model.beginUpdate();
         try {
@@ -1046,8 +1047,8 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertGroupNode(Cell parent, mxPoint clickPoint, Cell insertCell) {
-        Cell edge1 = CellFactory.getInstance().getEdge(false, false);
-        Cell edge2 = CellFactory.getInstance().getEdge(false, false);
+        mxCell edge1 = CellFactory.getInstance().getEdge(false);
+        mxCell edge2 = CellFactory.getInstance().getEdge(false);
 
 //      Object[] cells = new Object[3];
 
@@ -1625,7 +1626,7 @@ public class SPGraph extends mxGraph {
                 connectCell(inEdge, seq.getFirst(), false);
             }
 
-            Cell outEdge = CellFactory.getInstance().getEdge(true, true);
+            mxCell outEdge = CellFactory.getInstance().getEdge(true);
 
             addEdge(outEdge, targetParent, seq.getLast(), target, null);
 
@@ -1639,7 +1640,7 @@ public class SPGraph extends mxGraph {
             if (outEdge != null) {
                 connectCell(outEdge, seq.getLast(), true);
             }
-            Cell inEdge = CellFactory.getInstance().getEdge(true, false);
+            mxCell inEdge = CellFactory.getInstance().getEdge(true);
 
             addEdge(inEdge, targetParent, target, seq.getFirst(), null);
 
@@ -1647,10 +1648,10 @@ public class SPGraph extends mxGraph {
 
         } else if (placement == GRP_INSIDE && parType) {
             targetParent = target;
-            Cell parEdge = CellFactory.getInstance().getEdge(false, false);
+            mxCell parEdge = CellFactory.getInstance().getEdge(false);
             addEdge(parEdge, targetParent, target, seq.getFirst(), null);
             parEdge =
-                    CellFactory.getInstance().getEdge(false, false);
+                    CellFactory.getInstance().getEdge(false);
             addEdge(parEdge, targetParent, seq.getLast(), target, null);
 
 

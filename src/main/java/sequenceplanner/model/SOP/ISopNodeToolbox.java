@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData.CellData2;
+import sequenceplanner.model.data.ViewData.CellData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -43,7 +43,7 @@ public interface ISopNodeToolbox {
      */
     public void drawNode(ISopNode iRootNode, OperationView iView);
 
-    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData2> iCellDataSet);
+    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData> iCellDataSet);
 
     /**
      * Remove unnecessary nodes recursively in sequences to iRootNode.<br/>

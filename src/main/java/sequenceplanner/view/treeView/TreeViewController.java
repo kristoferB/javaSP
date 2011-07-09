@@ -99,12 +99,9 @@ public class TreeViewController {
             mGUIController.getView().removeOperationObjectView(mTreeNode);
 
             //Loop views and remove operation if present
-            for(final OperationView opView : mGUIController.getGUIModel().getOperationViews()) {
-                if(opView.removeOperationInGraph(mTreeNode.getId())) {
+            for (final OperationView opView : mGUIController.getGUIModel().getOperationViews()) {
+                if (opView.removeOperationInGraph(mTreeNode.getId())) {
                     //Operation was removed
-//                    final ISopNode rootSopNode = opView.getSopNodeForGraph();
-//                    new SopNodeToolboxSetOfOperations().drawNode(rootSopNode, opView);
-//                    System.out.println("opView name: " + opView.getName());
                 }
             }
 
@@ -132,8 +129,42 @@ public class TreeViewController {
                 return;
             }
             mGUIController.mOpViewController.createOperationView();
-//            final OperationView opView = mGUIController.getGUIModel().createNewOpView();
-//            mGUIController.addNewOpTab(opView);
+        }
+    }
+
+    /**
+     * To remove an operation view in {@link Model}.
+     */
+    public static class RemoveOperationView implements ActionListener {
+
+        private TreeNode mTreeNode;
+        private GUIController mGUIController;
+
+        public RemoveOperationView(final GUIController iGUIController, final TreeNode iTreeNode) {
+            this.mGUIController = iGUIController;
+            this.mTreeNode = iTreeNode;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (mGUIController == null) {
+                return;
+            }
+
+            if (Model.isView(mTreeNode.getNodeData())) {
+                final ViewData viewData = (ViewData) mTreeNode.getNodeData();
+                //Remove conditions based on view
+                mGUIController.getModel().removeConditions(viewData.getName());
+
+                //Remove Operation view
+                mGUIController.getView().removeOperationView(mTreeNode);
+
+                //Remove viewdata from Model
+                mGUIController.getModel().removeChild(mGUIController.getModel().getViewRoot(), mTreeNode);
+            }
+
+
+
         }
     }
 
@@ -165,10 +196,12 @@ public class TreeViewController {
                 if (path != null) {
                     TreeNode t = (TreeNode) path.getLastPathComponent();
                     if (Model.isView(t.getNodeData())) {
-                        controller.addNewOpTab((ViewData) t.getNodeData());
-                    } else if (Model.isOperation(t.getNodeData())) {
-                        OperationData data = (OperationData) t.getNodeData();
-                        controller.addNewOpTab(view.getModel().getOperationView(data.getId()));
+                        controller.getView().setOperationViewFocus(t);
+
+//                        controller.addNewOpTab((ViewData) t.getNodeData());
+//                    } else if (Model.isOperation(t.getNodeData())) {
+//                        OperationData data = (OperationData) t.getNodeData();
+//                        controller.addNewOpTab(view.getModel().getOperationView(data.getId()));
                     }
 
                 }

@@ -215,7 +215,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 		label.put(TextAttribute.SIZE,
 				(int) Math.round(syncFont.getSize2D() * scale));
 
-		String v = "precondition"; //value.getPrecondition();
+		String v = "precond2DCan"; //value.getPrecondition();
 		if (v.length() > SPGraph.cutOff) {
 			v = v.substring(0, SPGraph.cutOff) + "...";
 		}
@@ -281,7 +281,7 @@ public class custom2DCanvas extends mxInteractiveCanvas {
 			g.drawString(v, (int) (x + (w - bounds.getWidth()) / 2),
 					(y + start));
 			g.setFont(small);
-			v = "postcondition"; //value.getPostcondition();
+			v = "postcond2Dcan"; //value.getPostcondition();
 			if (v.length() > SPGraph.cutOff) {
 				v = v.substring(0, SPGraph.cutOff) + "...";
 			}

@@ -155,36 +155,36 @@ public class Model extends Observable implements IModel {
         return isNamePresent(getViewRoot(), name, true);
     }
 
-    public boolean saveOperationViews(ViewData[] data) {
-        for (int i = 0; i < data.length; i++) {
-            ViewData viewData = data[i];
-            operationViews.put(viewData.getRoot(), viewData);
-        }
-        return true;
-    }
+//    public boolean saveOperationViews(ViewData[] data) {
+//        for (int i = 0; i < data.length; i++) {
+//            ViewData viewData = data[i];
+//            operationViews.put(viewData.getRoot(), viewData);
+//        }
+//        return true;
+//    }
 
     public TreeMap<Integer, ViewData> getOperationsWithViews() {
         return operationViews;
     }
 
-    public ViewData getOperationView(int id) {
-        ViewData out = operationViews.get(id);
-
-        if (out != null) {
-            return out;
-        }
-
-        if (out == null && isOperationPresent(id)) {
-
-            String name = getOperation(id).getNodeData().getName();
-            out = new ViewData(name, -1);
-            out.setRoot(id);
-        } else {
-            return null;
-        }
-
-        return out;
-    }
+//    public ViewData getOperationView(int id) {
+//        ViewData out = operationViews.get(id);
+//
+//        if (out != null) {
+//            return out;
+//        }
+//
+//        if (out == null && isOperationPresent(id)) {
+//
+//            String name = getOperation(id).getNodeData().getName();
+//            out = new ViewData(name, -1);
+//            out.setRoot(id);
+//        } else {
+//            return null;
+//        }
+//
+//        return out;
+//    }
 
     /**
      * If name of data is already present -> overwrite.
@@ -913,28 +913,28 @@ public class Model extends Observable implements IModel {
      * @param view view that is going to be saved. Observe that you have to update the root of the view.
      * @return
      */
-    public boolean insertView(ViewData view) {
-        Integer index = view.getRoot();
+//    public boolean insertView(ViewData view) {
+//        Integer index = view.getRoot();
+//
+//        if (index > -1) {
+//            operationViews.put(index, view);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
-        if (index > -1) {
-            operationViews.put(index, view);
-            return true;
-        }
-
-        return false;
-    }
-
-    public ViewData getView(Integer id) {
-        ViewData d = operationViews.get(id);
-
-        if (d != null) {
-            return d;
-        } else {
-            d = new ViewData(Integer.toString(id), -1);
-            d.setRoot(id);
-            return d;
-        }
-    }
+//    public ViewData getView(Integer id) {
+//        ViewData d = operationViews.get(id);
+//
+//        if (d != null) {
+//            return d;
+//        } else {
+//            d = new ViewData(Integer.toString(id), -1);
+//            d.setRoot(id);
+//            return d;
+//        }
+//    }
 
     public int getCounter() {
         return idConter;

@@ -10,7 +10,8 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.model.data.ViewData.CellData2;
+import sequenceplanner.model.data.ViewData.CellDataLayout;
+import sequenceplanner.model.data.ViewData.CellData;
 import sequenceplanner.view.operationView.Constants;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.CellFactory;
@@ -26,8 +27,9 @@ public class DrawSopNode {
     private SPGraph mGraph = null;
     private ISopNode mRoot = null;
     private Map<ISopNode, Cell> mSopNodeCellMap = null;
-    private Map<ISopNode, CellData2> mNodeCellDataMap = null;
-    private Set<CellData2> mCellDataSet = null;
+    private Map<ISopNode, CellDataLayout> mNodeCellDataLayoutMap;
+//    private Map<ISopNode, CellData> mNodeCellDataMap = null;
+//    private Set<CellData> mCellDataSet = null;
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
     private boolean doAutoLayout = true;
 
@@ -44,10 +46,17 @@ public class DrawSopNode {
         this(iRoot, iGraph, null);
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Set<CellData2> iCellDataSet) {
+    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Set<CellData> iCellDataSet) {
         this.mRoot = iRoot;
         this.mGraph = mGraph;
-        this.mCellDataSet = iCellDataSet;
+//        this.mCellDataSet = iCellDataSet;
+        addNodesToGraph();
+    }
+
+    public DrawSopNode(final ISopNode iRoot, final SPGraph iGraph, final Map<ISopNode, CellDataLayout> iCellData3Map, boolean b) {
+        this.mRoot = iRoot;
+        this.mGraph = iGraph;
+        this.mNodeCellDataLayoutMap = iCellData3Map;
         addNodesToGraph();
     }
 
@@ -57,7 +66,7 @@ public class DrawSopNode {
      */
     private void addNodesToGraph() {
 
-        init();
+//        init();
 
         //Create Cells and a map between cells and nodes.
         mSopNodeCellMap = new HashMap<ISopNode, Cell>();
@@ -77,18 +86,18 @@ public class DrawSopNode {
     /**
      * Fill map, have had problems with pointers otherwise...
      */
-    private void init() {
-        if (mCellDataSet != null) {
-            if (mNodeCellDataMap == null) {
-                mNodeCellDataMap = new HashMap<ISopNode, CellData2>();
-            } else {
-                mNodeCellDataMap.clear();
-            }
-            for (final ViewData.CellData2 cellData : mCellDataSet) {
-                mNodeCellDataMap.put(cellData.mSopNode, cellData);
-            }
-        }
-    }
+//    private void init() {
+//        if (mCellDataSet != null) {
+//            if (mNodeCellDataMap == null) {
+//                mNodeCellDataMap = new HashMap<ISopNode, CellData>();
+//            } else {
+//                mNodeCellDataMap.clear();
+//            }
+//            for (final ViewData.CellData cellData : mCellDataSet) {
+//                mNodeCellDataMap.put(cellData.mSopNode, cellData);
+//            }
+//        }
+//    }
 
     /**
      * Doing the addition of nodes to the graph.<br/>
@@ -219,13 +228,12 @@ public class DrawSopNode {
         }
 
         //Set celldata if such exists
-        if (returnCell != null && mNodeCellDataMap != null) {
-            if (mNodeCellDataMap.containsKey(iNode)) {
+        if (returnCell != null && mNodeCellDataLayoutMap != null) {
+            if (mNodeCellDataLayoutMap.containsKey(iNode)) {
 
 //                System.out.println("DrawSopNode: extra cell data for " + iNode.typeToString());
 
-                final ViewData.CellData2 cellData = mNodeCellDataMap.get(iNode);
-
+                final CellDataLayout cellData = mNodeCellDataLayoutMap.get(iNode);
                 returnCell.setGeometry(cellData.mGeo);
                 returnCell.setCollapsed(!cellData.mExpanded);
 

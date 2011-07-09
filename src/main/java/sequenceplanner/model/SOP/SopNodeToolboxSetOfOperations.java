@@ -7,7 +7,7 @@ import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData.CellData2;
+import sequenceplanner.model.data.ViewData.CellData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -17,7 +17,7 @@ import sequenceplanner.view.operationView.OperationView;
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
-    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData2> iCellDataSet) {
+    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData> iCellDataSet) {
         new DrawSopNode(iRootNode, iView.getGraph(), iCellDataSet);
     }
 

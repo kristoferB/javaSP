@@ -45,12 +45,12 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void updateList() {
-        System.out.println("updateList CLP");
+//        System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
             for (String key : conditionList.keySet()) {
                 if (conditionList.get(key) != null) {
-                    System.out.println("kommer hit");
+//                    System.out.println("kommer hit");
                     internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
                     conditionLabel = new JLabel(key + ": " + conditionList.get(key).toString());
@@ -67,7 +67,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
             }
 
         } else {
-            System.out.println("removeall");
+//            System.out.println("removeall");
             this.removeAll();
             conditionList.clear();
             this.repaint();

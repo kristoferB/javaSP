@@ -248,64 +248,66 @@ public class ConvertToXML {
      * @param node, has to be an liason root
      * @return
      */
-    private ViewType getView(ViewData view) {
+    private ViewType getView(ViewData iViewData) {
         ViewType viewX = new ViewType();
 
+        viewX.setName(iViewData.getName());
+
+        viewX.setIsClosed(iViewData.isClosed());
+        viewX.setIsHidden(iViewData.isHidden());
 
 
-        viewX.setName(view.getName());
-        viewX.setRoot(view.getRoot());
-
-        viewX.setIsClosed(view.isClosed());
-        viewX.setIsHidden(view.isHidden());
-
-
-        final Map<ISopNode, ViewData.CellData2> nodeCellMap = view.mNodeCellDataMap;
+        final Map<ISopNode, ViewData.CellData> nodeCellMap = iViewData.mNodeCellDataMap;
         for (final ISopNode node : nodeCellMap.keySet()) {
-            final ViewData.CellData2 cellData = nodeCellMap.get(node);
+            //Init---------------------------------------------------------------
+            final ViewData.CellData cellData = nodeCellMap.get(node);
+            final ViewData.CellDataLayout cellDataLayout = iViewData.mNodeCellDataLayoutMap.get(node);
 
-            System.out.println("start with node: " + node.typeToString());
-
+            //Return variable
             final CellData dataX = new CellData();
 
-            //Ref id
+            //Ref id-------------------------------------------------------------
             dataX.setRefId(cellData.mRefId);
-            
-            //Sequence set
+
+            //Sequence set-------------------------------------------------------
             final CellData.SequenceSet ss = new CellData.SequenceSet();
-            for(final ISopNode childNode : node.getFirstNodesInSequencesAsSet()) {
+            for (final ISopNode childNode : node.getFirstNodesInSequencesAsSet()) {
                 ss.getChildId().add(nodeCellMap.get(childNode).mRefId);
             }
             dataX.setSequenceSet(ss);
 
-            //Successor
+            //Successor----------------------------------------------------------
             final ISopNode successorNode = node.getSuccessorNode();
             if (successorNode != null) {
-                final int successorRefId = view.mNodeCellDataMap.get(successorNode).mRefId;
+                final int successorRefId = iViewData.mNodeCellDataMap.get(successorNode).mRefId;
                 dataX.setSuccessor(successorRefId);
             }
 
-            //Node type
+            //Node type----------------------------------------------------------
             if (node instanceof SopNode) {
                 dataX.setType(0);
-            } else if(node instanceof SopNodeOperation) {
+            } else if (node instanceof SopNodeOperation) {
                 final int operationId = node.getOperation().getId();
                 dataX.setType(operationId);
-            } else if(node instanceof SopNodeAlternative) {
+            } else if (node instanceof SopNodeAlternative) {
                 dataX.setType(-2);
-            } else if(node instanceof SopNodeArbitrary) {
+            } else if (node instanceof SopNodeArbitrary) {
                 dataX.setType(-3);
-            } else if(node instanceof SopNodeParallel) {
+            } else if (node instanceof SopNodeParallel) {
                 dataX.setType(-4);
             }
 
-            //Geometry
-            dataX.setGeo(getGeo(cellData.mGeo));
+            if (cellDataLayout != null) {
+                //Geometry-------------------------------------------------------
 
-            //Expanded
-            dataX.setExpanded(cellData.mExpanded);
+                dataX.setGeo(getGeo(cellDataLayout.mGeo));
 
-            //Add to view
+                //Expanded-------------------------------------------------------
+                dataX.setExpanded(cellDataLayout.mExpanded);
+
+            }
+            
+            //Add to view--------------------------------------------------------
             viewX.getCellData().add(dataX);
         }
 

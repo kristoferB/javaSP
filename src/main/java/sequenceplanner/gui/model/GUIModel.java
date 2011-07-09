@@ -51,6 +51,10 @@ public class GUIModel {
         return operationViews;
     }
 
+    /**
+     * Should not use this method
+     * @return
+     */
     public OperationView createNewOpView() {
         final OperationView opView = new OperationView(this.model, "Opereration view " + Model.newId());
 
@@ -58,15 +62,20 @@ public class GUIModel {
         return opView;
     }
 
+    /**
+     * Use this method!!
+     * @param toOpen
+     * @return
+     */
     public OperationView createNewOpView(ViewData toOpen) {
         final OperationView opView = new OperationView(this.model, toOpen);
         operationViews.addLast(opView);
         return opView;
     }
 
-    public void createNewReView() {
+    public ResourceView createNewReView() {
         resourceView = new ResourceView(this.model, this.model.getResourceRoot(), "Resource view");
-
+        return resourceView;
     }
 
     //Crude exit method?

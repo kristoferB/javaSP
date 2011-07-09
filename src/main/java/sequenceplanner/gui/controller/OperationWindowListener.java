@@ -35,8 +35,7 @@ class OperationWindowListener implements DockingWindowListener{
         System.out.println("Window shown");
         if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
-
-                    op.setHidden(false);
+            op.mViewData.setHidden(false);
         }
     }
 
@@ -45,9 +44,7 @@ class OperationWindowListener implements DockingWindowListener{
         System.out.println("Window hidden");
         if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
-
-                    op.setHidden(true);
-                    System.out.println(op.getName() + " is hidden? " +op.isHidden());
+            op.mViewData.setHidden(true);
         }
     }
 
@@ -66,8 +63,7 @@ System.out.println("Not supported yet.4");
         System.out.println("Window closed");
         if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
             OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
-                    op.setClosed(true);
-                    System.out.println(op.getName() + " is closed? " +op.isClosed());
+            op.mViewData.setClosed(true);
         }
     }
 
@@ -118,7 +114,11 @@ System.out.println("Not supported yet.4");
 
     @Override
     public void windowRestored(DockingWindow dw) {
-       System.out.println("Not supported yet.14");
+        System.out.println("Window restored");
+        if(dw.getComponent(0).getComponentAt(10, 10) instanceof OperationView){
+            OperationView op = (OperationView) dw.getComponent(0).getComponentAt(10, 10);
+            op.mViewData.setClosed(false);
+        }
     }
 
 }

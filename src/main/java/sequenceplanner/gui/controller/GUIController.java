@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
+import net.infonode.docking.View;
 import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
 
 import sequenceplanner.gui.model.GUIModel;
@@ -100,13 +101,14 @@ public class GUIController {
      * @param iOperationView the view to add.
      */
     public void addNewOpTab(final OperationView iOperationView) {
-        mGuiView.addNewOpTab(iOperationView.toString(), iOperationView);
+        //Add view to Infonode window
+        final View newView = mGuiView.addNewOpTab(iOperationView.toString(), iOperationView);
 
         //Listener function unclear
         mOpViewController.addOperationView(iOperationView);
 
         //Listener related to Infonode
-        mGuiView.getOpViewMap().getView(mGuiView.getOpViewIndex()).addListener(new OperationWindowListener(this.mGuiView));
+        newView.addListener(new OperationWindowListener(this.mGuiView));
 
         //Listener for mouse click related operations
         iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
@@ -424,13 +426,21 @@ public class GUIController {
                         final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         System.out.println("viewData to open: " + viewData.getName());
 
-//                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData);
+                        final OperationView opView = mOpViewController.createOperationView(viewData);
+
+                        System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false));
+
+                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData, viewData.mSopNodeForGraphPlus.getRootSopNode(false));
+
+                        System.out.println(viewData.mNodeCellDataLayoutMap);
 //                        final OperationView opView = mGuiModel.createNewOpView(viewData);
+
+                        opView.redrawGraph();
 //
 //                        new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
 //
 //                        //Set conditions
-//                        mGuiModel.getModel().setConditions(viewData, viewData.getName());
+                        mGuiModel.getModel().setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
 //
 //                        //Include tab for view
 //                        addNewOpTab(opView);

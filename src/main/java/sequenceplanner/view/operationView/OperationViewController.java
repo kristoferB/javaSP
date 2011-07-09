@@ -26,9 +26,7 @@ public class OperationViewController implements Observer {
 
     //All exsting operation views
     private LinkedList<OperationView> views;
-
 //    private static Map<ViewData,OperationView> mViewViewMap;
-
     private final GUIController mGUIController;
 
     public OperationViewController() {
@@ -88,21 +86,23 @@ public class OperationViewController implements Observer {
 
         private OperationView mOpView;
 
-        public SaveOperationView(final OperationView iOpView){
+        public SaveOperationView(final OperationView iOpView) {
             this.mOpView = iOpView;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
+
             final ViewData viewData = mOpView.mViewData;
-            if(viewData != null) {
+            if (viewData != null) {
 
                 mOpView.model.removeConditions(viewData.getName());
-                
+
                 mOpView.model.saveView(viewData);
 
                 mOpView.model.updateSopNodeStructureWithObjectsInModel(viewData.mSopNodeForGraphPlus.getRootSopNode(true));
+
+                viewData.storeCellData();
 
                 mOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
 
@@ -112,7 +112,4 @@ public class OperationViewController implements Observer {
             }
         }
     }
-
-
-
 }

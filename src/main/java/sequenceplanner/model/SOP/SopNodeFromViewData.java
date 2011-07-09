@@ -20,31 +20,33 @@ public class SopNodeFromViewData {
     private Map<Integer, ISopNode> mIdSopNodeMap;
     private Set<ISopNode> mInSequenceSetForRootSopNode;
 
-    public SopNodeFromViewData(ViewData mViewData, ISopNode iSopNode) {
+    public SopNodeFromViewData(ViewData mViewData) {
+        this(mViewData,new SopNode());
+    }
+
+    public SopNodeFromViewData(ViewData mViewData, ISopNode mRootSopNode) {
         this.mViewData = mViewData;
-        this.mRootSopNode = iSopNode;
+        this.mRootSopNode = mRootSopNode;
         run();
     }
 
+
     private void run() {
-        for (final ViewData.CellData2 cellData : mViewData.mCellDataSet) {
-            System.out.println(cellData);
-        }
 
         //int--------------------------------------------------------------------
         mIdSopNodeMap = new HashMap<Integer, ISopNode>();
         mInSequenceSetForRootSopNode = new HashSet<ISopNode>();
 
         //Create map (mIdSopNodeMap) between local ids in graph and SopNodes-----
-        for (final ViewData.CellData2 cellData : mViewData.mCellDataSet) {
+        for (final ISopNode sopNode: mViewData.mNodeCellDataMap.keySet()) {
+            final ViewData.CellData cellData = mViewData.mNodeCellDataMap.get(sopNode);
             final Integer id = cellData.mRefId;
-            final ISopNode sopNode = cellData.mSopNode;
             putToIdSopNodeMap(id, sopNode);
         }
 
         //Set sequence set and successor for sop nodes based on mIdIdMap---------
-        for (final ViewData.CellData2 cellData : mViewData.mCellDataSet) {
-            final ISopNode sopNode = cellData.mSopNode;
+        for (final ISopNode sopNode: mViewData.mNodeCellDataMap.keySet()) {
+            final ViewData.CellData cellData = mViewData.mNodeCellDataMap.get(sopNode);
 
             //Sequence set
             if (cellData.mSequenceSet != null) {

@@ -69,6 +69,8 @@ public class ClickMenu extends JPopupMenu {
         if (model.isResourceRoot(node)) {
             add(new JMenuItem(av.createAction("Insert Resource",
                     new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png")));
+            add(new JMenuItem(av.createAction("Open Resource View",
+                    new OpenResourceView(node, mGUIController), "resources/icons/res.png")));
             draw = true;
         }
         if (Model.isResource(node.getNodeData())) {
@@ -87,28 +89,29 @@ public class ClickMenu extends JPopupMenu {
 
         //Views------------------------------------------------------------------
         if (model.isViewRoot(node)) {
-            add(new JMenuItem(av.createAction("Insert View",
+            add(new JMenuItem(av.createAction("Insert SOP",
                     new TreeViewController.InsertOperationView(mGUIController), "resources/icons/sop_1.png")));
             draw = true;
         }
         if (Model.isView(node.getNodeData())) {
-            add(rem);
+            add(new JMenuItem(av.createAction("Remove SOP",
+                    new TreeViewController.RemoveOperationView(mGUIController, node), "resources/icons/close.png")));
             draw = true;
         }//----------------------------------------------------------------------
 
 
-        //Extra------------------------------------------------------------------
-        if (Model.isResource(node.getNodeData()) || Model.isLiason(node.getNodeData()) || model.isResourceRoot(node) || model.isLiasonRoot(node)) {
-            JMenu innerMenu = new JMenu("Views");
-            innerMenu.add(new JMenuItem(av.createAction("Open treeview",
-                    new OpenResourceView(node), "resources/icons/res.png")));
-            add(innerMenu);
-
-            if (Model.isResource(node.getNodeData())) {
-                innerMenu.add(new JMenuItem(av.createAction("Open operations realized by",
-                        new OpenOperationsRealizedBy(node), "resources/icons/res.png")));
-            }
-        }//----------------------------------------------------------------------
+//        //Extra------------------------------------------------------------------
+//        if (Model.isResource(node.getNodeData()) || model.isResourceRoot(node)) {
+//            JMenu innerMenu = new JMenu("Views");
+//            innerMenu.add(new JMenuItem(av.createAction("Open treeview",
+//                    new OpenResourceView(node), "resources/icons/res.png")));
+//            add(innerMenu);
+//
+//            if (Model.isResource(node.getNodeData())) {
+//                innerMenu.add(new JMenuItem(av.createAction("Open operations realized by",
+//                        new OpenOperationsRealizedBy(node), "resources/icons/res.png")));
+//            }
+//        }//----------------------------------------------------------------------
 
         //Liason-----------------------------------------------------------------
         /*} else if (model.isLiasonRoot(node) || Model.isLiason(d)) {
