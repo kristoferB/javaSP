@@ -96,7 +96,7 @@ public class PerformVisualization implements IPerformVisualization {
     @Override
     public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView) {
         ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
-        toolbox.drawNode(iSopNode, iView);
+        toolbox.drawNode(iSopNode, iView.getGraph());
         return true;
     }
 

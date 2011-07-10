@@ -40,13 +40,13 @@ public class RelationIdentification {
      * Loops operations in subset and adds two events per operation to a map in {@link RelationContainer} object.
      */
     private void initEventOperationLocationSetMapForRelationContainer() {
-        Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
-        Map<OperationData, Map<String, Map<OperationData, Set<String>>>> map = new HashMap<OperationData, Map<String, Map<OperationData, Set<String>>>>();
+        final Set<OperationData> setToLoop = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
+        final Map<OperationData, Map<String, Map<OperationData, Set<String>>>> map = new HashMap<OperationData, Map<String, Map<OperationData, Set<String>>>>();
         for (final OperationData opData : setToLoop) {
 
             final Map<String, Map<OperationData, Set<String>>> eventMap = new HashMap<String, Map<OperationData, Set<String>>>();
-            eventMap.put(ISupremicaInteractionForVisualization.EVENT_UP, new HashMap<OperationData, Set<String>>());
-            eventMap.put(ISupremicaInteractionForVisualization.EVENT_DOWN, new HashMap<OperationData, Set<String>>());
+            eventMap.put(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString(), new HashMap<OperationData, Set<String>>());
+            eventMap.put(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString(), new HashMap<OperationData, Set<String>>());
 
             map.put(opData, eventMap);
         }
@@ -57,9 +57,9 @@ public class RelationIdentification {
         //Remove Single EFA from automaton name (the name is Single) + extra substrings
         //From sup(oX||oY||Single) -> oX||oY
         mStateNameExplanation = mAutomaton.getName().replaceAll("sup\\(", "").replaceAll("\\)", "");
-        mStateNameExplanation = mStateNameExplanation.replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME + "\\|\\|", "\\|\\|").
-                replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME, "").
-                replaceAll(ISupremicaInteractionForVisualization.BIG_FLOWER_EFA_NAME + "\\|\\|", "");
+        mStateNameExplanation = mStateNameExplanation.replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.Type.BIG_FLOWER_EFA_NAME.toString() + "\\|\\|", "\\|\\|").
+                replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.Type.BIG_FLOWER_EFA_NAME.toString(), "").
+                replaceAll(ISupremicaInteractionForVisualization.Type.BIG_FLOWER_EFA_NAME.toString() + "\\|\\|", "");
     }
 
     private void fillOperationRelations() {
@@ -95,26 +95,26 @@ public class RelationIdentification {
     /**
      * Loops all children to mRoot.<br/>
      * Finds in what locations for other operations the events of an operation can take place.<br/>
-     * This info is added to the field mEventOperationLocationSetMap for each RVNode in mRoot.mChildren.
+     * This info is added to the variable mEventOperationLocationSetMap for each RVNode in mRoot.mChildren.
      */
     public boolean findEventOperationRelations() {
         //Create a map between the order of an operation in the state name and it's id.
-        Map<Integer, OperationData> serialnrOperationMap = new HashMap<Integer, OperationData>();
+        final Map<Integer, OperationData> serialnrOperationMap = new HashMap<Integer, OperationData>();
         final String[] operationNames = mStateNameExplanation.split("\\|\\|");
         for (int i = 0; i < operationNames.length; ++i) {
             final String operationName = operationNames[i];
-            final String operationId = operationName.replaceAll(ISupremicaInteractionForVisualization.OPERATION_VARIABLE_PREFIX, "");
+            final String operationId = operationName.replaceAll(ISupremicaInteractionForVisualization.Type.OPERATION_VARIABLE_PREFIX.toString(), "");
             final OperationData iOpData = getOperationWithStringId(operationId);
             serialnrOperationMap.put(i, iOpData);
         }
 
         //Loop events of interest to find what operation locations that are present
-        Set<OperationData> opDataSet = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
+        final Set<OperationData> opDataSet = new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false);
         for (final OperationData opDataExternal : opDataSet) {
-            Set<String> eventSet = mRC.getEventOperationLocationSetMap(opDataExternal).keySet();
+            final Set<String> eventSet = mRC.getEventOperationLocationSetMap(opDataExternal).keySet();
             for (final String eventType : eventSet) {
                 final Integer id = opDataExternal.getId();
-                String eventToLookFor = ISupremicaInteractionForVisualization.EVENT_PREFIX + id + eventType;
+                final String eventToLookFor = ISupremicaInteractionForVisualization.Type.EVENT_PREFIX.toString() + id + eventType;
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     System.out.println("Mismatch between events in supervisor and subset!");
                     System.out.println("The supervisor is so strict that not all operations can finish!");
@@ -123,7 +123,7 @@ public class RelationIdentification {
                 final Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);
 
                 //Init of map where result is stored
-                Map<OperationData, Set<String>> opLocationSetMap =
+                final Map<OperationData, Set<String>> opLocationSetMap =
                         mRC.getEventOperationLocationSetMap(opDataExternal).get(eventType);
                 for (final OperationData opData : serialnrOperationMap.values()) {
                     opLocationSetMap.put(opData, new HashSet<String>());

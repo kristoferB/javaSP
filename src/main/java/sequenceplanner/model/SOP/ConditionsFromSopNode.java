@@ -304,7 +304,7 @@ public class ConditionsFromSopNode {
     }
 
     private ConditionStatement createConditionStatment(final OperationData iOperation, final String iValue) {
-        return new ConditionStatement(Integer.toString(iOperation.getId()), ConditionStatement.Operator.Equal, iValue);
+        return new ConditionStatement("id" + Integer.toString(iOperation.getId()), ConditionStatement.Operator.Equal, iValue);
     }
 
     private void andToOperationConditionMap(final OperationData iAddToOperation, final ConditionType iConditionType, final OperationData iOperationAsElement, final String iValue) {

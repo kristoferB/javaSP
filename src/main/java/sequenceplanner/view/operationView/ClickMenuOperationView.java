@@ -22,9 +22,9 @@ import sequenceplanner.view.operationView.graphextension.SPGraphModel;
  *
  * @author Erik Ohlson
  */
-public class ClickMenu extends JPopupMenu {
+public class ClickMenuOperationView extends JPopupMenu {
 
-   public ClickMenu() {
+   public ClickMenuOperationView() {
    }
 
    public void show(Component invoker, MouseEvent e) {

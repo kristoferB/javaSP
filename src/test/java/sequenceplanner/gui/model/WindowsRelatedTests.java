@@ -51,7 +51,7 @@ public class WindowsRelatedTests {
      * Opens all SOP views for a project and checks that they are added to correct root window.<br/>
      * The views are opened two times in order to check that a view can not be added mutiple times.<br/>
      */
-    @Test
+//    @Test
     public void id88() {
         int nbrOfSOPViewsInOperationRootWindowAtState = mSP.getGUIView().getSOPViewMap().getViewCount();
 

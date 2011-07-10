@@ -21,7 +21,7 @@ import sequenceplanner.view.resourceView.Editors.ResourceEditor;
 import sequenceplanner.view.resourceView.Editors.VariableEditor;
 import sequenceplanner.view.resourceView.Renderers.ResourcePanel;
 import sequenceplanner.view.resourceView.Renderers.VariablePanel;
-import sequenceplanner.view.treeView.ClickMenu;
+import sequenceplanner.view.treeView.ClickMenuTreeView;
 
 /**
  *
@@ -79,7 +79,7 @@ public class ResourceView extends AbstractView {
                TreePath path = tree.getPathForLocation(e.getX(), e.getY());
                if (path != null) {
                   tree.setSelectionPath(path);
-                  ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), ResourceView.this.model);
+                  ClickMenuTreeView c = new ClickMenuTreeView((TreeNode) path.getLastPathComponent(), ResourceView.this.model);
                   c.show(ResourceView.this, e);
                }
             }

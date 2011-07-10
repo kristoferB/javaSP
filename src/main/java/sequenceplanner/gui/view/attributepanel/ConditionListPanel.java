@@ -92,19 +92,23 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         if (type == ConditionType.PRE) {
             editor.setPreButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
-                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
+                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString();
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString();
                 editor.setActionButtonStatus(true);
             }
         } else if (type == ConditionType.POST) {
             editor.setPostButtonStatus(true);
             if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
-                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
+                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString();
                 editor.setGuardButtonStatus(true);
             } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString();
                 editor.setActionButtonStatus(true);
             }
         }

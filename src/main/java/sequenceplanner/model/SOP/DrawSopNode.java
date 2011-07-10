@@ -46,10 +46,10 @@ public class DrawSopNode {
         this(iRoot, iGraph, null);
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Set<CellData> iCellDataSet) {
+    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Map<ISopNode, CellDataLayout> iCellDataMap) {
         this.mRoot = iRoot;
         this.mGraph = mGraph;
-//        this.mCellDataSet = iCellDataSet;
+        this.mNodeCellDataLayoutMap = iCellDataMap;
         addNodesToGraph();
     }
 
@@ -98,7 +98,6 @@ public class DrawSopNode {
 //            }
 //        }
 //    }
-
     /**
      * Doing the addition of nodes to the graph.<br/>
      * There are some different methods to add a Cell/Node dependent on where in the graph the cell should be added.<br/>

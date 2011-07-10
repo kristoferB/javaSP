@@ -38,14 +38,14 @@ public class RelationsForOperationSet {
             return 0;
         }
         //Translate operations to EFA
-        ModuleSubject ms = formalMethods.getModuleSubject(mRC.getOsetSopNode(), mRC.getOfinishsetSopNode());
+        final ModuleSubject ms = formalMethods.getModuleSubject(mRC.getOsetSopNode(), mRC.getOfinishsetSopNode());
         if (ms == null) {
             System.out.println("Problem with translation from op to efa!");
             return 0;
         }
 
         //flatten out (EFA->DFA, Module -> Automata)
-        Automata automata = formalMethods.flattenOut(ms);
+        final Automata automata = formalMethods.flattenOut(ms);
         if (automata == null) {
             System.out.println("Problem with flatten out!");
             return 0;
@@ -56,7 +56,7 @@ public class RelationsForOperationSet {
         saveFormalModel(mWmodPath);
 
         //synthesis
-        Automaton automaton = formalMethods.synthesize(automata);
+        final Automaton automaton = formalMethods.synthesize(automata);
         if (automaton == null) {
             System.out.println("Problem with synthesis!");
             return 0;
@@ -71,10 +71,10 @@ public class RelationsForOperationSet {
         }
 
         //Get states where each event is enabled
-        Map<String, Set<String>> eventStateSpaceMap = formalMethods.getStateSpaceForEventSetMap(automaton);
+        final Map<String, Set<String>> eventStateSpaceMap = formalMethods.getStateSpaceForEventSetMap(automaton);
 
         //Relation identification
-        RelationIdentification ri = new RelationIdentification(automaton, mRC, eventStateSpaceMap);
+        final RelationIdentification ri = new RelationIdentification(automaton, mRC, eventStateSpaceMap);
         if (!ri.run()) {
             System.out.println("Problem with relation identification!");
             return 0;
@@ -105,13 +105,13 @@ public class RelationsForOperationSet {
 
                     //Print location sets----------------------------------------
                     if ((relationInt == IRelateTwoOperations.OTHER) || (relationInt == IRelateTwoOperations.ARBITRARY_ORDER)) {
-                        System.out.print(printLocationSet(externalOpName, "u", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.EVENT_UP).get(opDataInternal)));
+                        System.out.print(printLocationSet(externalOpName, "u", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(opDataInternal)));
                         System.out.print("| ");
-                        System.out.print(printLocationSet(externalOpName, "d", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(opDataInternal)));
+                        System.out.print(printLocationSet(externalOpName, "d", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(opDataInternal)));
                         System.out.print("| ");
-                        System.out.print(printLocationSet(internalOpName, "u", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.EVENT_UP).get(opDataExternal)));
+                        System.out.print(printLocationSet(internalOpName, "u", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(opDataExternal)));
                         System.out.print("| ");
-                        System.out.print(printLocationSet(internalOpName, "d", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(opDataExternal)));
+                        System.out.print(printLocationSet(internalOpName, "d", externalOpName, mRC.getEventOperationLocationSetMap(opDataInternal).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(opDataExternal)));
                         System.out.print("\n");
                     }
                     //-----------------------------------------------------------

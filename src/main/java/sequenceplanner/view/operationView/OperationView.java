@@ -136,7 +136,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //    public boolean isHidden() {
 //        return isHidden;
 //    }
-
     /**
      * Method for checking if the view is closed or not
      * @return boolean true if closed else false
@@ -144,7 +143,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //    public boolean isClosed() {
 //        return isClosed;
 //    }
-
     /**
      * Sets the isClosed variable to true or false
      * @param closed true if closed else false
@@ -152,7 +150,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //    public void setClosed(boolean closed) {
 //        isClosed = closed;
 //    }
-
     /**
      * Sets the isHidden variable to true or false
      * @param closed true if hidden closed else false
@@ -160,7 +157,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //    public void setHidden(boolean hidden) {
 //        isHidden = hidden;
 //    }
-
     public boolean isChanged() {
         return changed;
     }
@@ -654,45 +650,17 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         updateName();
     }
 
-//    /**
-//     * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
-//     * @return the root {@link ISopNode}
-//     */
-//    public ISopNode getSopNodeForGraph() {
-//        return getSopNodeForGraphPlus().keySet().iterator().next();
-//    }
-//    /**
-//     * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
-//     * @param ioMap key: {@link ISopNode} object, value: {@link Cell} for node
-//     * @return the root {@link ISopNode}
-//     */
-//    public Map<ISopNode, Map<ISopNode, Cell>> getSopNodeForGraphPlus() {
-//        //Create a new sop node root aka theSopNode
-//        final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel());
-//        //get root sop
-//        final ISopNode rootSopNode = snfspgm.getSopNodeRoot();
-//        //get Cell for each node
-//        final Map<ISopNode, Cell> nodeCellMap = snfspgm.getNodeCellMap();
-//
-//        //Print out sop structure
-//        System.out.println("::::::::::\n");
-//        System.out.println(rootSopNode.toString());
-//        System.out.println("::::::::::");
-//        //return root root sop
-//        final Map<ISopNode, Map<ISopNode, Cell>> returnMap = new HashMap<ISopNode, Map<ISopNode, Cell>>();
-//        returnMap.put(rootSopNode, nodeCellMap);
-//        return returnMap;
-//    }
     /**
      * To remove operation from this graph/operation view.
      * @param iIdOfOperationToRemove id of operation to remove
-     * @return true if operation was removed else false
+     * @return always true
      */
     public boolean removeOperationInGraph(final Integer iIdOfOperationToRemove) {
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
 
         final Set<ISopNode> sopNodeSet = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), true);
 
+        //Loop node set and remove all instances of node to remove---------------
         for (final ISopNode node : sopNodeSet) {
             if (node instanceof SopNodeOperation) {
                 final OperationData opData = node.getOperation();
@@ -703,34 +671,30 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
                     //Remove node from sop node data structure
                     snToolbox.removeNode(node, mViewData.mSopNodeForGraphPlus.getRootSopNode(false));
-
-                    //Remove old graph
-                    getGraph().selectAll();
-                    getGraph().deleteMarkedCells();
-
-                    //draw new graph
-//                    final ViewData viewData = new ViewData("", -1);
-                    mViewData.storeCellData();
-//                    snToolbox.drawNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), this, mViewData.mCellDataSet);
-                    redrawGraph();
-//                    new DrawSopNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), getGraph(), mViewData.mNodeCellDataLayoutMap, true);
-
-                    System.out.println("SopStructure after remove of operation:");
-                    System.out.println("Model:");
-                    System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
-                    System.out.println("Graph:");
-                    System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(true).toString());
-
-                    return true;
                 }
             }
         }
 
-        return false;
+        //Remove old graph-------------------------------------------------------
+        getGraph().selectAll();
+        getGraph().deleteMarkedCells();
+
+        //draw new graph---------------------------------------------------------
+        mViewData.storeCellData();
+        redrawGraph();
+
+        System.out.println("SopStructure after remove of operation:");
+        System.out.println("Model:");
+        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
+        System.out.println("Graph:");
+        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(true).toString());
+
+        return true;
+
     }
 
     public boolean redrawGraph() {
-        new DrawSopNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), getGraph(), mViewData.mNodeCellDataLayoutMap, true);
+        new SopNodeToolboxSetOfOperations().drawNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), getGraph(), mViewData.mNodeCellDataLayoutMap);
         return true;
     }
 

@@ -41,6 +41,13 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
+    public boolean removeFromSequenceSet(ISopNode iNodeToRemove) {
+        return getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
+    }
+
+
+
+    @Override
     public void setSuccessorNode(ISopNode iSuccessor) {
         mSuccessor = iSuccessor;
     }
@@ -66,6 +73,10 @@ public abstract class ASopNode implements ISopNode {
         return false;
     }
 
+    /**
+     * Is only overwritten by {@link SopNodeOperation}
+     * @return
+     */
     @Override
     public OperationData getOperation() {
         return null;

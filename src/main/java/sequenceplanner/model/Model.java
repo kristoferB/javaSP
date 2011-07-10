@@ -250,7 +250,7 @@ public class Model extends Observable implements IModel {
      */
     public TreeNode createModelOperationNode() {
         final int id = newId();
-        System.out.println("id: " + id);
+//        System.out.println("id: " + id);
         final String name = "mOP"+id;
         return createModelOperationNode(name, id);
     }
@@ -952,8 +952,8 @@ public class Model extends Observable implements IModel {
         }
     }
 
-    public LinkedList<TreeNode> getAllOperations() {
-        LinkedList<TreeNode> operations = new LinkedList<TreeNode>();
+    public List<TreeNode> getAllOperations() {
+        List<TreeNode> operations = new LinkedList<TreeNode>();
 
         if (operationRoot == null || operationRoot.getChildCount() == 0) {
             return operations;

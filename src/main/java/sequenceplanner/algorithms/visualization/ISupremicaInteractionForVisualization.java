@@ -13,11 +13,22 @@ import sequenceplanner.model.SOP.ISopNode;
  */
 public interface ISupremicaInteractionForVisualization {
 
-    String EVENT_PREFIX  = "e";
-    String EVENT_UP = "up";
-    String EVENT_DOWN = "down";
-    String OPERATION_VARIABLE_PREFIX = "o";
-    String BIG_FLOWER_EFA_NAME = "Single";
+    public enum Type {
+
+        EVENT_PREFIX("e"), EVENT_UP("up"), EVENT_DOWN("down"),
+        OPERATION_VARIABLE_PREFIX("id"), BIG_FLOWER_EFA_NAME("Single"),
+        LOOK_FOR_GUARD("guard"), LOOK_FOR_ACTION("action");
+        private final String mType;
+
+        Type(String iType) {
+            mType = iType;
+        }
+
+        @Override
+        public String toString() {
+            return mType;
+        }
+    };
 
     /**
      * DOES NOT HANDLE VARIABLES IN CONDITIONS!!!<br/>
@@ -28,28 +39,31 @@ public interface ISupremicaInteractionForVisualization {
      * @param iHasToFinishSet Operations with only Of as marked location
      * @return null if problem else a {@link ModuleSubject}
      */
-    ModuleSubject getModuleSubject(ISopNode iOperationSet, ISopNode iHasToFinishSet);
+    ModuleSubject getModuleSubject(
+            ISopNode iOperationSet, ISopNode iHasToFinishSet);
 
     /**
      * From EFA to DFA
      * @param iModuleSubject
      * @return null if problem else a {@link Automata}
      */
-    Automata flattenOut(ModuleSubject iModuleSubject);
+    Automata flattenOut(
+            ModuleSubject iModuleSubject);
 
     /**
      * Monolithic non-blocking and controllable synthesis
      * @param iAutomata
      * @return null if problem else a {@link Automaton} as supervisor
      */
-    Automaton synthesize(Automata iAutomata);
+    Automaton synthesize(
+            Automata iAutomata);
 
     /**
      * Get the states from where each event is enabled.
      * @param iAutomaton
      * @return keyset: event, valueset: states where key is enabled
      */
-    Map<String,Set<String>> getStateSpaceForEventSetMap(Automaton iAutomaton);
+    Map<String, Set<String>> getStateSpaceForEventSetMap(Automaton iAutomaton);
 
     /**
      * To save a Module as wmod file
@@ -57,5 +71,4 @@ public interface ISupremicaInteractionForVisualization {
      * @return true if ok else false
      */
     boolean saveSupervisorAsWmodFile(String iFilePath);
-
 }

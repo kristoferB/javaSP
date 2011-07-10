@@ -238,7 +238,7 @@ public class ConvertFromXML {
         //-----------------------------------------------------------------------
 
         //Add as CellData object in ViewData-------------------------------------
-        final ViewData.CellDataLayout newCellData = new ViewData.CellDataLayout(meo, !cdX.isExpanded());
+        final ViewData.CellDataLayout newCellData = new ViewData.CellDataLayout(meo, cdX.isExpanded());
 
         return newCellData;
     }

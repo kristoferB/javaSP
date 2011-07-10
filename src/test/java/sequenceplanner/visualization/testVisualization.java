@@ -42,8 +42,8 @@ public class testVisualization {
         mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
         //Add all operations to Oset
-//        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
-//        mVisualization.addOset(allOpSet);
+        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        mVisualization.addOset(allOpSet);
     }
 
     /**
@@ -300,7 +300,7 @@ public class testVisualization {
     /**
      * Test of: complex operation conditions
      */
-    @Test
+//    @Test
     public void test6() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/visualizationAlgorithmTestFile.sopx");
 

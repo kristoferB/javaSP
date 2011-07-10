@@ -18,6 +18,7 @@ import org.supremica.automata.algorithms.SynthesizerOptions;
 import sequenceplanner.efaconverter.SEFA;
 import sequenceplanner.efaconverter.SEGA;
 import sequenceplanner.efaconverter.SModule;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
@@ -31,7 +32,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
     private SModule mModule = new SModule("temp");
-    private SEFA mEfa = new SEFA(BIG_FLOWER_EFA_NAME, mModule);
+    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
 
     public SupremicaInteractionForVisualization() {
     }
@@ -62,12 +63,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             }
         }
 
-        //Check ids
-        if (!mModule.testIDs(mAllOperationSet)) {
-            System.out.println("Problem with ids!");
-            return null;
-        }
-
         SEGA ega;
         mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
@@ -76,9 +71,9 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 System.out.println("Node: " + node.typeToString() + " not an operation!");
                 return null;
             }
-            OperationData opData = node.getOperation();
+            final OperationData opData = node.getOperation();
             final int id = opData.getId();
-            final String varName = OPERATION_VARIABLE_PREFIX + id;
+            final String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + id;
 
             //Add integer variable for operation---------------------------------
             Integer marking = null;
@@ -89,17 +84,19 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             //-------------------------------------------------------------------
 
             //Add transition to start execute operation--------------------------
-            ega = new SEGA(EVENT_PREFIX + id + EVENT_UP);
+            ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
             ega.andGuard(varName + "==0");
-//            ega.addGuardBasedOnSPCondition(opData.getRawPrecondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
+            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD);
+            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION);
             ega.addAction(varName + "=1");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
 
             //Add transition to finish execute operation-------------------------
-            ega = new SEGA(EVENT_PREFIX + id + EVENT_DOWN);
+            ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_DOWN.toString());
             ega.andGuard(varName + "==1");
-//            ega.addGuardBasedOnSPCondition(opData.getRawPostcondition(), OPERATION_VARIABLE_PREFIX, mAllOperationSet);
+            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD);
+            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION);
             ega.addAction(varName + "=2");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
@@ -109,22 +106,21 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
     }
 
     @Override
-    public Map<String, Set<String>> getStateSpaceForEventSetMap(Automaton iAutomaton) {
+    public Map<String, Set<String>> getStateSpaceForEventSetMap(final Automaton iAutomaton) {
 
-        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        final Map<String, Set<String>> map = new HashMap<String, Set<String>>();
 
         //Loop states and events to fill map-------------------------------------
-        for (StateProxy sp : iAutomaton.getStates()) {
+        for (final StateProxy sp : iAutomaton.getStates()) {
             String stateName = sp.getName();
-            for (Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
+            for (final Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
                 //Remove the single EFA location "pm"
-                stateName = stateName.replaceAll("."+SEFA.SINGLE_LOCATION_NAME+".", ".")
-                        .replaceAll("."+SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME+".", "");
+                stateName = stateName.replaceAll("."+SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME+".", "");
                 String eventName = arc.getLabel();
-                if (eventName.contains(EVENT_UP)) {
-                    eventName = eventName.substring(0, eventName.indexOf(EVENT_UP) + 2); //To handle addition of suffix for events when disjunction
+                if (eventName.contains(Type.EVENT_UP.toString())) {
+                    eventName = eventName.substring(0, eventName.indexOf(Type.EVENT_UP.toString()) + 2); //To handle addition of suffix for events when disjunction
                 } else {//EVENT_DOWN
-                    eventName = eventName.substring(0, eventName.indexOf(EVENT_DOWN) + 4);
+                    eventName = eventName.substring(0, eventName.indexOf(Type.EVENT_DOWN.toString()) + 4);
                 }
                 if (!map.keySet().contains(eventName)) {
                     map.put(eventName, new HashSet<String>());
@@ -139,15 +135,15 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
     public Automaton synthesize(Automata iAutomata) {
         if (iAutomata != null) {
 
-            SynthesizerOptions syntho = new SynthesizerOptions();
+            final SynthesizerOptions syntho = new SynthesizerOptions();
             syntho.setSynthesisType(SynthesisType.NONBLOCKING);
             syntho.setSynthesisAlgorithm(SynthesisAlgorithm.MONOLITHIC);
             syntho.setPurge(true);
 
-            SynchronizationOptions syncho = new SynchronizationOptions();
+            final SynchronizationOptions syncho = new SynchronizationOptions();
             syncho.setSynchronizationType(SynchronizationType.FULL);
 
-            AutomataSynthesizer as = new AutomataSynthesizer(iAutomata, syncho, syntho);
+            final AutomataSynthesizer as = new AutomataSynthesizer(iAutomata, syncho, syntho);
 
             try {
                 iAutomata = as.execute();

@@ -10,7 +10,7 @@ public class GuardAsTextInputToConditionParser extends AStringToConditionParser 
     private static String variable = "(" + variablePrefix + "\\d{1,})";
     private static String statementOperator = "([=><!][=]|[><])";
     private static String value = "(\\d{1,}|i|e|f)";
-    private static String clauseOperator = "(&&|&|and|or|\\|\\||\\|)";
+    private static String clauseOperator = "(&&|&|\\|\\||\\|)";
 
     @Override
     String getClauseOperator() {

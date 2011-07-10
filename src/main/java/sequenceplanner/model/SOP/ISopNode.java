@@ -16,6 +16,8 @@ public interface ISopNode{
 
     void addNodeToSequenceSet(ISopNode iNode);
 
+    boolean removeFromSequenceSet(ISopNode iNodeToRemove);
+
     ISopNode getSuccessorNode();
 
     void setSuccessorNode(ISopNode iSuccessor);

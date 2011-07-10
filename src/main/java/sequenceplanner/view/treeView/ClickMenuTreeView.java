@@ -26,18 +26,18 @@ import sequenceplanner.view.Actions.RemoveNode;
  * Click menu for tree view.<br/>
  * @author Erik Ohlson
  */
-public class ClickMenu extends JPopupMenu {
+public class ClickMenuTreeView extends JPopupMenu {
 
     protected TreeNode node;
     protected Model model;
     protected GUIController mGUIController = null;
 
-    public ClickMenu(TreeNode node, Model model) {
+    public ClickMenuTreeView(TreeNode node, Model model) {
         this.node = node;
         this.model = model;
     }
 
-    public ClickMenu(TreeNode node, Model model, GUIController mGUIController) {
+    public ClickMenuTreeView(TreeNode node, Model model, GUIController mGUIController) {
         this(node, model);
         this.mGUIController = mGUIController;
     }

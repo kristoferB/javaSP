@@ -98,7 +98,7 @@ public class HierarchicalPartition {
      */
     private boolean updateHierarchicalRelation(final OperationData iNewParent, final ISopNode iOldParent, final OperationData iChild, final IRelationContainer iRC) {
         final ISopNode childNode = mRCToolbox.getSopNode(iChild, iOldParent);
-        mSNToolbox.removeNode(childNode, iOldParent);
+        iOldParent.removeFromSequenceSet(childNode);
 
         final ISopNode parentNode = mRCToolbox.getSopNode(iNewParent, iOldParent);
         final ISopNode newChildNode = new SopNodeOperation(iChild);

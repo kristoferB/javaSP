@@ -116,13 +116,13 @@ public class Sequencing {
         if (bottomPred != null) {
             bottomPred.setSuccessorNode(iRoot);
             bottomPred.setSuccessorRelation(iRelationMap.get(bottomPred));
-            mSNToolbox.removeNode(iRoot, iSop);
+            iSop.removeFromSequenceSet(iRoot);
         }
 
         if (iTopSucc != null) {
             iRoot.setSuccessorNode(iTopSucc);
             iRoot.setSuccessorRelation(iRelationMap.get(iTopSucc));
-            mSNToolbox.removeNode(iTopSucc, iSop);
+            iSop.removeFromSequenceSet(iTopSucc);
         }
     }
 
@@ -254,7 +254,7 @@ public class Sequencing {
                     final ISopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
                     //Move node one level up
                     iRoot.addNodeToSequenceSet(childChild);
-                    mSNToolbox.removeNode(child, iRoot);
+                    iRoot.removeFromSequenceSet(child);
                     //Set successor relations
                     final ISopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
                     final ISopNode firstNodeAfterChild = child.getSuccessorNode();

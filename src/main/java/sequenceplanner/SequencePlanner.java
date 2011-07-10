@@ -51,7 +51,7 @@ public class SequencePlanner {
      *
      * @param args the args
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 // Docking windwos should be run in the Swing thread
 
     SwingUtilities.invokeLater(new Runnable() {
@@ -60,6 +60,11 @@ public class SequencePlanner {
         GUIModel model = new GUIModel();
         GUIView view = new GUIView(model);
         GUIController gc = new GUIController(model, view);
+
+        for(final String arg : args) {
+            System.out.println("arg" + arg);
+        }
+
       }
     });
         

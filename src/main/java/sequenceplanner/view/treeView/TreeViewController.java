@@ -216,7 +216,7 @@ public class TreeViewController {
                 TreePath path = view.tree.getPathForLocation(e.getX(), e.getY());
                 if (path != null) {
                     view.tree.setSelectionPath(path);
-                    ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), view.getModel(), controller);
+                    ClickMenuTreeView c = new ClickMenuTreeView((TreeNode) path.getLastPathComponent(), view.getModel(), controller);
                     c.show(view, e);
                 }
             }

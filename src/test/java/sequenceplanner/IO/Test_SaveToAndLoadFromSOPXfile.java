@@ -30,17 +30,17 @@ public class Test_SaveToAndLoadFromSOPXfile {
     @Test
     public void method1() {
 
-        sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
+//        sp.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
         sp.insertOperation();
-
-        loopDataRoots();
-        sp.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\output.sopx");
-
-        sp.loadFromSOPXFile("C:\\Users\\patrik\\Desktop\\output.sopx");
-
-        loopDataRoots();
-
-        sp.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\output2.sopx");
+//
+//        loopDataRoots();
+//        sp.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\output.sopx");
+//
+//        sp.loadFromSOPXFile("C:\\Users\\patrik\\Desktop\\output.sopx");
+//
+//        loopDataRoots();
+//
+//        sp.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\output2.sopx");
 
     }
 

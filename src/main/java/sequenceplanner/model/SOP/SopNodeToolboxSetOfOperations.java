@@ -7,8 +7,9 @@ import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData.CellData;
+import sequenceplanner.model.data.ViewData.CellDataLayout;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
  * 
@@ -17,13 +18,13 @@ import sequenceplanner.view.operationView.OperationView;
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
-    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData> iCellDataSet) {
-        new DrawSopNode(iRootNode, iView.getGraph(), iCellDataSet);
+    public void drawNode(ISopNode iRootNode, SPGraph iGraph, Map<ISopNode, CellDataLayout> iCellDataMap) {
+        new DrawSopNode(iRootNode, iGraph, iCellDataMap);
     }
 
     @Override
-    public void drawNode(ISopNode iRootNode, OperationView iView) {
-        new DrawSopNode(iRootNode, iView.getGraph());
+    public void drawNode(ISopNode iRootNode, SPGraph iGraph) {
+        new DrawSopNode(iRootNode, iGraph);
     }
 
     @Override
@@ -62,6 +63,10 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
         final ISopNode parentNode = getParentIfNodeIsInSequenceSet(iNodeToRemove, iRootNode);
         final ISopNode predecessorNode = getPredecessor(iNodeToRemove, iRootNode);
         final ISopNode successorNode = iNodeToRemove.getSuccessorNode();
+
+        if(successorNode != null) {
+            System.out.println("successor: " + iNodeToRemove.typeToString() + " " + successorNode.typeToString());
+        }
 
         //Has a parent
         if (parentNode != null) {

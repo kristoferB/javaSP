@@ -47,8 +47,8 @@ public class Test_RemoveNode {
         final ISopNode nodeD = new SopNodeOperation(new OperationData("nodeD", id++));
         parB.setSuccessorNode(nodeD);
         
-        System.out.println("before");
-        System.out.println(rootNode.toString());
+//        System.out.println("before");
+//        System.out.println(rootNode.toString());
 
         //Test snToolbox methods
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
@@ -64,8 +64,8 @@ public class Test_RemoveNode {
 //        assertFalse(snToolbox.removeNode(rootNode, rootNode));
 //        assertFalse(snToolbox.removeNode(nodeF, rootNode));
 
-        System.out.println("after");
-        System.out.println(rootNode.toString());
+//        System.out.println("after");
+//        System.out.println(rootNode.toString());
     }
 }
 

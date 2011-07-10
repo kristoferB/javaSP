@@ -28,7 +28,7 @@ import sequenceplanner.model.SOP.SopNodeFromViewData;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
-import sequenceplanner.view.operationView.ClickMenu;
+import sequenceplanner.view.operationView.ClickMenuOperationView;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -340,10 +340,16 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = mGuiModel.createNewOpView();
-            opView.setName("Projection" + Model.newId());
+            //Create a new projection view
+//            final int id = Model.newId();
+//            final ViewData viewData  = new ViewData("Projection " + id, id);
+//            final OperationView opView = mOpViewController.createOperationView(viewData);
+
+            //Create a new view like any view
+            final OperationView opView = mOpViewController.createOperationView();
+
+            //Start visualization
             new UserInteractionForVisualization(opView, mGuiModel.getModel());
-            addNewOpTab(opView);
         }
     }
 
@@ -405,7 +411,7 @@ public class GUIController {
         public void createPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
 
-                ClickMenu c = new ClickMenu();
+                ClickMenuOperationView c = new ClickMenuOperationView();
                 c.show(oV, e);
 
             }

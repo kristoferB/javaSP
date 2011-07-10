@@ -5,7 +5,9 @@ import java.util.Set;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData.CellData;
+import sequenceplanner.model.data.ViewData.CellDataLayout;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.view.operationView.graphextension.SPGraph;
 
 /**
  * Functions to be performed on a {@link ISopNode}
@@ -41,9 +43,9 @@ public interface ISopNodeToolbox {
      * @param iRootNode container for sequences to be drawn, CHANGE TO FIT WHAT IS BEST
      * @param iView a view already exists or null if a new view should be created.
      */
-    public void drawNode(ISopNode iRootNode, OperationView iView);
+    public void drawNode(ISopNode iRootNode, SPGraph iGraph);
 
-    public void drawNode(ISopNode iRootNode, OperationView iView, Set<CellData> iCellDataSet);
+    public void drawNode(ISopNode iRootNode, SPGraph iGraph, Map<ISopNode, CellDataLayout> iCellDataMap);
 
     /**
      * Remove unnecessary nodes recursively in sequences to iRootNode.<br/>

@@ -26,10 +26,10 @@ public class RelateTwoOperations implements IRelateTwoOperations{
 
     @Override
     public void setOperationPair(final IRelationContainer iRC, final OperationData iOpData1, final OperationData iOpData2) {
-        mOperation1up = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOpData2);
-        mOperation2up = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.EVENT_UP).get(iOpData1);
-        mOperation1down = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOpData2);
-        mOperation2down = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.EVENT_DOWN).get(iOpData1);
+        mOperation1up = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(iOpData2);
+        mOperation2up = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(iOpData1);
+        mOperation1down = iRC.getEventOperationLocationSetMap(iOpData1).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(iOpData2);
+        mOperation2down = iRC.getEventOperationLocationSetMap(iOpData2).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(iOpData1);
     }
 
     /**

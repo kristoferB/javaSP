@@ -260,7 +260,7 @@ public abstract class AStringToConditionParser {
     private static ConditionStatement createConditionStatement(String iVariable, final String iOperator, String iValue) {
 
         //Variable
-        iVariable = iVariable.replaceAll("id", "");
+//        iVariable = iVariable.replaceAll("id", "");
 
         //Operator
         if (!statementOperatorMap.containsKey(iOperator)) {

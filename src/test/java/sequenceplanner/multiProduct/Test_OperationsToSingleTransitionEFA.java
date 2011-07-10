@@ -35,7 +35,7 @@ public class Test_OperationsToSingleTransitionEFA {
     public void test1() {
 
 //        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
-        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/TwoSimpleProducts.sopx");
+//        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/TwoSimpleProducts.sopx");
 
 //        new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
 

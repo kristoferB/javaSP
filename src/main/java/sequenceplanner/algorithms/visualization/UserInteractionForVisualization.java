@@ -18,7 +18,6 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
@@ -54,7 +53,7 @@ public class UserInteractionForVisualization {
             return false;
         }
 
-        RelationContainer rc = mVisualization.identifyRelations();
+        final RelationContainer rc = mVisualization.identifyRelations();
         if (rc == null) {
             return false;
         }
@@ -72,10 +71,10 @@ public class UserInteractionForVisualization {
 
         mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
 
-        System.out.println("\n--------------------------------");
-        System.out.println("Get conditions");
-        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());
-        System.out.println("--------------------------------");
+//        System.out.println("\n--------------------------------");
+//        System.out.println("Get conditions");
+//        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());
+//        System.out.println("--------------------------------");
 
         return true;
     }
@@ -96,7 +95,7 @@ public class UserInteractionForVisualization {
         JButton[] mSButtonArray = new JButton[3];
         JButton[] mDSButtonArray = new JButton[3];
         JPanel jp = null;
-        List<OperationData> mOperationList = null;
+        List<TreeNode> mOperationList = null;
         JCheckBox[][] mOpSelectionTable = null;
 
         public SelectOperationsDialog() {
@@ -105,7 +104,7 @@ public class UserInteractionForVisualization {
             generateButton.setEnabled(false);
 
             //Collect operations and init variables
-            mOperationList = getOperationsInModel(mModel.getOperationRoot());
+            mOperationList = mModel.getAllOperations();
             mOpSelectionTable = new JCheckBox[mOperationList.size()][3];
 
             jp = new JPanel();
@@ -131,12 +130,12 @@ public class UserInteractionForVisualization {
             //-------------------------------------------------------------------
 
             //Add operations to JPanel-------------------------------------------
-            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            final Iterator<TreeNode> listIterator = mOperationList.iterator();
             while (listIterator.hasNext()) {
-                final OperationData opData = listIterator.next();
-                final int operationIndex = mOperationList.indexOf(opData);
+                final TreeNode tnData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(tnData);
 
-                jp.add(new JLabel(opData.getName()));
+                jp.add(new JLabel(tnData.getNodeData().getName()));
                 JCheckBox cb = null;
 
                 cb = new JCheckBox();
@@ -180,10 +179,11 @@ public class UserInteractionForVisualization {
                 final ISopNode allOperationsNode = new SopNode();
                 final ISopNode hasToFinishNode = new SopNode();
                 final ISopNode operationsToViewNode = new SopNode();
-                final Iterator<OperationData> listIterator = mOperationList.iterator();
+                final Iterator<TreeNode> listIterator = mOperationList.iterator();
                 while (listIterator.hasNext()) {
-                    final OperationData opData = listIterator.next();
-                    final int operationIndex = mOperationList.indexOf(opData);
+                    final TreeNode tnData = listIterator.next();
+                    final int operationIndex = mOperationList.indexOf(tnData);
+                    final OperationData opData = (OperationData) tnData.getNodeData();
 
                     final ISopNode opNode = new SopNodeOperation(opData);
                     if (mOpSelectionTable[operationIndex][0].isSelected()) {
@@ -212,10 +212,10 @@ public class UserInteractionForVisualization {
                 changeCheckBoxColumn(2, false);
             }
             //Only be possible to press generate button if there is something to work with
-            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            final Iterator<TreeNode> listIterator = mOperationList.iterator();
             while (listIterator.hasNext()) {
-                final OperationData opData = listIterator.next();
-                final int operationIndex = mOperationList.indexOf(opData);
+                final TreeNode tnData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(tnData);
                 if (mOpSelectionTable[operationIndex][0].isSelected() &&
                         mOpSelectionTable[operationIndex][2].isSelected()) {
                     generateButton.setEnabled(true);
@@ -226,10 +226,10 @@ public class UserInteractionForVisualization {
         }
 
         private void changeCheckBoxColumn(final int iColumnIndex, final boolean iBoolean) {
-            final Iterator<OperationData> listIterator = mOperationList.iterator();
+            final Iterator<TreeNode> listIterator = mOperationList.iterator();
             while (listIterator.hasNext()) {
-                final OperationData opData = listIterator.next();
-                final int operationIndex = mOperationList.indexOf(opData);
+                final TreeNode tnData = listIterator.next();
+                final int operationIndex = mOperationList.indexOf(tnData);
                 mOpSelectionTable[operationIndex][iColumnIndex].setSelected(iBoolean);
             }
         }

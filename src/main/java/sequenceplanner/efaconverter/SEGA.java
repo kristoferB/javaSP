@@ -1,7 +1,12 @@
 package sequenceplanner.efaconverter;
 
+import java.util.Map;
 import java.util.Set;
 import org.supremica.external.avocades.common.EGA;
+import sequenceplanner.algorithms.visualization.ISupremicaInteractionForVisualization;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.model.SOP.ConditionsFromSopNode;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Has to do with EFA. Should be merged with the general EFA conversion classes...
@@ -64,7 +69,6 @@ public class SEGA extends EGA {
 //            andGuard(iCondition);
 //        }
 //    }
-
     public void addGuardBasedOnSPCondition(String iCondition, final String iOpVariablePrefix, final Set<Integer> iSet) {
         //Example of raw precondition 18_f A (143_iV19_f)
 
@@ -82,6 +86,33 @@ public class SEGA extends EGA {
         }
     }
 
+    /**
+     * Ands all conditions for parameter <p>iOpData</p> to this transition.<br/>
+     * @param iOpData
+     * @param iConditionType is given as {@link ConditionsFromSopNode.ConditionType}
+     * @param iType is given as {@link ISupremicaInteractionForVisualization.Type}
+     */
+    public void addCondition(final OperationData iOpData, final ConditionsFromSopNode.ConditionType iConditionType, final ISupremicaInteractionForVisualization.Type iType) {
+        final Map<String, Map<ConditionsFromSopNode.ConditionType, Condition>> map = iOpData.getGlobalConditions();
+        for (final String sop : map.keySet()) {
+            final Map<ConditionsFromSopNode.ConditionType, Condition> innerMap = map.get(sop);
 
+            if (innerMap.containsKey(iConditionType)) {
+
+                if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_GUARD)) {
+                    final String condition = "("+innerMap.get(iConditionType).getGuard().toString()+")";
+                    if (!condition.equals("()")) {
+                        andGuard(condition);
+                    }
+                } else if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_ACTION)) {
+                    final String condition = innerMap.get(iConditionType).getAction().toString();
+                    if (!condition.equals("()")) {
+                        addAction(condition);
+                    }
+                }
+
+            }
+        }
+    }
 }
 
