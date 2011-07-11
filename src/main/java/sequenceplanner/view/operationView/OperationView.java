@@ -405,6 +405,8 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         bar.setFloatable(false);
         //External Listener------------------------------------------------------
         bar.add(createAction("SavePM", new OperationViewController.SaveOperationView(this), "resources/icons/save.png"));
+//        bar.add(createAction("LocalVisualization", new OperationViewController.VisualizeOperationView(this,true), "resources/icons/local_visualization.png"));
+        bar.add(createAction("GlobalVisualization", new OperationViewController.VisualizeOperationView(this,false), "resources/icons/global_visualization.png"));
         //-----------------------------------------------------------------------
 //        Action a = createAction("Save",
 //                new ActionListener() {

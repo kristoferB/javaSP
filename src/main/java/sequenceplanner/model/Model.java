@@ -340,7 +340,7 @@ public class Model extends Observable implements IModel {
         return getNode(id, getOperationRoot());
     }
 
-    public TreeNode getNode(int id) {
+    private TreeNode getNode(int id) {
         return getNode(id, getRoot());
     }
 

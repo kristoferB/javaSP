@@ -22,16 +22,9 @@ public class OperationDataTest {
     public OperationDataTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    OperationData d1 = null;
-    OperationData d2 = null;
+//    OperationData d1 = null;
+//    OperationData d2 = null;
 //
 //    @Before
 //    public void setUp() {
@@ -71,9 +64,6 @@ public class OperationDataTest {
 //
 //    }
 
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public static void dummy() {

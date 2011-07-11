@@ -13,7 +13,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
 import net.infonode.docking.View;
-import sequenceplanner.algorithms.visualization.UserInteractionForVisualization;
+import sequenceplanner.algorithms.visualization.StartVisualization;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -349,7 +349,7 @@ public class GUIController {
             final OperationView opView = mOpViewController.createOperationView();
 
             //Start visualization
-            new UserInteractionForVisualization(opView, mGuiModel.getModel());
+            new StartVisualization(opView);
         }
     }
 

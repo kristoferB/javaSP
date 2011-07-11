@@ -22,21 +22,39 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
-
 /**
  * To manage the user interaction for {@link PerformVisualization}.<br/>
  * @author patrik
  */
-public class UserInteractionForVisualization {
+public class StartVisualization {
 
     private OperationView mOpView = null;
     private Model mModel = null;
     private IPerformVisualization mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
 
-    public UserInteractionForVisualization(OperationView mOpView, Model iModel) {
-        this.mOpView = mOpView;
-        this.mModel = iModel;
+    /**
+     * A dialog is started where user selects operation to visualize.
+     * @param mOpView
+     */
+    public StartVisualization(OperationView mOpView) {
+        init(mOpView);
         new SelectOperationsDialog();
+    }
+
+    /**
+     * Start visualization based on parameters
+     * @param iOpView
+     * @param iAllOperaitons
+     * @param iOperationsToView
+     */
+    public StartVisualization(final OperationView iOpView, final ISopNode iAllOperaitons, final ISopNode iOperationsToView) {
+        init(iOpView);
+        run(iAllOperaitons, iOperationsToView, new SopNode());
+    }
+
+    private void init(final OperationView iOpView) {
+        this.mOpView = iOpView;
+        this.mModel = iOpView.getModel();
     }
 
     public boolean run(final ISopNode iAllOperaitons, final ISopNode iOperationsToView, final ISopNode iHasToFinish) {
@@ -160,7 +178,7 @@ public class UserInteractionForVisualization {
             //Layout-------------------------------------------------------------
             setTitle("Operation selection");
             Container c = getContentPane();
-            
+
             c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
             JPanel jpButton = new JPanel(new GridLayout(1, 1));
             jpButton.add(generateButton);

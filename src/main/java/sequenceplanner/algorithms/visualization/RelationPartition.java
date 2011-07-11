@@ -90,9 +90,8 @@ public class RelationPartition {
         remainingElementsSet.removeAll(masterSet);
         remainingElementsSet.removeAll(relationSet);
 
-        //Maybe skip this method...
-//        while (possibleChangeInPartition(masterSet, relationSet, remainingElementsSet, iRC)) {
-//        }
+        while (possibleChangeInPartition(masterSet, relationSet, remainingElementsSet, iRC)) {
+        }
         //-----------------------------------------------------------------------
 
         //Update Root------------------------------------------------------------

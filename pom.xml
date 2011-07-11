@@ -54,8 +54,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-	    <groupId>org.mockito</groupId>
-  	    <artifactId>mockito-all</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
             <version>1.8.1</version>
             <scope>test</scope>
         </dependency>
@@ -74,36 +74,117 @@
             </plugin>
 
 	<!-- Build runnable jars, mainly for testing -->
-	    <plugin>
-	      <artifactId>maven-assembly-plugin</artifactId>
-	      <configuration>
-		<descriptorRefs>
-		  <descriptorRef>jar-with-dependencies</descriptorRef>
-		</descriptorRefs>
-		<archive>
-		  <manifest>
-		    <mainClass>sequenceplanner.SequencePlanner</mainClass>
-		  </manifest>
-		</archive>
-	      </configuration>
-	      <executions>
-		<execution>
-		  <phase>package</phase>
-		  <goals>
-		    <goal>single</goal>
-		  </goals>
-		</execution>
-	      </executions>
-	    </plugin>
+<!--            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-reactor-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <folderList>foo</folderList>
+                    <artifactList>foo</artifactList>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>make-dependents</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>uber-${project.artifactId}-${project.version}</finalName>
+                </configuration>
+            </plugin>
+
+
+<!--            <plugin>
+         NOTE: We don't need a groupId specification because the group is
+          org.apache.maven.plugins ...which is assumed by default.
+        
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>sequenceplanner.SequencePlanner</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> this is used for inheritance merges
+                        <phase>package</phase> append to the packaging phase.
+                        <goals>
+                            <goal>attached</goal> goals == mojos
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+<!--            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>sequenceplanner.SequencePlanner</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>-->
+
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>sequenceplanner.SequencePlanner</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 	<!-- Should do some work with assembly-plugin and jar-plugin to make a real install file -->
         </plugins>
     </build>
 
-  <repositories>
-    <repository>
-      <id>my-remote-local-site</id>
-      <url>http://129.16.80.161/</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>my-remote-local-site</id>
+            <url>http://129.16.80.161/</url>
+        </repository>
+    </repositories>
 
 </project>

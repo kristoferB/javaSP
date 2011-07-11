@@ -50,8 +50,8 @@ public class ClickMenuOperationView extends JPopupMenu {
             this.add(av.createAction("Transfer to SOP",
                   new AlternateSOP(cell), "resources/icons/sop.png"));
 
-            this.add(av.createAction("Add Graphical precondition",
-                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
+//            this.add(av.createAction("Add Graphical precondition",
+//                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
 
          } else if (av.getGraph().isSOP(c)) {
             this.add(av.createAction("Transform to Operation",
@@ -95,8 +95,8 @@ public class ClickMenuOperationView extends JPopupMenu {
             this.add(av.createAction("Autoarrange cell",
                   new AutoarrangeGroup(cell), "resources/icons/sop.png"));
 
-            this.add(av.createAction("Add Graphical precondition",
-                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
+//            this.add(av.createAction("Add Graphical precondition",
+//                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
 
          } else if (!cell.isCollapsed() && av.getGraph().isType(cell, false, false, true, false, false)) {
             // The cell is a parallel
@@ -104,8 +104,8 @@ public class ClickMenuOperationView extends JPopupMenu {
             this.add(av.createAction("Autoarrange cell",
                   new AutoarrangeGroup(cell), "resources/icons/sop.png"));
 
-            this.add(av.createAction("Add Graphical precondition",
-                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
+//            this.add(av.createAction("Add Graphical precondition",
+//                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
 
             sub.add(new JMenuItem(av.createAction("Operation",
                   new AddOperation(e.getPoint(), SPGraphModel.TYPE_OPERATION, false, true), "resources/icons/addOperation.png")));
@@ -119,8 +119,8 @@ public class ClickMenuOperationView extends JPopupMenu {
             this.add(av.createAction("Autoarrange cell",
                   new AutoarrangeGroup(cell), "resources/icons/sop.png"));
 
-            this.add(av.createAction("Add Graphical precondition",
-                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
+//            this.add(av.createAction("Add Graphical precondition",
+//                  new AutoSeqGroup(cell), "resources/icons/sop.png"));
 
             sub.add(new JMenuItem(av.createAction("Operation",
                   new AddOperation(e.getPoint(), SPGraphModel.TYPE_OPERATION, false, true), "resources/icons/addOperation.png")));
@@ -131,8 +131,8 @@ public class ClickMenuOperationView extends JPopupMenu {
             this.add(av.createAction("Autoarrange cell",
                   new AutoarrangeGroup(cell), "resources/icons/sop.png"));
 
-            this.add(av.createAction("Add Graphical precondition",
-               new AutoSeqGroup(cell), "resources/icons/sop.png"));
+//            this.add(av.createAction("Add Graphical precondition",
+//               new AutoSeqGroup(cell), "resources/icons/sop.png"));
 
             sub.add(new JMenuItem(av.createAction("Operation",
                   new AddOperation(e.getPoint(), SPGraphModel.TYPE_OPERATION, false, true), "resources/icons/addOperation.png")));
@@ -144,8 +144,8 @@ public class ClickMenuOperationView extends JPopupMenu {
          this.add(av.createAction("Autoarrange cell",
                new AutoarrangeGroup(null), "resources/icons/sop.png"));
 
-         this.add(av.createAction("Add Graphical precondition",
-               new AutoSeqGroup(null), "resources/icons/sop.png"));
+//         this.add(av.createAction("Add Graphical precondition",
+//               new AutoSeqGroup(null), "resources/icons/sop.png"));
       }
 
 
