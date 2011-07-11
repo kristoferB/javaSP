@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Write to a text file, or read from a text file
@@ -16,6 +18,7 @@ public abstract class AWriteReadTextFile {
 
     private String mReadFromFile = "";
     private String mWriteToFile = "";
+    protected Set<String> mReadLineSet;
 
     public AWriteReadTextFile(final String iReadFromFile, final String iWriteToFile) {
         mReadFromFile = iReadFromFile;
@@ -24,10 +27,14 @@ public abstract class AWriteReadTextFile {
 
     public boolean readFromFile() {
         try {
+            mReadLineSet = new HashSet<String>();
             BufferedReader bis = new BufferedReader(new FileReader(new File(mReadFromFile)));
             while (bis.ready()) {
 
-                whatToDoWithLine(bis.readLine());
+                final String line = bis.readLine();
+                if (line.length() > 1) {
+                    mReadLineSet.add(line);
+                }
 
             }
             bis.close();
@@ -41,11 +48,10 @@ public abstract class AWriteReadTextFile {
         return true;
     }
 
-    abstract void whatToDoWithLine(final String iLine);
-
     public boolean writeToFile() {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(mWriteToFile));
+
 
             whatToWriteToFile(out);
 

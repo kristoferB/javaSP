@@ -35,4 +35,24 @@
                 <make.artifacts>${groupId}:${artifactId}</make.artifacts>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-Build a jar file</actionName>
+            <displayName>Build a jar file</displayName>
+            <goals>
+                <goal>package</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>Build</activatedProfile>
+                <activatedProfile>a</activatedProfile>
+                <activatedProfile>jar</activatedProfile>
+                <activatedProfile>file</activatedProfile>
+            </activatedProfiles>
+        </action>
+        <action>
+            <actionName>CUSTOM-Create jarfile with dependencies</actionName>
+            <displayName>Create jarfile with dependencies</displayName>
+            <goals>
+                <goal>assembly:single</goal>
+            </goals>
+        </action>
     </actions>
