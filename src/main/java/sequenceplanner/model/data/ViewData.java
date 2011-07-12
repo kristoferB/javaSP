@@ -77,11 +77,6 @@ public class ViewData extends Data {
         for (final ISopNode node : map.keySet()) {
             final Cell cell = map.get(node);
 
-            System.out.print("cell.getGeometry(): ");
-            System.out.println(cell.getGeometry() != null);
-            System.out.print("cell.isCollapsed(): ");
-            System.out.println(cell.isCollapsed());
-
             //Create new CellData
             final CellData cellData = new CellData(refIdCounter++);
             mNodeCellDataMap.put(node, cellData);
@@ -192,6 +187,7 @@ public class ViewData extends Data {
             mRootSopNode = snfspgm.getSopNodeRoot();
             //get Cell for each node
             mNodeCellMap = snfspgm.getNodeCellMap();
+
         }
     }
 }

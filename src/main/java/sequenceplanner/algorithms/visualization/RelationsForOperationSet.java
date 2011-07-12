@@ -22,10 +22,10 @@ public class RelationsForOperationSet {
     private RelationContainer mRC = null;
     private String mWmodPath = "";
 
-    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath) {
+    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<String> iConditionsToInclude) {
         setmRC(iRC);
         mWmodPath = iWmodPath;
-        formalMethods = new SupremicaInteractionForVisualization();
+        formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude);
     }
 
     /**

@@ -64,10 +64,6 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
         final ISopNode predecessorNode = getPredecessor(iNodeToRemove, iRootNode);
         final ISopNode successorNode = iNodeToRemove.getSuccessorNode();
 
-        if(successorNode != null) {
-            System.out.println("successor: " + iNodeToRemove.typeToString() + " " + successorNode.typeToString());
-        }
-
         //Has a parent
         if (parentNode != null) {
             parentNode.getFirstNodesInSequencesAsSet().remove(iNodeToRemove);

@@ -30,11 +30,13 @@ import sequenceplanner.model.data.OperationData;
  */
 public class SupremicaInteractionForVisualization implements ISupremicaInteractionForVisualization {
 
+    private final Set<String> mConditionsToInclude;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
     private SModule mModule = new SModule("temp");
     private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
 
-    public SupremicaInteractionForVisualization() {
+    public SupremicaInteractionForVisualization(final Set<String> iConditionsToInclude) {
+        this.mConditionsToInclude = iConditionsToInclude;
     }
 
     @Override
@@ -64,6 +66,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         }
 
         SEGA ega;
+        //Create center in flower automaton
         mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
         for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
@@ -77,7 +80,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
             //Add integer variable for operation---------------------------------
             Integer marking = null;
-            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet,false).contains(opData)) {
+            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
                 marking = 2;
             }
             mModule.addIntVariable(varName, 0, 2, 0, marking);
@@ -86,8 +89,8 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             //Add transition to start execute operation--------------------------
             ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
             ega.andGuard(varName + "==0");
-            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD);
-            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION);
+            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD, mConditionsToInclude);
+            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=1");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
@@ -95,8 +98,8 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             //Add transition to finish execute operation-------------------------
             ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_DOWN.toString());
             ega.andGuard(varName + "==1");
-            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD);
-            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION);
+            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD, mConditionsToInclude);
+            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=2");
             mEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
@@ -115,7 +118,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             String stateName = sp.getName();
             for (final Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
                 //Remove the single EFA location "pm"
-                stateName = stateName.replaceAll("."+SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME+".", "");
+                stateName = stateName.replaceAll("." + SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME + ".", "");
                 String eventName = arc.getLabel();
                 if (eventName.contains(Type.EVENT_UP.toString())) {
                     eventName = eventName.substring(0, eventName.indexOf(Type.EVENT_UP.toString()) + 2); //To handle addition of suffix for events when disjunction
@@ -157,6 +160,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mModule.saveToWMODFile(iFilePath,mModule.getModuleSubject());
+        return mModule.saveToWMODFile(iFilePath, mModule.getModuleSubject());
     }
 }

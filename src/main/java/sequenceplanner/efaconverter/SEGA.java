@@ -92,27 +92,37 @@ public class SEGA extends EGA {
      * @param iConditionType is given as {@link ConditionsFromSopNode.ConditionType}
      * @param iType is given as {@link ISupremicaInteractionForVisualization.Type}
      */
-    public void addCondition(final OperationData iOpData, final ConditionsFromSopNode.ConditionType iConditionType, final ISupremicaInteractionForVisualization.Type iType) {
+    public void addCondition(final OperationData iOpData, final ConditionsFromSopNode.ConditionType iConditionType, final ISupremicaInteractionForVisualization.Type iType, final Set<String> iConditionsToInclude) {
         final Map<String, Map<ConditionsFromSopNode.ConditionType, Condition>> map = iOpData.getGlobalConditions();
         for (final String sop : map.keySet()) {
-            final Map<ConditionsFromSopNode.ConditionType, Condition> innerMap = map.get(sop);
+            if (allowedNamePrefixForCondition(sop, iConditionsToInclude)) {
+                final Map<ConditionsFromSopNode.ConditionType, Condition> innerMap = map.get(sop);
 
-            if (innerMap.containsKey(iConditionType)) {
+                if (innerMap.containsKey(iConditionType)) {
 
-                if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_GUARD)) {
-                    final String condition = "("+innerMap.get(iConditionType).getGuard().toString()+")";
-                    if (!condition.equals("()")) {
-                        andGuard(condition);
-                    }
-                } else if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_ACTION)) {
-                    final String condition = innerMap.get(iConditionType).getAction().toString();
-                    if (!condition.equals("()")) {
-                        addAction(condition);
+                    if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_GUARD)) {
+                        final String condition = "(" + innerMap.get(iConditionType).getGuard().toString() + ")";
+                        if (!condition.equals("()")) {
+                            andGuard(condition);
+                        }
+                    } else if (iType.equals(ISupremicaInteractionForVisualization.Type.LOOK_FOR_ACTION)) {
+                        final String condition = innerMap.get(iConditionType).getAction().toString();
+                        if (!condition.equals("()")) {
+                            addAction(condition);
+                        }
                     }
                 }
-
             }
         }
+    }
+
+    private boolean allowedNamePrefixForCondition(final String iCondition, final Set<String> iConditionsToInclude) {
+        for (final String condition : iConditionsToInclude) {
+            if (iCondition.equals(condition)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

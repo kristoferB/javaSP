@@ -127,7 +127,8 @@ public class OperationViewController implements Observer {
 
             iOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
 
-            System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
+//            System.out.println("SOP structure that is saved");
+//            System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
 
             System.out.println("save was done: " + viewData.getName());
         }

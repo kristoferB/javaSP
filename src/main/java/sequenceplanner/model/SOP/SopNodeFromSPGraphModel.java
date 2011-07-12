@@ -23,7 +23,6 @@ public class SopNodeFromSPGraphModel {
     private SPGraphModel mSPGraphModel = null;
     private Map<ISopNode, Cell> mSopNodeCellMap = null;
     private ISopNode mSopNodeRoot = null;
-    private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
 
     /**
      *
@@ -69,7 +68,7 @@ public class SopNodeFromSPGraphModel {
 
     /**
      * Collects "correct" cells that are children to other correct cells.</br>
-     * The collected cells should not be childten to mSopNodeRoot.
+     * The collected cells should not be children to mSopNodeRoot.
      */
     private void getChildCells() {
         mChildSopNodesAsCells = new HashSet<Cell>();
@@ -169,7 +168,7 @@ public class SopNodeFromSPGraphModel {
 
         //remove nodes that not are first in sequence among children to parent---
         for (final ISopNode node : nodesToRemoveForParent) {
-            mSNToolbox.removeNode(node, iParentNode);
+            iParentNode.removeFromSequenceSet(node);
         }//----------------------------------------------------------------------
 
         return true;

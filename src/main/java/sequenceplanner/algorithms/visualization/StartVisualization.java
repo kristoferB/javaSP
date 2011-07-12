@@ -5,9 +5,13 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,7 +34,7 @@ public class StartVisualization {
 
     private OperationView mOpView = null;
     private Model mModel = null;
-    private IPerformVisualization mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod");
+    private IPerformVisualization mVisualization = null;
 
     /**
      * A dialog is started where user selects operation to visualize.
@@ -58,6 +62,12 @@ public class StartVisualization {
     }
 
     public boolean run(final ISopNode iAllOperaitons, final ISopNode iOperationsToView, final ISopNode iHasToFinish) {
+        return run(iAllOperaitons, iOperationsToView, iHasToFinish, null);
+    }
+
+    public boolean run(final ISopNode iAllOperaitons, final ISopNode iOperationsToView, final ISopNode iHasToFinish, final Set<String> iConditionsToInclude) {
+
+        mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod", iConditionsToInclude);
 
         mVisualization.addOset(iAllOperaitons);
 
@@ -113,8 +123,11 @@ public class StartVisualization {
         JButton[] mSButtonArray = new JButton[3];
         JButton[] mDSButtonArray = new JButton[3];
         JPanel jp = null;
+        JPanel jpCond = null;
         List<TreeNode> mOperationList = null;
         JCheckBox[][] mOpSelectionTable = null;
+        Set<String> mConditionNameSet = null;
+        Map<String,JCheckBox> mConditionSelectionMap = null;
 
         public SelectOperationsDialog() {
             //Work with listeners------------------------------------------------
@@ -124,9 +137,28 @@ public class StartVisualization {
             //Collect operations and init variables
             mOperationList = mModel.getAllOperations();
             mOpSelectionTable = new JCheckBox[mOperationList.size()][3];
-
             jp = new JPanel();
             jp.setLayout(new GridLayout(1 + 2 + mOperationList.size(), 4));
+
+            //Collect conditions and init vairables
+            mConditionNameSet = getConditionNames();
+            mConditionSelectionMap = new HashMap<String, JCheckBox>();
+            jpCond = new JPanel();
+            jpCond.setLayout(new GridLayout(mConditionNameSet.size(), 2));
+
+            //Conditions---------------------------------------------------------
+            
+            
+            for(final String condition : mConditionNameSet) {
+                jpCond.add(new JLabel(condition));
+                JCheckBox cb = null;
+
+                cb = new JCheckBox();
+                cb.addActionListener(this);
+                cb.setSelected(true);
+                mConditionSelectionMap.put(condition, cb);
+                jpCond.add(cb);
+            }
 
             //Text---------------------------------------------------------------
             jp.add(new JLabel(""));
@@ -183,6 +215,7 @@ public class StartVisualization {
             JPanel jpButton = new JPanel(new GridLayout(1, 1));
             jpButton.add(generateButton);
             c.add(jpButton);
+            c.add(jpCond);
             c.add(jp);
             //-------------------------------------------------------------------
 
@@ -197,6 +230,8 @@ public class StartVisualization {
                 final ISopNode allOperationsNode = new SopNode();
                 final ISopNode hasToFinishNode = new SopNode();
                 final ISopNode operationsToViewNode = new SopNode();
+
+                //Operations
                 final Iterator<TreeNode> listIterator = mOperationList.iterator();
                 while (listIterator.hasNext()) {
                     final TreeNode tnData = listIterator.next();
@@ -214,7 +249,15 @@ public class StartVisualization {
                         }
                     }
                 }
-                run(allOperationsNode, operationsToViewNode, hasToFinishNode);
+
+                //Conditions
+                final Set<String> conditionNameToIncludeSet = new HashSet<String>();
+                for(final String condition : mConditionSelectionMap.keySet()) {
+                    if(mConditionSelectionMap.get(condition).isSelected()) {
+                        conditionNameToIncludeSet.add(condition);
+                    }
+                }
+                run(allOperationsNode, operationsToViewNode, hasToFinishNode, conditionNameToIncludeSet);
 
             } else if (mSButtonArray[0] == e.getSource()) {
                 changeCheckBoxColumn(0, true);
@@ -263,6 +306,23 @@ public class StartVisualization {
                 jp.add(button);
                 iButtonArray[iLocal] = button;
             }
+        }
+
+        private Set<String> getConditionNames() {
+            final Set<String> returnSet = new HashSet<String>();
+            final List<TreeNode> operationList = mModel.getAllOperations();
+
+            for(final TreeNode tn : operationList) {
+                if(Model.isOperation(tn.getNodeData())) {
+                    final OperationData opData = (OperationData) tn.getNodeData();
+                    final Set<String> conditionNameSet = opData.getGlobalConditions().keySet();
+                    for(final String cond : conditionNameSet) {
+                        returnSet.add(cond);
+                    }
+                }
+            }
+
+            return returnSet;
         }
     }
 }

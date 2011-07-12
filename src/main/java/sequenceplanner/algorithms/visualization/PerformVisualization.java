@@ -1,5 +1,6 @@
 package sequenceplanner.algorithms.visualization;
 
+import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
@@ -21,17 +22,19 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class PerformVisualization implements IPerformVisualization {
 
-    private RelationContainer mRC = null;
+    private RelationContainer mRC;
     private String mWmodPath = "";
+    private Set<String> mConditionsToInclude;
 
 
     /**
      *
      * @param iWmodPath where to store wmod file of operations.
      */
-    public PerformVisualization(final String iWmodPath) {
+    public PerformVisualization(final String iWmodPath, final Set<String> iConditionsToInclude) {
         mRC = new RelationContainer();
         mWmodPath = iWmodPath;
+        mConditionsToInclude = iConditionsToInclude;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class PerformVisualization implements IPerformVisualization {
 
     @Override
     public RelationContainer identifyRelations() {
-        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath);
+        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath, mConditionsToInclude);
         switch (rfos.run()) {
             case 0: //Errors have occured
                 return null;

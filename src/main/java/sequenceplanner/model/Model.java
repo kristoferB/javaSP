@@ -1099,15 +1099,15 @@ public class Model extends Observable implements IModel {
         final List<TreeNode> allOperationsList = getAllOperations();
         for (final TreeNode tn : allOperationsList) {
             final OperationData opData = (OperationData) tn.getNodeData();
-            System.out.println("operation: " + opData.getName());
-            System.out.println("removecon1" + opData.getGlobalConditions().toString());
+//            System.out.println("operation: " + opData.getName());
+//            System.out.println("removecon1" + opData.getGlobalConditions().toString());
             if (opData.getGlobalConditions().containsKey(iLabel)) {
                 opData.getGlobalConditions().remove(iLabel);
 
                 setChanged();
                 notifyObservers(opData);
             }
-            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+//            System.out.println("removecon2" + opData.getGlobalConditions().toString());
         }
     }
 }

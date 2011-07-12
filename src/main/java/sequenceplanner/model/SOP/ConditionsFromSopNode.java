@@ -143,20 +143,20 @@ public class ConditionsFromSopNode {
             } else { //node is operation with child operaitons
                 final ISopNode parentNode = iNode; //is an operation
                 final OperationData parentOperation = iNode.getOperation();
-                for (final ISopNode childNode : mSopNodeToolbox.getNodes(parentNode, true)) {
+                for (final ISopNode childNode : mSopNodeToolbox.getNodes(parentNode, true)) { //Take all child operations, not only the first ones
                     if (childNode instanceof SopNodeOperation) {
                         final OperationData childOperation = childNode.getOperation();
                         //set relation between parent and child operations
                         andToOperationConditionMap(parentOperation, ConditionType.PRE, childOperation, "0");
-                        andToOperationConditionMap(parentOperation, ConditionType.POST, childOperation, "2");
-                        andToOperationConditionMap(childOperation, ConditionType.PRE, parentOperation, "1");
+//                        andToOperationConditionMap(parentOperation, ConditionType.POST, childOperation, "2");
+//                        andToOperationConditionMap(childOperation, ConditionType.PRE, parentOperation, "1");
                         andToOperationConditionMap(childOperation, ConditionType.POST, parentOperation, "1");
                     }
                 }
             }
         } else if (iNode instanceof SopNodeAlternative) {
             //find operations that are first in each sequence.
-            Map<ISopNode, Set<OperationData>> nodeOperationSetMap = new HashMap<ISopNode, Set<OperationData>>();
+            final Map<ISopNode, Set<OperationData>> nodeOperationSetMap = new HashMap<ISopNode, Set<OperationData>>();
             for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
                 final Set<OperationData> operationSet = new HashSet<OperationData>();
                 findFirstOperationsForNode(node, operationSet);
@@ -232,7 +232,6 @@ public class ConditionsFromSopNode {
             System.out.println("nodeTypeToCondition node type found is that known");
             //return false;
         }
-
 
         return true;
     }
@@ -318,14 +317,14 @@ public class ConditionsFromSopNode {
         if (!mOperationConditionMap.containsKey(iAddToOperation)) {
             mOperationConditionMap.put(iAddToOperation, new HashMap<ConditionType, Condition>());
         }
-        Map<ConditionType, Condition> typeConditionMap = mOperationConditionMap.get(iAddToOperation);
+        final Map<ConditionType, Condition> typeConditionMap = mOperationConditionMap.get(iAddToOperation);
 
         //First time for condition type?
         if (!typeConditionMap.containsKey(iConditionType)) {
             typeConditionMap.put(iConditionType, new Condition());
         }
 
-        Condition condition = typeConditionMap.get(iConditionType);
+        final Condition condition = typeConditionMap.get(iConditionType);
 
         final ConditionExpression ce = condition.getGuard();
 
@@ -359,7 +358,7 @@ public class ConditionsFromSopNode {
                 s += postCond;
             }
 
-            System.out.println(s);
+            System.out.println("ConditionsFromSopNode " + s);
         }
     }
 }

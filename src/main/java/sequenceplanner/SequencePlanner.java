@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import sequenceplanner.IO.ReadFromProcessSimulateTextFile;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -61,8 +62,20 @@ public class SequencePlanner {
         GUIView view = new GUIView(model);
         GUIController gc = new GUIController(model, view);
 
-        for(final String arg : args) {
-            System.out.println("arg" + arg);
+        for(String arg : args ) {
+            System.out.println("arg " + arg);
+        }
+
+        //To Read from file att start up
+        if(args.length >= 2) {
+            if(args[0].equals("fromPS")) {
+
+                final String path = args[1];
+                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, gc.getModel());
+                final boolean result = rftf.run();
+                System.out.println("Result from text file parse: " + result);
+                view.printToConsole("Result from text file parse: " + result);
+            }
         }
 
       }
