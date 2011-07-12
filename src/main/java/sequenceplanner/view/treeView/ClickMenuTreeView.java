@@ -76,7 +76,6 @@ public class ClickMenuTreeView extends JPopupMenu {
         if (Model.isResource(node.getNodeData())) {
             add(new JMenuItem(av.createAction("Insert Resource",
                     new InsertVariable(node, Data.RESOURCE), "resources/icons/robot.png")));
-
             add(new JMenuItem(av.createAction("Insert Variable",
                     new InsertVariable(node, Data.RESOURCE_VARIABLE), "resources/icons/variable.png")));
             add(rem);

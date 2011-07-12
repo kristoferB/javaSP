@@ -478,7 +478,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      *      Reduced-order EFA
      *
      */
-    private JMenu fileMenu, edit, project, convert, mp, em, windows, visualization, help;
+    private JMenu fileMenu, importMenu, edit, convert, mp, em, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
             printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
@@ -490,8 +490,15 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         JMenuBar mb = new JMenuBar();
         //File menu
         fileMenu = new JMenu("File");
-        fileMenu.add(newOperationView = new JMenuItem("New Operation View"));
-        fileMenu.add(newResourceView = new JMenuItem("New Resource View"));
+        fileMenu.add(open = new JMenuItem("Open"));
+        fileMenu.add(save = new JMenuItem("Save"));
+        fileMenu.add(saveAs = new JMenuItem("Save As"));
+        fileMenu.add(close = new JMenuItem("Close"));
+        fileMenu.addSeparator();
+        importMenu = new JMenu("Import");
+        importMenu.add(addOperationsFromFile = new JMenuItem("From .txt"));
+        fileMenu.add(importMenu);
+        fileMenu.addSeparator();
         fileMenu.add(exit = new JMenuItem("Exit"));
         this.add(fileMenu);
 
@@ -500,14 +507,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         edit.add(preferences = new JMenuItem("Preferences"));
         edit.add(addAll = new JMenuItem("Add all cells to new view"));
         this.add(edit);
-
-        //Project menu
-        project = new JMenu("Project");
-        project.add(open = new JMenuItem("Open"));
-        project.add(save = new JMenuItem("Save"));
-        project.add(saveAs = new JMenuItem("Save As"));
-        project.add(close = new JMenuItem("Close"));
-        this.add(project);
 
         //Convert menu
         convert = new JMenu("Convert");
@@ -534,10 +533,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
-        visualization.add(addOperationsFromFile = new JMenuItem("Add Selfcontained operations from file"));
+        
         this.add(visualization);
 
         windows = new JMenu("Windows");
+        windows.add(newOperationView = new JMenuItem("New Operation View"));
+        windows.add(newResourceView = new JMenuItem("New Resource View"));
         windows.add(defaultWindows = new JMenuItem("Default Windows"));
         this.add(windows);
 
@@ -550,7 +551,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Add menues to menubar
         mb.add(fileMenu);
         mb.add(edit);
-        mb.add(project);
         mb.add(convert);
         mb.add(mp);
         mb.add(em);
@@ -656,7 +656,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         bruteForceVisualization.addActionListener(l);
     }
 
-    public void addAddOperationsFromFileL(ActionListener l) {
+    public void addOperationsFromFileL(ActionListener l) {
         addOperationsFromFile.addActionListener(l);
     }
 

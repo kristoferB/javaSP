@@ -7,15 +7,14 @@ import java.util.TreeMap;
 
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.xml.Actions;
-import sequenceplanner.xml.Bookings;
+
 import sequenceplanner.xml.CellData;
-import sequenceplanner.xml.Conditions;
+
 import sequenceplanner.xml.Liason;
 import sequenceplanner.xml.ObjectFactory;
 import sequenceplanner.xml.Operation;
 import sequenceplanner.xml.OperationData;
-import sequenceplanner.xml.Properties;
+
 import sequenceplanner.xml.Rectangle;
 import sequenceplanner.xml.Resource;
 import sequenceplanner.xml.SequencePlannerProjectFile;
@@ -23,11 +22,15 @@ import sequenceplanner.xml.Variable;
 import sequenceplanner.xml.ViewType;
 
 import com.mxgraph.model.mxGeometry;
-import java.util.ArrayList;
-import java.util.HashMap;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
@@ -43,10 +46,10 @@ import sequenceplanner.xml.GlobalProperty;
 public class ConvertToXML {
 
     //TODO : Thread this
-    private Model model;
+    private Model mModel;
 
     public ConvertToXML(Model model) {
-        this.model = model;
+        this.mModel = model;
     }
 
     public SequencePlannerProjectFile convert() {
@@ -55,7 +58,7 @@ public class ConvertToXML {
         SequencePlannerProjectFile project = f.createSequencePlannerProjectFile();
 
         //ID counter
-        project.setIdCounter(model.getCounter());
+        project.setIdCounter(mModel.getCounter());
 
         //Liason
 //      project.setLiasons(getLiasonRoot());
@@ -77,7 +80,7 @@ public class ConvertToXML {
     }
 
     private SequencePlannerProjectFile.Operations getOperationRoot() {
-        TreeNode node = model.getOperationRoot();
+        TreeNode node = mModel.getOperationRoot();
 
         SequencePlannerProjectFile.Operations result = new SequencePlannerProjectFile.Operations();
 
@@ -87,13 +90,13 @@ public class ConvertToXML {
             result.getOperation().add(getOperation(child));
         }
 
-        TreeMap<Integer, ViewData> views = model.getOperationsWithViews();
+        TreeMap<Integer, ViewData> views = mModel.getOperationsWithViews();
         Set<Integer> keys = views.keySet();
 
         for (Integer i : keys) {
             ViewData d = views.get(i);
 
-            if (d != null && model.isOperationPresent(i)) {
+            if (d != null && mModel.isOperationPresent(i)) {
                 result.getOperationViews().add(getView(d));
             }
         }
@@ -128,108 +131,56 @@ public class ConvertToXML {
 
         if (!data.getDescription().isEmpty()) {
             dataX.setDescription(data.getDescription());
-        } else {
-            dataX.setDescription("");
         }
 
-//      dataX.setCost(data.getCost());
-//      dataX.setIsPostoperation(data.isPostoperation());
-//      dataX.setIsPreoperation(data.isPreoperation());
-//      dataX.setAccomplishes(data.getAccomplishes());
-//      dataX.setRealizedBy(data.getRealizedBy());
-
-        //Preconditions
-//      if (!data.getSequenceCondition().isEmpty()) {
-//         dataX.setPreSequenceCondtions(getConditions(data.getSequenceCondition()));
-//      }
-//      if (!data.getResourceBooking().isEmpty()) {
-//         dataX.setPreResurceBooking(getBookings(data.getResourceBooking()));
-//      }
-
-//      if (!data.getActions().isEmpty()) {
-//         dataX.setPreActions(getActions(data.getActions()));
-//      }
-
-        //Invariant
-//      if (!data.getSeqInvariant().isEmpty()) {
-//         dataX.setSequenceInvariants(getConditions(data.getSeqInvariant()));
-//      }
-
-        //Properties
-//      if (!data.getProperties().isEmpty()){
-//        dataX.setProperties(getProperties(data.getProperties()));
-//      }
-
-        //PostConditions
-//      if (!data.getPSequenceCondition().isEmpty()) {
-//         dataX.setPostSequenceCondtions(getConditions(data.getPSequenceCondition()));
-//      }
-//      if (!data.getPResourceBooking().isEmpty()) {
-//         dataX.setPostResurceBooking(getBookings(data.getPResourceBooking()));
-//      }
-
-        return dataX;
-    }
-
-//   private Conditions getConditions(LinkedList<LinkedList<SeqCond>> data) {
-//      Conditions dataX = new Conditions();
-//
-//      for (LinkedList<SeqCond> one : data) {
-//         Conditions.Or inOr = new Conditions.Or();
-//
-//
-//         for (SeqCond seqCond : one) {
-//            Conditions.Or.SequenceCondition sc = new Conditions.Or.SequenceCondition();
-//            sc.setOperation(seqCond.id);
-//            sc.setStatus(seqCond.state);
-//            inOr.getSequenceCondition().add(sc);
-//         }
-//
-//         dataX.getOr().add(inOr);
-//      }
-//      return dataX;
-//   }
-    private Properties getProperties(HashMap<Integer, Boolean> data) {
-
-        Properties dataX = new Properties();
-
-        for (Integer id : data.keySet()) {
-            Properties.Property p = new Properties.Property();
-            p.setId(id);
-            p.setValue(data.get(id));
-            dataX.getProperty().add(p);
+        final String pattern = getPatternForConditionsToExclude();
+        
+        if (!data.getGlobalConditions().isEmpty()) {
+            final OperationData.PreConditionSet pcsPre = new OperationData.PreConditionSet();
+            pcsPre.getCondition().addAll(getConditions(data, pattern, ConditionType.PRE));
+            dataX.setPreConditionSet(pcsPre);
+        }
+        
+        if (!data.getGlobalConditions().isEmpty()) {
+            final OperationData.PostConditionSet pcsPost = new OperationData.PostConditionSet();
+            pcsPost.getCondition().addAll(getConditions(data, pattern, ConditionType.POST));
+            dataX.setPostConditionSet(pcsPost);
         }
 
         return dataX;
     }
 
-    private Bookings getBookings(LinkedList<Integer[]> data) {
-        Bookings dataX = new Bookings();
-
-        for (Integer[] in : data) {
-            Bookings.ResourceBooking b = new Bookings.ResourceBooking();
-            b.setResource(in[0]);
-            b.setType(in[1]);
-            dataX.getResourceBooking().add(b);
+    private String getPatternForConditionsToExclude() {
+        //Find names for SOPs that shold be excluded from storare. Because stored in SOP/view
+        String patternView = "";
+        final TreeNode[] viewArray = mModel.getChildren(mModel.getViewRoot());
+        for (final TreeNode tn : viewArray) {
+            final String name = tn.getNodeData().getName();
+            if (!patternView.equals("")) {
+                patternView += "|";
+            }
+            patternView += name;
         }
-
-        return dataX;
+        System.out.println(patternView);
+        return patternView;
     }
 
-//   private Actions getActions(LinkedList<Action> data) {
-//      Actions dataX = new Actions();
-//
-//      for (Action action : data) {
-//         Actions.Action a = new Actions.Action();
-//         a.setVariable(action.id);
-//         a.setValue(action.value);
-//         a.setType(action.state);
-//         dataX.getAction().add(a);
-//      }
-//      return dataX;
-//   }
+    private Set<String> getConditions(final sequenceplanner.model.data.OperationData iOpData, final String iConditionPattern, final ConditionType iConditionType) {
+        final Set<String> returnSet = new HashSet<String>();
+        for(final String viewName : iOpData.getGlobalConditions().keySet()) {
+            final Matcher matcher = Pattern.compile(iConditionPattern).matcher(viewName);
+
+            if(!matcher.find() || iConditionPattern.equals("")) {
+                if(iOpData.getGlobalConditions().get(viewName).containsKey(iConditionType)) {
+                    returnSet.add(iOpData.getGlobalConditions().get(viewName).get(iConditionType).toString());
+                }
+            }
+        }
+        return returnSet;
+    }
+
     private SequencePlannerProjectFile.Views getViewRoot() {
-        TreeNode node = model.getViewRoot();
+        TreeNode node = mModel.getViewRoot();
 
         SequencePlannerProjectFile.Views result = new SequencePlannerProjectFile.Views();
 
@@ -306,7 +257,7 @@ public class ConvertToXML {
                 dataX.setExpanded(cellDataLayout.mExpanded);
 
             }
-            
+
             //Add to view--------------------------------------------------------
             viewX.getCellData().add(dataX);
         }
@@ -342,7 +293,7 @@ public class ConvertToXML {
     }
 
     private SequencePlannerProjectFile.Liasons getLiasonRoot() {
-        TreeNode node = model.getLiasonRoot();
+        TreeNode node = mModel.getLiasonRoot();
         Liason li = getLiason(node);
 
         SequencePlannerProjectFile.Liasons result = new SequencePlannerProjectFile.Liasons();
@@ -360,7 +311,7 @@ public class ConvertToXML {
         Liason li = new Liason();
 
 
-        if (Model.isLiason(node.getNodeData()) || node == model.getLiasonRoot()) {
+        if (Model.isLiason(node.getNodeData()) || node == mModel.getLiasonRoot()) {
             li.setId(node.getId());
             li.setName(node.getNodeData().getName());
 
@@ -375,7 +326,7 @@ public class ConvertToXML {
     }
 
     private SequencePlannerProjectFile.Resources getResourceRoot() {
-        TreeNode node = model.getResourceRoot();
+        TreeNode node = mModel.getResourceRoot();
         Resource res = getResource(node);
 
         SequencePlannerProjectFile.Resources result = new SequencePlannerProjectFile.Resources();
@@ -392,7 +343,7 @@ public class ConvertToXML {
     private Resource getResource(TreeNode node) {
         Resource res = new Resource();
 
-        if (Model.isResource(node.getNodeData()) || node == model.getResourceRoot()) {
+        if (Model.isResource(node.getNodeData()) || node == mModel.getResourceRoot()) {
             res.setId(node.getId());
             res.setName(node.getNodeData().getName());
 

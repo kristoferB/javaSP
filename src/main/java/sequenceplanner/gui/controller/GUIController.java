@@ -13,6 +13,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
 import net.infonode.docking.View;
+import sequenceplanner.IO.ReadFromProcessSimulateTextFile;
 import sequenceplanner.algorithms.visualization.StartVisualization;
 
 import sequenceplanner.gui.model.GUIModel;
@@ -86,14 +87,11 @@ public class GUIController {
         
 
         mGuiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
+        mGuiView.addOperationsFromFileL(new AddOperationsFromFileListener());
         mGuiView.addShortCommandsL(new AddShortCommandsListener());
         mGuiView.addAboutL(new AddAboutListener());
     }
     //Listener classes
-
-    public void printToConsole(String text) {
-        mGuiView.printToConsole(text);
-    }
 
     //private methods
     /**
@@ -128,7 +126,7 @@ public class GUIController {
 
         } else {
             mGuiView.setFocusedOperationView(data);
-            printToConsole("Already open!");
+            GUIView.printToConsole("Already open!");
         }
     }
 
@@ -149,8 +147,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = mGuiModel.createNewOpView();
-            addNewOpTab(opView);
+            mOpViewController.createOperationView();
         }
     }
 
@@ -158,8 +155,8 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiModel.createNewReView();
             mGuiView.addResourceView();
+
         }
     }
 
@@ -353,6 +350,22 @@ public class GUIController {
         }
     }
 
+    class AddOperationsFromFileListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser dialog = new JFileChooser(getGUIModel().path);
+
+            if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                final String path = dialog.getSelectedFile().getAbsolutePath();
+                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, getModel());
+                final boolean result = rftf.run();
+                GUIView.printToConsole("Result from text file parse: " + result);
+            }
+        }
+
+    }
+
     class AddShortCommandsListener implements ActionListener {
 
         @Override
@@ -473,7 +486,7 @@ public class GUIController {
 //            }
 
         }
-        printToConsole("New model opened!");
+        GUIView.printToConsole("New model opened!");
     }
 
     private void saveModel(boolean saveAs) {
@@ -514,9 +527,9 @@ public class GUIController {
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
             mGuiModel.getModel().addObserver(ctrl);
-            printToConsole("Operation " + data.getName() + " opened.");
+            GUIView.printToConsole("Operation " + data.getName() + " opened.");
         } else {
-            printToConsole("Operation already opened.");
+            GUIView.printToConsole("Operation already opened.");
 
         }
         return data;

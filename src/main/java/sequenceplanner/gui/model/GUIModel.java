@@ -28,7 +28,7 @@ public class GUIModel {
     private File projectFile;
     private ResourceView resourceView;
     private LinkedList<OperationView> operationViews = new LinkedList();
-    private String path = "user.dir";
+    public String path = "user.dir";
     //Main model for the project
     private Model model;
 

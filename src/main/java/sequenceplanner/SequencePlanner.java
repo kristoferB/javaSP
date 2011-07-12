@@ -73,8 +73,7 @@ public class SequencePlanner {
                 final String path = args[1];
                 final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, gc.getModel());
                 final boolean result = rftf.run();
-                System.out.println("Result from text file parse: " + result);
-                view.printToConsole("Result from text file parse: " + result);
+                GUIView.printToConsole("Result from text file parse: " + result);
             }
         }
 

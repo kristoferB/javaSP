@@ -9,12 +9,10 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.xml.Actions;
 import sequenceplanner.xml.Properties;
 import sequenceplanner.xml.Bookings;
 import sequenceplanner.xml.Bookings.ResourceBooking;
 import sequenceplanner.xml.CellData;
-import sequenceplanner.xml.Conditions;
 import sequenceplanner.xml.Liason;
 import sequenceplanner.xml.Operation;
 import sequenceplanner.xml.Rectangle;
@@ -27,6 +25,12 @@ import sequenceplanner.xml.ViewType;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import java.util.HashMap;
+import sequenceplanner.condition.AStringToConditionParser;
+import sequenceplanner.condition.ActionAsTextInputToConditionParser;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.GuardAsTextInputToConditionParser;
+import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
@@ -67,28 +71,6 @@ public class ConvertFromXML {
         return this.model;
     }
 
-    private void setOperationRoot(SequencePlannerProjectFile.Operations inputX) {
-        for (Operation opX : inputX.getOperation()) {
-            model.createModelOperationNode(opX.getName(), opX.getId());
-//         model.getOperationRoot().insert(getOperations(opX));
-        }
-
-//      List<ViewData> d = new LinkedList<ViewData>();
-//      for (ViewType viewType : inputX.getOperationViews()) {
-//         d.add(getView(viewType));
-//      }
-//      model.saveOperationViews(d.toArray(new ViewData[0]));
-    }
-
-    private TreeNode getOperations(Operation opX) {
-        TreeNode out = new TreeNode(getOperationData(opX));
-
-        for (Operation childX : opX.getOperation()) {
-            out.insert(getOperations(childX));
-        }
-
-        return out;
-    }
 
     private void getOperationData(SequencePlannerProjectFile.Operations inputX) {
         for (Operation opX : inputX.getOperation()) {
@@ -98,51 +80,47 @@ public class ConvertFromXML {
             if (opX.getOperationData().getDescription() != null) {
                 opData.setDescription(opX.getOperationData().getDescription());
             }
+
+            if (!opX.getOperationData().getPreConditionSet().getCondition().isEmpty()) {
+                getConditions(opData, opX.getOperationData().getPreConditionSet().getCondition(), ConditionType.PRE);
+            }
+
+            if (!opX.getOperationData().getPostConditionSet().getCondition().isEmpty()) {
+                getConditions(opData, opX.getOperationData().getPostConditionSet().getCondition(), ConditionType.POST);
+            }
         }
     }
 
-    private OperationData getOperationData(Operation dataX) {
-
-
-        OperationData data = new OperationData(dataX.getName(), dataX.getId());
-
-        data.setDescription(dataX.getOperationData().getDescription());
-//      data.setCost(dataX.getOperationData().getCost());
-//      data.setPreoperation(dataX.getOperationData().isIsPreoperation());
-//      data.setPostoperation(dataX.getOperationData().isIsPostoperation());
-//      data.setAccomplishes(dataX.getOperationData().getAccomplishes());
-//      data.setRealizedBy(dataX.getOperationData().getRealizedBy());
-
-        //Pre
-        if (dataX.getOperationData().getPreSequenceCondtions() != null) {
-//         data.setSequenceCondition(getCondition(dataX.getOperationData().getPreSequenceCondtions()));
-        }
-        if (dataX.getOperationData().getPreActions() != null) {
-//         data.setActions(getAction(dataX.getOperationData().getPreActions()));
-        }
-        if (dataX.getOperationData().getPreResurceBooking() != null) {
-//         data.setResourceBooking(getBooking(dataX.getOperationData().getPreResurceBooking()));
-        }
-
-        // Invariant
-        if (dataX.getOperationData().getSequenceInvariants() != null) {
-//         data.setSeqInvariant(getCondition(dataX.getOperationData().getSequenceInvariants()));
-        }
-
-        //Properties
-        if (dataX.getOperationData().getProperties() != null) {
-//         data.setProperties(getProperties(dataX.getOperationData().getProperties()));
-        }
-
-        //Post
-        if (dataX.getOperationData().getPostSequenceCondtions() != null) {
-//         data.setPSequenceCondition(getCondition(dataX.getOperationData().getPostSequenceCondtions()));
-        }
-        if (dataX.getOperationData().getPostResurceBooking() != null) {
-//         data.setPResourceBooking(getBooking(dataX.getOperationData().getPostResurceBooking()));
+    private OperationData getConditions(OperationData data, List<String> prelist, final ConditionType iConditionType) {
+        System.out.println(prelist.size());
+        HashMap<ConditionType, Condition> map;
+        for (int i = 0; prelist.size() > i; i++) {
+            map = new HashMap<ConditionType, Condition>();
+            map.put(iConditionType, conditionFromString(prelist.get(i)));
+            data.setConditions(map, "Algebraic " + data.getAlgebraicCounter());
+            data.increaseAlgebraicCounter();
         }
 
         return data;
+    }
+
+    private Condition conditionFromString(String savedCondition) {
+//        System.out.println("preparse " + savedCondition);
+//        String formatstring = StringTrimmer.getInstance().stringTrim(savedCondition);
+//        System.out.println("postparse " + formatstring);
+        final String[] conditionSplit = savedCondition.split("/");
+        final Condition condition = new Condition();
+        final AStringToConditionParser guardParser = new GuardAsTextInputToConditionParser();
+        final ConditionExpression ce1 = new ConditionExpression();
+        final ConditionExpression ce2 = new ConditionExpression();
+        final AStringToConditionParser actionParser = new ActionAsTextInputToConditionParser();
+        if (guardParser.run(conditionSplit[0], ce1)) {
+            condition.setGuard(ce1);
+        }
+        if (actionParser.run(conditionSplit[1], ce2)) {
+            condition.setAction(ce2);
+        }
+        return condition;
     }
 
     private LinkedList<Integer[]> getBooking(Bookings bookX) {
