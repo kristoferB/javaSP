@@ -99,7 +99,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public int getOpViewIndex() {
         return opViewIndex;
     }
-    private JTextArea console;
+    private static JTextArea console;
     private JButton saveButton;
     /**
      * To map right id with right view. Both for operation views object views.
@@ -730,7 +730,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         }
     }
 
-    public void printToConsole(String text) {
+    public static void printToConsole(String text) {
         console.append(text + "\n");
     }
 

@@ -30,14 +30,14 @@ import sequenceplanner.view.operationView.OperationView;
  * To manage the user interaction for {@link PerformVisualization}.<br/>
  * @author patrik
  */
-public class StartVisualization {
+public class StartVisualization{
 
     private OperationView mOpView = null;
     private Model mModel = null;
     private IPerformVisualization mVisualization = null;
 
     /**
-     * A dialog is started where user selects operation to visualize.
+     * A dialog is started where user selects operations to visualize.
      * @param mOpView
      */
     public StartVisualization(OperationView mOpView) {
@@ -98,6 +98,7 @@ public class StartVisualization {
         System.out.println("--------------------------------");
 
         mVisualization.sopNodeToGraphicalView(rc.getOsubsetSopNode(), mOpView);
+        
 
 //        System.out.println("\n--------------------------------");
 //        System.out.println("Get conditions");
@@ -127,7 +128,7 @@ public class StartVisualization {
         List<TreeNode> mOperationList = null;
         JCheckBox[][] mOpSelectionTable = null;
         Set<String> mConditionNameSet = null;
-        Map<String,JCheckBox> mConditionSelectionMap = null;
+        Map<String, JCheckBox> mConditionSelectionMap = null;
 
         public SelectOperationsDialog() {
             //Work with listeners------------------------------------------------
@@ -147,9 +148,7 @@ public class StartVisualization {
             jpCond.setLayout(new GridLayout(mConditionNameSet.size(), 2));
 
             //Conditions---------------------------------------------------------
-            
-            
-            for(final String condition : mConditionNameSet) {
+            for (final String condition : mConditionNameSet) {
                 jpCond.add(new JLabel(condition));
                 JCheckBox cb = null;
 
@@ -214,6 +213,7 @@ public class StartVisualization {
             c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
             JPanel jpButton = new JPanel(new GridLayout(1, 1));
             jpButton.add(generateButton);
+
             c.add(jpButton);
             c.add(jpCond);
             c.add(jp);
@@ -227,6 +227,7 @@ public class StartVisualization {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (generateButton == e.getSource()) {
+
                 final ISopNode allOperationsNode = new SopNode();
                 final ISopNode hasToFinishNode = new SopNode();
                 final ISopNode operationsToViewNode = new SopNode();
@@ -252,8 +253,8 @@ public class StartVisualization {
 
                 //Conditions
                 final Set<String> conditionNameToIncludeSet = new HashSet<String>();
-                for(final String condition : mConditionSelectionMap.keySet()) {
-                    if(mConditionSelectionMap.get(condition).isSelected()) {
+                for (final String condition : mConditionSelectionMap.keySet()) {
+                    if (mConditionSelectionMap.get(condition).isSelected()) {
                         conditionNameToIncludeSet.add(condition);
                     }
                 }
@@ -312,11 +313,11 @@ public class StartVisualization {
             final Set<String> returnSet = new HashSet<String>();
             final List<TreeNode> operationList = mModel.getAllOperations();
 
-            for(final TreeNode tn : operationList) {
-                if(Model.isOperation(tn.getNodeData())) {
+            for (final TreeNode tn : operationList) {
+                if (Model.isOperation(tn.getNodeData())) {
                     final OperationData opData = (OperationData) tn.getNodeData();
                     final Set<String> conditionNameSet = opData.getGlobalConditions().keySet();
-                    for(final String cond : conditionNameSet) {
+                    for (final String cond : conditionNameSet) {
                         returnSet.add(cond);
                     }
                 }
