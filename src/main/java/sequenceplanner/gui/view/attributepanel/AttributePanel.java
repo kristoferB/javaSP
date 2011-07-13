@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import sequenceplanner.condition.Condition;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**

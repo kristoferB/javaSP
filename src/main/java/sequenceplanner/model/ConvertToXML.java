@@ -1,6 +1,5 @@
 package sequenceplanner.model;
 
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -24,26 +23,22 @@ import sequenceplanner.xml.ViewType;
 import com.mxgraph.model.mxGeometry;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import sequenceplanner.condition.Condition;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
-import sequenceplanner.xml.GlobalProperty;
 
 /**
  *
  * @author Erik Ohlson
  */
-public class ConvertToXML {
+public class ConvertToXML{
 
     //TODO : Thread this
     private Model mModel;
@@ -51,7 +46,6 @@ public class ConvertToXML {
     public ConvertToXML(Model model) {
         this.mModel = model;
     }
-
     public SequencePlannerProjectFile convert() {
         ObjectFactory f = new ObjectFactory();
 //      f.createSequencePlannerProjectFileLiasons();
@@ -337,7 +331,7 @@ public class ConvertToXML {
 
     /**
      *
-     * @param node, has to be an liason root
+     * @param node, has to be an resource root
      * @return
      */
     private Resource getResource(TreeNode node) {

@@ -8,23 +8,19 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import java.util.Map;
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeModelListener;
+
 import net.infonode.docking.DockingWindow;
 
 import net.infonode.docking.RootWindow;
@@ -38,7 +34,6 @@ import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
 
-import sequenceplanner.SequencePlanner;
 import sequenceplanner.model.data.ViewData;
 
 import sequenceplanner.gui.model.GUIModel;
@@ -62,7 +57,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenuBar menuBar;
     private GUIModel guiModel;
     //ViewMaps holding all views for the RootWindows
-    private ViewMap rootViewMap = new ViewMap();
+    private ViewMap iViewMap = new ViewMap();
     private ViewMap opViewMap = new ViewMap();
     private ViewMap treeViewMap = new ViewMap();
     private ViewMap consoleViewMap = new ViewMap();
@@ -118,6 +113,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         createRootWindow();
         setStartingWindowsProperties();
         setRootDropDisabled();
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); //Take case of in GUIController
     }
 
     public ViewMap getOpViewMap() {
@@ -129,10 +125,26 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     /**
+     * To change title in main titlebar<br/>
+     * Title is always prefixed with <b>Sequence Planner - <b/><br/>
+     * null as input gives the default title: <b>Sequence Planner - New Project<b/><br/>
+     * @param iTitle
+     */
+    public void changeTitle(String iTitle) {
+        if (iTitle == null) {
+            iTitle = "New Project";
+        }
+        if (!iTitle.equals("")) {
+            iTitle = " - " + iTitle;
+        }
+        setTitle("Sequence Planner" + iTitle);
+    }
+
+    /**
      * creates the frame
      */
     private void initJFrame() {
-        setTitle("Sequence Planner");
+        changeTitle(null);
         setIconImage(IconHandler.getNewIcon("/sequenceplanner/resources/icons/icon.png").getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -170,7 +182,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         //Create main RootWindow and set it's dragrectangleborderwidth
         //to 0, i.e. invisible.
-        rootWindow = DockingUtil.createRootWindow(rootViewMap, true);
+        rootWindow = DockingUtil.createRootWindow(iViewMap, true);
         rootWindow.getRootWindowProperties().getDockingWindowProperties().setMaximizeEnabled(true);
 
         treeRoot = DockingUtil.createRootWindow(treeViewMap, true);
@@ -195,15 +207,16 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
 
 
-        rootViewMap.addView(1, operationRootView);
+        iViewMap.addView(1, operationRootView);
 
         //Create consoltreeRoote
         consoleViewMap.addView(1, new View("console", null, new JScrollPane(console = new JTextArea())));
+        console.setEditable(false);
         consoleRoot.setWindow(new TabWindow(consoleViewMap.getView(1)));
         consoleRootView.getViewProperties().setAlwaysShowTitle(false);
         consoleRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         consoleRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
-        rootViewMap.addView(2, consoleRootView);
+        iViewMap.addView(2, consoleRootView);
 
         //Create treeview
         treeViewMap.addView(1, new View("Tree view", null, treeView));
@@ -211,7 +224,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         treeRootView.getViewProperties().setAlwaysShowTitle(false);
         treeRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         treeRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
-        rootViewMap.addView(3, treeRootView);
+        iViewMap.addView(3, treeRootView);
 
         //Test (adding save button to object attribute window) should be cleaned up!!!!
 //        JPanel objectView = new JPanel();
@@ -228,7 +241,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         objectRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
 
-        rootViewMap.addView(4, treeRootView);
+        iViewMap.addView(4, treeRootView);
 
         //--------------------
 
@@ -295,10 +308,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     /**
-     * Empties the opViewMap and removes all tabs from mainDocks.
-     * BIG PROBLEM WITH THIS CLASS... SP WILL BLOCK!
+     * Removes all tabs/{@link View}s from mainDocks and objectDocks.
      */
-    public void closeAllViews() {
+    public void removeAllViews() {
         for (int i = 1; opViewMap.getViewCount() != 0; i++) {
             if (opViewMap.getView(i) != null) {
                 opViewMap.getView(i).close();
@@ -306,16 +318,12 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             opViewMap.removeView(i);
         }
 
-        for (int i = 3; objectViewMap.getViewCount() != 2; i++) {
+        for (int i = 1; objectViewMap.getViewCount() != 0; i++) {
             if (objectViewMap.getView(i) != null) {
                 objectViewMap.getView(i).close();
             }
             objectViewMap.removeView(i);
         }
-
-        //operationRoot.remove(mainDocks);
-        mainDocks = new TabWindow();
-
     }
 
     public boolean removeOperationView(final TreeNode iTreeNode) {
@@ -533,7 +541,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //Visualization
         visualization = new JMenu("Visualization");
         visualization.add(bruteForceVisualization = new JMenuItem("Brute Force"));
-        
+
         this.add(visualization);
 
         windows = new JMenu("Windows");
@@ -699,18 +707,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         addToViewMap(newView, opView.mViewData.getId(), opViewMap);
 
         addToMaindocks(newView);
-//        if (mainDocks.getChildWindowCount() == 0) {
-//            operationRoot.setWindow(mainDocks = new TabWindow(newView));
-//        } else {
-//            mainDocks.addTab(newView);
-//            mainDocks.restore();
-//        }
 
         if (opView.mViewData.isClosed()) {
             System.out.println("start closed: " + opView.getName());
             newView.close();
         }
-
         return newView;
     }
 
@@ -725,6 +726,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             addToViewMap(mResourceView, guiModel.getModel().getResourceRoot().getId(), opViewMap);
             addToMaindocks(mResourceView);
         } else {
+            mResourceView.dock();
             mResourceView.close();
             mResourceView.restore();
         }
@@ -736,100 +738,37 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     @Override
     public void invoke(Object arg0, mxEventObject arg1) {
-        System.out.println("arg0: " + arg0 + " arg1: " + arg1);
-//        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("GUIView: " + "arg0: " + arg0 + " arg1: " + arg1);
     }
 
+    /**
+     * To reset all {@link View}s in all {@link ViewMap}s.<br/>
+     * 1) Undocked windows are docked.<br/>
+     * 2) Closed windows are opened.<br/>
+     */
     public void setWindowLayout() {
-        System.out.println("Focus:" + operationRoot.getLastFocusedChildWindow() + " @ " + " :end");
-        //System.out.println("is closed? " + operationRoot.getChildWindow(1));
-//--- Taking views from the model and recreating them (Not done yet, need to close the empty Tabs)
-//+mainDocks.getWindowProperties().getTabProperties().getFocusedProperties().toString()
-//------- Docking the undocked windows ---------
-
-        DockingWindow tempViewMap = new TabWindow();
-        try {
-            tempViewMap = operationRoot.getLastFocusedChildWindow();
-
-
-        } catch (NullPointerException e) {
-            System.out.println("error: " + e);
-        }
-        for (int i = 1; i <= rootViewMap.getViewCount(); i++) {
-
-            rootViewMap.getView(i).dock();
-            rootViewMap.getView(i).restore();
-        }
-        for (int i = 1; i <= opViewMap.getViewCount(); i++) {
-
-            if (opViewMap.getView(i) != null) {
-                opViewMap.getView(i).dock();
-                opViewMap.getView(i).restore();
-            }
-        }
-        for (int i = 1; i <= editorViewMap.getViewCount(); i++) {
-            editorViewMap.getView(i).dock();
-            editorViewMap.getView(i).restore();
-        }
-        for (int i = 1; i <= treeViewMap.getViewCount(); i++) {
-            treeViewMap.getView(i).dock();
-            treeViewMap.getView(i).restore();
-        }
-        for (int i = 1; i <= consoleViewMap.getViewCount(); i++) {
-            consoleViewMap.getView(i).dock();
-            consoleViewMap.getView(i).restore();
-        }
-        for (int i = 1; i <= objectViewMap.getViewCount(); i++) {
-            objectViewMap.getView(i).dock();
-            objectViewMap.getView(i).restore();
-        }
-
-        closeAllViews();
-        LinkedList<OperationView> modelViews = guiModel.getOperationViews();
-        Iterator modelViews2 = modelViews.listIterator(0);
-        opViewIndex = 0;
-        while (modelViews2.hasNext()) {
-            opViewIndex++;
-            OperationView op12 = (OperationView) modelViews2.next();
-            opViewMap.addView(opViewIndex, new View(op12.toString(), null,
-                    op12));
-            System.out.println(op12);
-
-        }
-        if (mResourceView != null) {
-            addResourceView();
-        }
-
-        //Recreate operation views window and view map
-        operationRoot = DockingUtil.createRootWindow(opViewMap, true);
-        operationRootView = new View("Operation Views", null, operationRoot);
-        operationRoot.setWindow(mainDocks = new TabWindow(opViewMap.getView(1)));
-        /*int count = 1;
-        while (count <= opViewIndex) {
-        
-        mainDocks.addTab(opViewMap.getView(count));
-        count = count + 1;
-        System.out.println(count);
-        System.out.println(opViewIndex);
-        }*/
-        try {
-            for (int i = 0; i < tempViewMap.getChildWindowCount(); i++) {
-                addToMaindocks(tempViewMap.getChildWindow(i));
-//                mainDocks.addTab(tempViewMap.getChildWindow(i));
-            }
-
-        } catch (NullPointerException e) {
-            System.out.println("error 2: " + e);
-        }
-        operationRootView.getViewProperties().setAlwaysShowTitle(false);
-        operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
-        operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
-        rootViewMap.addView(1, operationRootView);
+        //Dock and resore or views
+        dockAndRestoreViewMap(iViewMap);
+        dockAndRestoreViewMap(opViewMap);
+        dockAndRestoreViewMap(editorViewMap);
+        dockAndRestoreViewMap(treeViewMap);
+        dockAndRestoreViewMap(consoleViewMap);
+        dockAndRestoreViewMap(objectViewMap);
 
         //Set original rootwindow proportions
         setRootWindowProportions();
-        // mainDocks = new TabWindow(tempViewMap);
-        mainDocks.restore();
+
+        printToConsole("Windows has been restored.");
+
+    }
+
+    private void dockAndRestoreViewMap(final ViewMap iViewMap) {
+        for (int i = 1; i <= iViewMap.getViewCount(); i++) {
+            if (iViewMap.getView(i) != null) {
+                iViewMap.getView(i).dock();
+                iViewMap.getView(i).restore();
+            }
+        }
     }
 
     /**
@@ -874,7 +813,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
             final Integer currentId = mAttributePanelViewOperationIdMap.get(objectViewMap.getView(i));
 
-            if (objectViewMap.getView(i).getComponent() != null && currentId != null && operationId.toString().equals(currentId.toString())) {
+            if (objectViewMap.getView(i) != null && objectViewMap.getView(i).getComponent() != null && currentId != null && operationId.toString().equals(currentId.toString())) {
 
                 //Uncomment the line below if the focus should shift to the OjbectRootView
                 //objectViewMap.getView(i).requestFocusInWindow();
@@ -928,19 +867,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
                 consoleRootView));
     }
 
-    public void loadEmptyProject() {
-    }
-
     public void setModel(GUIModel guiModel) {
         this.guiModel = guiModel;
-    }
-
-    public void resetView(GUIModel guiModel) {
-        this.removeAll();
-        this.guiModel = guiModel;
-        initJFrame();
-        createRootWindow();
-        setStartingWindowsProperties();
-        setRootDropDisabled();
     }
 }

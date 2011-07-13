@@ -1,13 +1,14 @@
 package sequenceplanner;
 
 import java.awt.Rectangle;
+import java.io.File;
 import javax.swing.SwingUtilities;
 
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import sequenceplanner.IO.ReadFromProcessSimulateTextFile;
+import sequenceplanner.IO.txt.ReadFromProcessSimulateTextFile;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -66,14 +67,15 @@ public class SequencePlanner {
             System.out.println("arg " + arg);
         }
 
-        //To Read from file att start up
+        //To Read from file at start up
         if(args.length >= 2) {
             if(args[0].equals("fromPS")) {
-
                 final String path = args[1];
-                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, gc.getModel());
-                final boolean result = rftf.run();
-                GUIView.printToConsole("Result from text file parse: " + result);
+                final File file = new File(path);
+                gc.parseTextFile(file);
+//                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, gc.getModel());
+//                final boolean result = rftf.run();
+//                GUIView.printToConsole("Result from text file parse: " + result);
             }
         }
 

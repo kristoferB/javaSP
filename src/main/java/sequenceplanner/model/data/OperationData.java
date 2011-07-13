@@ -17,7 +17,7 @@ import java.util.Set;
 import sequenceplanner.condition.Condition;
 
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 
 /**
  *

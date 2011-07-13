@@ -1,7 +1,7 @@
 package sequenceplanner.model.SOP;
 
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
+import sequenceplanner.visualization.algorithms.RelateTwoOperations;
 
 /**
  *

@@ -48,9 +48,9 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
@@ -658,6 +658,9 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 
                 //Check if operation in loop is the operation of interest
                 if (Integer.toString(opDataId).equals(iIdOfOperationToRemove.toString())) {
+
+                    //Save View, otherwise all non saved operations for this view are not redrawn
+                    OperationViewController.save(this);
 
                     //Remove node from sop node data structure
                     snToolbox.removeNode(node, mViewData.mSopNodeForGraphPlus.getRootSopNode(false));

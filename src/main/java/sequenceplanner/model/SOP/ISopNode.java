@@ -1,7 +1,7 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**

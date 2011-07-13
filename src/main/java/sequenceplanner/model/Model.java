@@ -1,7 +1,6 @@
 package sequenceplanner.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,17 +8,15 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
-import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import sequenceplanner.condition.Condition;
 
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
-import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.FolderData;
 import sequenceplanner.model.data.LiasonData;
@@ -27,9 +24,6 @@ import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.model.data.ViewData;
-
-import sequenceplanner.view.operationView.Constants;
-import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
@@ -44,6 +38,7 @@ public class Model extends Observable implements IModel {
     public static final String VARIABLE_ROOT_NAME = "Variables";
     static Logger logger = Logger.getLogger(Model.class);
     private static int idConter = 0;
+    private static int idAfterInit = 0;
     private static int propertyIdCounter = 0;
     //Holds a cache for easy access to all operations names and paths
     private NameCacheMap nameCache;
@@ -67,6 +62,11 @@ public class Model extends Observable implements IModel {
     protected TreeNode viewRoot;
 
     public Model() {
+        init();
+    }
+
+    private void init() {
+        idConter = 0;
         treeRoot = new TreeNode(new Data("root", newId()));
 
         //Initalize tree
@@ -92,6 +92,7 @@ public class Model extends Observable implements IModel {
         nameCache = new NameCacheMap();
         operationViews = new TreeMap<Integer, ViewData>();
 
+        idAfterInit = idConter;
     }
 
     @Override
@@ -950,6 +951,8 @@ public class Model extends Observable implements IModel {
         for (int i = 0; i < getRoot().getChildCount(); i++) {
             getRoot().getChildAt(i).removeAllChildren();
         }
+
+        idConter = idAfterInit;
     }
 
     public List<TreeNode> getAllOperations() {

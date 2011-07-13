@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
-import sequenceplanner.condition.AStringToConditionParser;
-import sequenceplanner.condition.ActionAsTextInputToConditionParser;
+import sequenceplanner.condition.parser.AStringToConditionParser;
+import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.GuardAsTextInputToConditionParser;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**

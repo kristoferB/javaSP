@@ -2,8 +2,8 @@ package sequenceplanner.model.SOP;
 
 import java.util.HashSet;
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
+import sequenceplanner.visualization.algorithms.RelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**

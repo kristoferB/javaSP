@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import javax.swing.JFileChooser;
-import javax.swing.event.TreeModelListener;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
@@ -43,23 +42,24 @@ public class GUIModel {
         return model;
     }
 
+    public String getProjectName() {
+        if (projectFile != null) {
+            String name = projectFile.getName();
+            if (name.endsWith(Constants.FILEFORMAT)) {
+                final int length = name.lastIndexOf(Constants.FILEFORMAT);
+                name = name.substring(0, length);
+            }
+            return name;
+        }
+        return "";
+    }
+
     /**
      *
      * @return all OperationViews in a list.
      */
     public LinkedList<OperationView> getOperationViews() {
         return operationViews;
-    }
-
-    /**
-     * Should not use this method
-     * @return
-     */
-    public OperationView createNewOpView() {
-        final OperationView opView = new OperationView(this.model, "Opereration view " + Model.newId());
-
-        operationViews.addLast(opView);
-        return opView;
     }
 
     /**
@@ -83,16 +83,6 @@ public class GUIModel {
         System.exit(0);
     }
 
-    /**
-     * Adds all current operations to a new OperationView
-     */
-    public OperationView addAllOperations() {
-        OperationView ov = new OperationView(this.model, "Operation View");
-        ov.open(this.model.getChildren(model.getOperationRoot()));
-        operationViews.addLast(ov);
-        return ov;
-    }
-
     public ResourceView getResourceView() {
         return resourceView;
     }
@@ -107,32 +97,18 @@ public class GUIModel {
 
     public boolean openModel() {
         JFileChooser fc = new JFileChooser(path);
-        
+        //Remember path for next time a FileChooser is opened
+        path = fc.getCurrentDirectory().getPath();
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
-//        removeAllOpViews();
-        
-        path = fc.getCurrentDirectory().getPath();
-                
+
         if (answer == JFileChooser.APPROVE_OPTION) {
-            openModel(fc.getSelectedFile());
+            final File file = fc.getSelectedFile();
+            projectFile = file;
+            openModel(file);
+
             getModel().reloadNamesCache();
 
-            //This code makes it impossible to click after reopen
-//            try {
-//
-//                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
-//                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
-//                        ViewData toOpen = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
-//                        createNewOpView(toOpen);
-//                        if(toOpen.isClosed())
-//                            operationViews.getLast().setClosed(true);
-//                    }
-//            }
-//
-//            } catch (ClassCastException e) {
-//                System.out.println("Could not cast first child of viewroot to viewData");
-//            }
             return true;
         }
         return false;
@@ -169,9 +145,18 @@ public class GUIModel {
         return true;
     }
 
+    /**
+     * Save project.<br/>
+     * Project is saved to an earlier set project if parameter <p>saveAs</p>
+     * is set to false and an earlier project exist.<br/>
+     * Otherwise is the user given a FileChooser in order to choose project to open.
+     * @param saveAs true = Show FileChooser,
+     * @return true if ok else false
+     */
     public boolean saveModel(boolean saveAs) {
 
-        if (projectFile == null && !saveAs) {
+        //Check if project has been saved before.
+        if (projectFile == null) {
             saveAs = true;
         }
 
@@ -182,9 +167,13 @@ public class GUIModel {
             fc.setFileFilter(SPFileFilter.getInstance());
 
             int fileResult = fc.showSaveDialog(null);
-            
+
+            //User aborted?
+            if (fc.getSelectedFile() == null) {
+                return false;
+            }
             path = fc.getSelectedFile().getPath();
-            
+
             if (fileResult == JFileChooser.APPROVE_OPTION) {
                 filepath = fc.getSelectedFile().getAbsolutePath();
 
@@ -194,7 +183,9 @@ public class GUIModel {
                 if (filepath.endsWith(Constants.FILEFORMAT)) {
 
                     projectFile = saveModelToFile(filepath);
-                    return true;
+                    if (projectFile != null) {
+                        return true;
+                    }
                 }
             }
         } else {
@@ -204,6 +195,9 @@ public class GUIModel {
         return false;
     }
 
+    /**
+     * Not used
+     */
     public void saveBackup() {
         if (projectFile != null) {
             String path = projectFile.getParent();
@@ -221,17 +215,18 @@ public class GUIModel {
     }
 
     public File saveModelToFile(String filepath) {
-        File file = new File(filepath);
+        final File file = new File(filepath);
 
         try {
             file.createNewFile();
-            saveModelToFile(file);
-            return file;
+            if (saveModelToFile(file)) {
+                return file;
+            }
 
         } catch (IOException ex) {
             System.out.println("File save error\n " + ex.getMessage());
-            return null;
         }
+        return null;
     }
 
     public boolean saveModelToFile(File file) {
@@ -265,12 +260,12 @@ public class GUIModel {
         }
         return new OperationView(this.model, data);
     }
-    
-    public String getPath(){
+
+    public String getPath() {
         return path;
     }
-    
-    public void setPath(String path){
+
+    public void setPath(String path) {
         this.path = path;
     }
 }

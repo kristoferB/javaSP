@@ -5,11 +5,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.ISopNodeToolbox;
+import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 import static org.junit.Assert.*;
 

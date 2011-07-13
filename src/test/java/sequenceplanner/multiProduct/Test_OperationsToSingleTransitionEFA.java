@@ -6,7 +6,7 @@ import org.junit.Test;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
+import sequenceplanner.model.SOP.algorithms.SopNodeFromSPGraphModel;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.ViewData;

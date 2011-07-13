@@ -14,14 +14,15 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
-import sequenceplanner.algorithms.visualization.StartVisualization;
+import sequenceplanner.visualization.algorithms.StartVisualization;
 import sequenceplanner.gui.controller.GUIController;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
@@ -110,7 +111,7 @@ public class OperationViewController implements Observer {
         }
     }
 
-    private static void save(final OperationView iOpView) {
+    public static void save(final OperationView iOpView) {
         if (iOpView == null) {
             return;
         }

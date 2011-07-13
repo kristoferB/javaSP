@@ -25,12 +25,12 @@ import sequenceplanner.xml.ViewType;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import java.util.HashMap;
-import sequenceplanner.condition.AStringToConditionParser;
-import sequenceplanner.condition.ActionAsTextInputToConditionParser;
+import sequenceplanner.condition.parser.AStringToConditionParser;
+import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.GuardAsTextInputToConditionParser;
-import sequenceplanner.model.SOP.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
@@ -51,7 +51,6 @@ public class ConvertFromXML {
     }
 
     public Model convert(SequencePlannerProjectFile project) {
-        model.clearModel();
 
         model.setCounter(project.getIdCounter());
 
@@ -71,7 +70,6 @@ public class ConvertFromXML {
         return this.model;
     }
 
-
     private void getOperationData(SequencePlannerProjectFile.Operations inputX) {
         for (Operation opX : inputX.getOperation()) {
             final TreeNode tn = model.createModelOperationNode(opX.getName(), opX.getId());
@@ -81,12 +79,15 @@ public class ConvertFromXML {
                 opData.setDescription(opX.getOperationData().getDescription());
             }
 
-            if (!opX.getOperationData().getPreConditionSet().getCondition().isEmpty()) {
-                getConditions(opData, opX.getOperationData().getPreConditionSet().getCondition(), ConditionType.PRE);
+            if (opX.getOperationData().getPreConditionSet() != null) {
+                if (opX.getOperationData().getPreConditionSet().getCondition() != null) {
+                    getConditions(opData, opX.getOperationData().getPreConditionSet().getCondition(), ConditionType.PRE);
+                }
             }
-
-            if (!opX.getOperationData().getPostConditionSet().getCondition().isEmpty()) {
-                getConditions(opData, opX.getOperationData().getPostConditionSet().getCondition(), ConditionType.POST);
+            if (opX.getOperationData().getPostConditionSet() != null) {
+                if (opX.getOperationData().getPostConditionSet().getCondition() != null) {
+                    getConditions(opData, opX.getOperationData().getPostConditionSet().getCondition(), ConditionType.POST);
+                }
             }
         }
     }

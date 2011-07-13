@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
-import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
+import sequenceplanner.model.SOP.algorithms.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;

@@ -2,20 +2,19 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
 import javax.swing.JFileChooser;
-import javax.swing.JProgressBar;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
+
 
 import net.infonode.docking.View;
-import sequenceplanner.IO.ReadFromProcessSimulateTextFile;
-import sequenceplanner.algorithms.visualization.SelectOperationsDialog;
-import sequenceplanner.algorithms.visualization.StartVisualization;
+import sequenceplanner.IO.txt.ReadFromProcessSimulateTextFile;
+import sequenceplanner.visualization.algorithms.SelectOperationsDialog;
 
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -25,10 +24,8 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.SopNode;
-import sequenceplanner.model.SOP.SopNodeFromViewData;
+import sequenceplanner.model.SOP.algorithms.SopNodeFromViewData;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.view.operationView.ClickMenuOperationView;
 import sequenceplanner.view.operationView.OperationView;
@@ -63,19 +60,35 @@ public class GUIController {
 
         addListeners();
 
+        //Listener for top right exit button-------------------------------------
+        mGuiView.addWindowListener(new java.awt.event.WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent winEvt) {
+                exitProject();
+            }
+        });//--------------------------------------------------------------------
     }
 
     private void addListeners() {
-        mGuiView.addCreateOPL(new CreateOpListener());
-        mGuiView.addCreateRVL(new CreateRVListener());
-        mGuiView.addExitL(new ExitListener());
-        mGuiView.addPrefL(new PrefListener());
-        mGuiView.addAddCellsL(new AddAllListener());
+        //File
         mGuiView.addOpenL(new OpenListener());
         mGuiView.addSaveL(new SaveListener());
         mGuiView.addSaveAsL(new SaveAsListener());
         mGuiView.addCloseL(new CloseListener());
+        mGuiView.addOperationsFromFileL(new AddOperationsFromFileListener());
+        mGuiView.addExitL(new ExitListener());
+
+        //Edit
+        mGuiView.addPrefL(new PrefListener());
+        mGuiView.addAddCellsL(new AddAllListener());
+
+        //Windows
+        mGuiView.addCreateOPL(new CreateOpListener());
+        mGuiView.addCreateRVL(new CreateRVListener());
         mGuiView.addDefWindL(new DefaultListener());
+
+        //Mix of different...
         mGuiView.addSaveEFAoL(new SaveEFAoListener());
         mGuiView.addSaveEFArL(new SaveEFArListener());
         mGuiView.addSaveCostL(new SaveCostListener());
@@ -85,16 +98,29 @@ public class GUIController {
         mGuiView.addEFAForTransL(new EFAForTListener());
         mGuiView.addUpdateModelL(new UpdateModelListener());
         mGuiView.addEFAForMPL(new EFAForMPListener());
-        
 
+        //Visualization
         mGuiView.addBruteForceVisualizationL(new BruteForceVisualizationListener());
-        mGuiView.addOperationsFromFileL(new AddOperationsFromFileListener());
+
+        //About
         mGuiView.addShortCommandsL(new AddShortCommandsListener());
         mGuiView.addAboutL(new AddAboutListener());
     }
-    //Listener classes
 
-    //private methods
+    public GUIView getView() {
+        return this.mGuiView;
+    }
+
+    public Model getModel() {
+        return mGuiModel.getModel();
+    }
+
+    public GUIModel getGUIModel() {
+        return mGuiModel;
+    }
+
+    //Listener classes
+    //File menu listenrs
     /**
      * To add a {@link OperationView} to a operation tab in the operationRootView
      * @param iOperationView the view to add.
@@ -113,37 +139,6 @@ public class GUIController {
         iOperationView.addGraphComponentListener(new OperationViewGraphicsListener(iOperationView));
     }
 
-    /**
-     * Creates a new Operations View in the GUIModel using the
-     * ViewData. If an operation with the same name exists,
-     * this method shifts focus to that Operation View instead.
-     *
-     * @param data ViewData on which the operationview is based
-     */
-    public void addNewOpTab(ViewData data) {
-        if (!isOpened(data)) {
-            final OperationView opView = mGuiModel.createNewOpView(data);
-            addNewOpTab(opView);
-
-        } else {
-            mGuiView.setFocusedOperationView(data);
-            GUIView.printToConsole("Already open!");
-        }
-    }
-
-    public GUIView getView() {
-        return this.mGuiView;
-    }
-
-    public Model getModel() {
-        return mGuiModel.getModel();
-    }
-
-    public GUIModel getGUIModel() {
-        return mGuiModel;
-    }
-
-    //File menu listenrs
     private class CreateOpListener implements ActionListener {
 
         @Override
@@ -165,6 +160,12 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            exitProject();
+        }
+    }
+
+    private void exitProject() {
+        if (askForSaveOfModel("Save project before exit?")) {
             mGuiModel.exit();
         }
     }
@@ -183,8 +184,17 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final OperationView opView = mGuiModel.addAllOperations();
-            addNewOpTab(opView);
+            final OperationView opView = mOpViewController.createOperationView();
+            final ISopNode rootNode = opView.mViewData.mSopNodeForGraphPlus.getRootSopNode(false);
+            final List<TreeNode> allOperationList = getModel().getAllOperations();
+            for (final TreeNode tn : allOperationList) {
+                if (Model.isOperation(tn.getNodeData())) {
+                    final OperationData opData = (OperationData) tn.getNodeData();
+                    final ISopNode newNode = new SopNodeOperation(opData);
+                    rootNode.addNodeToSequenceSet(newNode);
+                }
+            }
+            opView.redrawGraph();
         }
     }
     //Project menu listeners
@@ -193,7 +203,10 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            openModel();
+            if (askForSaveOfModel("Save project before open?")) {
+                reloadAnEmptyProject(false);
+                openModel();
+            }
         }
     }
 
@@ -209,7 +222,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            saveModel(false);
+            saveModel(true);
         }
     }
 
@@ -217,9 +230,23 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiModel = new GUIModel();
-            mGuiView.resetView(mGuiModel);
-            mGuiView.closeAllViews();
+            if (askForSaveOfModel("Save project before close?")) {
+                reloadAnEmptyProject(true);
+            }
+        }
+    }
+
+    /**
+     * Go back to an empty project.<br/>
+     * @param iPrintToConsole true == a text is written in console, false == no text
+     */
+    public void reloadAnEmptyProject(boolean iPrintToConsole) {
+        mGuiView.removeAllViews();
+        getModel().clearModel();
+        getModel().rootUpdated();
+        mGuiView.changeTitle(null);
+        if (iPrintToConsole) {
+            GUIView.printToConsole("A New Project created");
         }
     }
 
@@ -227,7 +254,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            defaultWindows();
+            mGuiView.setWindowLayout();
         }
     }
 
@@ -236,7 +263,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -244,7 +271,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -252,7 +279,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -260,7 +287,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -268,7 +295,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -277,7 +304,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -285,7 +312,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -293,7 +320,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
 
@@ -301,17 +328,16 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mGuiView.printToConsole("Not supported yet.");
+            GUIView.printToConsole("Not supported yet.");
         }
     }
-
 
     class OperationIdTextFieldListener implements ActionListener {
 
         int id;
         AttributePanelController ctrl;
 
-        public OperationIdTextFieldListener(int id , AttributePanelController ctrl) {
+        public OperationIdTextFieldListener(int id, AttributePanelController ctrl) {
             super();
             this.id = id;
             this.ctrl = ctrl;
@@ -321,14 +347,14 @@ public class GUIController {
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equalsIgnoreCase("set name")) {
                 JTextField field = (JTextField) e.getSource();
-                
+
                 System.out.println("setname");
                 if (mGuiModel.getModel().getOperation(id) != null) {
                     mGuiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
                     mOpViewController.update(null, ctrl.getModel());
                     System.out.println("setname");
-                    
-                }   
+
+                }
                 mOpViewController.update(null, ctrl.getModel());
             }
         }
@@ -348,7 +374,6 @@ public class GUIController {
 
             //Start visualization
             new SelectOperationsDialog(getModel(), opView);
-//            new StartVisualization(opView);
         }
     }
 
@@ -359,13 +384,26 @@ public class GUIController {
             final JFileChooser dialog = new JFileChooser(getGUIModel().path);
 
             if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final String path = dialog.getSelectedFile().getAbsolutePath();
-                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, getModel());
-                final boolean result = rftf.run();
-                GUIView.printToConsole("Result from text file parse: " + result);
+                final File file = dialog.getSelectedFile();
+
+                parseTextFile(file);
             }
         }
+    }
 
+    public void parseTextFile(final File iFile) {
+        if (iFile != null) {
+            final String path = iFile.getAbsolutePath();
+            final String name = iFile.getName();
+
+            final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, getModel());
+            final boolean result = rftf.run();
+            if (result) {
+                GUIView.printToConsole("Parse of " + name + " was ok!");
+                return;
+            }
+        }
+        GUIView.printToConsole("Problem to parse from file!");
     }
 
     class AddShortCommandsListener implements ActionListener {
@@ -438,66 +476,66 @@ public class GUIController {
      */
     private void openModel() {
         if (mGuiModel.openModel()) {
-            System.out.println("open was ok");
 
+            //To redraw the operation sequences in each operation view
             try {
-
                 for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
                     if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
                         final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
                         System.out.println("viewData to open: " + viewData.getName());
-
                         final OperationView opView = mOpViewController.createOperationView(viewData);
-
                         System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false));
-
                         final SopNodeFromViewData trans = new SopNodeFromViewData(viewData, viewData.mSopNodeForGraphPlus.getRootSopNode(false));
-
-                        System.out.println(viewData.mNodeCellDataLayoutMap);
-//                        final OperationView opView = mGuiModel.createNewOpView(viewData);
-
                         opView.redrawGraph();
-//
-//                        new SopNodeToolboxSetOfOperations().drawNode(viewData.mSopNodeRoot, opView, viewData.mCellDataSet);
-//
-//                        //Set conditions
+                        //Set conditions
                         mGuiModel.getModel().setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
-//
-//                        //Include tab for view
-//                        addNewOpTab(opView);
-
-
-//                        final OperationView opView = guiModel.createNewOpView(viewData);
-//                        createNewOpView(viewData);
-//                        if (viewData.isClosed()) {
-//                            operationViews.getLast().setClosed(true);
-//                        }
                     }
                 }
+
+                final String name = mGuiModel.getProjectName();
+                getView().changeTitle(name);
+                GUIView.printToConsole("Project " + name + " opened!");
+                return;
 
             } catch (ClassCastException e) {
                 System.out.println("Could not cast first child of viewroot to viewData");
             }
-
-//            guiView.closeAllViews(); //BIG PROBLEM WITH METHOD, BLOCKS SP
-//            for (OperationView o : guiModel.getOperationViews()) {
-//                guiView.addNewOpTab(o.toString(), o);
-//                if (o.isClosed()) {
-//                    guiView.getOpViewMap().getView(guiView.getOpViewIndex()).close();
-//                }
-//            }
-
         }
-        GUIView.printToConsole("New model opened!");
+        GUIView.printToConsole("Project could not be opened!");
     }
 
-    private void saveModel(boolean saveAs) {
-        mGuiModel.saveModel(saveAs);
+    /**
+     *
+     * @param saveAs true = do saveAs, false = "normal" save
+     */
+    private boolean saveModel(boolean saveAs) {
+        if (mGuiModel.saveModel(saveAs)) {
+            final String name = mGuiModel.getProjectName();
+            getView().changeTitle(name);
+            GUIView.printToConsole("Project " + name + " saved!");
+            return true;
+        }
+        return false;
     }
 
-    private void defaultWindows() {
-        mGuiView.setWindowLayout();
-
+    /**
+     * Saves proejct if user answers yes.<br/>
+     * @param iQuestion text in question
+     * @return true if user pressed yes or no, false if user aborted or exit
+     */
+    private boolean askForSaveOfModel(final String iQuestion) {
+        final int choice = JOptionPane.showConfirmDialog(null, iQuestion);
+        switch (choice) {
+            case 0: //Yes
+                if (saveModel(false)) {
+                    return true;
+                }
+                return false;
+            case 1: //No
+                return true;
+            default:
+        }
+        return false; //Abort or exit
     }
 
     /**
@@ -513,26 +551,24 @@ public class GUIController {
         }
         return false;
     }
-    
+
     /**
      * Saves an OperationData object to the main project model.
      * @param data 
      */
-    public void saveOperationToModel(OperationData data){
+    public void saveOperationToModel(OperationData data) {
         TreeNode dataNode = new TreeNode(data);
         mGuiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
     }
+
     public OperationData addPropertyPanelView(OperationData data) {
         AttributePanel panel = new AttributePanel(data);
         if (mGuiView.addAttributePanelView(panel)) {
-            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(),this);
+            AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(), this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
             mGuiModel.getModel().addObserver(ctrl);
             GUIView.printToConsole("Operation " + data.getName() + " opened.");
-        } else {
-            GUIView.printToConsole("Operation already opened.");
-
         }
         return data;
     }
