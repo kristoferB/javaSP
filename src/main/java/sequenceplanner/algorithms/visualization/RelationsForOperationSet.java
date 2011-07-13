@@ -5,6 +5,7 @@ import java.util.Set;
 import net.sourceforge.waters.subject.module.ModuleSubject;
 import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
@@ -40,6 +41,7 @@ public class RelationsForOperationSet {
         //Translate operations to EFA
         final ModuleSubject ms = formalMethods.getModuleSubject(mRC.getOsetSopNode(), mRC.getOfinishsetSopNode());
         if (ms == null) {
+            GUIView.printToConsole("Problem with translation from op to efa!");
             System.out.println("Problem with translation from op to efa!");
             return 0;
         }
@@ -47,6 +49,7 @@ public class RelationsForOperationSet {
         //flatten out (EFA->DFA, Module -> Automata)
         final Automata automata = formalMethods.flattenOut(ms);
         if (automata == null) {
+            GUIView.printToConsole("Problem with flatten out!");
             System.out.println("Problem with flatten out!");
             return 0;
         }
@@ -58,6 +61,7 @@ public class RelationsForOperationSet {
         //synthesis
         final Automaton automaton = formalMethods.synthesize(automata);
         if (automaton == null) {
+            GUIView.printToConsole("Problem with synthesis!");
             System.out.println("Problem with synthesis!");
             return 0;
         }
@@ -66,6 +70,7 @@ public class RelationsForOperationSet {
 
         //Check if supervisor exists
         if (automaton.nbrOfStates() == 0) {
+            GUIView.printToConsole("No supervisor found :( Specifications are to strict! \n 1) Modifiy conditions \n 2) Modifiy what operations that have to finish");
             System.out.println("No supervisor found :( Specifications are to strict! \n 1) Modifiy conditions \n 2) Modifiy what operations that have to finish");
             return 1;
         }
@@ -76,6 +81,7 @@ public class RelationsForOperationSet {
         //Relation identification
         final RelationIdentification ri = new RelationIdentification(automaton, mRC, eventStateSpaceMap);
         if (!ri.run()) {
+            GUIView.printToConsole("Problem with relation identification!");
             System.out.println("Problem with relation identification!");
             return 0;
         }

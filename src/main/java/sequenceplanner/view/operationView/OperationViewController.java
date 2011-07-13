@@ -196,6 +196,7 @@ public class OperationViewController implements Observer {
         iOpView.getGraph().deleteMarkedCells();
 
         //Start visualization
-        final StartVisualization sv = new StartVisualization(iOpView, rootForOperationsToInclude, rootForOperationsToView);
+        final StartVisualization sv = new StartVisualization(iOpView, rootForOperationsToInclude, rootForOperationsToView, new SopNode(), null, null);
+        sv.start();
     }
 }

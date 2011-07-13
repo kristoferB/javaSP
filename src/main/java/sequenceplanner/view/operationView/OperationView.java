@@ -3,13 +3,10 @@ package sequenceplanner.view.operationView;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
-import java.util.LinkedList;
-import java.util.Stack;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -43,22 +40,15 @@ import sequenceplanner.view.operationView.graphextension.SPGraphComponent;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.model.mxICell;
+
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.DrawSopNode;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.ISopNodeToolbox;
-import sequenceplanner.model.SOP.SopNode;
-import sequenceplanner.model.SOP.SopNodeFromSPGraphModel;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeToolboxSetOfOperations;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -77,7 +67,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
 //    private boolean isClosed;
 //    private boolean isHidden;
     public ViewData mViewData;
-    final SopNodeForGraphPlus mSopNodeForGraphPlus;
 
     //TODO refactor name to SOPView
     public OperationView(Model model, String name) {
@@ -89,7 +78,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         graph = new SPGraph(graphModel);
         graphComponent = new SPGraphComponent(graph, this);
         graphComponent.setGridVisible(true);
-        mSopNodeForGraphPlus = new SopNodeForGraphPlus();
         graphModel.addListener(mxEvent.CHANGE, new mxIEventListener() {
 
             @Override
@@ -406,7 +394,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         //External Listener------------------------------------------------------
         bar.add(createAction("SavePM", new OperationViewController.SaveOperationView(this), "resources/icons/save.png"));
 //        bar.add(createAction("LocalVisualization", new OperationViewController.VisualizeOperationView(this,true), "resources/icons/local_visualization.png"));
-        bar.add(createAction("GlobalVisualization", new OperationViewController.VisualizeOperationView(this,false), "resources/icons/global_visualization.png"));
+//        bar.add(createAction("GlobalVisualization", new OperationViewController.VisualizeOperationView(this,false), "resources/icons/global_visualization.png"));
         //-----------------------------------------------------------------------
 //        Action a = createAction("Save",
 //                new ActionListener() {
@@ -698,46 +686,5 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     public boolean redrawGraph() {
         new SopNodeToolboxSetOfOperations().drawNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), getGraph(), mViewData.mNodeCellDataLayoutMap);
         return true;
-    }
-
-    /**
-     * To store {@link ISopNode} structure info for this {@link OperationView}
-     */
-    private class SopNodeForGraphPlus {
-
-        private ISopNode mRootSopNode = null;
-        private Map<ISopNode, Cell> mNodeCellMap = null;
-
-        public SopNodeForGraphPlus() {
-            this.getSopNodeForGraphPlus();
-        }
-
-        public ISopNode getRootSopNode(final boolean iUpDateBeforeReturn) {
-            if (iUpDateBeforeReturn) {
-                this.getSopNodeForGraphPlus();
-            }
-            return mRootSopNode;
-        }
-
-        public Map<ISopNode, Cell> getNodeCellMap(final boolean iUpDateBeforeReturn) {
-            if (iUpDateBeforeReturn) {
-                this.getSopNodeForGraphPlus();
-            }
-            return mNodeCellMap;
-        }
-
-        /**
-         * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
-         * @param ioMap key: {@link ISopNode} object, value: {@link Cell} for node
-         * @return the root {@link ISopNode}
-         */
-        private void getSopNodeForGraphPlus() {
-            //Create a new sop node root aka theSopNode
-            final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(getGraphModel(), new SopNode());
-            //get root sop
-            mRootSopNode = snfspgm.getSopNodeRoot();
-            //get Cell for each node
-            mNodeCellMap = snfspgm.getNodeCellMap();
-        }
     }
 }

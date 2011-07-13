@@ -14,6 +14,7 @@ import javax.swing.event.TreeModelListener;
 
 import net.infonode.docking.View;
 import sequenceplanner.IO.ReadFromProcessSimulateTextFile;
+import sequenceplanner.algorithms.visualization.SelectOperationsDialog;
 import sequenceplanner.algorithms.visualization.StartVisualization;
 
 import sequenceplanner.gui.model.GUIModel;
@@ -346,7 +347,8 @@ public class GUIController {
             final OperationView opView = mOpViewController.createOperationView();
 
             //Start visualization
-            new StartVisualization(opView);
+            new SelectOperationsDialog(getModel(), opView);
+//            new StartVisualization(opView);
         }
     }
 

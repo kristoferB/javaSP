@@ -117,6 +117,9 @@ public class SEGA extends EGA {
     }
 
     private boolean allowedNamePrefixForCondition(final String iCondition, final Set<String> iConditionsToInclude) {
+        if (iConditionsToInclude == null) {
+            return true;
+        }
         for (final String condition : iConditionsToInclude) {
             if (iCondition.equals(condition)) {
                 return true;
