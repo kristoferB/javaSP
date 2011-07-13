@@ -95,7 +95,7 @@ public class GUIModel {
         operationViews.clear();
     }
 
-    public boolean openModel() {
+    public Model openModel() {
         JFileChooser fc = new JFileChooser(path);
         //Remember path for next time a FileChooser is opened
         path = fc.getCurrentDirectory().getPath();
@@ -105,13 +105,11 @@ public class GUIModel {
         if (answer == JFileChooser.APPROVE_OPTION) {
             final File file = fc.getSelectedFile();
             projectFile = file;
-            openModel(file);
-
-            getModel().reloadNamesCache();
-
-            return true;
+            Model model = openModel(file);
+                    
+            return model;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -119,30 +117,32 @@ public class GUIModel {
      * @param inputFile
      * @return
      */
-    public boolean openModel(File inputFile) {
+    public Model openModel(File inputFile) {
 
         SequencePlannerProjectFile project = null;
+
+        System.out.println(SequencePlannerProjectFile.class.getPackage().getName());
 
         try {
             javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(SequencePlannerProjectFile.class.getPackage().getName());
             javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
             project = (SequencePlannerProjectFile) unmarshaller.unmarshal(inputFile);
 
+            final ConvertFromXML con = new ConvertFromXML(new Model());
+
+            Model model = con.convert(project);
+
+            
+
+            return model;
+
         } catch (javax.xml.bind.JAXBException ex) {
             java.util.logging.Logger.getLogger("global").log(
                     java.util.logging.Level.SEVERE, null, ex); // NOI18N
-            return false;
         } catch (ClassCastException ex) {
             System.out.println("Class Cast Error in openModel");
-            return false;
         }
-
-        ConvertFromXML con = new ConvertFromXML(getModel());
-        setModel(con.convert(project));
-
-        getModel().rootUpdated();
-
-        return true;
+        return null;
     }
 
     /**

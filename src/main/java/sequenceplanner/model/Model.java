@@ -38,7 +38,6 @@ public class Model extends Observable implements IModel {
     public static final String VARIABLE_ROOT_NAME = "Variables";
     static Logger logger = Logger.getLogger(Model.class);
     private static int idConter = 0;
-    private static int idAfterInit = 0;
     private static int propertyIdCounter = 0;
     //Holds a cache for easy access to all operations names and paths
     private NameCacheMap nameCache;
@@ -91,8 +90,6 @@ public class Model extends Observable implements IModel {
 
         nameCache = new NameCacheMap();
         operationViews = new TreeMap<Integer, ViewData>();
-
-        idAfterInit = idConter;
     }
 
     @Override
@@ -951,8 +948,6 @@ public class Model extends Observable implements IModel {
         for (int i = 0; i < getRoot().getChildCount(); i++) {
             getRoot().getChildAt(i).removeAllChildren();
         }
-
-        idConter = idAfterInit;
     }
 
     public List<TreeNode> getAllOperations() {

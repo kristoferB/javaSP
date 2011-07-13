@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import sequenceplanner.IO.txt.ReadFromProcessSimulateTextFile;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
@@ -29,6 +28,7 @@ public class SequencePlanner {
         initiateLogger();
 
     }
+
     /**
      * Show splash.
      *
@@ -56,32 +56,30 @@ public class SequencePlanner {
     public static void main(final String[] args) {
 // Docking windwos should be run in the Swing thread
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        GUIModel model = new GUIModel();
-        GUIView view = new GUIView(model);
-        GUIController gc = new GUIController(model, view);
+        SwingUtilities.invokeLater(new Runnable() {
 
-        for(String arg : args ) {
-            System.out.println("arg " + arg);
-        }
+            @Override
+            public void run() {
+                GUIModel model = new GUIModel();
+                GUIView view = new GUIView(model);
+                GUIController gc = new GUIController(model, view);
 
-        //To Read from file at start up
-        if(args.length >= 2) {
-            if(args[0].equals("fromPS")) {
-                final String path = args[1];
-                final File file = new File(path);
-                gc.parseTextFile(file);
-//                final ReadFromProcessSimulateTextFile rftf = new ReadFromProcessSimulateTextFile(path, null, gc.getModel());
-//                final boolean result = rftf.run();
-//                GUIView.printToConsole("Result from text file parse: " + result);
+                for (String arg : args) {
+                    System.out.println("arg " + arg);
+                }
+
+                //To Read from file at start up
+                if (args.length >= 2) {
+                    if (args[0].equals("fromPS")) {
+                        final String path = args[1];
+                        final File file = new File(path);
+                        gc.parseTextFile(file);
+                    }
+                }
+
             }
-        }
+        });
 
-      }
-    });
-        
 
     }
 

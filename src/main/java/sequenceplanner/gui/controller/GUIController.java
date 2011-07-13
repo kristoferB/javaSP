@@ -31,6 +31,7 @@ import sequenceplanner.view.operationView.ClickMenuOperationView;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.operationView.graphextension.Cell;
+import sequenceplanner.view.treeView.TreeView;
 import sequenceplanner.view.treeView.TreeViewController;
 
 /**
@@ -204,7 +205,6 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (askForSaveOfModel("Save project before open?")) {
-                reloadAnEmptyProject(false);
                 openModel();
             }
         }
@@ -475,7 +475,25 @@ public class GUIController {
      * Tells the model to open a new project and adds all open views as tabs.
      */
     private void openModel() {
-        if (mGuiModel.openModel()) {
+        final Model newModel = getGUIModel().openModel();
+
+        
+        if (newModel != null) {
+
+            reloadAnEmptyProject(false);
+
+            System.out.println("operations" +newModel.getAllOperations().size());
+
+            //Update Model
+            getGUIModel().setModel(newModel);
+            System.out.println("operations" +newModel.getAllOperations().size());
+            System.out.println("operations" +mGuiModel.getModel().getAllOperations().size());
+
+//            TreeView tv = mGuiView.getTreeView();
+//            tv = new TreeView(newModel);
+
+            getModel().rootUpdated();
+            getModel().reloadNamesCache();
 
             //To redraw the operation sequences in each operation view
             try {
@@ -492,6 +510,7 @@ public class GUIController {
                     }
                 }
 
+                //Inform user of update
                 final String name = mGuiModel.getProjectName();
                 getView().changeTitle(name);
                 GUIView.printToConsole("Project " + name + " opened!");

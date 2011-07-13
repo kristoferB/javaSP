@@ -98,6 +98,7 @@ public class StartVisualization implements Runnable {
         if (!updateStatus("...finished")) {
             return;
         }
+        mStatus.mStopButton.setEnabled(false);
 //        System.out.println("\n--------------------------------");
 //        System.out.println("Get conditions");
 //        new SopNodeToolboxSetOfOperations().relationsToSelfContainedOperations(rc.getOsubsetSopNode());

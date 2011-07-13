@@ -25,6 +25,7 @@ import sequenceplanner.xml.ViewType;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.util.mxRectangle;
 import java.util.HashMap;
+import java.util.Map;
 import sequenceplanner.condition.parser.AStringToConditionParser;
 import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
@@ -92,14 +93,15 @@ public class ConvertFromXML {
         }
     }
 
-    private OperationData getConditions(OperationData data, List<String> prelist, final ConditionType iConditionType) {
-        System.out.println(prelist.size());
-        HashMap<ConditionType, Condition> map;
-        for (int i = 0; prelist.size() > i; i++) {
-            map = new HashMap<ConditionType, Condition>();
-            map.put(iConditionType, conditionFromString(prelist.get(i)));
-            data.setConditions(map, "Algebraic " + data.getAlgebraicCounter());
-            data.increaseAlgebraicCounter();
+    private OperationData getConditions(OperationData data, List<sequenceplanner.xml.Condition> iConditionList, final ConditionType iConditionType) {
+        
+        for (final sequenceplanner.xml.Condition condition : iConditionList) {
+            final String key = condition.getCondKey();
+            final String value = condition.getCondValue();
+
+            final Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
+            map.put(iConditionType, conditionFromString(value));
+            data.setConditions(map, key);
         }
 
         return data;

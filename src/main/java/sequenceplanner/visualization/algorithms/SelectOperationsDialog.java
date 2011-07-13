@@ -38,7 +38,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
     JPanel jpCond = null;
     JPanel jpStatus;
     JLabel jlStatus;
-    JButton stopButton;
+    JButton mStopButton;
     List<TreeNode> mOperationList = null;
     JCheckBox[][] mOpSelectionTable = null;
     Set<String> mConditionNameSet = null;
@@ -138,11 +138,11 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         //Status JPanel----------------------------------------------------------
         jpStatus = new JPanel();
         jlStatus = new JLabel("Status: not started");
-        stopButton = new JButton("Stop execution");
-        stopButton.setEnabled(false);
-        stopButton.addActionListener(this);
+        mStopButton = new JButton("Stop execution");
+        mStopButton.setEnabled(false);
+        mStopButton.addActionListener(this);
         jpStatus.add(jlStatus);
-        jpStatus.add(stopButton);
+        jpStatus.add(mStopButton);
 
         //Layout-------------------------------------------------------------
         setTitle("Operation selection");
@@ -199,13 +199,13 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
             sv = new StartVisualization(mOpView, allOperationsNode, operationsToViewNode, hasToFinishNode, conditionNameToIncludeSet, this);
             mGoOn = true;
             sv.start();
-            stopButton.setEnabled(true);
+            mStopButton.setEnabled(true);
 //                run(allOperationsNode, operationsToViewNode, hasToFinishNode, conditionNameToIncludeSet);
 
-        } else if (stopButton == e.getSource()) {
+        } else if (mStopButton == e.getSource()) {
             mGoOn = false;
             changeText("Stoped!");
-            stopButton.setEnabled(false);
+            mStopButton.setEnabled(false);
 
         } else if (mSButtonArray[0] == e.getSource()) {
             changeCheckBoxColumn(0, true);

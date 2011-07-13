@@ -33,12 +33,13 @@ import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
+import sequenceplanner.xml.Condition;
 
 /**
  *
  * @author Erik Ohlson
  */
-public class ConvertToXML{
+public class ConvertToXML {
 
     //TODO : Thread this
     private Model mModel;
@@ -46,6 +47,7 @@ public class ConvertToXML{
     public ConvertToXML(Model model) {
         this.mModel = model;
     }
+
     public SequencePlannerProjectFile convert() {
         ObjectFactory f = new ObjectFactory();
 //      f.createSequencePlannerProjectFileLiasons();
@@ -128,13 +130,13 @@ public class ConvertToXML{
         }
 
         final String pattern = getPatternForConditionsToExclude();
-        
+
         if (!data.getGlobalConditions().isEmpty()) {
             final OperationData.PreConditionSet pcsPre = new OperationData.PreConditionSet();
             pcsPre.getCondition().addAll(getConditions(data, pattern, ConditionType.PRE));
             dataX.setPreConditionSet(pcsPre);
         }
-        
+
         if (!data.getGlobalConditions().isEmpty()) {
             final OperationData.PostConditionSet pcsPost = new OperationData.PostConditionSet();
             pcsPost.getCondition().addAll(getConditions(data, pattern, ConditionType.POST));
@@ -155,22 +157,33 @@ public class ConvertToXML{
             }
             patternView += name;
         }
-        System.out.println(patternView);
+//        System.out.println(patternView);
         return patternView;
     }
 
-    private Set<String> getConditions(final sequenceplanner.model.data.OperationData iOpData, final String iConditionPattern, final ConditionType iConditionType) {
-        final Set<String> returnSet = new HashSet<String>();
-        for(final String viewName : iOpData.getGlobalConditions().keySet()) {
+    private Set<Condition> getConditions(final sequenceplanner.model.data.OperationData iOpData, final String iConditionPattern, final ConditionType iConditionType) {
+        final Set<Condition> conditionSet = new HashSet<Condition>();
+        for (final String viewName : iOpData.getGlobalConditions().keySet()) {
             final Matcher matcher = Pattern.compile(iConditionPattern).matcher(viewName);
 
-            if(!matcher.find() || iConditionPattern.equals("")) {
-                if(iOpData.getGlobalConditions().get(viewName).containsKey(iConditionType)) {
-                    returnSet.add(iOpData.getGlobalConditions().get(viewName).get(iConditionType).toString());
+            if (!matcher.find() || iConditionPattern.equals("")) {
+                if (iOpData.getGlobalConditions().get(viewName).containsKey(iConditionType)) {
+                    final Condition condition = new Condition();
+
+                    condition.setCondKey(viewName);
+
+                    final sequenceplanner.condition.Condition conditionToSave = iOpData.getGlobalConditions().get(viewName).get(iConditionType);
+                    String guard = conditionToSave.getGuard().toString();
+                    guard = guard.substring(1, guard.length() - 1);
+                    String action = conditionToSave.getAction().toString();
+                    action = action.substring(1, action.length() - 1);
+                    condition.setCondValue(guard + "/" + action);
+
+                    conditionSet.add(condition);
                 }
             }
         }
-        return returnSet;
+        return conditionSet;
     }
 
     private SequencePlannerProjectFile.Views getViewRoot() {

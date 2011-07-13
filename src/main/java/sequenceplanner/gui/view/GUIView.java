@@ -206,7 +206,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getCloseButtonProperties().setVisible(true);
         operationRootView.getViewProperties().getViewTitleBarProperties().getNormalProperties().getUndockButtonProperties().setVisible(true);
 
-
         iViewMap.addView(1, operationRootView);
 
         //Create consoltreeRoote
