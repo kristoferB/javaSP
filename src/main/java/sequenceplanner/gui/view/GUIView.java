@@ -114,6 +114,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         setStartingWindowsProperties();
         setRootDropDisabled();
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); //Take case of in GUIController
+        setFocusable(true); //To enable key listener
+
     }
 
     public ViewMap getOpViewMap() {

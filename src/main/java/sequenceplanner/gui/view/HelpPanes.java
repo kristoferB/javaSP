@@ -10,45 +10,42 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
-*
-* @author Peter
-*/
-public class HelpPanes extends JFrame{
+ *
+ * @author Peter
+ */
+public class HelpPanes extends JFrame {
 
-    public HelpPanes(String window){
+    public HelpPanes(String window) {
 
         JTextArea text;
         JLabel lb;
-        if(window.equals("Short Commands")){
+        if (window.equals("Short Commands")) {
             ShortCommands sc = new ShortCommands();
-            lb = new JLabel("Short Commands",JLabel.CENTER);
-            text = new JTextArea(sc.getString(), 25,40);
-
-
-        }
-        else{ //if(window.equals("About")){
+            lb = new JLabel("Short Commands", JLabel.CENTER);
+            text = new JTextArea(sc.getString(), 25, 40);
+        } else { //if(window.equals("About")){
             About sc = new About();
-            lb = new JLabel("About",JLabel.CENTER);
-            text = new JTextArea(sc.getString(), 25,40);
+            lb = new JLabel("About", JLabel.CENTER);
+            text = new JTextArea(sc.getString(), 25, 40);
         }
-            text.setBackground(Color.white);
-            text.setEditable(false);
-            lb.setFont(new Font("SansSerif", Font.BOLD,18));
-            JPanel pan = new JPanel();
-            pan.setSize(100, 400);
+        text.setBackground(Color.white);
+        text.setEditable(false);
+        lb.setFont(new Font("SansSerif", Font.BOLD, 18));
+        JPanel pan = new JPanel();
+        pan.setSize(100, 400);
 
-            JPanel pan2 = new JPanel();
-            pan2.setSize(500,400);
+        JPanel pan2 = new JPanel();
+        pan2.setSize(500, 400);
 
-            pan2.add(text);
-            pan.add(lb);
+        pan2.add(text);
+        pan.add(lb);
 
-            setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
-            add(pan);
-            add(pan2);
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        add(pan);
+        add(pan2);
 
-
-            setSize(500,500);
-            setVisible(true);
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 }

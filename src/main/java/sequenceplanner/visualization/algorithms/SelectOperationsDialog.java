@@ -156,9 +156,9 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         c.add(jpCond);
         c.add(jp);
         //-------------------------------------------------------------------
-
-        setLocationRelativeTo(null);
+        
         pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 

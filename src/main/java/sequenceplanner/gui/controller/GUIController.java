@@ -2,11 +2,16 @@ package sequenceplanner.gui.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -22,6 +27,7 @@ import sequenceplanner.gui.view.HelpPanes;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
+import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeFromViewData;
@@ -31,8 +37,8 @@ import sequenceplanner.view.operationView.ClickMenuOperationView;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.operationView.graphextension.Cell;
-import sequenceplanner.view.treeView.TreeView;
 import sequenceplanner.view.treeView.TreeViewController;
+import sequenceplanner.xml.SequencePlannerProjectFile;
 
 /**
  *Main controller in the GUI package. Listens for changes calls from the view,
@@ -69,6 +75,10 @@ public class GUIController {
                 exitProject();
             }
         });//--------------------------------------------------------------------
+
+        //The general keylisterner for the program. Save, open, ...
+        mGuiView.addKeyListener(keyListener);
+
     }
 
     private void addListeners() {
@@ -107,6 +117,28 @@ public class GUIController {
         mGuiView.addShortCommandsL(new AddShortCommandsListener());
         mGuiView.addAboutL(new AddAboutListener());
     }
+    /**
+     * Key listener for program.<br/>
+     * Save, open, ...
+     */
+    final KeyListener keyListener = new KeyAdapter() {
+
+        @Override
+        public synchronized void keyPressed(KeyEvent e) {
+            final boolean doSave = e.getKeyCode() == 83 && e.isControlDown(); //83=='s'
+            final boolean doOpen = e.getKeyCode() == 79 && e.isControlDown(); //79=='o'
+
+            if (doSave) {
+                saveModel(false);
+            }
+
+            if (doOpen) {
+                if (askForSaveOfModel("Save project before open?")) {
+                    openModel();
+                }
+            }
+        }
+    };
 
     public GUIView getView() {
         return this.mGuiView;
@@ -381,16 +413,22 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final JFileChooser dialog = new JFileChooser(getGUIModel().path);
+            if (askForSaveOfModel("Save project before import?")) {
+                final JFileChooser dialog = new JFileChooser(getGUIModel().path);
 
-            if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final File file = dialog.getSelectedFile();
+                if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    final File file = dialog.getSelectedFile();
 
-                parseTextFile(file);
+                    parseTextFile(file);
+                }
             }
         }
     }
 
+    /**
+     * Parses a text file.
+     * @param iFile
+     */
     public void parseTextFile(final File iFile) {
         if (iFile != null) {
             final String path = iFile.getAbsolutePath();
@@ -419,7 +457,7 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Soon implemented");
+            HelpPanes hp = new HelpPanes("About");
         }
     }
 
@@ -475,22 +513,16 @@ public class GUIController {
      * Tells the model to open a new project and adds all open views as tabs.
      */
     private void openModel() {
-        final Model newModel = getGUIModel().openModel();
+        final SequencePlannerProjectFile newProject = getGUIModel().openModel();
 
-        
-        if (newModel != null) {
+        if (newProject != null) {
 
+            //Remove old project. This is done when only if the newProejct != null
             reloadAnEmptyProject(false);
 
-            System.out.println("operations" +newModel.getAllOperations().size());
-
-            //Update Model
-            getGUIModel().setModel(newModel);
-            System.out.println("operations" +newModel.getAllOperations().size());
-            System.out.println("operations" +mGuiModel.getModel().getAllOperations().size());
-
-//            TreeView tv = mGuiView.getTreeView();
-//            tv = new TreeView(newModel);
+            //Load newProject to Model
+            final ConvertFromXML con = new ConvertFromXML(getModel());
+            getGUIModel().setModel(con.convert(newProject));
 
             getModel().rootUpdated();
             getModel().reloadNamesCache();
@@ -538,7 +570,7 @@ public class GUIController {
     }
 
     /**
-     * Saves proejct if user answers yes.<br/>
+     * Saves project if user answers yes.<br/>
      * @param iQuestion text in question
      * @return true if user pressed yes or no, false if user aborted or exit
      */

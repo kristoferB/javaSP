@@ -113,15 +113,19 @@ public class ConvertFromXML {
 //        System.out.println("postparse " + formatstring);
         final String[] conditionSplit = savedCondition.split("/");
         final Condition condition = new Condition();
+
         final AStringToConditionParser guardParser = new GuardAsTextInputToConditionParser();
-        final ConditionExpression ce1 = new ConditionExpression();
-        final ConditionExpression ce2 = new ConditionExpression();
+        final ConditionExpression gurad = new ConditionExpression();
+
+        
         final AStringToConditionParser actionParser = new ActionAsTextInputToConditionParser();
-        if (guardParser.run(conditionSplit[0], ce1)) {
-            condition.setGuard(ce1);
+        final ConditionExpression action = new ConditionExpression();
+
+        if (guardParser.run(conditionSplit[0], gurad)) {
+            condition.setGuard(gurad);
         }
-        if (actionParser.run(conditionSplit[1], ce2)) {
-            condition.setAction(ce2);
+        if (conditionSplit.length >1 && actionParser.run(conditionSplit[1], action)) {
+            condition.setAction(action);
         }
         return condition;
     }

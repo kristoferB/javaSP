@@ -95,46 +95,41 @@ public class GUIModel {
         operationViews.clear();
     }
 
-    public Model openModel() {
+    /**
+     * User dialog to select project to open.<br/>
+     * @return {@link SequencePlannerProjectFile} or null if problem with xml-parse
+     */
+    public SequencePlannerProjectFile openModel() {
         JFileChooser fc = new JFileChooser(path);
+
         //Remember path for next time a FileChooser is opened
         path = fc.getCurrentDirectory().getPath();
+
         fc.setFileFilter(SPFileFilter.getInstance());
         int answer = fc.showOpenDialog(null);
 
         if (answer == JFileChooser.APPROVE_OPTION) {
             final File file = fc.getSelectedFile();
             projectFile = file;
-            Model model = openModel(file);
-                    
-            return model;
+            return openModel(file);
         }
         return null;
     }
 
     /**
-     * Read from xml
+     * Parse xml file based on schema.<br/>
+     * Schema -> JAXB -> sequenceplanner.xml.<br/>
      * @param inputFile
-     * @return
+     * @return {@link SequencePlannerProjectFile} or null if problem with xml-parse
      */
-    public Model openModel(File inputFile) {
-
-        SequencePlannerProjectFile project = null;
-
-        System.out.println(SequencePlannerProjectFile.class.getPackage().getName());
+    public SequencePlannerProjectFile openModel(File inputFile) {
 
         try {
             javax.xml.bind.JAXBContext jaxbCtx = javax.xml.bind.JAXBContext.newInstance(SequencePlannerProjectFile.class.getPackage().getName());
             javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
-            project = (SequencePlannerProjectFile) unmarshaller.unmarshal(inputFile);
+            final SequencePlannerProjectFile project = (SequencePlannerProjectFile) unmarshaller.unmarshal(inputFile);
 
-            final ConvertFromXML con = new ConvertFromXML(new Model());
-
-            Model model = con.convert(project);
-
-            
-
-            return model;
+            return project;
 
         } catch (javax.xml.bind.JAXBException ex) {
             java.util.logging.Logger.getLogger("global").log(

@@ -46,6 +46,9 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
@@ -54,7 +57,7 @@ import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.view.operationView.graphextension.Cell;
 
 //TODO Change name to SOPView
-public class OperationView extends AbstractView implements IView, AsyncModelListener {
+public class OperationView extends AbstractView implements AsyncModelListener {
 
     // Logging for this class
     private static Logger logger = Logger.getLogger(OperationView.class);
@@ -69,7 +72,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
     public ViewData mViewData;
 
     //TODO refactor name to SOPView
-    public OperationView(Model model, String name) {
+    private OperationView(Model model, String name) {
         super(model, name);
         startName = name;
         initVariables();
@@ -89,25 +92,18 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         initPanels();
         registerKeystrokes(graphComponent.getInputMap(), graphComponent.getActionMap());
 
-
-
     }
 
     public OperationView(Model model, ViewData iViewData) {
         this(model, iViewData.getName());
         this.mViewData = iViewData;
         this.mViewData.setSpGraphModel(getGraphModel());
-//        open(iViewData);
     }
 
     public void addGraphComponentListener(MouseAdapter ma) {
         graphComponent.getGraphControl().addMouseListener(ma);
     }
 
-//    public OperationView(Model model, ViewData view) {
-//        this(model, view.getName());
-//        open(view);
-//    }
     public JSplitPane getPane() {
         return pane;
     }
@@ -117,34 +113,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Method for checking if the view is hidden or not
-     * @return boolean true if hidden else false
-     */
-//    public boolean isHidden() {
-//        return isHidden;
-//    }
-    /**
-     * Method for checking if the view is closed or not
-     * @return boolean true if closed else false
-     */
-//    public boolean isClosed() {
-//        return isClosed;
-//    }
-    /**
-     * Sets the isClosed variable to true or false
-     * @param closed true if closed else false
-     */
-//    public void setClosed(boolean closed) {
-//        isClosed = closed;
-//    }
-    /**
-     * Sets the isHidden variable to true or false
-     * @param closed true if hidden closed else false
-     */
-//    public void setHidden(boolean hidden) {
-//        isHidden = hidden;
-//    }
     public boolean isChanged() {
         return changed;
     }
@@ -209,56 +177,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
         return cell;
     }
 
-//    private void open(ViewData view) {
-////        OperationData in = null;
-////        if (view.getRoot() != -1) {
-////            TreeNode d = model.getOperation(view.getRoot());
-////            if (d != null) {
-////                in = (OperationData) d.getNodeData();
-////            }
-////        } else {
-////            in = new OperationData("Bottom", view.getRoot());
-////        }
-//
-////        Cell opRoot = open(view, new Cell(in));
-////        Cell root = new Cell("Root");
-////        root.insert(opRoot, 0);
-////
-////        getGraphModel().setRoot(root);
-//        getGraph().majorUpdate();
-//        setChanged(false);
-//    }
-//    public Cell open(ViewData view, Cell cell) {
-//
-//        if (view == null) {
-//            return cell;
-//        }
-//
-//        ConvertToCell c = new ConvertToCell();
-//
-//        c.ConvertToCell(view, model, this);
-//        Cell opRoot = c.getRoot();
-//
-//        Object[] o = SPGraphModel.getChildren(getGraphModel(), opRoot);
-//
-//        for (int i = 0; i < o.length; i++) {
-//            System.out.println("operation: " + o[i].toString());
-//            cell.insert((mxICell) o[i]);
-//        }
-//
-//        Cell[] cells = getGraphModel().getChildSOP(cell);
-//
-//        for (int i = 0; i < cells.length; i++) {
-//            Cell child = cells[i];
-//            if (child.isSOP()) {
-//                ViewData data = model.getOperationView(child.getUniqueId());
-//                open(data, child);
-//            }
-//        }
-//
-//
-//        return cell;
-//    }
+
     @Override
     public boolean closeView() {
         if (isChanged()) {
@@ -269,64 +188,6 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             }
         }
         return true;
-    }
-
-    @Override
-    public void save(boolean newSave, boolean saveView) {
-//
-//        String tempName = "";
-//
-//        if (saveView) {
-//            tempName = getSaveName(newSave);
-//        } else {
-//            tempName = "Temporary View";
-//        }
-//
-//        if (!tempName.isEmpty()) {
-//            startName = tempName;
-//
-//            SPGraphModel gModel = ((SPGraphModel) graph.getModel());
-//
-//            Object o = gModel.getChildAt(gModel.getRoot(), 0);
-//            Cell cell = (Cell) o;
-//            //This will only return the topView, the rest is saved in
-//            LinkedList<ViewData> viewData = convertToViewData(cell);
-//            TreeNode[] data = convertToTreeData(cell);
-//
-//            System.out.println("start remove");
-//            model.removeConditions(startName);
-//            System.out.println("end remove");
-//
-//
-//            if (viewData.getFirst().getRoot() == -1 && saveView) {
-//                viewData.getFirst().setName(startName);
-//                model.saveView(viewData.getFirst());
-//            }
-//
-//            model.saveOperationViews(viewData.toArray(new ViewData[0]));
-//            model.saveOperationData(data);
-//
-//            //Save sop nodes
-////            final Map<ISopNode, Map<ISopNode, Cell>> map = getSopNodeForGraphPlus();
-////
-////            final ISopNode sopNodeRoot = map.keySet().iterator().next();
-////            final Map<ISopNode, Cell> nodeCellMap = map.get(sopNodeRoot);
-////
-////            System.out.println("save nodeCellMap: " + nodeCellMap);
-//
-//            model.updateSopNodeStructureWithObjectsInModel(mSopNodeForGraphPlus.getRootSopNode(true));
-////            viewData.getFirst().storeCellData(mSopNodeForGraphPlus.getNodeCellMap(false)); //for xml
-//            System.out.println("start set conditions");
-//            model.setConditions(mSopNodeForGraphPlus.getRootSopNode(false), startName);
-//            System.out.println("end set conditions");
-//
-//            setChanged(false);
-//            updateName();
-//
-//        } else {
-//            logger.debug("Save was called but with a empty name");
-//        }
-//
     }
 
     /**

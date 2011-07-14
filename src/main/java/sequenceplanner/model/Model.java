@@ -1,6 +1,7 @@
 package sequenceplanner.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +161,6 @@ public class Model extends Observable implements IModel {
 //        }
 //        return true;
 //    }
-
     public TreeMap<Integer, ViewData> getOperationsWithViews() {
         return operationViews;
     }
@@ -183,7 +183,6 @@ public class Model extends Observable implements IModel {
 //
 //        return out;
 //    }
-
     /**
      * If name of data is already present -> overwrite.
      * @param data
@@ -249,7 +248,7 @@ public class Model extends Observable implements IModel {
     public TreeNode createModelOperationNode() {
         final int id = newId();
 //        System.out.println("id: " + id);
-        final String name = "mOP"+id;
+        final String name = "mOP" + id;
         return createModelOperationNode(name, id);
     }
 
@@ -518,8 +517,6 @@ public class Model extends Observable implements IModel {
         return result;
     }
 
-
-
     /**
      *
      * @param node TreeNode to where you want to get path
@@ -546,15 +543,14 @@ public class Model extends Observable implements IModel {
         return n;
     }
 
-
     private ArrayList<Integer> getListIds(ArrayList<TreeNode> nodes) {
         ArrayList<Integer> result = new ArrayList<Integer>();
 
-      for (TreeNode node : nodes) {
-         result.add(node.getId());
-      }
+        for (TreeNode node : nodes) {
+            result.add(node.getId());
+        }
 
-      return result;
+        return result;
 
     }
 
@@ -906,34 +902,6 @@ public class Model extends Observable implements IModel {
         return false;
     }
 
-    /**
-     *
-     * @param view view that is going to be saved. Observe that you have to update the root of the view.
-     * @return
-     */
-//    public boolean insertView(ViewData view) {
-//        Integer index = view.getRoot();
-//
-//        if (index > -1) {
-//            operationViews.put(index, view);
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-//    public ViewData getView(Integer id) {
-//        ViewData d = operationViews.get(id);
-//
-//        if (d != null) {
-//            return d;
-//        } else {
-//            d = new ViewData(Integer.toString(id), -1);
-//            d.setRoot(id);
-//            return d;
-//        }
-//    }
-
     public int getCounter() {
         return idConter;
     }
@@ -948,6 +916,27 @@ public class Model extends Observable implements IModel {
         for (int i = 0; i < getRoot().getChildCount(); i++) {
             getRoot().getChildAt(i).removeAllChildren();
         }
+    }
+
+    /**
+     * Returns a {@link Set} with all root {@link ISopNode}s that are in this Model.<br/>
+     * @return
+     */
+    public Set<ISopNode> getAllSOPs() {
+        final Set<ISopNode> returnSet = new HashSet<ISopNode>();
+        final TreeNode[] viewDataArray = getChildren(viewRoot);
+
+        for (final TreeNode tn : viewDataArray) {
+            if (isView(tn.getNodeData())) {
+                final ViewData viewData = (ViewData) tn.getNodeData();
+                final ISopNode root = viewData.mSopNodeForGraphPlus.getRootSopNode(false);
+                if (root != null) {
+                    returnSet.add(root);
+                }
+            }
+        }
+
+        return returnSet;
     }
 
     public List<TreeNode> getAllOperations() {
