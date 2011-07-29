@@ -9,9 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -380,14 +378,10 @@ public class GUIController {
             if (e.getActionCommand().equalsIgnoreCase("set name")) {
                 JTextField field = (JTextField) e.getSource();
 
-                System.out.println("setname");
                 if (mGuiModel.getModel().getOperation(id) != null) {
                     mGuiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
-                    mOpViewController.update(null, ctrl.getModel());
-                    System.out.println("setname");
-
                 }
-                mOpViewController.update(null, ctrl.getModel());
+                mOpViewController.update(null, ctrl.getModel()); //not used...
             }
         }
     }
@@ -613,7 +607,7 @@ public class GUIController {
     }
 
     public OperationData addPropertyPanelView(OperationData data) {
-        AttributePanel panel = new AttributePanel(data);
+        final AttributePanel panel = new AttributePanel(data, getModel());
         if (mGuiView.addAttributePanelView(panel)) {
             AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(), this);
             panel.addEditorSaveListener(ctrl);

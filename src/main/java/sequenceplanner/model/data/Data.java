@@ -49,6 +49,8 @@ public class Data extends Observable implements Cloneable {
 
     public void setName(String name) {
         setAttribute(Type.NAME, name);
+        setChanged();
+        notifyObservers(name);
     }
 
     public String getDescription() {

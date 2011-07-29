@@ -14,6 +14,7 @@ import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
@@ -45,9 +46,9 @@ public class AttributePanelController implements ActionListener, Observer {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
-            System.out.println("save");
+            System.out.println("AttributePanelController: save condition");
             if (!attributeEditor.getConditionString().isEmpty()) {
-                System.out.println(attributeEditor.getConditionString());
+                System.out.println("AttributePanelController: condition string to add: " + attributeEditor.getConditionString());
                 setCondition(attributeEditor.getConditionString());
             }
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
@@ -57,12 +58,29 @@ public class AttributePanelController implements ActionListener, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        OperationData od = (OperationData) arg;
-        if (od.getName() != null && od.getName().equalsIgnoreCase(attributePanel.getName())) {
-            this.opData = od;
-            attributePanel.updateModel(od);
-            System.out.println("APC" + o.toString());
+        try {
+            final OperationData od = (OperationData) arg;
+            final int opId = od.getId();
+
+            try {
+                final int attributePanelId = attributePanel.getOperationData().getId();
+
+                if (opId == attributePanelId) {
+                    this.opData = od;
+                    attributePanel.updateModel(od);
+//                    System.out.println("APC" + o.toString());
+                }
+
+            } catch (NullPointerException npe) {
+                GUIView.printToConsole("Problem to update attribute panel: " + npe);
+            }
+        } catch (ClassCastException cce) {
         }
+
+
+
+
+
     }
 
     /**
@@ -79,8 +97,7 @@ public class AttributePanelController implements ActionListener, Observer {
             if (parser.run(conditionString, ce)) {
                 condition.setGuard(ce);
             } else {
-                JOptionPane.showMessageDialog(null, "This is not a correct guard!\n"
-                        + "This is: (id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)");
+                JOptionPane.showMessageDialog(null, "This is not a correct guard!\n" + "This is: (id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)");
                 correctCondition = false;
             }
 
@@ -90,8 +107,7 @@ public class AttributePanelController implements ActionListener, Observer {
             if (parser.run(conditionString, ce)) {
                 condition.setAction(ce);
             } else {
-                JOptionPane.showMessageDialog(null, "This is not a correct action!\n"
-                        + "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
+                JOptionPane.showMessageDialog(null, "This is not a correct action!\n" + "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
                 correctCondition = false;
             }
         }
@@ -103,10 +119,19 @@ public class AttributePanelController implements ActionListener, Observer {
                 map.put(ConditionType.POST, condition);
             }
 
-            opData.setConditions(map, "Algebraic " + opData.getAlgebraicCounter());
-            opData.increaseAlgebraicCounter();
-            System.out.println(opData.getGlobalConditions().size());
-//            this.attributePanel.setConditions();
+            //Check if name should be stored with default name or if other name has been given.
+            String name = attributeEditor.mConditionName;
+            if (name.equals("")) {
+                name = "Algebraic" + opData.getAlgebraicCounter();
+                opData.increaseAlgebraicCounter();
+            }
+
+            //Set condition
+            opData.setConditions(map, name);
+
+            //Reset condition name
+            attributeEditor.mConditionName = "";
+
             this.attributeEditor.clearTextField();
             controller.saveOperationToModel(opData);
         }
@@ -117,8 +142,8 @@ public class AttributePanelController implements ActionListener, Observer {
         opData.setName(text);
         attributePanel.updateModel(opData);
     }
-    
-    public OperationData getModel(){
+
+    public OperationData getModel() {
         return opData;
     }
 }

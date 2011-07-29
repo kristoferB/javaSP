@@ -137,7 +137,7 @@ public class TreeView extends AbstractView {
                 new BorderLayout());
 
 
-        this.add( new JScrollPane(tree), BorderLayout.CENTER);
+        this.add(new JScrollPane(tree), BorderLayout.CENTER);
 
 
         tree.setDragEnabled(false);
@@ -146,7 +146,7 @@ public class TreeView extends AbstractView {
 
     }
 
-    public void addTreeMouseListener(MouseAdapter ma){
+    public void addTreeMouseListener(MouseAdapter ma) {
         tree.addMouseListener(ma);
     }
 //   private void expandListener() {
@@ -161,6 +161,7 @@ public class TreeView extends AbstractView {
 //         }
 //      });
 //   }
+
     @Override
     public Action createAction(String name, ActionListener usedAction, String icon, Object source) {
         return super.createAction(name, usedAction, icon, this);

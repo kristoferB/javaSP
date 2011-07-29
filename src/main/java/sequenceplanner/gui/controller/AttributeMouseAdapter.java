@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
@@ -12,60 +13,57 @@ import javax.swing.SwingUtilities;
 import sequenceplanner.gui.view.AttributeClickMenu;
 import sequenceplanner.gui.view.attributepanel.ConditionListPanel;
 import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
-import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.Model;
 
 /**
-*
-* @author Peter
-*/
+ *
+ * @author Peter
+ */
 public class AttributeMouseAdapter extends MouseAdapter {
 
-    //private ConditionListPanel condList = new ConditionListPanel();
     private Component clickedComponent;
     private String conditionKey;
     private String conditionValue;
     private AttributeClickMenu menu;
     private OperationAttributeEditor editor;
     private ConditionListPanel condList;
+    private Model mModel;
 
-    public AttributeMouseAdapter(OperationAttributeEditor editor, ConditionListPanel condList) {
+    public AttributeMouseAdapter(OperationAttributeEditor editor, ConditionListPanel condList, final Model iModel) {
         this.editor = editor;
         this.condList = condList;
-        System.out.println("XxXXxXxXXXxXXXxx");
+        this.mModel = iModel;
+        System.out.println("AttributeMouseAdapter costructor");
     }
 
-    /* @Override
-public void mouseEntered(MouseEvent e) {
-System.out.println("TTT");
-popup(e);
-}*/
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("RRRR");
+        System.out.println("AttributeMouseAdapter: mouseReleased");
         popup(e);
     }
 
     /**
-* Creates a AttributeClickMenu for clicked node
-*
-* @param e a MouseEvent
-*/
+     * Creates a AttributeClickMenu for clicked node
+     *
+     * @param e a MouseEvent
+     */
     private void popup(MouseEvent e) {
-        System.out.println("OOO");
         //Also need to check if pre or post panel
         if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e)) {
-            System.out.println("Click: " + e.getX() + e.getY());
+//            System.out.println("AttributeMouseAdapter: Click: " + e.getX() + e.getY());
 
             clickedComponent = (JLabel) e.getSource();
-            getConditionValue(clickedComponent);
-
 
             if (clickedComponent != null) {
                 if (clickedComponent instanceof JLabel) {
+
+
+                    //To set <p>conditionKey</p>
+                    getConditionValue(clickedComponent);
+
                     if (!conditionKey.equals("")) {
                         menu = new AttributeClickMenu(clickedComponent, new MenuListener(), true);
-                        System.out.println("The click is on condition panel");
-                    }else{
+                    } else {
                         menu = new AttributeClickMenu(clickedComponent, new MenuListener(), false);
                     }
                     menu.showAttributePanelMenu(e);
@@ -75,8 +73,8 @@ popup(e);
     }
 
     /**
-* Listens for actions in AttributeClickMenu
-*/
+     * Listens for actions in AttributeClickMenu
+     */
     public class MenuListener implements ActionListener {
 
         @Override
@@ -92,7 +90,7 @@ popup(e);
             if (command.equals("EDIT_VALUE")) {
                 System.out.println("EDIT_VALUE");
                 //AttrController.displayCondInField(Cond)
-                System.out.println("Edit: "+ conditionValue + " Ed: " + editor.toString());
+                System.out.println("Edit: " + conditionKey);
 
                 condList.editCondition(conditionKey);
 
@@ -100,25 +98,23 @@ popup(e);
         }
     }
 
-    public void getConditionValue(Component conditionLabel){
-        JLabel condition = (JLabel)conditionLabel;
-        Pattern conditionKeyPattern = Pattern.compile("Algebraic (\\d)");
-        Matcher m1 = conditionKeyPattern.matcher(condition.getText());
+    public void getConditionValue(Component conditionLabel) {
+        final JLabel localConditionLabel = (JLabel) conditionLabel;
 
+        //Loop conditions defined in SOP views in order to disable popup menu through <p>conditionKey</p> if conditionLabel is from SOP view
+        final Set<String> sopConditionSet = mModel.getAllSOPs().keySet();
+        for (final String sopName : sopConditionSet) {
+            final Pattern conditionKeyPattern = Pattern.compile(sopName);
+            final Matcher matcher = conditionKeyPattern.matcher(localConditionLabel.getText());
 
-        if(m1.find()){
-            conditionKey = m1.group();
-            conditionValue = condition.getText().substring(m1.end());
-            System.out.println("Deeeee: " + conditionValue);
-            System.out.println("Zeee: "+conditionKey);
-            //Note: m?e h?a keyn fr?modellen, f?inte med den riktiga upps?ningen annars+"[)]"
+            if (matcher.find()) {
+                conditionKey = "";
+                return;
+            }
+        }
 
-        }else conditionKey = "";
-        /*
-String [] st = conditionValue.split("/");
-System.out.println("1: " + st[0] + "2:"+st[1]);
-String conditionGuard = st[0].substring(1,st[0].length()-1);
-String conditionAction = st[1].substring(1,st[0].length()-1);
-*/
+        //conditionLabel is not from SOP view
+        //<p>conditionKey</p> is now both key and value, e.g. signal2: id20==2
+        conditionKey = localConditionLabel.getText();
     }
 }

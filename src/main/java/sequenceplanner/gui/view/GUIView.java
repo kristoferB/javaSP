@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -43,6 +45,7 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.IconHandler;
 import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.gui.controller.TabTitleObserver;
 import sequenceplanner.view.resourceView.ResourceView;
 import sequenceplanner.view.treeView.TreeView;
 
@@ -85,10 +88,11 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private View mResourceView = null;
     private boolean resourceViewOpen = false;
 
+    
+
     public TreeView getTreeView() {
         return treeView;
     }
-    private OperationView selectedOperationView;
     private int opViewIndex;
 
     public int getOpViewIndex() {
@@ -97,9 +101,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private static JTextArea console;
     private JButton saveButton;
     /**
-     * To map right id with right view. Both for operation views object views.
+     * To map right id with right view. Both for operation views and object views.
      */
-    private Map<View, Integer> mAttributePanelViewOperationIdMap = new HashMap<View, Integer>();
+    private Map<View, Integer> mViewIdMap = new HashMap<View, Integer>();
 
     /**
      * Constructor for the GUIView class
@@ -352,14 +356,14 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
             System.out.println(view);
         }
 
-        for (View view : mAttributePanelViewOperationIdMap.keySet()) {
-            System.out.println("index: " + mAttributePanelViewOperationIdMap.get(view));
+        for (View view : mViewIdMap.keySet()) {
+            System.out.println("index: " + mViewIdMap.get(view));
         }
 
         //do check
         for (int i = 1; i <= getOpViewMap().getViewCount(); i++) {
             final View view = getOpViewMap().getView(i);
-            final Integer id = mAttributePanelViewOperationIdMap.get(view);
+            final Integer id = mViewIdMap.get(view);
             if (id != null) {
                 if (viewDataId.equals(id.toString())) {
                     System.out.println("Start Remove");
@@ -389,7 +393,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //do check
         for (int i = 1; i <= getObjectViewMap().getViewCount(); i++) {
             final View view = getObjectViewMap().getView(i);
-            final Integer id = mAttributePanelViewOperationIdMap.get(view);
+            final Integer id = mViewIdMap.get(view);
             if (id != null) {
                 if (opId.equals(id.toString())) {
                     removeView(getObjectViewMap(), i);
@@ -435,7 +439,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         //do check
         for (int i = 1; i <= iViewMap.getViewCount(); i++) {
             final View view = iViewMap.getView(i);
-            final Integer id = mAttributePanelViewOperationIdMap.get(view);
+            final Integer id = mViewIdMap.get(view);
             if (id != null) {
                 if (treeNodeId.equals(id.toString())) {
                     return i;
@@ -700,7 +704,6 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public View addNewOpTab(String name, OperationView opView) {
 //Should not be done here.. selectedOperationView is only updated when adding new tabs!
         opView.addmxIEventListener(this);
-        selectedOperationView = opView;
 
 //----- 
         opViewIndex++;
@@ -708,6 +711,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         addToViewMap(newView, opView.mViewData.getId(), opViewMap);
 
         addToMaindocks(newView);
+
+        //Observer for update of view title
+        opView.mViewData.addObserver(new TabTitleObserver(newView));
 
         if (opView.mViewData.isClosed()) {
             System.out.println("start closed: " + opView.getName());
@@ -807,12 +813,13 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
      * @return false if a PropertyPanelView for the same operation already exists else true
      */
     public boolean addAttributePanelView(AttributePanel toInsert) {
-        final Integer operationId = toInsert.getOperationData().getId();
+        final OperationData opData = toInsert.getOperationData();
+        final Integer operationId = opData.getId();
 
         // Check if view exists.
         for (int i = 1; objectViewMap.getViewCount() >= i; i++) {
 
-            final Integer currentId = mAttributePanelViewOperationIdMap.get(objectViewMap.getView(i));
+            final Integer currentId = mViewIdMap.get(objectViewMap.getView(i));
 
             if (objectViewMap.getView(i) != null && objectViewMap.getView(i).getComponent() != null && currentId != null && operationId.toString().equals(currentId.toString())) {
 
@@ -831,15 +838,19 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
             }
         }
-        View newView = new View(toInsert.getName(), null, new JScrollPane(toInsert));
+        final View newView = new View(opData.getName(), null, new JScrollPane(toInsert));
         addToViewMap(newView, operationId, objectViewMap);
+
         addToObjectdocks(newView);
+
+        //Observer for update of view title
+        opData.addObserver(new TabTitleObserver(newView));
 
         return true;
     }
 
     /**
-     * To add {@link View}s to objectViewMap.<br/>
+     * To add {@link View}s to <code>objectViewMap</code>.<br/>
      * An extra {@link Integer} parameter is included to compare different views
      * in the map based on unique ids.
      * @param iViewToAdd
@@ -852,7 +863,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         if (iId == null) {
             iId = -1;
         }
-        mAttributePanelViewOperationIdMap.put(iViewToAdd, iId);
+        mViewIdMap.put(iViewToAdd, iId);
         iViewMap.addView(iViewMap.getViewCount() + 1, iViewToAdd);
     }
 
@@ -871,4 +882,5 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     public void setModel(GUIModel guiModel) {
         this.guiModel = guiModel;
     }
+
 }

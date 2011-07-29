@@ -3,12 +3,15 @@ package sequenceplanner.IO.txt;
 import java.io.BufferedWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.parser.AStringToConditionParser;
 import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
@@ -152,30 +155,22 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
     }
 
     private boolean addCondtion(String iCondition, final OperationData iOpData, final ConditionType iConditionType) {
-        //Find if condition points to other operations or signals or a mix
-        final int conditionType = conditionType(iCondition);
-        String conditionTypeString = "";
-        if (conditionType == -1) {
-            System.out.println("Condition " + iCondition + " is not right");
-            return false;
-        } else if (conditionType == 0) {
-            conditionTypeString = "Mix";
-        } else if (conditionType == 1) {
-            conditionTypeString = "Operations";
-        } else if (conditionType == 2) {
-            conditionTypeString = "Signals";
-        }
 
-        //Change id in file to id in Model
-        iCondition = changeIds(iCondition);
-
-        //In order to add a unique number to each condition
+        //In order to add a unique number to each condition for operation
         final int number = iOpData.getGlobalConditions().size();
 
         //Test to parse condition as guard
         AStringToConditionParser parser = new GuardAsTextInputToConditionParser();
         ConditionExpression ce = parser.run(iCondition);
+
         if (ce != null) {
+
+            //Find if condition points to other operations or signals or a mix
+            final String conditionTypeString = conditionType(ce);
+
+            //Change id in file to id in Model
+            ce = changeIds(ce);
+
             //Add condition if parse was ok
             final Condition conditon = new Condition();
             conditon.setGuard(ce);
@@ -189,7 +184,15 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         //Test parse condition as action
         parser = new ActionAsTextInputToConditionParser();
         ce = parser.run(iCondition);
+
         if (ce != null) {
+
+            //Find if condition points to other operations or signals or a mix
+            final String conditionTypeString = conditionType(ce);
+
+            //Change id in file to id in Model
+            ce = changeIds(ce);
+
             //Add condition if parse was ok
             final Condition conditon = new Condition();
             conditon.setAction(ce);
@@ -209,30 +212,65 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
      * To determine if parameter <p>iCondition</p> has to do with: <br/>
      * operations, signals, or a mix.
      * @param iCondition
-     * @return -1= error, 0=a mix, 1=operations, 2=signals
+     * @return null= error, mix, operations, signals
      */
-    private int conditionType(final String iCondition) {
+    private String conditionType(final ConditionExpression iCondition) {
         int returnInt = -1;
-        for (final ADataFromFile data : mDataInFile) {
-            final String id = data.mId;
 
-            if (iCondition.contains(id)) {
-                if (data instanceof OperationDataFromFile) {
-                    if (returnInt == 2) {
-                        return 0;
+        if (iCondition == null) {
+            System.out.println("Condition " + iCondition + " is not right");
+            return null;
+        }
+
+        final List<ConditionElement> conditionElementList = iCondition.getConditionElements();
+
+        for (final ConditionElement conditionElement : conditionElementList) {
+            if (conditionElement.isStatment()) {
+                try {
+                    final ConditionStatement conditionStatement = (ConditionStatement) conditionElement;
+
+                    final String externalVariable = conditionStatement.getVariable();
+
+                    for (final ADataFromFile data : mDataInFile) {
+                        final String id = data.mId;
+
+                        if (externalVariable.equals(id)) {
+                            if (data instanceof OperationDataFromFile) {
+                                if (returnInt == 2) {
+                                    return null;
+                                }
+                                returnInt = 1;
+                            }
+                            if (data instanceof SignalDataFromFile) {
+                                if (returnInt == 1) {
+                                    return null;
+                                }
+                                returnInt = 2;
+                            }
+                        }
+
                     }
-                    returnInt = 1;
-                }
-                if (data instanceof SignalDataFromFile) {
-                    if (returnInt == 1) {
-                        return 0;
-                    }
-                    returnInt = 2;
+
+                } catch (ClassCastException cce) {
+                    System.out.println("Method:conditionType, ClassCastException " + cce);
                 }
             }
-
         }
-        return returnInt;
+
+        //From int to String
+        String conditionTypeString = "";
+        if (returnInt == -1) {
+            System.out.println("Condition " + iCondition + " is not right");
+            return null;
+        } else if (returnInt == 0) {
+            conditionTypeString = "Mix";
+        } else if (returnInt == 1) {
+            conditionTypeString = "Operations";
+        } else if (returnInt == 2) {
+            conditionTypeString = "Signals";
+        }
+
+        return conditionTypeString;
     }
 
     private ResourceVariableData getVariable(final ADataFromFile iData, final String iName, final int iIdInModel) {
@@ -268,10 +306,36 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         return rvd;
     }
 
-    private String changeIds(String iCondition) {
-        for (final String oldId : mExternalInternalIdMap.keySet()) {
-            iCondition = iCondition.replaceAll(oldId, "id" + mExternalInternalIdMap.get(oldId).toString());
+    /**
+     * To change from external id to internal id.
+     * @param iCondition
+     * @return
+     */
+    private ConditionExpression changeIds(final ConditionExpression iCondition) {
+        if (iCondition == null) {
+            return null;
         }
+
+        final List<ConditionElement> conditionElementList = iCondition.getConditionElements();
+
+        for (final ConditionElement conditionElement : conditionElementList) {
+            if (conditionElement.isStatment()) {
+                try {
+                    final ConditionStatement conditionStatement = (ConditionStatement) conditionElement;
+
+                    final String externalVariable = conditionStatement.getVariable();
+                    if (mExternalInternalIdMap.containsKey(externalVariable)) {
+                        conditionStatement.setVariable("id" + mExternalInternalIdMap.get(externalVariable).toString());
+                    } else {
+                        System.out.println("Problem to change external to internal id");
+                        return null;
+                    }
+                } catch (ClassCastException cce) {
+                    System.out.println("Method:changeIds, ClassCastException " + cce);
+                }
+            }
+        }
+
         return iCondition;
     }
 

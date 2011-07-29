@@ -3,20 +3,16 @@ package sequenceplanner.view.operationView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
 import sequenceplanner.visualization.algorithms.StartVisualization;
 import sequenceplanner.gui.controller.GUIController;
-import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;

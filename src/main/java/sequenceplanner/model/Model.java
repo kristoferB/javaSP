@@ -1,7 +1,7 @@
 package sequenceplanner.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -216,6 +216,9 @@ public class Model extends Observable implements IModel {
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
                 saveNode(data[i], operationRoot);
+
+                System.out.println("Model: saveOperationData: description" + od.getDescription());
+
                 setChanged();
                 notifyObservers(od);
             } else {
@@ -919,24 +922,27 @@ public class Model extends Observable implements IModel {
     }
 
     /**
-     * Returns a {@link Set} with all root {@link ISopNode}s that are in this Model.<br/>
+     * Returns a {@link Map} with all Sops in this Model.<br/>
+     * Key: name of Sop as {@link String}.<br/>
+     * Value: rootSop as {@link ISopNode}.<br/>
      * @return
      */
-    public Set<ISopNode> getAllSOPs() {
-        final Set<ISopNode> returnSet = new HashSet<ISopNode>();
+    public Map<String,ISopNode> getAllSOPs() {
+        final Map<String,ISopNode> nameRootSopMap = new HashMap<String, ISopNode>();
         final TreeNode[] viewDataArray = getChildren(viewRoot);
 
         for (final TreeNode tn : viewDataArray) {
             if (isView(tn.getNodeData())) {
                 final ViewData viewData = (ViewData) tn.getNodeData();
+                final String name = viewData.getName();
                 final ISopNode root = viewData.mSopNodeForGraphPlus.getRootSopNode(false);
-                if (root != null) {
-                    returnSet.add(root);
+                if (name != null & root != null) {
+                    nameRootSopMap.put(name, root);
                 }
             }
         }
 
-        return returnSet;
+        return nameRootSopMap;
     }
 
     public List<TreeNode> getAllOperations() {

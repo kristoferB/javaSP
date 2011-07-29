@@ -1,8 +1,8 @@
 /*
-* AttributePanel.java
-*
-* Created on 2011-jun-21, 10:14:10
-*/
+ * AttributePanel.java
+ *
+ * Created on 2011-jun-21, 10:14:10
+ */
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.Dimension;
@@ -14,13 +14,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import sequenceplanner.condition.Condition;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
 /**
-* Class showing attributes of an {@link OperationData} object
-* @author Qw4z1
-*/
+ * Class showing attributes of an {@link OperationData} object
+ * @author Qw4z1
+ */
 public class AttributePanel extends JPanel {
 
     private JLabel jLabel1;
@@ -35,13 +36,14 @@ public class AttributePanel extends JPanel {
     private ConditionListPanel preCondListPanel;
     private DescriptionPanel descriptionPanel;
     private OperationData operationData;
+    private Model mModel;
 
     /** Creates new form AttributePanel */
-    public AttributePanel(OperationData od) {
+    public AttributePanel(OperationData od, final Model iModel) {
         this.operationData = od;
+        this.mModel = iModel;
         initComponents();
         initVariables(od);
-
     }
 
     private void initComponents() {
@@ -50,8 +52,8 @@ public class AttributePanel extends JPanel {
         operationIdTextField = new JTextField();
         operationIdTextField.setActionCommand("set name");
         operationAttributeEditor = new OperationAttributeEditor();
-        preCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData,ConditionType.PRE);
-        postCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData,ConditionType.POST);
+        preCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData, ConditionType.PRE, mModel);
+        postCondListPanel = new ConditionListPanel(operationAttributeEditor, operationData, ConditionType.POST, mModel);
         jLabel1 = new JLabel("Preconditions");
         jLabel2 = new JLabel("Postconditions");
         jScrollPane1 = new JScrollPane(preCondListPanel);
@@ -71,39 +73,31 @@ public class AttributePanel extends JPanel {
     }
 
     /**
-* Sets the ID label to display the id of the {@link OperationData} object.
-* @param id
-*/
+     * Sets the ID label to display the id of the {@link OperationData} object.
+     * @param id
+     */
     public void setOperationName(String name) {
         this.operationIdTextField.setText(name);
     }
 
     /**
-* Sets the listobjects to display the conditions in the OperationData class.
-*/
+     * Sets the listobjects to display the conditions in the OperationData class.
+     */
     public void setConditions() {
         preCondListPanel.clear();
-        System.out.println("");
         if (operationData.getGlobalConditions() != null) {
             //Extract each set of condition sets
             for (Object viewKey : operationData.getGlobalConditions().keySet()) {
-                System.out.println("uno");
                 Map<ConditionType, Condition> conditionMap = operationData.getGlobalConditions().get(viewKey);
                 //Split conditions into post and pre
                 for (Object key : conditionMap.keySet()) {
-                    System.out.println("due");
 
+                    //pre
                     if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key))) {
-                        System.out.println("pre");
-                        System.out.println(conditionMap.get(key).toString());
                         preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
-
-                        System.out.println("pre");
+                        //post
                     } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key))) {
-                        System.out.println("post");
-
                         postCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
-
                     }
                 }
             }
@@ -119,48 +113,48 @@ public class AttributePanel extends JPanel {
     }
 
     /**
-* Adds a ActionListener to the savebutton
-* @param l the ActionListener
-*/
+     * Adds a ActionListener to the savebutton
+     * @param l the ActionListener
+     */
     public void addEditorSaveListener(ActionListener l) {
         operationAttributeEditor.addSaveButtonListener(l);
     }
 
     /**
-* Adds an ActionListener to the OperationIdTextField
-* @param l the ActionListener
-*/
+     * Adds an ActionListener to the OperationIdTextField
+     * @param l the ActionListener
+     */
     public void addOperationIdTextFieldListener(ActionListener l) {
         operationIdTextField.addActionListener(l);
     }
 
     /**
-* Adds an ActionListener to the DescriptionTextField
-* @param l the ActionListener
-*/
+     * Adds an ActionListener to the DescriptionTextField
+     * @param l the ActionListener
+     */
     public void addDescriptionTextFieldListener(ActionListener l) {
         descriptionPanel.addTextFieldListener(l);
     }
 
     /**
-* Method for getting the inner {@link OperationAttributeeEditor}
-* @return
-*/
+     * Method for getting the inner {@link OperationAttributeeEditor}
+     * @return
+     */
     public OperationAttributeEditor getEditor() {
         return operationAttributeEditor;
     }
 
     /**
-* Sets operationData to a new OperationData and updates the conditions.
-* @param od
-*/
+     * Sets operationData to a new OperationData and updates the conditions.
+     * @param od
+     */
     public OperationData updateModel(OperationData od) {
         this.operationData = od;
         setOperationName(od.getName());
         setConditions();
-        if(operationData.getDescription()!=null){
+        if (operationData.getDescription() != null) {
             setDescription(operationData.getDescription());
-            System.out.println("setdesc");
+//            System.out.println("setdesc");
         }
         return this.operationData;
     }
@@ -170,10 +164,11 @@ public class AttributePanel extends JPanel {
     }
 
     /**
-*
-* @param description
-*/
-    private void setDescription(String description){
+     *
+     * @param description
+     */
+    private void setDescription(String description) {
+        System.out.println("AttributePanel: setDescription: " + description);
         descriptionPanel.setDescription(description);
     }
 

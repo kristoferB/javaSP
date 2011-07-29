@@ -45,7 +45,7 @@ public class Sequencing {
         final ISopNode root = iNodes.iterator().next();
 
         //Take action if selected root is group
-        processGroupNode(root);
+        processChildNodes(root);
 
         final Set<ISopNode> rootPredSet = new HashSet<ISopNode>();
         final Set<ISopNode> rootSuccSet = new HashSet<ISopNode>();
@@ -127,13 +127,13 @@ public class Sequencing {
     }
 
     /**
-     * Recursive call to sequence method if given parameter is group, i.e. not {@link OperationData}.<br/>
+     * Recursive call to sequence method if parameter <p>iNode</p> has children.<br/>
      * The sequence method is called with the child nodes to iNode
-     * @param iNode Node to check if group
+     * @param iNode
      */
-    private void processGroupNode(final ISopNode iNode) {
-        if (!(iNode instanceof SopNodeOperation)) {
-            //node is group
+    private void processChildNodes(final ISopNode iNode) {
+        if (!iNode.sequenceSetIsEmpty()) {
+            //node has children
             sequence(mSNToolbox.getNodes(iNode, false), iNode);
         }
     }

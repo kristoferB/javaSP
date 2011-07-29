@@ -1,5 +1,6 @@
 package sequenceplanner.visualization.algorithms;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -17,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
@@ -31,10 +33,12 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class SelectOperationsDialog extends JFrame implements ActionListener {
 
+    JScrollPane mScrollPane;
     JButton generateButton = new JButton("Generate projection");
     JButton[] mSButtonArray = new JButton[3];
     JButton[] mDSButtonArray = new JButton[3];
-    JPanel jp = null;
+    JPanel jpWest = null;
+    JPanel jpEast = null;
     JPanel jpCond = null;
     JPanel jpStatus;
     JLabel jlStatus;
@@ -46,15 +50,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
     Model mModel;
     OperationView mOpView;
     StartVisualization sv;
-        public boolean mGoOn = true;
-
-        public synchronized boolean goOn() {
-            return mGoOn;
-        }
-
-        private synchronized void setGoOn(boolean iValue) {
-            mGoOn = iValue;
-        }
+    public boolean mGoOn = true;
 
     public SelectOperationsDialog(Model iModel, OperationView iOpView) {
         this.mModel = iModel;
@@ -67,8 +63,9 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         //Collect operations and init variables
         mOperationList = mModel.getAllOperations();
         mOpSelectionTable = new JCheckBox[mOperationList.size()][3];
-        jp = new JPanel();
-        jp.setLayout(new GridLayout(1 + 2 + mOperationList.size(), 4));
+        jpWest = new JPanel(new GridLayout(1 + 2 + mOperationList.size(), 1));
+        jpEast = new JPanel(new GridLayout(1 + 2 + mOperationList.size(), 3));
+
 
         //Collect conditions and init vairables
         mConditionNameSet = getConditionNames();
@@ -89,17 +86,17 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         }
 
         //Text---------------------------------------------------------------
-        jp.add(new JLabel(""));
+        jpWest.add(new JLabel(""));
         JLabel jl = null;
         jl = new JLabel("To include");
         jl.setToolTipText("Select operations to include in calculations");
-        jp.add(jl);
+        jpEast.add(jl);
         jl = new JLabel("To finish");
         jl.setToolTipText("Select operations that has to finish");
-        jp.add(jl);
+        jpEast.add(jl);
         jl = new JLabel("To view");
         jl.setToolTipText("Select operations to view");
-        jp.add(jl);
+        jpEast.add(jl);
         //-------------------------------------------------------------------
 
         //Select and DeSelect------------------------------------------------
@@ -113,26 +110,26 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
             final TreeNode tnData = listIterator.next();
             final int operationIndex = mOperationList.indexOf(tnData);
 
-            jp.add(new JLabel(tnData.getNodeData().getName()));
+            jpWest.add(new JLabel(tnData.getNodeData().getName()));
             JCheckBox cb = null;
 
             cb = new JCheckBox();
             cb.addActionListener(this);
             cb.setSelected(true);
             mOpSelectionTable[operationIndex][0] = cb;
-            jp.add(cb);
+            jpEast.add(cb);
 
             cb = new JCheckBox();
             cb.addActionListener(this);
             cb.setSelected(false);
             mOpSelectionTable[operationIndex][1] = cb;
-            jp.add(cb);
+            jpEast.add(cb);
 
             cb = new JCheckBox();
             cb.addActionListener(this);
             cb.setSelected(false);
             mOpSelectionTable[operationIndex][2] = cb;
-            jp.add(cb);
+            jpEast.add(cb);
         }//------------------------------------------------------------------
 
         //Status JPanel----------------------------------------------------------
@@ -148,17 +145,27 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         setTitle("Operation selection");
         Container c = getContentPane();
 
-        c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
         JPanel jpButton = new JPanel(new GridLayout(1, 1));
         jpButton.add(generateButton);
-        c.add(jpButton);
-        c.add(jpStatus);
-        c.add(jpCond);
-        c.add(jp);
-        //-------------------------------------------------------------------
+        mainPanel.add(jpButton);
+        mainPanel.add(jpStatus);
+        mainPanel.add(jpCond);
+        final JPanel jp = new JPanel();
+        jp.setLayout(new BorderLayout());
+        jp.add(jpWest, BorderLayout.WEST);
+        jp.add(jpEast, BorderLayout.EAST);
+        mainPanel.add(jp);
         
+        mScrollPane = new JScrollPane(mainPanel);
+        c.add(mScrollPane);
+        //-------------------------------------------------------------------
+
+        setMinimumSize(new Dimension(300, 400));
         pack();
-        setLocationRelativeTo(null);
+//        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -244,14 +251,14 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
     }
 
     private void addButtons(final String iButtonText, final JButton[] iButtonArray) {
-        jp.add(new JLabel(iButtonText));
+        jpWest.add(new JLabel(iButtonText));
         for (int iLocal = 0; iLocal < 3; ++iLocal) {
             JButton button = null;
             button = new JButton("Do");
             button.setEnabled(true);
             button.addActionListener(this);
             button.setPreferredSize(new Dimension(2, 2));
-            jp.add(button);
+            jpEast.add(button);
             iButtonArray[iLocal] = button;
         }
     }

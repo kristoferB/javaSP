@@ -1,19 +1,23 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.util.HashMap;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.StringTrimmer;
 
 /**
-* Panel showing a list of Conditions.
-* @author Qw4z1
-*/
+ * Panel showing a list of Conditions.
+ * @author Qw4z1
+ */
 public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
     private HashMap<String, Condition> conditionList;
@@ -22,11 +26,13 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     OperationAttributeEditor editor;
     OperationData opData;
     ConditionType type;
+    private Model mModel;
 
-    public ConditionListPanel(OperationAttributeEditor editor, OperationData opData, ConditionType type) {
+    public ConditionListPanel(OperationAttributeEditor editor, OperationData opData, ConditionType type, final Model iModel) {
         this.editor = editor;
         this.opData = opData;
         this.type = type;
+        this.mModel = iModel;
         conditionList = new HashMap<String, Condition>();
         init();
     }
@@ -45,7 +51,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void updateList() {
-//        System.out.println("updateList CLP");
+        System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
             for (String key : conditionList.keySet()) {
@@ -58,7 +64,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
                     internalPanel.setVisible(true);
-                    addConditionListener(new AttributeMouseAdapter(editor, this));
+                    addConditionListener(new AttributeMouseAdapter(editor, this, mModel));
                 } else {
                     this.removeAll();
 
@@ -76,16 +82,40 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         this.updateUI();
     }
 
+    /**
+     * Trim condition to only include condition key in <p>global condition map</p> for this operation.
+     * @param iConditionKey
+     * @return
+     */
+    private String trimConditionKey(final String iConditionKey) {
+        final Set<String> conditionSet = opData.getGlobalConditions().keySet();
+        for (final String condition : conditionSet) {
+            final Pattern conditionKeyPattern = Pattern.compile(condition);
+            final Matcher matcher = conditionKeyPattern.matcher(iConditionKey);
+
+            if (matcher.find()) {
+                return condition;
+            }
+        }
+        return iConditionKey;
+    }
+
     @Override
     public void deleteCondition(String conditionKey) {
+
+        conditionKey = trimConditionKey(conditionKey);
+
         opData.getGlobalConditions().remove(conditionKey);
         conditionList.remove(conditionKey);
-        opData.decreaseAlgebraicCounter();
+
         this.updateList();
+
     }
 
     @Override
     public void editCondition(String conditionKey) throws NullPointerException {
+        conditionKey = trimConditionKey(conditionKey);
+        
         String conditionString = "";
 
         //To extract the original input string
@@ -112,11 +142,14 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
                 editor.setActionButtonStatus(true);
             }
         }
+
+        //Remebmer name for condition
+        editor.mConditionName = conditionKey;
         //Place the String in the input text window
         editor.setConditionString(conditionString);
+
         deleteCondition(conditionKey);
     }
-
 
     @Override
     public boolean contains(Condition condition) {
@@ -128,10 +161,10 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         this.removeAll();
         this.repaint();
     }
-    /*
-* Adds ActionListener to the conditions that are listed
-*/
 
+    /*
+     * Adds ActionListener to the conditions that are listed
+     */
     public void addConditionListener(AttributeMouseAdapter l) {
         conditionLabel.addMouseListener(l);
     }

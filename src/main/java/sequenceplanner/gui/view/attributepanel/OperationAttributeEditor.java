@@ -13,6 +13,13 @@ import java.awt.event.ActionListener;
 */
 public class OperationAttributeEditor extends javax.swing.JPanel {
 
+    /**
+     * Fix to save condition name during edit by user.<br/>
+     * If this field is !equal to "" is this condition saved with that name.<br/>
+     * If this field is eqial to "" is this condition saved with default name "Algebraic"
+     */
+    public String mConditionName = "";
+
     /** Creates new form OperationAttributeEditor */
     public OperationAttributeEditor() {
         initComponents();
@@ -132,7 +139,6 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 * @param conditionString the input String
 */
     public void setConditionString(String conditionString){
-        System.out.println("ka?awnfa");
         expresionTextField.setText(conditionString);
     }
 
