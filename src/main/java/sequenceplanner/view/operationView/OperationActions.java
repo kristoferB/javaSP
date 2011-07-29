@@ -218,28 +218,6 @@ public class OperationActions {
         }
     }
 
-    // Added by KB
-    public static class AutoSeqGroup implements ActionListener {
-
-        Cell cell;
-
-        public AutoSeqGroup(Cell cell) {
-            this.cell = cell;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (cell == null) {
-//                getGraph(e).autoSequence((Cell) getGraph(e).getDefaultParent());
-            } else if (cell instanceof Cell && ((cell).isGroup()) || (cell).isSOP()) {
-//                getGraph(e).autoSequence(cell);
-            } else if (cell instanceof Cell && ((cell).isOperation())) {
-                Cell[] sops = getGraph(e).getGraphModel().getChildSOP(getGraph(e).getDefaultParent());
-                getGraph(e).addGraphicalPrecond(cell, sops);
-            }
-        }
-    }
-
     public static class Select implements ActionListener {
 
         String type;

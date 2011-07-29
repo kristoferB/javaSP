@@ -1,7 +1,6 @@
 package sequenceplanner.model.SOP.algorithms;
 
 import sequenceplanner.model.SOP.*;
-import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -244,7 +243,7 @@ public class DrawSopNode {
     }
 
     /**
-     * Sorts parameter <p>iSet</p> with method getTopLeftSopNode(...).<br/>
+     * Sorts parameter <code>iSet</code> with method getTopLeftSopNode(...).<br/>
      * @param iSet
      * @return the set sorted as a {@link List}
      */

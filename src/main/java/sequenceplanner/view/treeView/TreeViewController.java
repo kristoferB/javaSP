@@ -96,6 +96,7 @@ public class TreeViewController {
             for (final OperationView opView : mGUIController.getGUIModel().getOperationViews()) {
                 if (opView.removeOperationInGraph(mTreeNode.getId())) {
                     //Operation was removed
+                    System.out.println("Operation removed from sop: " + opView.getName());
                 }
             }
 

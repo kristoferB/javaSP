@@ -168,7 +168,7 @@ public class AttributePanel extends JPanel {
      * @param description
      */
     private void setDescription(String description) {
-        System.out.println("AttributePanel: setDescription: " + description);
+//        System.out.println("AttributePanel: setDescription: " + description);
         descriptionPanel.setDescription(description);
     }
 

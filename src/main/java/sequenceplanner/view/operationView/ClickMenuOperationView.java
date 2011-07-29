@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import sequenceplanner.SequencePlanner;
 import sequenceplanner.view.operationView.OperationActions.AddOperation;
 import sequenceplanner.view.operationView.OperationActions.AlternateSOP;
-import sequenceplanner.view.operationView.OperationActions.AutoSeqGroup;
 import sequenceplanner.view.operationView.OperationActions.AutoarrangeGroup;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;

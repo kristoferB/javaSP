@@ -173,7 +173,6 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         return cell;
     }
 
-
     @Override
     public boolean closeView() {
         if (isChanged()) {
@@ -458,7 +457,7 @@ public class OperationView extends AbstractView implements AsyncModelListener {
                 createAction("SelectGrp", new Select("group"), ""));
 
         //Select sequence (Ctrl + s)
-        iMap.put(KeyStroke.getKeyStroke("control S"), "selectSequence");
+        iMap.put(KeyStroke.getKeyStroke("control shift S"), "selectSequence");
         aMap.put("selectSequence", createAction("selectAll", new Select("sequence"), ""));
 
         //Delete (Delete)
@@ -505,9 +504,9 @@ public class OperationView extends AbstractView implements AsyncModelListener {
     public boolean removeOperationInGraph(final Integer iIdOfOperationToRemove) {
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
 
-        final Set<ISopNode> sopNodeSet = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), true);
-
         //Loop node set and remove all instances of node to remove---------------
+        final Set<ISopNode> sopNodeSet = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(true), true);
+
         for (final ISopNode node : sopNodeSet) {
             if (node instanceof SopNodeOperation) {
                 final OperationData opData = node.getOperation();
@@ -519,8 +518,21 @@ public class OperationView extends AbstractView implements AsyncModelListener {
                     //Save View, otherwise all non saved operations for this view are not redrawn
                     OperationViewController.save(this);
 
-                    //Remove node from sop node data structure
-                    snToolbox.removeNode(node, mViewData.mSopNodeForGraphPlus.getRootSopNode(false));
+                    //Has to go through nodes again since method call to "save" recalculated the sop structure.
+                    final Set<ISopNode> sopNodeSetLocal = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), true);
+                    for (final ISopNode nodeLocal : sopNodeSetLocal) {
+                        if (nodeLocal instanceof SopNodeOperation) {
+                            final OperationData opDataLocal = nodeLocal.getOperation();
+                            final int opDataIdLocal = opDataLocal.getId();
+
+                            //Check if operation in loop is the operation of interest
+                            if (Integer.toString(opDataIdLocal).equals(iIdOfOperationToRemove.toString())) {
+
+                                //Remove node from sop node data structure
+                                snToolbox.removeNode(nodeLocal, mViewData.mSopNodeForGraphPlus.getRootSopNode(false));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -533,11 +545,11 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         mViewData.storeCellData();
         redrawGraph();
 
-        System.out.println("SopStructure after remove of operation:");
-        System.out.println("Model:");
-        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
-        System.out.println("Graph:");
-        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(true).toString());
+//        System.out.println("SopStructure after remove of operation:");
+//        System.out.println("Model:");
+//        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());
+//        System.out.println("Graph:");
+//        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(true).toString());
 
         return true;
 

@@ -14,6 +14,11 @@ public abstract class ASopNode implements ISopNode {
 
     private String mTypeAsString = "";
     /**
+     * Counter for unique ids
+     */
+    public static int mUniqueIdCounter = 1;
+    private int mUniqueid;
+    /**
      * Set containing the first ISopNode in all sequences that are children to this node.<br/>
      */
     private Set<ISopNode> mSequenceSet = null;
@@ -23,6 +28,12 @@ public abstract class ASopNode implements ISopNode {
     public ASopNode(final String iTypeAsString) {
         mSequenceSet = new HashSet<ISopNode>();
         this.mTypeAsString = iTypeAsString;
+        this.mUniqueid = mUniqueIdCounter++;
+    }
+
+    @Override
+    public int getUniquefId() {
+        return mUniqueid;
     }
 
     @Override
@@ -44,8 +55,6 @@ public abstract class ASopNode implements ISopNode {
     public boolean removeFromSequenceSet(ISopNode iNodeToRemove) {
         return getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
     }
-
-
 
     @Override
     public void setSuccessorNode(ISopNode iSuccessor) {

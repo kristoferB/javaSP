@@ -51,5 +51,10 @@ public interface ISopNode{
     String inDepthToString(String prefix);
 
 
+    /**
+     * For debug, a unique id for each object
+     * @return
+     */
+    int getUniquefId();
     
 }

@@ -3,9 +3,11 @@ package sequenceplanner.gui.controller;
 import java.util.Observable;
 import java.util.Observer;
 import net.infonode.docking.View;
+import sequenceplanner.model.data.Data;
 
 /**
- * Observer for the title in sop views and attribute views.
+ * Observer for the title in sop views and attribute views.<br/>
+ * Update method changes title according to notifyObservers call in <code>setName</code> in {@link Data}
  * @author patrik
  */
 public class TabTitleObserver implements Observer {
