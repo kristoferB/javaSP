@@ -545,6 +545,8 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         mViewData.storeCellData();
         redrawGraph();
 
+        OperationViewController.save(this);
+
 //        System.out.println("SopStructure after remove of operation:");
 //        System.out.println("Model:");
 //        System.out.println(mViewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());

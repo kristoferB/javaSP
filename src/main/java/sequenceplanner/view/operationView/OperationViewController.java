@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import sequenceplanner.gui.controller.CellNameObserver;
 import sequenceplanner.visualization.algorithms.StartVisualization;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
@@ -22,6 +24,7 @@ import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.operationView.graphextension.Cell;
 
 /**
  * Observes the operations in the model and updates all existing operation views when the model is changed
@@ -122,6 +125,17 @@ public class OperationViewController implements Observer {
 
             viewData.storeCellData();
 
+            final Map<ISopNode, Cell> map = viewData.mSopNodeForGraphPlus.getNodeCellMap(false);
+            for (final ISopNode node : map.keySet()) {
+                final Cell cell = map.get(node);
+                if (node instanceof SopNodeOperation) {
+                    cell.setValue(node.getOperation());
+                    node.getOperation().addObserver(new CellNameObserver(cell, iOpView.getGraph()));
+                    System.out.println("Name observer added for: " + node.getOperation().getName());
+                }
+            }
+
+
             iOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
 
 //            System.out.println("SOP structure that is saved");
@@ -184,7 +198,7 @@ public class OperationViewController implements Observer {
             }
         }
 
-        if(iLocal) {
+        if (iLocal) {
             rootForOperationsToInclude = rootForOperationsToView;
         }
 

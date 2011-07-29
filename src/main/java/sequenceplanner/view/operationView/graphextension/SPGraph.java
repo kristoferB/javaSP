@@ -105,10 +105,6 @@ public class SPGraph extends mxGraph {
             }
         });
 
-
-
-
-
         mxIEventListener update = new mxIEventListener() {
 
             @Override
@@ -118,8 +114,6 @@ public class SPGraph extends mxGraph {
         };
         addListener(mxEvent.CELLS_ADDED, update);
         addListener(mxEvent.CELLS_REMOVED, update);
-
-
 
         selectionModel = new mxGraphSelectionModel(this) {
 
@@ -405,7 +399,7 @@ public class SPGraph extends mxGraph {
 
             double height = 0, width = 0;
 
-            String value = "preconSPGraph"; //userFile.getPrecondition();
+            String value = ""; //userFile.getPrecondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }
@@ -430,7 +424,7 @@ public class SPGraph extends mxGraph {
                 width = width < rlf.getWidth() ? rlf.getWidth() : width;
             }
 
-            value = "postconSPGraph"; //userFile.getPostcondition();
+            value = ""; //userFile.getPostcondition();
             if (value.length() > cutOff) {
                 value = value.substring(0, cutOff) + "...";
             }
@@ -1040,7 +1034,7 @@ public class SPGraph extends mxGraph {
             addCell(insertCell, parent);
             addCell(edge2, parent, 0, insertCell, parent);
             addCell(edge1, parent, 0, parent, insertCell);
-            
+
         } finally {
             model.endUpdate();
         }
@@ -1612,7 +1606,7 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertSequence(LinkedList<Cell> seq, Cell target, int placement, boolean parType) {
-        System.out.println("insertSequence");
+        System.out.println("SPGraph: insertSequence");
         seq = disconnectSequence(seq);
 
         Object targetParent = null;

@@ -14,8 +14,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-
-import javax.swing.KeyStroke;
 import net.infonode.docking.View;
 import sequenceplanner.IO.txt.ReadFromProcessSimulateTextFile;
 import sequenceplanner.visualization.algorithms.SelectOperationsDialog;
