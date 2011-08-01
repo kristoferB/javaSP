@@ -125,6 +125,7 @@ public class OperationViewController implements Observer {
 
             viewData.storeCellData();
 
+            //Add observers to change name in cell when operation change name.
             final Map<ISopNode, Cell> map = viewData.mSopNodeForGraphPlus.getNodeCellMap(false);
             for (final ISopNode node : map.keySet()) {
                 final Cell cell = map.get(node);
@@ -134,7 +135,6 @@ public class OperationViewController implements Observer {
                     System.out.println("Name observer added for: " + node.getOperation().getName());
                 }
             }
-
 
             iOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
 

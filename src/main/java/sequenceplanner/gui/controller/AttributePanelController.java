@@ -1,14 +1,17 @@
 package sequenceplanner.gui.controller;
 
+import java.awt.event.FocusEvent;
 import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import sequenceplanner.condition.parser.AStringToConditionParser;
 import sequenceplanner.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.condition.Condition;
@@ -23,7 +26,7 @@ import sequenceplanner.model.data.OperationData;
  * and updates the panel accordingly
  * @author Qw4z1
  */
-public class AttributePanelController implements ActionListener, Observer {
+public class AttributePanelController implements ActionListener, FocusListener, Observer {
 
     private AttributePanel attributePanel;
     private OperationData opData;
@@ -53,6 +56,26 @@ public class AttributePanelController implements ActionListener, Observer {
             }
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
             attributeEditor.opendToEdit(e.getSource());
+        } else if (e.getActionCommand().equalsIgnoreCase("set description")) {
+            System.out.println("AttributePanelController: set description ");
+            setDescription();
+        }
+
+        //save changes to model
+        controller.saveOperationToModel(opData);
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (e.getSource() instanceof JTextField) {
+            setDescription();
+
+            //save changes to model
+            controller.saveOperationToModel(opData);
         }
     }
 
@@ -67,8 +90,8 @@ public class AttributePanelController implements ActionListener, Observer {
 
                 if (opId == attributePanelId) {
                     this.opData = od;
-                    attributePanel.updateModel(od);
-//                    System.out.println("APC" + o.toString());
+                    attributePanel.updateModel(this.opData);
+                    System.out.println("APC" + o.toString());
                 }
 
             } catch (NullPointerException npe) {
@@ -76,11 +99,6 @@ public class AttributePanelController implements ActionListener, Observer {
             }
         } catch (ClassCastException cce) {
         }
-
-
-
-
-
     }
 
     /**
@@ -133,9 +151,12 @@ public class AttributePanelController implements ActionListener, Observer {
             attributeEditor.mConditionName = "";
 
             this.attributeEditor.clearTextField();
-            controller.saveOperationToModel(opData);
         }
 
+    }
+
+    private void setDescription() {
+        opData.setDescription(attributePanel.getDescriptionPanel().getDescription());
     }
 
     public void setName(String text) {

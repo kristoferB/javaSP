@@ -1,7 +1,6 @@
 package sequenceplanner.model.SOP.algorithms;
 
 import sequenceplanner.model.SOP.*;
-import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -99,9 +98,9 @@ public class ConditionsFromSopNode {
                     }
 
                     //To capture e.g. a parallel node without any child nodes.
-                    try{
+                    try {
                         condition.clone();
-                    } catch(NullPointerException e) {
+                    } catch (NullPointerException e) {
                         System.out.println("Graph is not complete. No conditions are calculated!");
                         return false;
                     }
@@ -142,19 +141,36 @@ public class ConditionsFromSopNode {
         if (iNode instanceof SopNodeOperation) {
             if (iNode.sequenceSetIsEmpty()) {
                 //do nothing
-            } else { //node is operation with child operaitons
+            } else { //node is operation with child operations
                 final ISopNode parentNode = iNode; //is an operation
                 final OperationData parentOperation = iNode.getOperation();
+
+                //Precondition for child operations
                 for (final ISopNode childNode : mSopNodeToolbox.getNodes(parentNode, true)) { //Take all child operations, not only the first ones
                     if (childNode instanceof SopNodeOperation) {
                         final OperationData childOperation = childNode.getOperation();
                         //set relation between parent and child operations
-                        andToOperationConditionMap(parentOperation, ConditionType.PRE, childOperation, "0");
+//                        andToOperationConditionMap(parentOperation, ConditionType.PRE, childOperation, "0");
 //                        andToOperationConditionMap(parentOperation, ConditionType.POST, childOperation, "2");
-//                        andToOperationConditionMap(childOperation, ConditionType.PRE, parentOperation, "1");
-                        andToOperationConditionMap(childOperation, ConditionType.POST, parentOperation, "1");
+                        andToOperationConditionMap(childOperation, ConditionType.PRE, parentOperation, "1");
+//                        andToOperationConditionMap(childOperation, ConditionType.POST, parentOperation, "1");
                     }
                 }
+
+                //Postcondition for parent operation
+                final ConditionExpression postCondition = new ConditionExpression();
+                for (final ISopNode node : parentNode.getFirstNodesInSequencesAsSet()) {
+                    //Get condition for when sequence that starts with node is finished
+                    final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+                    final ConditionExpression finishCondition = new ConditionExpression();
+                    getFinishConditionForNode(lastNode, finishCondition);
+                    if (postCondition.isEmpty()) {
+                        postCondition.changeExpressionRoot(finishCondition);
+                    } else {
+                        postCondition.appendElement(ConditionOperator.Type.AND, finishCondition);
+                    }
+                }
+                andToOperationConditionMap(parentOperation, ConditionType.POST, postCondition);
             }
         } else if (iNode instanceof SopNodeAlternative) {
             //find operations that are first in each sequence.

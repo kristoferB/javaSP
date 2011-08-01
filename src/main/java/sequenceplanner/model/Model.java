@@ -215,9 +215,7 @@ public class Model extends Observable implements IModel {
 
             if (node.getNodeData() instanceof OperationData) {
                 OperationData od = (OperationData) node.getNodeData();
-                saveNode(data[i], operationRoot);
-
-                System.out.println("Model: saveOperationData: description" + od.getDescription());
+                addOperationNodeToModel(data[i], operationRoot);
 
                 setChanged();
                 notifyObservers(od);
@@ -231,95 +229,58 @@ public class Model extends Observable implements IModel {
     }
 
     /**
-     * Creates a new {@link OperationData}.<br/>
-     * The operation is saved to the model.<br/>
-     * @param iName
-     * @param iId
-     * @return The graphical representation of the operation
+     * Adds parameter <code>iOpData</code> to the operation root in the model.<br/>
+     * @param iOpData
+     * @return The {@link TreeNode} created.
      */
-    public TreeNode createModelOperationNode(final String iName, final int iId) {
-        final OperationData opData = new OperationData(iName, iId);
-        final TreeNode newOpNode = new TreeNode(opData);
+    public TreeNode createModelOperationNode(final OperationData iOpData) {
+        final TreeNode newOpNode = new TreeNode(iOpData);
         insertChild(getOperationRoot(), newOpNode);
         return newOpNode;
     }
 
     /**
-     * Creates a new {@link OperationData}.<br/>
-     * @return The graphical representation of the operation
+     * Creates a new operation that is added to the model.<br/>
+     * A default name is given.<br/>
+     * @return The {@link TreeNode} created.
      */
     public TreeNode createModelOperationNode() {
         final int id = newId();
-//        System.out.println("id: " + id);
         final String name = "mOP" + id;
-        return createModelOperationNode(name, id);
+        final OperationData opData = new OperationData(name, id);
+        return createModelOperationNode(opData);
     }
 
     /**
-     * Only used for operations
+     * adds parameter <code>newNode</code> to Model if:<br/>
+     * 1) No node with that id exists<br/>
+     * 2) node is an operation<br/>
      * @param id
      * @param root search for TreeNode with id from root
      * @return
      */
-    private TreeNode saveNode(TreeNode newNode, TreeNode root) {
-//        List<Integer> oldTree = getIds(root, -1);
+    private void addOperationNodeToModel(TreeNode newNode, TreeNode root) {
 
         TreeNode node = getNode(newNode.getId(), root);
 
         if (node == null) { //Node not present in model
+
+            if(!Model.isOperation(newNode.getNodeData())) {
+                return;
+            }
+
             // Create new empty root
             final Data data = newNode.getNodeData();
             final String name = data.getName();
             final int id = data.getId();
-            createModelOperationNode(name, id);
-
+            final OperationData opData = new OperationData(name, id);
+            opData.setDescription(data.getDescription());
+            createModelOperationNode(opData);
         }
-
-        // The node is present, what should we change in the model?
-//        ArrayList<Integer> newTree = getIds(newNode, -1);
-//
-//        // Get the intersection of oldTree and newTree to get if any is removed.
-//        ArrayList<Integer> toMove = getInteserction(getIds(root, node.getId()), newTree);
-//
-//        // Only top cells need to be handled
-//
-//        if (toMove.size() > 0) {
-//            toMove = getTopNodes(toMove);
-//            removeNodes(toMove, treeRoot);
-//        }
-//
-//// newTree is the model version
-//
-//
-//
-//
-//
-//
-//// oModelTree - newTree = is any cells in the old tree removed.
-//// FIXME:
-////Insert new node
-//        TreeNode parent = node.getParentIfNodeIsInSequenceSet();
-//        parent.remove(node);
-//        parent.insert(newNode);
-//
-//
-//
-//        ArrayList<Integer> reallyNewTree = getIds(root, -1);
-//        for (Integer i : reallyNewTree) {
-//            oldTree.remove(i);
-//        }
-//
-//        //Oldtree now contains all opeations that really has been moved.
-//
-//
-//
-//        fireSyncBigChangeEvent(getPath(parent));
-//
+ 
         reloadNamesCache();
-//        if (newNode.getNodeData() instanceof OperationData) {
-//            OperationData od = (OperationData) newNode.getNodeData();
-//        }
-        return newNode;
+
+        return;
 
     }
 
@@ -1036,10 +997,10 @@ public class Model extends Observable implements IModel {
                 final OperationData opDataInView = node.getOperation();
                 final SopNodeOperation sopNodeInView = (SopNodeOperation) node;
                 final int id = opDataInView.getId();
-                final String name = opDataInView.getName();
                 TreeNode tnInModel = getNode(id, getOperationRoot());
                 if (tnInModel == null) {
-                    tnInModel = createModelOperationNode(name, id);
+                    //No operation with that id saved to model before.
+                    tnInModel = createModelOperationNode(opDataInView);
                 }
                 final OperationData opDataInModel = (OperationData) tnInModel.getNodeData();
                 sopNodeInView.setOperation(opDataInModel);
@@ -1071,6 +1032,7 @@ public class Model extends Observable implements IModel {
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
             operation.setConditions(operationConditionMap.get(operation), iLabel);
+
             setChanged();
             notifyObservers(operation);
         }

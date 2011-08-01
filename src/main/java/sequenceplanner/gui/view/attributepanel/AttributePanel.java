@@ -7,6 +7,7 @@ package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -132,8 +133,11 @@ public class AttributePanel extends JPanel {
      * Adds an ActionListener to the DescriptionTextField
      * @param l the ActionListener
      */
-    public void addDescriptionTextFieldListener(ActionListener l) {
-        descriptionPanel.addTextFieldListener(l);
+    public void addDescriptionListeners(ActionListener l, FocusListener fl) {
+        //Save description when ENTER is pressed.
+        descriptionPanel.addActionListener(l);
+        //Save description when focus is lost
+        descriptionPanel.addFocusListener(fl);
     }
 
     /**
@@ -154,7 +158,6 @@ public class AttributePanel extends JPanel {
         setConditions();
         if (operationData.getDescription() != null) {
             setDescription(operationData.getDescription());
-//            System.out.println("setdesc");
         }
         return this.operationData;
     }
@@ -168,8 +171,11 @@ public class AttributePanel extends JPanel {
      * @param description
      */
     private void setDescription(String description) {
-//        System.out.println("AttributePanel: setDescription: " + description);
         descriptionPanel.setDescription(description);
+    }
+
+    public DescriptionPanel getDescriptionPanel() {
+        return descriptionPanel;
     }
 
     public OperationData getOperationData() {

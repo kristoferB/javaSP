@@ -612,7 +612,10 @@ public class GUIController {
             AttributePanelController ctrl = new AttributePanelController(data, panel, panel.getEditor(), this);
             panel.addEditorSaveListener(ctrl);
             panel.addOperationIdTextFieldListener(new OperationIdTextFieldListener(data.getId(), ctrl));
+            panel.addDescriptionListeners(ctrl, ctrl);
+
             mGuiModel.getModel().addObserver(ctrl);
+
             GUIView.printToConsole("Operation " + data.getName() + " opened.");
         }
         return data;

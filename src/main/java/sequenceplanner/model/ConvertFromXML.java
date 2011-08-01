@@ -73,8 +73,8 @@ public class ConvertFromXML {
 
     private void getOperationData(SequencePlannerProjectFile.Operations inputX) {
         for (Operation opX : inputX.getOperation()) {
-            final TreeNode tn = model.createModelOperationNode(opX.getName(), opX.getId());
-            final OperationData opData = (OperationData) tn.getNodeData();
+            final OperationData opData = new OperationData(opX.getName(), opX.getId());
+            model.createModelOperationNode(opData);
 
             if (opX.getOperationData().getDescription() != null) {
                 opData.setDescription(opX.getOperationData().getDescription());

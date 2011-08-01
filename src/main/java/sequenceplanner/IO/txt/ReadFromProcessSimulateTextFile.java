@@ -100,8 +100,8 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
 
             //Operations---------------------------------------------------------
             if (data instanceof OperationDataFromFile) {
-                final TreeNode tn = mModel.createModelOperationNode(name, idInModel);
-                final OperationData opData = (OperationData) tn.getNodeData();
+                final OperationData opData = new OperationData(name, idInModel);
+                mModel.createModelOperationNode(opData);
                 setDescription(opData, data.mDescription);
 
                 dataOperationMap.put(data, opData);
