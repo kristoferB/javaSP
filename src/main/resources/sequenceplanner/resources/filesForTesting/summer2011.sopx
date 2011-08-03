@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SequencePlannerProjectFile>
+    <idCounter>29</idCounter>
+    <Resources/>
+    <Operations>
+        <operation name="Fixate" id="21">
+            <operationData>
+                <description>rT1</description>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+            </operationData>
+        </operation>
+        <operation name="Unfixate" id="23">
+            <operationData>
+                <description>rT2</description>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet/>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="Move" id="22">
+            <operationData>
+                <description>rR1</description>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet/>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+    </Operations>
+    <Views>
+        <view root="0" name="P1" id="0">
+            <CellData expanded="true" type="23" refId="0">
+                <sequenceSet/>
+                <geo>
+                    <geometry h="36.3515625" w="73.0" y="152.703125" x="23.5"/>
+                </geo>
+            </CellData>
+            <CellData expanded="true" type="21" successor="1" refId="2">
+                <sequenceSet/>
+                <geo>
+                    <geometry h="36.3515625" w="60.0" y="30.0" x="30.0"/>
+                </geo>
+            </CellData>
+            <CellData expanded="true" type="22" successor="0" refId="1">
+                <sequenceSet/>
+                <geo>
+                    <geometry h="36.3515625" w="63.0" y="91.3515625" x="28.5"/>
+                </geo>
+            </CellData>
+            <isClosed>false</isClosed>
+            <isHidden>false</isHidden>
+        </view>
+    </Views>
+</SequencePlannerProjectFile>

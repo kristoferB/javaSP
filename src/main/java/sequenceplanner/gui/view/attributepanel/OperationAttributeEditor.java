@@ -6,6 +6,7 @@
 package sequenceplanner.gui.view.attributepanel;
 
 import java.awt.event.ActionListener;
+import sequenceplanner.model.data.ConditionData;
 
 /**
 * Small editor class. Used to edit or add conditions to an OperationData object.
@@ -15,10 +16,10 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 
     /**
      * Fix to save condition name during edit by user.<br/>
-     * If this field is !equal to "" is this condition saved with that name.<br/>
-     * If this field is eqial to "" is this condition saved with default name "Algebraic"
+     * If mConditionData.getName is !equal to "" then is this condition saved with that name.<br/>
+     * If mConditionData.getName is eqial to "" is this condition saved with default name "Algebraic"
      */
-    public String mConditionName = "";
+    public ConditionData mConditionData;
 
     /** Creates new form OperationAttributeEditor */
     public OperationAttributeEditor() {

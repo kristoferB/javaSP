@@ -33,6 +33,7 @@ import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.xml.Condition;
 
 /**
@@ -131,13 +132,13 @@ public class ConvertToXML {
 
         final String pattern = getPatternForConditionsToExclude();
 
-        if (!data.getGlobalConditions().isEmpty()) {
+        if (!data.getConditions().isEmpty()) {
             final OperationData.PreConditionSet pcsPre = new OperationData.PreConditionSet();
             pcsPre.getCondition().addAll(getConditions(data, pattern, ConditionType.PRE));
             dataX.setPreConditionSet(pcsPre);
         }
 
-        if (!data.getGlobalConditions().isEmpty()) {
+        if (!data.getConditions().isEmpty()) {
             final OperationData.PostConditionSet pcsPost = new OperationData.PostConditionSet();
             pcsPost.getCondition().addAll(getConditions(data, pattern, ConditionType.POST));
             dataX.setPostConditionSet(pcsPost);
@@ -163,16 +164,16 @@ public class ConvertToXML {
 
     private Set<Condition> getConditions(final sequenceplanner.model.data.OperationData iOpData, final String iConditionPattern, final ConditionType iConditionType) {
         final Set<Condition> conditionSet = new HashSet<Condition>();
-        for (final String viewName : iOpData.getGlobalConditions().keySet()) {
-            final Matcher matcher = Pattern.compile(iConditionPattern).matcher(viewName);
+        for (final ConditionData conditionDataKey : iOpData.getConditions().keySet()) {
+            final Matcher matcher = Pattern.compile(iConditionPattern).matcher(conditionDataKey.getName());
 
             if (!matcher.find() || iConditionPattern.equals("")) {
-                if (iOpData.getGlobalConditions().get(viewName).containsKey(iConditionType)) {
+                if (iOpData.getConditions().get(conditionDataKey).containsKey(iConditionType)) {
                     final Condition condition = new Condition();
 
-                    condition.setCondKey(viewName);
+                    condition.setCondKey(conditionDataKey.getName());
 
-                    final sequenceplanner.condition.Condition conditionToSave = iOpData.getGlobalConditions().get(viewName).get(iConditionType);
+                    final sequenceplanner.condition.Condition conditionToSave = iOpData.getConditions().get(conditionDataKey).get(iConditionType);
                     String guard = conditionToSave.getGuard().toString();
                     guard = guard.substring(1, guard.length() - 1);
                     String action = conditionToSave.getAction().toString();

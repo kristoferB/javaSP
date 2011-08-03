@@ -2,6 +2,7 @@ package sequenceplanner.visualization.algorithms;
 
 import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -15,11 +16,11 @@ public class StartVisualization implements Runnable {
     private ISopNode mAllOperations;
     private ISopNode mOperationsToView;
     private ISopNode mHasToFinish;
-    private Set<String> mConditionsToIncludeSet;
+    private Set<ConditionData> mConditionsToIncludeSet;
     private IPerformVisualization mVisualization = null;
     private SelectOperationsDialog mStatus;
 
-    public StartVisualization(final OperationView iOpView, ISopNode mAllOperations, ISopNode mOperationsToView, ISopNode mHasToFinish, final Set<String> iConditionsToInclude, final SelectOperationsDialog iStatus) {
+    public StartVisualization(final OperationView iOpView, ISopNode mAllOperations, ISopNode mOperationsToView, ISopNode mHasToFinish, final Set<ConditionData> iConditionsToInclude, final SelectOperationsDialog iStatus) {
         this.mOpView = iOpView;
         this.mAllOperations = mAllOperations;
         this.mOperationsToView = mOperationsToView;

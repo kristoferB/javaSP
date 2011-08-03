@@ -6,6 +6,7 @@ import org.supremica.external.avocades.common.EGA;
 import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -92,9 +93,9 @@ public class SEGA extends EGA {
      * @param iConditionType is given as {@link ConditionsFromSopNode.ConditionType}
      * @param iType is given as {@link ISupremicaInteractionForVisualization.Type}
      */
-    public void addCondition(final OperationData iOpData, final ConditionsFromSopNode.ConditionType iConditionType, final ISupremicaInteractionForVisualization.Type iType, final Set<String> iConditionsToInclude) {
-        final Map<String, Map<ConditionsFromSopNode.ConditionType, Condition>> map = iOpData.getGlobalConditions();
-        for (final String sop : map.keySet()) {
+    public void addCondition(final OperationData iOpData, final ConditionsFromSopNode.ConditionType iConditionType, final ISupremicaInteractionForVisualization.Type iType, final Set<ConditionData> iConditionsToInclude) {
+        final Map<ConditionData, Map<ConditionsFromSopNode.ConditionType, Condition>> map = iOpData.getConditions();
+        for (final ConditionData sop : map.keySet()) {
             if (allowedNamePrefixForCondition(sop, iConditionsToInclude)) {
                 final Map<ConditionsFromSopNode.ConditionType, Condition> innerMap = map.get(sop);
 
@@ -116,11 +117,11 @@ public class SEGA extends EGA {
         }
     }
 
-    private boolean allowedNamePrefixForCondition(final String iCondition, final Set<String> iConditionsToInclude) {
+    private boolean allowedNamePrefixForCondition(final ConditionData iCondition, final Set<ConditionData> iConditionsToInclude) {
         if (iConditionsToInclude == null) {
             return true;
         }
-        for (final String condition : iConditionsToInclude) {
+        for (final ConditionData condition : iConditionsToInclude) {
             if (iCondition.equals(condition)) {
                 return true;
             }

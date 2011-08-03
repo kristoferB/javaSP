@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import javax.swing.JFileChooser;
-import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.ConvertToXML;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.data.ViewData;
@@ -190,24 +189,24 @@ public class GUIModel {
         return false;
     }
 
-    /**
-     * Not used
-     */
-    public void saveBackup() {
-        if (projectFile != null) {
-            String path = projectFile.getParent();
-            path = path + File.separatorChar + "backup";
-
-            File f = new File(path);
-            f.mkdir();
-
-            Calendar c = Calendar.getInstance();
-            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
-
-            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constants.FILEFORMAT;
-            saveModelToFile(path);
-        }
-    }
+//    /**
+//     * Not used
+//     */
+//    public void saveBackup() {
+//        if (projectFile != null) {
+//            String path = projectFile.getParent();
+//            path = path + File.separatorChar + "backup";
+//
+//            File f = new File(path);
+//            f.mkdir();
+//
+//            Calendar c = Calendar.getInstance();
+//            String date = c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND) + "." + c.get(Calendar.MILLISECOND);
+//
+//            path = path + File.separatorChar + projectFile.getName() + "_" + date + Constants.FILEFORMAT;
+//            saveModelToFile(path);
+//        }
+//    }
 
     public File saveModelToFile(String filepath) {
         final File file = new File(filepath);

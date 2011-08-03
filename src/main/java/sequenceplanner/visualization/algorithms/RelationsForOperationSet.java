@@ -8,6 +8,7 @@ import org.supremica.automata.Automaton;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -23,7 +24,7 @@ public class RelationsForOperationSet {
     private RelationContainer mRC = null;
     private String mWmodPath = "";
 
-    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<String> iConditionsToInclude) {
+    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<ConditionData> iConditionsToInclude) {
         setmRC(iRC);
         mWmodPath = iWmodPath;
         formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude);

@@ -22,6 +22,7 @@ import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -30,12 +31,12 @@ import sequenceplanner.model.data.OperationData;
  */
 public class SupremicaInteractionForVisualization implements ISupremicaInteractionForVisualization {
 
-    private final Set<String> mConditionsToInclude;
+    private final Set<ConditionData> mConditionsToInclude;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
     private SModule mModule = new SModule("temp");
     private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
 
-    public SupremicaInteractionForVisualization(final Set<String> iConditionsToInclude) {
+    public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude) {
         this.mConditionsToInclude = iConditionsToInclude;
     }
 

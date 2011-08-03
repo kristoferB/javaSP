@@ -1,16 +1,11 @@
 package sequenceplanner.model.data;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import org.apache.log4j.Logger;
 
 import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeFromSPGraphModel;
@@ -26,6 +21,7 @@ public class ViewData extends Data {
 
     static Logger logger = Logger.getLogger(ViewData.class);
 
+    public ConditionData mConditionData;
     public SopNodeForGraphPlus mSopNodeForGraphPlus;
     public Map<ISopNode, CellDataLayout> mNodeCellDataLayoutMap = new HashMap<ISopNode, CellDataLayout>();
     public Map<ISopNode, CellData> mNodeCellDataMap = new HashMap<ISopNode, CellData>();
@@ -52,8 +48,7 @@ public class ViewData extends Data {
         super(name, id);
         setHidden(false);
         setClosed(false);
-        
-//        mRootSopNode = new SopNode();
+        mConditionData = new ConditionData(name);
     }
 
     public void setSpGraphModel(final SPGraphModel iSPGraphModel) {

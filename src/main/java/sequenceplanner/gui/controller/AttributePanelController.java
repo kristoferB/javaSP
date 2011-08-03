@@ -19,6 +19,7 @@ import sequenceplanner.condition.ConditionExpression;
 import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -138,17 +139,18 @@ public class AttributePanelController implements ActionListener, FocusListener, 
             }
 
             //Check if name should be stored with default name or if other name has been given.
-            String name = attributeEditor.mConditionName;
-            if (name.equals("")) {
-                name = "Algebraic" + opData.getAlgebraicCounter();
+            ConditionData conditionData = attributeEditor.mConditionData;
+
+            if (conditionData == null ){
+                conditionData = new ConditionData("Algebraic" + opData.getAlgebraicCounter());
                 opData.increaseAlgebraicCounter();
             }
 
             //Set condition
-            opData.setConditions(map, name);
+            opData.setConditions(conditionData, map);
 
             //Reset condition name
-            attributeEditor.mConditionName = "";
+            attributeEditor.mConditionData = null;
 
             this.attributeEditor.clearTextField();
         }

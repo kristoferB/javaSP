@@ -117,7 +117,7 @@ public class OperationViewController implements Observer {
         final ViewData viewData = iOpView.mViewData;
         if (viewData != null) {
 
-            iOpView.model.removeConditions(viewData.getName());
+            iOpView.model.removeConditions(viewData.mConditionData);
 
             iOpView.model.saveView(viewData);
 
@@ -136,7 +136,10 @@ public class OperationViewController implements Observer {
                 }
             }
 
-            iOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
+            //Update name that is showed for user.
+            viewData.mConditionData.setName(viewData.getName());
+
+            iOpView.model.setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.mConditionData);
 
 //            System.out.println("SOP structure that is saved");
 //            System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false).toString());

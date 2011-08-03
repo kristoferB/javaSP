@@ -4,6 +4,7 @@ import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -24,14 +25,14 @@ public class PerformVisualization implements IPerformVisualization {
 
     private RelationContainer mRC;
     private String mWmodPath = "";
-    private Set<String> mConditionsToInclude;
+    private Set<ConditionData> mConditionsToInclude;
 
 
     /**
      *
      * @param iWmodPath where to store wmod file of operations.
      */
-    public PerformVisualization(final String iWmodPath, final Set<String> iConditionsToInclude) {
+    public PerformVisualization(final String iWmodPath, final Set<ConditionData> iConditionsToInclude) {
         mRC = new RelationContainer();
         mWmodPath = iWmodPath;
         mConditionsToInclude = iConditionsToInclude;

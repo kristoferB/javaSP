@@ -38,6 +38,7 @@ import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
+import sequenceplanner.model.data.ConditionData;
 
 /**
  *
@@ -101,7 +102,7 @@ public class ConvertFromXML {
 
             final Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
             map.put(iConditionType, conditionFromString(value));
-            data.setConditions(map, key);
+            data.setConditions(new ConditionData(key), map);
         }
 
         return data;

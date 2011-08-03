@@ -149,7 +149,7 @@ public class TreeViewController {
             if (Model.isView(mTreeNode.getNodeData())) {
                 final ViewData viewData = (ViewData) mTreeNode.getNodeData();
                 //Remove conditions based on view
-                mGUIController.getModel().removeConditions(viewData.getName());
+                mGUIController.getModel().removeConditions(viewData.mConditionData);
 
                 //Remove Operation view
                 mGUIController.getView().removeOperationView(mTreeNode);

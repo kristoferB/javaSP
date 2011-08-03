@@ -510,43 +510,49 @@ public class GUIController {
         final SequencePlannerProjectFile newProject = getGUIModel().openModel();
 
         if (newProject != null) {
-
-            //Remove old project. This is done when only if the newProejct != null
-            reloadAnEmptyProject(false);
-
-            //Load newProject to Model
-            final ConvertFromXML con = new ConvertFromXML(getModel());
-            getGUIModel().setModel(con.convert(newProject));
-
-            getModel().rootUpdated();
-            getModel().reloadNamesCache();
-
-            //To redraw the operation sequences in each operation view
-            try {
-                for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
-                    if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
-                        final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
-                        System.out.println("viewData to open: " + viewData.getName());
-                        final OperationView opView = mOpViewController.createOperationView(viewData);
-                        System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false));
-                        final SopNodeFromViewData trans = new SopNodeFromViewData(viewData, viewData.mSopNodeForGraphPlus.getRootSopNode(false));
-                        opView.redrawGraph();
-                        //Set conditions
-                        mGuiModel.getModel().setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.getName());
-                    }
-                }
-
-                //Inform user of update
-                final String name = mGuiModel.getProjectName();
-                getView().changeTitle(name);
-                GUIView.printToConsole("Project " + name + " opened!");
-                return;
-
-            } catch (ClassCastException e) {
-                System.out.println("Could not cast first child of viewroot to viewData");
-            }
+            openModel(newProject);
+            return;
         }
         GUIView.printToConsole("Project could not be opened!");
+
+    }
+
+    public void openModel(final SequencePlannerProjectFile iNewProject) {
+        //Remove old project. This is done when only if the newProejct != null
+        reloadAnEmptyProject(false);
+
+        //Load newProject to Model
+        final ConvertFromXML con = new ConvertFromXML(getModel());
+        getGUIModel().setModel(con.convert(iNewProject));
+
+        getModel().rootUpdated();
+        getModel().reloadNamesCache();
+
+        //To redraw the operation sequences in each operation view
+        try {
+            for (int i = 0; i < getModel().getViewRoot().getChildCount(); i++) {
+                if (getModel().getViewRoot().getChildAt(i).getNodeData() != null) {
+                    final ViewData viewData = (ViewData) getModel().getViewRoot().getChildAt(i).getNodeData();
+                    System.out.println("viewData to open: " + viewData.getName());
+                    final OperationView opView = mOpViewController.createOperationView(viewData);
+                    System.out.println(viewData.mSopNodeForGraphPlus.getRootSopNode(false));
+                    final SopNodeFromViewData trans = new SopNodeFromViewData(viewData, viewData.mSopNodeForGraphPlus.getRootSopNode(false));
+                    opView.redrawGraph();
+                    //Set conditions
+                    mGuiModel.getModel().setConditions(viewData.mSopNodeForGraphPlus.getRootSopNode(false), viewData.mConditionData);
+                }
+            }
+
+            //Inform user of update
+            final String name = mGuiModel.getProjectName();
+            getView().changeTitle(name);
+            GUIView.printToConsole("Project " + name + " opened!");
+            return;
+
+        } catch (ClassCastException e) {
+            System.out.println("Could not cast first child of viewroot to viewData");
+        }
+
     }
 
     /**

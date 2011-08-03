@@ -24,7 +24,9 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -45,8 +47,8 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
     JButton mStopButton;
     List<TreeNode> mOperationList = null;
     JCheckBox[][] mOpSelectionTable = null;
-    Set<String> mConditionNameSet = null;
-    Map<String, JCheckBox> mConditionSelectionMap = null;
+    Set<ConditionData> mConditionNameSet = null;
+    Map<ConditionData, JCheckBox> mConditionSelectionMap = null;
     Model mModel;
     OperationView mOpView;
     StartVisualization sv;
@@ -68,14 +70,14 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
 
 
         //Collect conditions and init vairables
-        mConditionNameSet = getConditionNames();
-        mConditionSelectionMap = new HashMap<String, JCheckBox>();
+        mConditionNameSet = getViewData();
+        mConditionSelectionMap = new HashMap<ConditionData, JCheckBox>();
         jpCond = new JPanel();
         jpCond.setLayout(new GridLayout(mConditionNameSet.size(), 2));
 
         //Conditions---------------------------------------------------------
-        for (final String condition : mConditionNameSet) {
-            jpCond.add(new JLabel(condition));
+        for (final ConditionData condition : mConditionNameSet) {
+            jpCond.add(new JLabel(condition.getName()));
             JCheckBox cb = null;
 
             cb = new JCheckBox();
@@ -197,8 +199,8 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
             }
 
             //Conditions
-            final Set<String> conditionNameToIncludeSet = new HashSet<String>();
-            for (final String condition : mConditionSelectionMap.keySet()) {
+            final Set<ConditionData> conditionNameToIncludeSet = new HashSet<ConditionData>();
+            for (final ConditionData condition : mConditionSelectionMap.keySet()) {
                 if (mConditionSelectionMap.get(condition).isSelected()) {
                     conditionNameToIncludeSet.add(condition);
                 }
@@ -263,15 +265,15 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         }
     }
 
-    private Set<String> getConditionNames() {
-        final Set<String> returnSet = new HashSet<String>();
+    private Set<ConditionData> getViewData() {
+        final Set<ConditionData> returnSet = new HashSet<ConditionData>();
         final List<TreeNode> operationList = mModel.getAllOperations();
 
         for (final TreeNode tn : operationList) {
             if (Model.isOperation(tn.getNodeData())) {
                 final OperationData opData = (OperationData) tn.getNodeData();
-                final Set<String> conditionNameSet = opData.getGlobalConditions().keySet();
-                for (final String cond : conditionNameSet) {
+                final Set<ConditionData> conditionNameSet = opData.getConditions().keySet();
+                for (final ConditionData cond : conditionNameSet) {
                     returnSet.add(cond);
                 }
             }

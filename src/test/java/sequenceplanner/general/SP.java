@@ -9,6 +9,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.SequencePlanner;
+import sequenceplanner.xml.SequencePlannerProjectFile;
 import static org.junit.Assert.*;
 
 /**
@@ -85,7 +86,10 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
-        assertTrue(mGUIModel.openModel(new File(nameOfFile)));
+        final SequencePlannerProjectFile project = mGUIModel.openModel(new File(nameOfFile));
+        assertTrue(project != null);
+        assertTrue(getGUIController() != null);
+        getGUIController().openModel(project);
     }
 
     /**
@@ -93,6 +97,7 @@ public class SP {
      * @param nameOfFile name of template.sopx-file
      */
     public void loadFromTemplateSOPXFile(String nameOfFile) {
+        initViewAndController();
         loadFromSOPXFile(SequencePlanner.class.getResource(nameOfFile).getFile());
     }
 

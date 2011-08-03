@@ -14,6 +14,7 @@ import sequenceplanner.gui.view.AttributeClickMenu;
 import sequenceplanner.gui.view.attributepanel.ConditionListPanel;
 import sequenceplanner.gui.view.attributepanel.OperationAttributeEditor;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.data.ViewData;
 
 /**
  *
@@ -102,9 +103,9 @@ public class AttributeMouseAdapter extends MouseAdapter {
         final JLabel localConditionLabel = (JLabel) conditionLabel;
 
         //Loop conditions defined in SOP views in order to disable popup menu through <p>conditionKey</p> if conditionLabel is from SOP view
-        final Set<String> sopConditionSet = mModel.getAllSOPs().keySet();
-        for (final String sopName : sopConditionSet) {
-            final Pattern conditionKeyPattern = Pattern.compile(sopName);
+        final Set<ViewData> sopConditionSet = mModel.getAllSOPs().keySet();
+        for (final ViewData sopName : sopConditionSet) {
+            final Pattern conditionKeyPattern = Pattern.compile(sopName.getName());
             final Matcher matcher = conditionKeyPattern.matcher(localConditionLabel.getText());
 
             if (matcher.find()) {
@@ -114,7 +115,7 @@ public class AttributeMouseAdapter extends MouseAdapter {
         }
 
         //conditionLabel is not from SOP view
-        //<p>conditionKey</p> is now both key and value, e.g. signal2: id20==2
+        //<code>conditionKey</code> is now both key and value, e.g. signal2: id20==2
         conditionKey = localConditionLabel.getText();
     }
 }

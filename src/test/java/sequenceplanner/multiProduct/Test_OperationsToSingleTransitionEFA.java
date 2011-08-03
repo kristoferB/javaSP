@@ -1,18 +1,12 @@
 package sequenceplanner.multiProduct;
 
+import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
-import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.algorithms.SopNodeFromSPGraphModel;
-import sequenceplanner.model.TreeNode;
-import sequenceplanner.model.data.Data;
-import sequenceplanner.model.data.ViewData;
-//import sequenceplanner.multiProduct.summer2011.ASupervisorFromOperationsBasedOnSingleTransition;
-//import sequenceplanner.multiProduct.summer2011.SupervisorFromOperationsBasedOnSingleTransition;
-import sequenceplanner.view.operationView.OperationView;
+import sequenceplanner.model.data.OperationData;
+import sequenceplanner.multiproduct.summer2011.SupervisorFromOperationsBasedOnSingleTransition;
 import static org.junit.Assert.*;
 
 /**
@@ -33,11 +27,12 @@ public class Test_OperationsToSingleTransitionEFA {
 
     @Test
     public void test1() {
-
-//        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/fileForTesting.sopx");
+        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/summer2011.sopx");
 //        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/TwoSimpleProducts.sopx");
 
-//        new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
 
-    }    
+        SupervisorFromOperationsBasedOnSingleTransition s = new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
+        s.start();
+
+    }
 }

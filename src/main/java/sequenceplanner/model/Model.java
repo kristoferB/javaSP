@@ -18,6 +18,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.FolderData;
 import sequenceplanner.model.data.LiasonData;
@@ -888,17 +889,16 @@ public class Model extends Observable implements IModel {
      * Value: rootSop as {@link ISopNode}.<br/>
      * @return
      */
-    public Map<String,ISopNode> getAllSOPs() {
-        final Map<String,ISopNode> nameRootSopMap = new HashMap<String, ISopNode>();
+    public Map<ViewData,ISopNode> getAllSOPs() {
+        final Map<ViewData,ISopNode> nameRootSopMap = new HashMap<ViewData, ISopNode>();
         final TreeNode[] viewDataArray = getChildren(viewRoot);
 
         for (final TreeNode tn : viewDataArray) {
             if (isView(tn.getNodeData())) {
                 final ViewData viewData = (ViewData) tn.getNodeData();
-                final String name = viewData.getName();
                 final ISopNode root = viewData.mSopNodeForGraphPlus.getRootSopNode(false);
-                if (name != null & root != null) {
-                    nameRootSopMap.put(name, root);
+                if (root != null) {
+                    nameRootSopMap.put(viewData, root);
                 }
             }
         }
@@ -1017,7 +1017,7 @@ public class Model extends Observable implements IModel {
      * @param iLabel
      * @return true if ok else false
      */
-    public boolean setConditions(final ISopNode iSopNodeRoot, final String iLabel) {
+    public boolean setConditions(final ISopNode iSopNodeRoot, final ConditionData iConditionData ) {
         //Check sopNode----------------------------------------------------------
         if (iSopNodeRoot == null) {
             return false;
@@ -1031,7 +1031,7 @@ public class Model extends Observable implements IModel {
 
         //Add new conditions from SOP--------------------------------------------
         for (final OperationData operation : operationConditionMap.keySet()) {
-            operation.setConditions(operationConditionMap.get(operation), iLabel);
+            operation.setConditions(iConditionData, operationConditionMap.get(operation));
 
             setChanged();
             notifyObservers(operation);
@@ -1040,29 +1040,29 @@ public class Model extends Observable implements IModel {
         return true;
     }
 
-    public boolean removeOperationFromView(final TreeNode iTreeNodeOperationToRemove, final ViewData iViewData) {
-        removeConditions(iViewData.getName());
+    public boolean removeOperationFromView(final TreeNode iTreeNodeOperationToRemove, final ConditionData iConditionData) {
+        removeConditions(iConditionData);
         return false;
     }
 
     /**
      * Removes the {@link Condition}s that are based on {@link ViewData} with
-     * label/name parameter <p>iLabel</p>.<br/>
-     * @param iLabel
+     * {@link ConditionData} <code>iConditionData</code>.<br/>
+     * @param iConditionData {@link ConditionData} to remove
      */
-    public void removeConditions(final String iLabel) {
+    public void removeConditions(final ConditionData iConditionData) {
         final List<TreeNode> allOperationsList = getAllOperations();
         for (final TreeNode tn : allOperationsList) {
             final OperationData opData = (OperationData) tn.getNodeData();
 //            System.out.println("operation: " + opData.getName());
-//            System.out.println("removecon1" + opData.getGlobalConditions().toString());
-            if (opData.getGlobalConditions().containsKey(iLabel)) {
-                opData.getGlobalConditions().remove(iLabel);
+//            System.out.println("removecon1" + opData.getConditions().toString());
+            if (opData.getConditions().containsKey(iConditionData)) {
+                opData.getConditions().remove(iConditionData);
 
                 setChanged();
                 notifyObservers(opData);
             }
-//            System.out.println("removecon2" + opData.getGlobalConditions().toString());
+//            System.out.println("removecon2" + opData.getConditions().toString());
         }
     }
 }

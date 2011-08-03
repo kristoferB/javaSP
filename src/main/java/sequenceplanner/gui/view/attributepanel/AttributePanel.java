@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import sequenceplanner.condition.Condition;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -86,19 +87,19 @@ public class AttributePanel extends JPanel {
      */
     public void setConditions() {
         preCondListPanel.clear();
-        if (operationData.getGlobalConditions() != null) {
+        if (operationData.getConditions() != null) {
             //Extract each set of condition sets
-            for (Object viewKey : operationData.getGlobalConditions().keySet()) {
-                Map<ConditionType, Condition> conditionMap = operationData.getGlobalConditions().get(viewKey);
+            for (final ConditionData conditionDataKey : operationData.getConditions().keySet()) {
+                Map<ConditionType, Condition> conditionMap = operationData.getConditions().get(conditionDataKey);
                 //Split conditions into post and pre
-                for (Object key : conditionMap.keySet()) {
+                for (final ConditionType key : conditionMap.keySet()) {
 
                     //pre
                     if (key == ConditionType.PRE && !preCondListPanel.contains(conditionMap.get(key))) {
-                        preCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
+                        preCondListPanel.addCondition(conditionDataKey, conditionMap.get(key));
                         //post
-                    } else if (key == ConditionType.POST && !preCondListPanel.contains(conditionMap.get(key))) {
-                        postCondListPanel.addCondition(viewKey.toString(), conditionMap.get(key));
+                    } else if (key == ConditionType.POST && !postCondListPanel.contains(conditionMap.get(key))) {
+                        postCondListPanel.addCondition(conditionDataKey, conditionMap.get(key));
                     }
                 }
             }

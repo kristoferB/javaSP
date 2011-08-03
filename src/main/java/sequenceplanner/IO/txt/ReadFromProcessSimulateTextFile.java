@@ -16,6 +16,7 @@ import sequenceplanner.condition.parser.GuardAsTextInputToConditionParser;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceData;
@@ -157,7 +158,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
     private boolean addCondtion(String iCondition, final OperationData iOpData, final ConditionType iConditionType) {
 
         //In order to add a unique number to each condition for operation
-        final int number = iOpData.getGlobalConditions().size();
+        final int number = iOpData.getConditions().size();
 
         //Test to parse condition as guard
         AStringToConditionParser parser = new GuardAsTextInputToConditionParser();
@@ -178,7 +179,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             final Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
             map.put(iConditionType, conditon);
 
-            iOpData.getGlobalConditions().put(conditionTypeString + number, map);
+            iOpData.getConditions().put(new ConditionData(conditionTypeString + number), map);
             return true;
         }
         //Test parse condition as action
@@ -200,7 +201,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             final Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
             map.put(iConditionType, conditon);
 
-            iOpData.getGlobalConditions().put(conditionTypeString + number, map);
+            iOpData.getConditions().put(new ConditionData(conditionTypeString + number), map);
             return true;
         }
 

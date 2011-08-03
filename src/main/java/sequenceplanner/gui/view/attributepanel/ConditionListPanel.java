@@ -11,6 +11,7 @@ import sequenceplanner.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.utils.StringTrimmer;
 
@@ -20,7 +21,7 @@ import sequenceplanner.utils.StringTrimmer;
  */
 public class ConditionListPanel extends JPanel implements IConditionListPanel {
 
-    private HashMap<String, Condition> conditionList;
+    private HashMap<ConditionData, Condition> conditionList;
     private JPanel internalPanel;
     JLabel conditionLabel;
     OperationAttributeEditor editor;
@@ -33,7 +34,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         this.opData = opData;
         this.type = type;
         this.mModel = iModel;
-        conditionList = new HashMap<String, Condition>();
+        conditionList = new HashMap<ConditionData, Condition>();
         init();
     }
 
@@ -44,7 +45,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     @Override
-    public void addCondition(String key, Condition condition) {
+    public void addCondition(ConditionData key, Condition condition) {
         conditionList.put(key, condition);
         updateList();
 
@@ -54,12 +55,11 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
-            for (String key : conditionList.keySet()) {
+            for (ConditionData key : conditionList.keySet()) {
                 if (conditionList.get(key) != null) {
-//                    System.out.println("kommer hit");
                     internalPanel = new JPanel();
                     internalPanel.setLayout(new BoxLayout(internalPanel, BoxLayout.X_AXIS));
-                    conditionLabel = new JLabel(key + ": " + conditionList.get(key).toString());
+                    conditionLabel = new JLabel(key.getName() + ": " + conditionList.get(key).toString());
                     conditionLabel.setVisible(true);
                     internalPanel.add(conditionLabel);
                     this.add(internalPanel);
@@ -83,29 +83,29 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     /**
-     * Trim condition to only include condition key in <p>global condition map</p> for this operation.
+     * Trim condition to only include condition key in <code>global condition map</code> for this operation.
      * @param iConditionKey
      * @return
      */
-    private String trimConditionKey(final String iConditionKey) {
-        final Set<String> conditionSet = opData.getGlobalConditions().keySet();
-        for (final String condition : conditionSet) {
-            final Pattern conditionKeyPattern = Pattern.compile(condition);
+    private ConditionData getConditionKey(final String iConditionKey) {
+        final Set<ConditionData> conditionSet = opData.getConditions().keySet();
+        for (final ConditionData condition : conditionSet) {
+            final Pattern conditionKeyPattern = Pattern.compile(condition.getName());
             final Matcher matcher = conditionKeyPattern.matcher(iConditionKey);
 
             if (matcher.find()) {
                 return condition;
             }
         }
-        return iConditionKey;
+        return null;
     }
 
     @Override
-    public void deleteCondition(String conditionKey) {
+    public void deleteCondition(String iConditionKey) {
 
-        conditionKey = trimConditionKey(conditionKey);
+        final ConditionData conditionKey = getConditionKey(iConditionKey);
 
-        opData.getGlobalConditions().remove(conditionKey);
+        opData.getConditions().remove(conditionKey);
         conditionList.remove(conditionKey);
 
         this.updateList();
@@ -113,42 +113,42 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     @Override
-    public void editCondition(String conditionKey) throws NullPointerException {
-        conditionKey = trimConditionKey(conditionKey);
+    public void editCondition(String iConditionKey) throws NullPointerException {
+        final ConditionData conditionKey = getConditionKey(iConditionKey);
         
         String conditionString = "";
 
         //To extract the original input string
         if (type == ConditionType.PRE) {
             editor.setPreButtonStatus(true);
-            if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
-//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
-                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString();
+            if (opData.getConditions().get(conditionKey).get(ConditionType.PRE).hasGuard()) {
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString());
+                conditionString += opData.getConditions().get(conditionKey).get(ConditionType.PRE).getGuard().toString();
                 editor.setGuardButtonStatus(true);
-            } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
-//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
-                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString();
+            } else if (opData.getConditions().get(conditionKey).get(ConditionType.PRE).hasAction()) {
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString());
+                conditionString += opData.getConditions().get(conditionKey).get(ConditionType.PRE).getAction().toString();
                 editor.setActionButtonStatus(true);
             }
         } else if (type == ConditionType.POST) {
             editor.setPostButtonStatus(true);
-            if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
-//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
-                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString();
+            if (opData.getConditions().get(conditionKey).get(ConditionType.POST).hasGuard()) {
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString());
+                conditionString += opData.getConditions().get(conditionKey).get(ConditionType.POST).getGuard().toString();
                 editor.setGuardButtonStatus(true);
-            } else if (opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
-//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
-                conditionString += opData.getGlobalConditions().get(conditionKey).get(ConditionType.POST).getAction().toString();
+            } else if (opData.getConditions().get(conditionKey).get(ConditionType.POST).hasAction()) {
+//                conditionString = StringTrimmer.getInstance().stringTrim(conditionString + opData.getConditions().get(conditionKey).get(ConditionType.POST).getAction().toString());
+                conditionString += opData.getConditions().get(conditionKey).get(ConditionType.POST).getAction().toString();
                 editor.setActionButtonStatus(true);
             }
         }
 
         //Remebmer name for condition
-        editor.mConditionName = conditionKey;
+        editor.mConditionData = conditionKey;
         //Place the String in the input text window
         editor.setConditionString(conditionString);
 
-        deleteCondition(conditionKey);
+        deleteCondition(conditionKey.getName());
     }
 
     @Override
