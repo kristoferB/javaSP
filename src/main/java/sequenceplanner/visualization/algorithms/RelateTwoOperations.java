@@ -8,7 +8,7 @@ import sequenceplanner.model.data.OperationData;
  * Finds the relation between two {@link OperationData} operations.
  * @author patrik
  */
-public class RelateTwoOperations implements IRelateTwoOperations{
+public class RelateTwoOperations implements IRelateTwoOperations {
 
     private Set<String> setI = new HashSet<String>(1);
     private Set<String> setE = new HashSet<String>(1);
@@ -65,6 +65,10 @@ public class RelateTwoOperations implements IRelateTwoOperations{
         } else if (compareToSetQuartet(setI, setF, setE, setE)) {
 //            System.out.println(mOperation2.mOpNode.getName() + relationIntegerToString(7, " ", " ") + mOperation1.mOpNode.getName());
             return HIERARCHY_21;
+        } else if (compareToSetQuartet(setE, setE, setI, setIF)) {
+            return SOMETIMES_IN_HIERARCHY_12;
+        } else if (compareToSetQuartet(setI, setIF, setE, setE)) {
+            return SOMETIMES_IN_HIERARCHY_21;
         }
 //        System.out.println(mOperation1.mOpNode.getName() + relationIntegerToString(9, " ", " ") + mOperation2.mOpNode.getName());
         return OTHER;
@@ -86,25 +90,41 @@ public class RelateTwoOperations implements IRelateTwoOperations{
 
         switch (iRelation) {
             case 0:
-                returnString += ">"; break;
+                returnString += ">";
+                break;
             case 1:
-                returnString += "<"; break;
+                returnString += "<";
+                break;
             case 2:
-                returnString += ">~"; break;
+                returnString += ">~";
+                break;
             case 3:
-                returnString += "~<"; break;
+                returnString += "~<";
+                break;
             case 4:
-                returnString += "||"; break;
+                returnString += "||";
+                break;
             case 5:
-                returnString += "+"; break;
+                returnString += "+";
+                break;
             case 6:
-                returnString += "(+)"; break;
+                returnString += "(+)";
+                break;
             case 7:
-                returnString += "["; break;
+                returnString += "[";
+                break;
             case 8:
-                returnString += "]"; break;
+                returnString += "]";
+                break;
+            case 9:
+                returnString += "~[";
+                break;
+            case 10:
+                returnString += "]~";
+                break;
             default:
-                returnString += "^"; break;
+                returnString += "^";
+                break;
         }
 
         if (iSufix != null) {

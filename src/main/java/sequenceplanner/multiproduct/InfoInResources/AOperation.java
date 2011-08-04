@@ -1,22 +1,26 @@
-package sequenceplanner.multiproduct.summer2011;
+package sequenceplanner.multiproduct.InfoInResources;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import sequenceplanner.condition.ConditionElement;
 import sequenceplanner.model.data.OperationData;
 
 /**
-*
-* @author patrik
-*/
+ *
+ * @author patrik
+ */
 abstract class AOperation {
 
     OperationData mOperationData;
     Set<Resource> mResourceSet;
+    Set<AOperation> mPredecessorSet;
 
     public AOperation(final OperationData iOperationData) {
         this.mOperationData = iOperationData;
         mResourceSet = new HashSet<Resource>();
+        mPredecessorSet = new HashSet<AOperation>();
     }
 
     abstract Set<String> getPredecessors();
@@ -24,7 +28,16 @@ abstract class AOperation {
     abstract ConditionElement inOperation();
 
     private String getInstanceResourceName(final Resource iResource) {
+        final int index = iResource.indexOf(this);
         return iResource.mName + "_";
+    }
+
+    public Map<String, String> statusOfResourcesAtFinish() {
+        final Map<String, String> map = new HashMap<String, String>();
+        for (final Resource r : mResourceSet) {
+            map.put(LocalModel.variableName(r, this), Integer.toString(r.indexOf(this)));
+        }
+        return map;
     }
 
     @Override
@@ -50,6 +63,4 @@ abstract class AOperation {
     public String toString() {
         return mOperationData.getName();
     }
-
-
 }

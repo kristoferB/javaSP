@@ -1,4 +1,4 @@
-package sequenceplanner.multiproduct.summer2011;
+package sequenceplanner.multiproduct.InfoInResources;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,22 +35,36 @@ class Operation extends AOperation {
 //                System.out.println(map.get(cd));
                 if (ct.toString().equals(ConditionType.PRE.toString())) {
                     final Condition condition = map.get(cd).get(ct);
+//                    System.out.println("guard: " + condition.getGuard());
                     if (condition.hasGuard()) {
                         final ConditionExpression guard = condition.getGuard();
-                        final List<ConditionElement> ceList = guard.getConditionElements();
-                        for (final ConditionElement ce : ceList) {
-                            if (ce.isStatment()) {
-                                final ConditionStatement cs = (ConditionStatement) ce;
-                                if (cs.getValue().equals("2") && cs.getOperator().toString().equals(ConditionStatement.Operator.Equal.toString())) {
-                                    final String variable = cs.getVariable().replaceAll("id", "");
-                                    returnSet.add(variable);
-                                }
-                            }
-                        }
+                        returnSet.addAll(getOperationsFromCondition(guard));
                     }
                 }
             }
         }
+        return returnSet;
+    }
+
+    private Set<String> getOperationsFromCondition(final ConditionExpression iConditionExpression) {
+        final Set<String> returnSet = new HashSet<String>();
+
+        if (iConditionExpression != null) {
+            final List<ConditionElement> ceList = iConditionExpression.getConditionElements();
+            for (final ConditionElement conditionElement : ceList) {
+                if (conditionElement.isStatment()) {
+                    final ConditionStatement cs = (ConditionStatement) conditionElement;
+                    if (cs.getValue().equals("2") && cs.getOperator().toString().equals(ConditionStatement.Operator.Equal.toString())) {
+                        final String variable = cs.getVariable().replaceAll("id", "");
+                        returnSet.add(variable);
+                    }
+                } else if (conditionElement.isExpression()) {
+                    final ConditionExpression ce = (ConditionExpression) conditionElement;
+                    returnSet.addAll(getOperationsFromCondition(ce));
+                }
+            }
+        }
+
         return returnSet;
     }
 

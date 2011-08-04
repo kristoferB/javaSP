@@ -1,4 +1,4 @@
-package sequenceplanner.multiproduct.summer2011;
+package sequenceplanner.multiproduct.InfoInResources;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +15,27 @@ class LocalModel {
     public LocalModel() {
         mProductTypeSet = new HashSet<ProductType>();
         mResourceSet = new HashSet<Resource>();
+    }
+
+    public static String variableName(final Resource iResource, final AOperation iOperation) {
+        final String var = "v";
+        if(iResource != null && iOperation != null) {
+            return variableName(iResource, null) + "_" + variableName(null, iOperation);
+        } else if (iResource != null && iOperation == null) {
+            return var + iResource.mName;
+        } else if (iResource == null && iOperation != null) {
+            return var + iOperation.mOperationData.getName();
+        }
+        
+        return "";
+    }
+
+    public static String counterName(final ProductType iProductType) {
+        if(iProductType !=null) {
+            return "c" + iProductType.mName;
+        }
+
+        return "";
     }
 
     public boolean addOperationToProductType(final AOperation iOp, final String iProductTypeName) {

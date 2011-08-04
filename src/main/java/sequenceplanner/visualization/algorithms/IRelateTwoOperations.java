@@ -18,7 +18,9 @@ public interface IRelateTwoOperations {
     Integer ARBITRARY_ORDER = 6;
     Integer HIERARCHY_12 = 7;
     Integer HIERARCHY_21 = 8;
-    Integer OTHER = 9;
+    Integer SOMETIMES_IN_HIERARCHY_12 = 9;
+    Integer SOMETIMES_IN_HIERARCHY_21 = 10;
+    Integer OTHER = 11;
 
     void setOperationPair(IRelationContainer iRC, OperationData iOpData1, OperationData iOpData2);
 

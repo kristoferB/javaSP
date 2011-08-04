@@ -1,4 +1,4 @@
-package sequenceplanner.multiproduct.summer2011;
+package sequenceplanner.multiproduct.InfoInResources;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +17,15 @@ class Resource {
     public Resource(String iName) {
         this.mName = iName;
         mOperationList = new ArrayList<AOperation>();
+    }
+
+    /**
+     *
+     * @param iOperation
+     * @return -1 if not in list
+     */
+    public int indexOf(final AOperation iOperation) {
+        return mOperationList.indexOf(iOperation);
     }
 
     @Override

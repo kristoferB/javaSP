@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.multiproduct.summer2011.SupervisorFromOperationsBasedOnSingleTransition;
+import sequenceplanner.multiproduct.InfoInResources.SupervisorFromOperationsBasedOnSingleTransition;
 import static org.junit.Assert.*;
 
 /**
@@ -34,5 +34,11 @@ public class Test_OperationsToSingleTransitionEFA {
         SupervisorFromOperationsBasedOnSingleTransition s = new SupervisorFromOperationsBasedOnSingleTransition(mSP.getModel());
         s.start();
 
+    }
+
+//    @Test
+    public void test2() {
+        String s = "";
+        assertTrue(s.isEmpty());
     }
 }

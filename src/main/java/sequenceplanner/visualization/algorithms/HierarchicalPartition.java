@@ -36,7 +36,8 @@ public class HierarchicalPartition {
         //find operations with no parents----------------------------------------
         Map<OperationData, Set<OperationData>> hasNoParentWithChildrenMap = new HashMap<OperationData, Set<OperationData>>();
         for (final OperationData op : allOpSet) {
-            if (!mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.HIERARCHY_21,false)) {
+            if (!mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.HIERARCHY_21,false) ||
+                    !mRCToolbox.hasRelation(op, iRC, RelateTwoOperations.SOMETIMES_IN_HIERARCHY_21,false)) {
                 //->op has no parent in set
                 hasNoParentWithChildrenMap.put(op, new HashSet<OperationData>());
             }
@@ -46,7 +47,8 @@ public class HierarchicalPartition {
         //add children to operations without parents (children are candidates at this stage)
         for (final OperationData childCandidateOp : allOpSet) {
             for (final OperationData parentCandidateOp : hasNoParentWithChildrenMap.keySet()) {
-                if (mRCToolbox.getRelation(parentCandidateOp, childCandidateOp, iRC) == RelateTwoOperations.HIERARCHY_12) {
+                if (mRCToolbox.getRelation(parentCandidateOp, childCandidateOp, iRC) == RelateTwoOperations.HIERARCHY_12 ||
+                        mRCToolbox.getRelation(parentCandidateOp, childCandidateOp, iRC) == RelateTwoOperations.SOMETIMES_IN_HIERARCHY_12) {
                     hasNoParentWithChildrenMap.get(parentCandidateOp).add(childCandidateOp);
                 }
             }
@@ -60,7 +62,8 @@ public class HierarchicalPartition {
             for (final OperationData childOp : childSet) {
                 Set<OperationData> subset = new HashSet<OperationData>(allOpSet);
                 for (final OperationData localParentOp : hasNoParentWithChildrenMap.keySet()) { //Remove all parents to child
-                    if (mRCToolbox.getRelation(localParentOp, childOp, iRC) == IRelateTwoOperations.HIERARCHY_12) {
+                    if (mRCToolbox.getRelation(localParentOp, childOp, iRC) == IRelateTwoOperations.HIERARCHY_12 ||
+                            mRCToolbox.getRelation(localParentOp, childOp, iRC) == IRelateTwoOperations.SOMETIMES_IN_HIERARCHY_12) {
                         subset.remove(localParentOp);
                     }
                 }

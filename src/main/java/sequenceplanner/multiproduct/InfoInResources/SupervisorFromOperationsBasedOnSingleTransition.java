@@ -1,4 +1,4 @@
-package sequenceplanner.multiproduct.summer2011;
+package sequenceplanner.multiproduct.InfoInResources;
 
 import java.util.HashSet;
 import java.util.Map;
