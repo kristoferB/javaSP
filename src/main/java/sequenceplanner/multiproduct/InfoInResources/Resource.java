@@ -25,7 +25,7 @@ class Resource {
      * @return -1 if not in list
      */
     public int indexOf(final AOperation iOperation) {
-        return mOperationList.indexOf(iOperation);
+        return mOperationList.indexOf(iOperation) + 1;
     }
 
     @Override

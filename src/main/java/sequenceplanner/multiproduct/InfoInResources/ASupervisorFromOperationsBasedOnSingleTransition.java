@@ -1,5 +1,6 @@
 package sequenceplanner.multiproduct.InfoInResources;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -58,39 +59,49 @@ public abstract class ASupervisorFromOperationsBasedOnSingleTransition implement
         for (final TreeNode tn : mModel.getAllOperations()) {
             final Data data = tn.getNodeData();
             if (Model.isOperation(data)) {
-                //Init-----------------------------------------------------------
-                final OperationData opData = (OperationData) data;
+                addData(data);
+            }
+        }
 
-//                System.out.println("cd: " + opData.getName());
-
-                //Collect data---------------------------------------------------
-                final String productType = getProductType(opData);
-                final Set<String> resources = getResources(opData);
-
-                //Store data-----------------------------------------------------
-                final AOperation op = new Operation(opData);
-                mLocalModel.addOperationToProductType(op, productType);
-                mLocalModel.addResourcesToOperation(resources, op);
-                //---------------------------------------------------------------
+        //Add virtual operation for last transition.
+        for (final ProductType pt : mLocalModel.mProductTypeSet) {
+            for (final AOperation lastOp : pt.getLastOperations()) {
+                final OperationData opData = createLastData(lastOp);
+                addData(opData, pt.mName, new HashSet<String>());
             }
         }
     }
+
+    private void addData(final OperationData iOpData, final String iProductType, final Set<String> iResources) {
+        final AOperation op = new Operation(iOpData);
+        mLocalModel.addOperationToProductType(op, iProductType);
+        mLocalModel.addResourcesToOperation(iResources, op);
+    }
+
+    private void addData(final Data iData) {
+        final OperationData opData = (OperationData) iData;
+        addData(opData, getProductType(opData), getResources(opData));
+    }
+
+    abstract OperationData createLastData(final AOperation iOperation);
 
     private void workWithData() {
         for (final ProductType pt : mLocalModel.mProductTypeSet) {
             for (final AOperation op : pt.mOperationSet) {
                 //Init-----------------------------------------------------------
                 final Init init = new Init(op);
-
+//Flytta denna till collect data, när operation skapas.
                 //Guards---------------------------------------------------------
                 final Guards guards = new Guards(op, init.toBookResourceSet);
 
                 //Actions--------------------------------------------------------
-                final Actions actions = new Actions(pt, op, init.toBookResourceSet, init.toUnbookResourceSet);
-
-
+                final Actions actions = new Actions(pt, op, init.toBookResourceSet, init.toUnbookResourceOperationMap);
 
                 //---------------------------------------------------------------
+                System.out.println(op.toString());
+                System.out.println("guard " + guards.guardSet);
+                System.out.println("action " + actions.actionSet);
+
             }
         }
     }
@@ -100,11 +111,11 @@ public abstract class ASupervisorFromOperationsBasedOnSingleTransition implement
         final Set<String> actionSet;
 
         public Actions(final ProductType iPT, final AOperation iOp, final Set<Resource> iToBookResourceSet,
-                final Set<Resource> iToUnBookResourceSet) {
+                final Map<Resource, Set<AOperation>> iToUnbookResourceOperationMap) {
             final ProductType pt = iPT;
             final AOperation op = iOp;
             final Set<Resource> toBookResourceSet = iToBookResourceSet;
-            final Set<Resource> toUnBookResourceSet = iToUnBookResourceSet;
+            final Map<Resource, Set<AOperation>> toUnbookResourceOperationMap = iToUnbookResourceOperationMap;
             actionSet = new HashSet<String>();
 
             //First operation?
@@ -126,10 +137,13 @@ public abstract class ASupervisorFromOperationsBasedOnSingleTransition implement
             }
 
             //Unbook resources not used anymore
-            for (final Resource r : toUnBookResourceSet) {
+            for (final Resource r : toUnbookResourceOperationMap.keySet()) {
                 actionSet.add(LocalModel.variableName(r, null) + "-=" + "1");
+
+                for (final AOperation pOp : toUnbookResourceOperationMap.get(r)) {
+                    actionSet.add(LocalModel.variableName(r, pOp) + "=" + "0");
+                }
             }
-            //ALSO THE LOCAL VARIABELES SET TO ZERO...
         }
     }
 
@@ -160,35 +174,39 @@ public abstract class ASupervisorFromOperationsBasedOnSingleTransition implement
     class Init {
 
         final Set<Resource> toBookResourceSet;
-        final Set<Resource> toUnbookResourceSet;
+        final Map<Resource, Set<AOperation>> toUnbookResourceOperationMap;
 
         public Init(final AOperation iOp) {
             final AOperation op = iOp;
+
+            toUnbookResourceOperationMap = new HashMap<Resource, Set<AOperation>>();
 
             //Get predecessor operations...
             for (final String id : op.getPredecessors()) {
                 final AOperation operationToAdd = mLocalModel.getOperationBasedOnId(id);
                 if (operationToAdd != null) {
                     op.mPredecessorSet.add(operationToAdd);
+
+                    //... and their resources
+                    for (final Resource r : operationToAdd.mResourceSet) {
+                        if (!toUnbookResourceOperationMap.containsKey(r)) {
+                            toUnbookResourceOperationMap.put(r, new HashSet<AOperation>());
+                        }
+                        toUnbookResourceOperationMap.get(r).add(operationToAdd);
+                    }
                 }
-            }
-            //... and there resources
-            final Set<Resource> predecessorResourceSet = new HashSet<Resource>();
-            for (final AOperation pOp : op.mPredecessorSet) {
-                predecessorResourceSet.addAll(pOp.mResourceSet);
             }
 
             //Resources to book
             toBookResourceSet = Resource.cloneSet(op.mResourceSet);
-            toBookResourceSet.removeAll(predecessorResourceSet);
+            toBookResourceSet.removeAll(toUnbookResourceOperationMap.keySet());
 
-            System.out.println("to book: " + toBookResourceSet);
+//            System.out.println("to book: " + toBookResourceSet);
 
             //Resources to unbook
-            toUnbookResourceSet = Resource.cloneSet(predecessorResourceSet);
-            toUnbookResourceSet.removeAll(op.mResourceSet);
+            toUnbookResourceOperationMap.keySet().removeAll(op.mResourceSet);
 
-            System.out.println("to unbook: " + toUnbookResourceSet);
+//            System.out.println("to unbook: " + toUnbookResourceOperationMap.keySet());
         }
     }
 
