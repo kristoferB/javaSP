@@ -44,8 +44,8 @@ public class TreeView extends AbstractView {
 
     protected final JTree tree;
     private TreeDragSource drag;
-    public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0, 0), "ResPointer");
-    public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0, 0), "ResPointer");
+//    public static Cursor resPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.resIcon.getImage(), new Point(0, 0), "ResPointer");
+//    public static Cursor productPointer = Toolkit.getDefaultToolkit().createCustomCursor(Editors.productLiason.getImage(), new Point(0, 0), "ResPointer");
 
     public TreeView(final Model model) {
         super(model, "ProjectView");
@@ -137,7 +137,7 @@ public class TreeView extends AbstractView {
                 new BorderLayout());
 
 
-        this.add( new JScrollPane(tree), BorderLayout.CENTER);
+        this.add(new JScrollPane(tree), BorderLayout.CENTER);
 
 
         tree.setDragEnabled(false);
@@ -146,7 +146,7 @@ public class TreeView extends AbstractView {
 
     }
 
-    public void addTreeMouseListener(MouseAdapter ma){
+    public void addTreeMouseListener(MouseAdapter ma) {
         tree.addMouseListener(ma);
     }
 //   private void expandListener() {
@@ -161,6 +161,7 @@ public class TreeView extends AbstractView {
 //         }
 //      });
 //   }
+
     @Override
     public Action createAction(String name, ActionListener usedAction, String icon, Object source) {
         return super.createAction(name, usedAction, icon, this);
@@ -220,9 +221,9 @@ public class TreeView extends AbstractView {
             ddd.getDragSourceContext().getCursor();
 
             if (Model.isResource(node.getNodeData())) {
-                ddd.getDragSourceContext().setCursor(resPointer);
+//                ddd.getDragSourceContext().setCursor(resPointer);
             } else if (Model.isLiason(node.getNodeData())) {
-                ddd.getDragSourceContext().setCursor(productPointer);
+//                ddd.getDragSourceContext().setCursor(productPointer);s
             }
         }
 
@@ -253,8 +254,6 @@ public class TreeView extends AbstractView {
 
         @Override
         public void dragDropEnd(DragSourceDropEvent dsd) {
-            System.out.println("End; TargetAction: " + dsd.getDropAction());
-
             if (dsd.getDropAction() == TransferHandler.MOVE) {
                 node.getNodeData().setCopy(false);
             } else if (dsd.getDropAction() == TransferHandler.COPY) {

@@ -27,15 +27,15 @@ public class CreateEFAOperationsTest {
 //        mSP.loadFromTemplateSOPXFile("resources/filesForTesting/KristoferTASEexample.sopx");
         mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/KristoferPPURivetingTASEExample_selfcontainedoperations.sopx");
 
-        OperationToEFA obj = new OperationToEFA(mSP.getModel());
+//        OperationToEFA obj = new OperationToEFA(mSP.getModel());
 
         //Test ids
 //        assertTrue("Problem with ids!",obj.testIDs());
-        obj.testIDs();
-
-        obj.startToGetOperations();
-
-        obj.mSModule.saveToWMODFile("C:/Users/patrik/Desktop/visualizationTestResult.wmod");
+//        obj.testIDs();
+//
+//        obj.startToGetOperations();
+//
+//        obj.mSModule.saveToWMODFile("C:/Users/patrik/Desktop/visualizationTestResult.wmod");
 
     }
 

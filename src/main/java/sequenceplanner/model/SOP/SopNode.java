@@ -7,7 +7,7 @@ package sequenceplanner.model.SOP;
 public class SopNode extends ASopNode {
 
     public SopNode() {
-        setNodeType("SOP");
+        super("sop");
     }
 
 }

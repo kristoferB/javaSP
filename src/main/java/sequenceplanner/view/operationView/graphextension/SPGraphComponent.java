@@ -13,7 +13,6 @@ import java.util.List;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.OperationView;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxGraphHandler;
 import com.mxgraph.swing.handler.mxGraphTransferHandler;
@@ -36,7 +35,7 @@ public class SPGraphComponent extends mxGraphComponent {
    private mxUndoManager undoManager;
    private final OperationView view;
    private boolean moveInto;
-
+   private int zoomCounter = 0;
    public SPGraphComponent(mxGraph graph, final OperationView view) {
       super(graph);
       this.view = view;
@@ -135,7 +134,7 @@ public class SPGraphComponent extends mxGraphComponent {
 
          private void insert(boolean before) {
             SPGraph SPgraph = (SPGraph) getGraph();
-
+             System.out.println("insert 1");
             if (SPgraph.getSelectionCount() == 1 && SPgraph.getSelectionCell() instanceof Cell) {
                Cell cell = (Cell) SPgraph.getSelectionCell();
 
@@ -160,15 +159,21 @@ public class SPGraphComponent extends mxGraphComponent {
                int rot = e.getWheelRotation();
                Double zoom = zoomFactor;
                zoomFactor *= zoomFactor * Math.abs(rot);
-               if (rot > 0) {
+                System.out.println("Zoom: "+rot + "Counter: " + zoomCounter );
+               if (rot > 0 && zoomCounter <2 ) {
                   SPGraphComponent.this.zoomOut();
-               } else {
+                  zoomCounter++;
+               } else if (rot < 0 && zoomCounter > -5) {
                   SPGraphComponent.this.zoomIn();
+                  zoomCounter--;
+               //zoomIn function is broken, this is a modification that
+               //resets the zoom when it is close enough to seem natural
+               }else if(zoomCounter <=-5){
+                   SPGraphComponent.this.zoomActual();
                }
                zoomFactor = zoom;
             } else {
                Rectangle r = getViewport().getViewRect();
-
                int rot = 0;
                if (Math.abs(e.getWheelRotation()) == 1) {
                   rot = scrollFactor * e.getWheelRotation();
@@ -242,13 +247,13 @@ public class SPGraphComponent extends mxGraphComponent {
 
       } else if (e.isShiftDown() && graph.getSelectionCount() == 1) {
 
-         mxCell selectedCell = (mxCell) graph.getSelectionCell();
+         Cell selectedCell = (Cell) graph.getSelectionCell();
 
-         List<mxCell> cells = ((SPGraph) graph).getCellsHereTo((mxCell) cell, true);
+         List<Cell> cells = ((SPGraph) graph).getCellsHereTo((Cell) cell, true);
          int i = cells.indexOf(selectedCell);
 
          if (i == -1) {
-            cells = ((SPGraph) graph).getCellsHereTo((mxCell) cell, false);
+            cells = ((SPGraph) graph).getCellsHereTo((Cell) cell, false);
             i = cells.indexOf(selectedCell);
 
          }
@@ -281,7 +286,6 @@ public class SPGraphComponent extends mxGraphComponent {
    public Object[] importCells(Object[] cells, double dx, double dy, Object target, Point location) {
 
 
-
       if (cells != null && cells.length == 1 && cells[0] instanceof Cell) {
          boolean copy = ((OperationData) ((Cell) cells[0]).getValue()).getCopy();
          cells = super.importCells(cells, dx, dy, target, location);
@@ -289,7 +293,7 @@ public class SPGraphComponent extends mxGraphComponent {
          //Todo it will crash if this is a copy
          Cell cell = (Cell) cells[0];
          if (!copy) {
-            cell = view.open(view.getModel().getOperationView(cell.getUniqueId()), cell);
+//            cell = view.open(view.getModel().getOperationView(cell.getUniqueId()), cell);
          }
          view.getGraph().updateSizeOfOperations();
          view.getGraph().majorUpdate();

@@ -1,5 +1,7 @@
 package sequenceplanner.view.treeView;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
@@ -9,6 +11,7 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
+import sequenceplanner.view.operationView.OperationView;
 
 /**
  * Class for handeling calls from the TreeView.
@@ -25,6 +28,139 @@ public class TreeViewController {
         this.controller = controller;
         this.view = view;
         view.addTreeMouseListener(new TreeMouseAdapter());
+    }
+
+    /**
+     * To insert an operation in {@link Model}.
+     */
+    public static class InsertOperation implements ActionListener {
+
+        private Model mModel;
+
+        public InsertOperation(final Model iModel) {
+            this.mModel = iModel;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mModel.createModelOperationNode();
+        }
+    }
+
+    /**
+     * Open the attribute panel for an operation.
+     */
+    public static class GetOperationAttributes implements ActionListener {
+
+        private TreeNode mTreeNode;
+        private GUIController mGUIController;
+
+        public GetOperationAttributes(TreeNode mTreeNode, GUIController mGUIController) {
+            this.mTreeNode = mTreeNode;
+            this.mGUIController = mGUIController;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (mTreeNode == null || mGUIController == null) {
+                return;
+            }
+            if (Model.isOperation(mTreeNode.getNodeData())) {
+                final OperationData opData = (OperationData) mTreeNode.getNodeData();
+                mGUIController.addPropertyPanelView(opData);
+            }
+        }
+    }
+
+    /**
+     * To remove an operation from {@link Model}.
+     */
+    public static class RemoveOperation implements ActionListener {
+
+        private Model mModel;
+        private TreeNode mTreeNode;
+        private GUIController mGUIController;
+
+        public RemoveOperation(final TreeNode iNode, final GUIController iGUIController) {
+            this.mModel = iGUIController.getModel();
+            this.mTreeNode = iNode;
+            this.mGUIController = iGUIController;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //Remove attribute tab
+            mGUIController.getView().removeOperationObjectView(mTreeNode);
+
+            //Loop views and remove operation if present
+            for (final OperationView opView : mGUIController.getGUIModel().getOperationViews()) {
+                if (opView.removeOperationInGraph(mTreeNode.getId())) {
+                    //Operation was removed
+                    System.out.println("Operation removed from sop: " + opView.getName());
+                }
+            }
+
+            //Remove operation from model
+            mModel.removeChild(mModel.getOperationRoot(), mTreeNode);
+
+            System.out.println("Remove operation: " + mTreeNode.toString());
+        }
+    }
+
+    /**
+     * To insert an operation view in {@link Model}.
+     */
+    public static class InsertOperationView implements ActionListener {
+
+        private GUIController mGUIController;
+
+        public InsertOperationView(final GUIController iGUIController) {
+            this.mGUIController = iGUIController;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (mGUIController == null) {
+                return;
+            }
+            mGUIController.mOpViewController.createOperationView();
+        }
+    }
+
+    /**
+     * To remove an operation view in {@link Model}.
+     */
+    public static class RemoveOperationView implements ActionListener {
+
+        private TreeNode mTreeNode;
+        private GUIController mGUIController;
+
+        public RemoveOperationView(final GUIController iGUIController, final TreeNode iTreeNode) {
+            this.mGUIController = iGUIController;
+            this.mTreeNode = iTreeNode;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (mGUIController == null) {
+                return;
+            }
+
+            if (Model.isView(mTreeNode.getNodeData())) {
+                final ViewData viewData = (ViewData) mTreeNode.getNodeData();
+                //Remove conditions based on view
+                mGUIController.getModel().removeConditions(viewData.mConditionData);
+
+                //Remove Operation view
+                mGUIController.getView().removeOperationView(mTreeNode);
+
+                //Remove viewdata from Model
+                mGUIController.getModel().removeChild(mGUIController.getModel().getViewRoot(), mTreeNode);
+            }
+
+
+
+        }
     }
 
     /**
@@ -55,11 +191,12 @@ public class TreeViewController {
                 if (path != null) {
                     TreeNode t = (TreeNode) path.getLastPathComponent();
                     if (Model.isView(t.getNodeData())) {
-                        //TODO q... fix controller to check for illegal multiple views
-                        controller.addNewOpTab((ViewData) t.getNodeData());
-                    } else if (Model.isOperation(t.getNodeData())) {
-                        OperationData data = (OperationData) t.getNodeData();
-                        controller.addNewOpTab(view.getModel().getOperationView(data.getId()));
+                        controller.getView().setOperationViewFocus(t);
+
+//                        controller.addNewOpTab((ViewData) t.getNodeData());
+//                    } else if (Model.isOperation(t.getNodeData())) {
+//                        OperationData data = (OperationData) t.getNodeData();
+//                        controller.addNewOpTab(view.getModel().getOperationView(data.getId()));
                     }
 
                 }
@@ -74,7 +211,7 @@ public class TreeViewController {
                 TreePath path = view.tree.getPathForLocation(e.getX(), e.getY());
                 if (path != null) {
                     view.tree.setSelectionPath(path);
-                    ClickMenu c = new ClickMenu((TreeNode) path.getLastPathComponent(), view.getModel());
+                    ClickMenuTreeView c = new ClickMenuTreeView((TreeNode) path.getLastPathComponent(), view.getModel(), controller);
                     c.show(view, e);
                 }
             }

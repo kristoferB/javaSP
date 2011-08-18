@@ -1,6 +1,7 @@
 package sequenceplanner;
 
 import java.awt.Rectangle;
+import java.io.File;
 import javax.swing.SwingUtilities;
 
 
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 
 /**
  *
@@ -18,7 +20,6 @@ import sequenceplanner.gui.view.GUIView;
 // TODO Handle comparing variables with values in sequenceconditions
 // TODO Handle actions
 // TODO Remove preconditions when cell is removed.
-//FIXME EOH: Refact, move icon functions to new class.
 public class SequencePlanner {
 
     static int id = 0;
@@ -28,6 +29,7 @@ public class SequencePlanner {
         initiateLogger();
 
     }
+
     /**
      * Show splash.
      *
@@ -52,22 +54,29 @@ public class SequencePlanner {
      *
      * @param args the args
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 // Docking windwos should be run in the Swing thread
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        GUIModel model = new GUIModel();
-        GUIView view = new GUIView(model);
-        new GUIController(model, view);
-      }
-    });
-        
+
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                GUIModel model = new GUIModel();
+                GUIView view = new GUIView(model);
+                GUIController gc = new GUIController(model, view);
+                
+                //Take action for input arguments
+                new InputArguments(gc, args).run();
+
+            }
+        });
+
 
     }
 
-    public void initiateLogger() {
+    private void initiateLogger() {
         BasicConfigurator.configure();
         Logger l = Logger.getRootLogger();
-        l.getRootLogger().setLevel(Level.ALL);
+        Logger.getRootLogger().setLevel(Level.ALL);
     }
 }

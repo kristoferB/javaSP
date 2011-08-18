@@ -2,9 +2,9 @@ package sequenceplanner.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
-import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
@@ -12,91 +12,113 @@ import sequenceplanner.view.operationView.OperationView;
  */
 public class Actions {
 
-   protected static AbstractView getAbstractView(ActionEvent e) {
-      return (AbstractView)e.getSource();
-   }
+    protected static AbstractView getAbstractView(ActionEvent e) {
+        return (AbstractView) e.getSource();
+    }
 
-   /**
-    *
-    */
-   public static class InsertVariable implements ActionListener {
+    /**
+     *
+     */
+    public static class InsertVariable implements ActionListener {
 
-      private int child = -1;
-      private TreeNode parent = null;
+        private int child = -1;
+        private TreeNode parent = null;
 
-      public InsertVariable(TreeNode parent, int type) {
-         this.parent = parent;
-         this.child = type;
-      }
+        public InsertVariable(TreeNode parent, int type) {
+            this.parent = parent;
+            this.child = type;
+        }
 
-      public void actionPerformed(ActionEvent e) {
-         Model m = getAbstractView(e).getModel();
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Model m = getAbstractView(e).getModel();
 
-         m.insertChild(parent, m.getChild(child));
-      }
+            m.insertChild(parent, m.getChild(child));
+        }
 
-      public void setParent(TreeNode parent) {
-         this.parent = parent;
-      }
-   }
+        public void setParent(TreeNode parent) {
+            this.parent = parent;
+        }
+    }
 
-   /**
-    *
-    */
-   public static class RemoveNode implements ActionListener {
+    public static class InsertOperation implements ActionListener {
 
-      private TreeNode toRemove = null;
+        private TreeNode toRemove = null;
 
-      public RemoveNode(TreeNode toRemove) {
-         this.toRemove = toRemove;
-      }
+        public InsertOperation() {
+//            this.toRemove = toRemove;
+        }
 
-      public void actionPerformed(ActionEvent e) {
-         Model m = getAbstractView(e).getModel();
-         m.removeChild(toRemove.getParent(), toRemove);
-      }
-   }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Model m = getAbstractView(e).getModel();
+            m.createModelOperationNode();
+        }
+    }
 
-   /**
-    *
-    */
-   public static class OpenResourceView implements ActionListener {
+    /**
+     *
+     */
+    public static class RemoveNode implements ActionListener {
 
-      private TreeNode root = null;
+        private TreeNode toRemove = null;
 
-      public OpenResourceView(TreeNode root) {
-         this.root = root;
-      }
+        public RemoveNode(TreeNode toRemove) {
+            this.toRemove = toRemove;
+        }
 
-      public void actionPerformed(ActionEvent e) {
-        // getAbstractView(e).getSPContainer().createResourceView(root);
-      }
-   }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Model m = getAbstractView(e).getModel();
+            m.removeChild(toRemove.getParent(), toRemove);
+        }
+    }
 
-   public static class OpenOperationsRealizedBy implements ActionListener {
+    /**
+     *
+     */
+    public static class OpenResourceView implements ActionListener {
 
-      TreeNode node;
+        private TreeNode root = null;
+        private GUIController mGUIController;
 
-      public OpenOperationsRealizedBy(TreeNode node) {
-         this.node = node;
-      }
+        public OpenResourceView(TreeNode root, final GUIController iGUIController) {
+            this.root = root;
+            this.mGUIController = iGUIController;
+        }
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        /* OperationView v = getAbstractView(e).getSPContainer().createOperationView(node.getNodeData().getName());
-         Model model = getAbstractView(e).getModel();
-         v.open(model.getOperationRealizedBy(node.getId()));*/
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mGUIController.getView().addResourceView();
+            //getAbstractView(e).getSPContainer().createResourceView(root);
+            }
+    }
 
-      }
-   }
+    //TODO : get this working again!
+    public static class OpenOperationsRealizedBy implements ActionListener {
 
-   public static class ExitApplication implements ActionListener {
+        TreeNode node;
 
-      public ExitApplication() {
-      }
+        public OpenOperationsRealizedBy(TreeNode node) {
+            this.node = node;
+        }
 
-      public void actionPerformed(ActionEvent e) {
-         System.exit(0);
-      }
-   }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            /* OperationView v = getAbstractView(e).getSPContainer().createOperationView(node.getNodeData().getName());
+            Model model = getAbstractView(e).getModel();
+            v.open(model.getOperationRealizedBy(node.getId()));*/
+        }
+    }
+
+    public static class ExitApplication implements ActionListener {
+
+        public ExitApplication() {
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
 }

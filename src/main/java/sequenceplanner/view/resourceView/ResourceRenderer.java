@@ -42,6 +42,7 @@ public class ResourceRenderer extends JPanel
 
    }
 
+    @Override
    public Component getTreeCellRendererComponent(JTree tree, Object value,
          boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
       Data d = ((TreeNode)value).getNodeData();

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SequencePlannerProjectFile>
+    <idCounter>40</idCounter>
+    <Resources>
+        <resource name="r" id="4"/>
+    </Resources>
+    <Operations>
+        <operation name="O15" id="5">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id8==2&amp;id20==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O13" id="6">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id14==2|id19==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O11" id="7">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+            </operationData>
+        </operation>
+        <operation name="O6" id="8">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id13==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O2" id="9">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id17==1/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O4" id="10">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id17==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O12" id="11">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id7==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O10" id="12">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id11==2&amp;id6==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O16" id="13">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id17==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet>
+                    <condition condValue="id12==2/" condKey="Operations1"/>
+                </postConditionSet>
+            </operationData>
+        </operation>
+        <operation name="O8" id="14">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id13==1&amp;id16==2&amp;id21==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O5" id="15">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id10==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O7" id="16">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id9==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O1" id="17">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id7==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet>
+                    <condition condValue="id21==2|id18==2/" condKey="Operations1"/>
+                </postConditionSet>
+            </operationData>
+        </operation>
+        <operation name="O3b" id="18">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id9==2&amp;id21==0/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O9" id="19">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id13==1&amp;id16==2&amp;id18==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O14" id="20">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id6==2/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+        <operation name="O3a" id="21">
+            <operationData>
+                <isPreoperation>false</isPreoperation>
+                <isPostoperation>false</isPostoperation>
+                <cost>0.0</cost>
+                <RealizedBy>0</RealizedBy>
+                <Accomplishes>0</Accomplishes>
+                <preConditionSet>
+                    <condition condValue="id9==2&amp;id18==0/" condKey="Operations0"/>
+                </preConditionSet>
+                <postConditionSet/>
+            </operationData>
+        </operation>
+    </Operations>
+    <Views/>
+</SequencePlannerProjectFile>
