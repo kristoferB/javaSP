@@ -35,6 +35,7 @@ import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.treeView.TreeViewController;
+import sequenceplanner.weightNonBlocking.WeightNonBlocking;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 
 /**
@@ -436,6 +437,19 @@ public class GUIController {
             }
         }
         GUIView.printToConsole("Problem to parse from file!");
+    }
+
+    public void weightNonBlockingPlusVisualization(final File iFile) {
+        if (iFile != null) {
+            final String path = iFile.getAbsolutePath();
+            final String name = iFile.getName();
+
+            final WeightNonBlocking w = new WeightNonBlocking(iFile, mOpViewController);
+            w.run();
+            return;
+
+        }
+        GUIView.printToConsole("Problem to run weight non-blocking algorithm!");
     }
 
     class AddShortCommandsListener implements ActionListener {

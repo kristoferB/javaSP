@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import sequenceplanner.algorithm.IAlgorithm;
+import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
@@ -26,14 +29,13 @@ import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
  *
  * @author patrik
  */
-public class SelectOperationsDialog extends JFrame implements ActionListener {
+public class SelectOperationsDialog extends JFrame implements ActionListener, IAlgorithmListener {
 
     JScrollPane mScrollPane;
     JButton generateButton = new JButton("Generate projection");
@@ -51,8 +53,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
     Map<ConditionData, JCheckBox> mConditionSelectionMap = null;
     Model mModel;
     OperationView mOpView;
-    StartVisualization sv;
-    public boolean mGoOn = true;
+    private VisualizationAlgorithm mVisualizationAlgorithm;
 
     public SelectOperationsDialog(Model iModel, OperationView iOpView) {
         this.mModel = iModel;
@@ -70,7 +71,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
 
 
         //Collect conditions and init vairables
-        mConditionNameSet = getViewData();
+        mConditionNameSet = mModel.getAllConditions();
         mConditionSelectionMap = new HashMap<ConditionData, JCheckBox>();
         jpCond = new JPanel();
         jpCond.setLayout(new GridLayout(mConditionNameSet.size(), 2));
@@ -160,7 +161,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         jp.add(jpWest, BorderLayout.WEST);
         jp.add(jpEast, BorderLayout.EAST);
         mainPanel.add(jp);
-        
+
         mScrollPane = new JScrollPane(mainPanel);
         c.add(mScrollPane);
         //-------------------------------------------------------------------
@@ -205,15 +206,26 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
                     conditionNameToIncludeSet.add(condition);
                 }
             }
-            sv = new StartVisualization(mOpView, allOperationsNode, operationsToViewNode, hasToFinishNode, conditionNameToIncludeSet, this);
-            mGoOn = true;
-            sv.start();
+            //Call Visualization Algorithm---------------------------------------
+            mVisualizationAlgorithm = new VisualizationAlgorithm("FromVisualizationDialog", this);
+
+            //init
+            final List<Object> list = new ArrayList<Object>();
+            list.add(allOperationsNode);
+            list.add(operationsToViewNode);
+            list.add(hasToFinishNode);
+            list.add(conditionNameToIncludeSet);
+            mVisualizationAlgorithm.init(list);
+
+            //start
+            mVisualizationAlgorithm.start();
+            //-------------------------------------------------------------------
             mStopButton.setEnabled(true);
-//                run(allOperationsNode, operationsToViewNode, hasToFinishNode, conditionNameToIncludeSet);
 
         } else if (mStopButton == e.getSource()) {
-            mGoOn = false;
-            changeText("Stoped!");
+
+            mVisualizationAlgorithm.stop();
+            newMessageFromAlgorithm("Stoped!", null);
             mStopButton.setEnabled(false);
 
         } else if (mSButtonArray[0] == e.getSource()) {
@@ -265,25 +277,25 @@ public class SelectOperationsDialog extends JFrame implements ActionListener {
         }
     }
 
-    private Set<ConditionData> getViewData() {
-        final Set<ConditionData> returnSet = new HashSet<ConditionData>();
-        final List<TreeNode> operationList = mModel.getAllOperations();
+    @Override
+    public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
+        mStopButton.setEnabled(false);
 
-        for (final TreeNode tn : operationList) {
-            if (Model.isOperation(tn.getNodeData())) {
-                final OperationData opData = (OperationData) tn.getNodeData();
-                final Set<ConditionData> conditionNameSet = opData.getConditions().keySet();
-                for (final ConditionData cond : conditionNameSet) {
-                    returnSet.add(cond);
-                }
-            }
+        if (iList.get(0) instanceof ISopNode) {
+            final ISopNode sopNode = (ISopNode) iList.get(0);
+
+            newMessageFromAlgorithm("...drawing...", null);
+
+            //Translate datastructure to graph in operation view.
+            mOpView.drawGraph(sopNode);
+
+            newMessageFromAlgorithm("...finished", null);
         }
-
-        return returnSet;
     }
 
-    public synchronized void changeText(final String iText) {
-        jlStatus.setText("Status: " + iText);
+    @Override
+    public void newMessageFromAlgorithm(String iMessage, IAlgorithm iFromAlgorithm) {
+        jlStatus.setText("Status: " + iMessage);
         repaint();
     }
 }

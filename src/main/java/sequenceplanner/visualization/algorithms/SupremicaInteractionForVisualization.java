@@ -114,9 +114,13 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
         final Map<String, Set<String>> map = new HashMap<String, Set<String>>();
 
+        int nr = 0;
         //Loop states and events to fill map-------------------------------------
         for (final StateProxy sp : iAutomaton.getStates()) {
             String stateName = sp.getName();
+            if(nr++%100==0) {
+                System.out.println(nr);
+            }
             for (final Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
                 //Remove the single EFA location "pm"
                 stateName = stateName.replaceAll("." + SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME + ".", "");
@@ -132,6 +136,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 map.get(eventName).add(stateName);
             }
         }//----------------------------------------------------------------------
+        System.out.println("getStateSpaceForEventSetMap finished");
         return map;
     }
 

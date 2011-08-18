@@ -559,6 +559,12 @@ public class OperationView extends AbstractView implements AsyncModelListener {
 
     public boolean redrawGraph() {
         new SopNodeToolboxSetOfOperations().drawNode(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), getGraph(), mViewData.mNodeCellDataLayoutMap);
+        OperationViewController.save(this);
         return true;
+    }
+
+    public void drawGraph(final ISopNode iSopNode) {
+        new SopNodeToolboxSetOfOperations().drawNode(iSopNode, getGraph());
+        OperationViewController.save(this);
     }
 }

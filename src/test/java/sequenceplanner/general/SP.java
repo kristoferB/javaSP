@@ -1,6 +1,8 @@
 package sequenceplanner.general;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
@@ -9,6 +11,11 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.SequencePlanner;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.xml.SequencePlannerProjectFile;
 import static org.junit.Assert.*;
 
@@ -138,5 +145,21 @@ public class SP {
         final TreeNode tn = mModel.createModelOperationNode();
         final OperationData opData = (OperationData) tn.getNodeData();
         return opData;
+    }
+
+    /**
+     * Adds parameter <code>iOpBefore</code> as precondition to parameter <code>iOpAfter</code>.<br/>
+     * <code>iOpBefore</code> has to be finished before <code>iOpAfter</code> can start.
+     * @param iOpBefore
+     * @param iOpAfter
+     */
+    public static void addSequentialPreCondition(final OperationData iOpBefore, final OperationData iOpAfter) {
+        final ConditionStatement cs = new ConditionStatement("id"+Integer.toString(iOpBefore.getId()), ConditionStatement.Operator.Equal, "2");
+        final ConditionExpression ce = new ConditionExpression(cs);
+        final Condition condition = new Condition();
+        condition.setGuard(ce);
+        final Map<ConditionType,Condition> map = new HashMap<ConditionType, Condition>();
+        map.put(ConditionType.PRE, condition);
+        iOpAfter.setConditions(new ConditionData(iOpBefore.getName()+"_"), map);
     }
 }

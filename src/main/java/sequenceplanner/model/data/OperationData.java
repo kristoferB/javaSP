@@ -53,15 +53,9 @@ public class OperationData extends Data {
         this.algebraicCounter--;
     }
 
-    private String getValue(String key) {
-        String s = preference.get(key);
-
-        return s == null ? "" : s;
-    }
-
     @Override
     public String toString() {
-        return getValue(OPERATION_NAME);
+        return getAttribute(Type.NAME);
     }
 
     public Map<ConditionData, Map<ConditionType, Condition>> getConditions() {

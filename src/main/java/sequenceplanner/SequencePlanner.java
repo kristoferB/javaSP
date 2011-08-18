@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
+import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 
 /**
  *
@@ -63,19 +64,9 @@ public class SequencePlanner {
                 GUIModel model = new GUIModel();
                 GUIView view = new GUIView(model);
                 GUIController gc = new GUIController(model, view);
-
-                for (String arg : args) {
-                    System.out.println("arg " + arg);
-                }
-
-                //To Read from file at start up
-                if (args.length >= 2) {
-                    if (args[0].equals("fromPS")) {
-                        final String path = args[1];
-                        final File file = new File(path);
-                        gc.parseTextFile(file);
-                    }
-                }
+                
+                //Take action for input arguments
+                new InputArguments(gc, args).run();
 
             }
         });

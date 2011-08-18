@@ -2,6 +2,7 @@ package sequenceplanner.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -266,7 +267,7 @@ public class Model extends Observable implements IModel {
 
         if (node == null) { //Node not present in model
 
-            if(!Model.isOperation(newNode.getNodeData())) {
+            if (!Model.isOperation(newNode.getNodeData())) {
                 return;
             }
 
@@ -278,7 +279,7 @@ public class Model extends Observable implements IModel {
             opData.setDescription(data.getDescription());
             createModelOperationNode(opData);
         }
- 
+
         reloadNamesCache();
 
         return;
@@ -889,8 +890,8 @@ public class Model extends Observable implements IModel {
      * Value: rootSop as {@link ISopNode}.<br/>
      * @return
      */
-    public Map<ViewData,ISopNode> getAllSOPs() {
-        final Map<ViewData,ISopNode> nameRootSopMap = new HashMap<ViewData, ISopNode>();
+    public Map<ViewData, ISopNode> getAllSOPs() {
+        final Map<ViewData, ISopNode> nameRootSopMap = new HashMap<ViewData, ISopNode>();
         final TreeNode[] viewDataArray = getChildren(viewRoot);
 
         for (final TreeNode tn : viewDataArray) {
@@ -984,6 +985,23 @@ public class Model extends Observable implements IModel {
         return resources;
     }
 
+    public Set<ConditionData> getAllConditions() {
+        final Set<ConditionData> returnSet = new HashSet<ConditionData>();
+        final List<TreeNode> operationList = getAllOperations();
+
+        for (final TreeNode tn : operationList) {
+            if (Model.isOperation(tn.getNodeData())) {
+                final OperationData opData = (OperationData) tn.getNodeData();
+                final Set<ConditionData> conditionNameSet = opData.getConditions().keySet();
+                for (final ConditionData cond : conditionNameSet) {
+                    returnSet.add(cond);
+                }
+            }
+        }
+
+        return returnSet;
+    }
+
     /**
      * Exchange of {@link OperationData} objects in parameter <p>iSopNode</p>
      * to the corresponding {@link OperationData} objects in this model.<br/>
@@ -1017,7 +1035,7 @@ public class Model extends Observable implements IModel {
      * @param iLabel
      * @return true if ok else false
      */
-    public boolean setConditions(final ISopNode iSopNodeRoot, final ConditionData iConditionData ) {
+    public boolean setConditions(final ISopNode iSopNodeRoot, final ConditionData iConditionData) {
         //Check sopNode----------------------------------------------------------
         if (iSopNodeRoot == null) {
             return false;

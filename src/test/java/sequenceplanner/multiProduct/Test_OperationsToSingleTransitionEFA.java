@@ -1,5 +1,8 @@
 package sequenceplanner.multiProduct;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,7 +28,7 @@ public class Test_OperationsToSingleTransitionEFA {
     public static void tearDownClass() throws Exception {
     }
 
-    @Test
+//    @Test
     public void test1() {
         mSP.loadFromTemplateSOPXFile("resources/filesForTesting/summer2011.sopx");
 //        mSP.loadFromSOPXFile("C:/Users/patrik/Desktop/TwoSimpleProducts.sopx");
@@ -38,7 +41,6 @@ public class Test_OperationsToSingleTransitionEFA {
 
 //    @Test
     public void test2() {
-        String s = "";
-        assertTrue(s.isEmpty());
     }
+
 }

@@ -3,6 +3,7 @@ package sequenceplanner.view.operationView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -12,8 +13,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.gui.controller.CellNameObserver;
-import sequenceplanner.visualization.algorithms.StartVisualization;
+import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
@@ -31,12 +33,13 @@ import sequenceplanner.view.operationView.graphextension.Cell;
  *
  * @author Evelina
  */
-public class OperationViewController implements Observer {
+public class OperationViewController implements Observer{
 
     //All exsting operation views
     private LinkedList<OperationView> views;
 //    private static Map<ViewData,OperationView> mViewViewMap;
     private final GUIController mGUIController;
+
 
     public OperationViewController() {
         this(null);
@@ -209,8 +212,20 @@ public class OperationViewController implements Observer {
         iOpView.getGraph().selectAll();
         iOpView.getGraph().deleteMarkedCells();
 
-        //Start visualization
-        final StartVisualization sv = new StartVisualization(iOpView, rootForOperationsToInclude, rootForOperationsToView, new SopNode(), null, null);
-        sv.start();
+//        //Start visualization
+//        final VisualizationAlgorithm sv = new VisualizationAlgorithm("FromOperationViewController", this);
+//
+//        final List<Object> list = new ArrayList<Object>();
+//        list.add(rootForOperationsToInclude);
+//        list.add(rootForOperationsToView);
+//        list.add(new SopNode());
+//        list.add(null);
+//        sv.init(list);
+//
+//        sv.start();
+//
+//        mCurretOperationView = iOpView;
     }
+
+
 }

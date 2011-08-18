@@ -76,8 +76,12 @@ public class RelationsForOperationSet {
             return 1;
         }
 
+        System.out.println("Creation of eventStateSpaceMap started");
+
         //Get states where each event is enabled
         final Map<String, Set<String>> eventStateSpaceMap = formalMethods.getStateSpaceForEventSetMap(automaton);
+
+        System.out.println("Creation of eventStateSpaceMap finished");
 
         //Relation identification
         final RelationIdentification ri = new RelationIdentification(automaton, mRC, eventStateSpaceMap);
