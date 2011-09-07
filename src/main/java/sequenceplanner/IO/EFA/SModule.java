@@ -301,7 +301,7 @@ public class SModule {
      * @param iModuleSubject the {@link ModuleSubject} to save
      * @return true if save was ok else false
      */
-    public boolean saveToWMODFile(final String iFilePath, final ModuleSubject iModuleSubject) {
+    public static boolean saveToWMODFile(final String iFilePath, final ModuleSubject iModuleSubject) {
         try {
             final File file = new File(iFilePath);
             iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));

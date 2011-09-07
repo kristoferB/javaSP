@@ -11,12 +11,12 @@
         <dependency>
             <groupId>org.supremica</groupId>
             <artifactId>supremica-lib</artifactId>
-            <version>1.0</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.supremica</groupId>
             <artifactId>supremica-svn</artifactId>
-            <version>1.0</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.supremica</groupId>
