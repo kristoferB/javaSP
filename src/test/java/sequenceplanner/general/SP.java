@@ -1,6 +1,8 @@
 package sequenceplanner.general;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
@@ -9,6 +11,12 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.SequencePlanner;
+import sequenceplanner.condition.Condition;
+import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.data.ConditionData;
+import sequenceplanner.xml.SequencePlannerProjectFile;
 import static org.junit.Assert.*;
 
 /**
@@ -85,7 +93,10 @@ public class SP {
      * @param nameOfFile name of .sopx-file
      */
     public void loadFromSOPXFile(String nameOfFile) {
-        assertTrue(mGUIModel.openModel(new File(nameOfFile)));
+        final SequencePlannerProjectFile project = mGUIModel.openModel(new File(nameOfFile));
+        assertTrue(project != null);
+        assertTrue(getGUIController() != null);
+        getGUIController().openModel(project);
     }
 
     /**
@@ -93,6 +104,7 @@ public class SP {
      * @param nameOfFile name of template.sopx-file
      */
     public void loadFromTemplateSOPXFile(String nameOfFile) {
+        initViewAndController();
         loadFromSOPXFile(SequencePlanner.class.getResource(nameOfFile).getFile());
     }
 
@@ -118,8 +130,10 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation() {
-        final Integer count = mModel.getCounter();
-        return insertOperation("OP" + count);
+        final OperationData opData = insertOperation("OP");
+        int count = opData.getId();
+        opData.setName("OP" + count);
+        return opData;
     }
 
     /**
@@ -128,21 +142,24 @@ public class SP {
      * @return the created operation as {@link OperationData}
      */
     public OperationData insertOperation(final String iName) {
-        Integer idCounter = getUpdatedIdCount();
-        OperationData opData = new OperationData(iName, idCounter);
-        TreeNode[] toAdd = new TreeNode[1];
-        toAdd[0] = new TreeNode(opData);
-        mModel.saveOperationData(toAdd);
+        final TreeNode tn = mModel.createModelOperationNode();
+        final OperationData opData = (OperationData) tn.getNodeData();
         return opData;
     }
 
     /**
-     * Updates idcounter with one and returns this new value.
-     * @return the new value
+     * Adds parameter <code>iOpBefore</code> as precondition to parameter <code>iOpAfter</code>.<br/>
+     * <code>iOpBefore</code> has to be finished before <code>iOpAfter</code> can start.
+     * @param iOpBefore
+     * @param iOpAfter
      */
-    public Integer getUpdatedIdCount() {
-        Integer idCount = mModel.getCounter();
-        mModel.setCounter(idCount + 1);
-        return idCount;
+    public static void addSequentialPreCondition(final OperationData iOpBefore, final OperationData iOpAfter) {
+        final ConditionStatement cs = new ConditionStatement("id"+Integer.toString(iOpBefore.getId()), ConditionStatement.Operator.Equal, "2");
+        final ConditionExpression ce = new ConditionExpression(cs);
+        final Condition condition = new Condition();
+        condition.setGuard(ce);
+        final Map<ConditionType,Condition> map = new HashMap<ConditionType, Condition>();
+        map.put(ConditionType.PRE, condition);
+        iOpAfter.setConditions(new ConditionData(iOpBefore.getName()+"_"), map);
     }
 }

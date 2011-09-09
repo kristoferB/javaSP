@@ -1,24 +1,22 @@
 package sequenceplanner.model.SOP;
 
 import java.util.Set;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
+import sequenceplanner.model.data.OperationData;
 
 /**
  * Interface for a SOP node<br/>
  * @author patrik
  */
-public interface ISopNode {
+public interface ISopNode{
 
-    Object getNodeType();
-
-    void setNodeType(Object iType);
+    OperationData getOperation();
 
     Set<ISopNode> getFirstNodesInSequencesAsSet();
 
     void addNodeToSequenceSet(ISopNode iNode);
 
-    ISopNode getPredecessorNode();
-
-    void setPredecessorNode(ISopNode iPredecessor);
+    boolean removeFromSequenceSet(ISopNode iNodeToRemove);
 
     ISopNode getSuccessorNode();
 
@@ -26,11 +24,37 @@ public interface ISopNode {
 
     int getSuccessorRelation();
 
+    /**
+     * See {@link IRelateTwoOperations} for parameter <p>iRelation</p>.<br/>
+     * @param iRelation
+     */
     void setSuccessorRelation(int iRelation);
 
+    boolean sequenceSetIsEmpty();
+
+    /**
+     * Only works this node.
+     * @return operation name or node type as symbol
+     */
     String typeToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString();
 
+    /**
+     * For internal use only
+     * @return
+     */
     String inDepthToString(String prefix);
+
+
+    /**
+     * For debug, a unique id for each object
+     * @return
+     */
+    int getUniquefId();
+    
 }

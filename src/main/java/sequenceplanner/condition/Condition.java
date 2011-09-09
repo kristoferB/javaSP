@@ -31,7 +31,7 @@ public class Condition {
     }
 
     public boolean hasAction(){
-        return action != null;
+        return !action.isEmpty();
     }
 
     public ConditionExpression getGuard() {
@@ -43,7 +43,7 @@ public class Condition {
     }
 
     public boolean hasGuard(){
-        return guard != null;
+        return !guard.isEmpty();
     }
 
     public boolean evaluateGuard(Map<String,String> variableValues){
@@ -68,7 +68,7 @@ public class Condition {
             ConditionExpression ce = (ConditionExpression) element;
             elementBoolean = reqGuardEvaluater(ce.getExpressionRoot(), variableValues);
         }else if (element.isStatment()){
-            elementBoolean = validateStatment((ConditionStatment)element,variableValues);
+            elementBoolean = validateStatment((ConditionStatement)element,variableValues);
         }
         if (element.hasNextElement()){
             if (element.getNextOperator().isOperationType(ConditionOperator.Type.AND)){
@@ -82,7 +82,7 @@ public class Condition {
 
 
 
-    private boolean validateStatment(ConditionStatment statment, Map<String,String> variableValues){
+    private boolean validateStatment(ConditionStatement statment, Map<String,String> variableValues){
         String var = statment.getVariable();
         if (variableValues.containsKey(var)){
             return statment.evaluate(variableValues.get(var));
@@ -96,7 +96,7 @@ public class Condition {
             if (e.isExpression()) {
                 newVars.putAll(variableUpdater((ConditionExpression) e, oldVars));
             } else if (e.isStatment()){
-                ConditionStatment cs =  (ConditionStatment) e;
+                ConditionStatement cs =  (ConditionStatement) e;
                 if (newVars.containsKey(cs.getVariable())){
                     newVars.put(cs.getVariable(), cs.getNewVariableValue(newVars.get(cs.getValue())));
                 }

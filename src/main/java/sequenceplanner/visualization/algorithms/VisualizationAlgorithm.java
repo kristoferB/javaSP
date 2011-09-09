@@ -1,0 +1,87 @@
+package sequenceplanner.visualization.algorithms;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import sequenceplanner.algorithm.AAlgorithm;
+import sequenceplanner.algorithm.IAlgorithmListener;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.ConditionData;
+
+/**
+ * To manage the user interaction for {@link PerformVisualization}.<br/>
+ * @author patrik
+ */
+public class VisualizationAlgorithm extends AAlgorithm {
+
+    private ISopNode mAllOperations;
+    private ISopNode mOperationsToView;
+    private ISopNode mHasToFinish;
+    private Set<ConditionData> mConditionsToIncludeSet;
+    private IPerformVisualization mVisualization = null;
+
+    public VisualizationAlgorithm(String iThreadName, IAlgorithmListener iAL) {
+        super(iThreadName);
+        addAlgorithmListener(iAL);
+    }
+
+    @Override
+    public void init(List<Object> iList) {
+        this.mAllOperations = (ISopNode) iList.get(0);
+        this.mOperationsToView = (ISopNode) iList.get(1);
+        this.mHasToFinish = (ISopNode) iList.get(2);
+        this.mConditionsToIncludeSet = (Set<ConditionData>) iList.get(3);
+    }
+
+    @Override
+    public void run() {
+
+        if (!getStatus("Started...")) {
+            return;
+        }
+        mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod", mConditionsToIncludeSet);
+
+        mVisualization.addOset(mAllOperations);
+
+        if (!mVisualization.addOsubset(mOperationsToView)) {
+            System.out.println("Operations to view are not a subset of all operations!");
+            if (!getStatus("Problem! See console")) {
+            }
+            return;
+        }
+
+        if (!mVisualization.addToOfinish(mHasToFinish)) {
+            System.out.println("Operations to finish are not a subset of all operations!");
+            if (!getStatus("Problem! See console")) {
+            }
+            return;
+        }
+        if (!getStatus("...SCT...")) {
+            return;
+        }
+        final RelationContainer rc = mVisualization.identifyRelations();
+        if (rc == null) {
+            if (!getStatus("Problem! See console")) {
+            }
+            return;
+        }
+
+        if (!getStatus("...partition...")) {
+            return;
+        }
+        mVisualization.hierarchicalPartition(rc);
+        mVisualization.alternativePartition(rc);
+        mVisualization.arbitraryOrderPartition(rc);
+        mVisualization.parallelPartition(rc);
+        mVisualization.sequenceing(rc);
+
+        System.out.println("\n--------------------------------");
+        System.out.println("After partition");
+        System.out.println(rc.getOsubsetSopNode());
+        System.out.println("--------------------------------");
+
+        final List<Object> list = new ArrayList<Object>();
+        list.add(rc.getOsubsetSopNode());
+        fireFinishedEvent(list);
+    }
+}

@@ -21,7 +21,7 @@ import sequenceplanner.model.Model;
  */
 public abstract class AbstractView extends JPanel {
 
-    protected final Model model;
+    public final Model model;
     static Logger logger = Logger.getLogger(AbstractView.class);
 
     public AbstractView(Model model, String name) {

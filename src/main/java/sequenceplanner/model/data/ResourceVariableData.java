@@ -21,12 +21,8 @@ public class ResourceVariableData extends Data {
    private int initialValue = 0;
    private int[] constraint = new int[2];
 
-   public ResourceVariableData(String name, int type, int id) {
-      super(name, type, id);
-   }
-
    public ResourceVariableData(String name, int id) {
-      super(name, Data.RESOURCE_VARIABLE, id);
+      super(name, id);
       setData(0, 0, 1, 0);
    }
 

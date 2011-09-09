@@ -3,7 +3,7 @@ package sequenceplanner.efaconverter.efamodel.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
-import sequenceplanner.condition.ConditionStatment;
+import sequenceplanner.condition.ConditionStatement;
 import sequenceplanner.efaconverter.efamodel.SpLocation;
 import sequenceplanner.efaconverter.efamodel.SpTransition;
 
@@ -94,7 +94,7 @@ public class SpSyncLocation extends SpLocation {
      * @param variableValues A Map where the key is the variableName and the
      * value is the variable value (both as strings even if the value is an int).
      * @return true if the value was added correct, false if a value already
-     * exists and ConditionStatment.MULTIPLE_VALUES was added instead.
+     * exists and ConditionStatement.MULTIPLE_VALUES was added instead.
      */
     public boolean setVariableValues(Map<String, String> variableValues) {
         if (variableValues == null) return true;
@@ -109,19 +109,19 @@ public class SpSyncLocation extends SpLocation {
     /**
      * The method adds a variable and its value to This location. If the location
      * already has the variable, but with another value, the value will be changed
-     * to the constant {%link ConditionStatment.MULTIPLE_VALUES} and the method
+     * to the constant {%link ConditionStatement.MULTIPLE_VALUES} and the method
      * will return false.
      * @param variableName The name of the variable
      * @param variableValue The value of the variable in this location
      * @return true if the value was added correct, false if a value already
-     * exists and ConditionStatment.MULTIPLE_VALUES was added instead.
+     * exists and ConditionStatement.MULTIPLE_VALUES was added instead.
      */
     public boolean addVariableValue(String variableName, String variableValue) {
         if (variableName == null || variableValue == null)
             throw new NullPointerException();
         if (this.variableValues.containsKey(variableName)) {
             if (!this.variableValues.get(variableName).equals(variableValue)) {
-                this.variableValues.put(variableName, ConditionStatment.MULTIPLE_VALUES);
+                this.variableValues.put(variableName, ConditionStatement.MULTIPLE_VALUES);
                 this.multipleValues = true;
                 return false;
             }

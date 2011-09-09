@@ -8,7 +8,7 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-classpath %classpath sequenceplanner.SequencePlanner</exec.args>
+                <exec.args>-classpath %classpath sequenceplanner.SequencePlanner weightDARPA C:\\Users\\patrik\\Desktop\\seamAssembly_Multiblocks.xml</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -20,9 +20,38 @@
             </goals>
             <properties>
                 <exec.classpathScope>runtime</exec.classpathScope>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath sequenceplanner.SequencePlanner</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath sequenceplanner.SequencePlanner weightDARPA C:\\Users\\patrik\\Desktop\\seamAssembly_Multiblocks.xml</exec.args>
                 <jpda.listen>true</jpda.listen>
                 <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+        <action>
+            <actionName>build-with-dependencies</actionName>
+            <basedir>.</basedir>
+            <goals>
+                <goal>reactor:make</goal>
+            </goals>
+            <properties>
+                <make.artifacts>${groupId}:${artifactId}</make.artifacts>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-Create jarfile with dependencies</actionName>
+            <displayName>Create jarfile with dependencies</displayName>
+            <goals>
+                <goal>assembly:single</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>profile</actionName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.1.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>${profiler.args} -classpath %classpath sequenceplanner.SequencePlanner weightDARPA C:\\Users\\patrik\\Desktop\\seamAssembly_Multiblocks.xml</exec.args>
+                <profiler.action>profile</profiler.action>
+                <exec.executable>${profiler.java}</exec.executable>
             </properties>
         </action>
     </actions>

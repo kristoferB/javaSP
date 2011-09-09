@@ -3,7 +3,7 @@ package sequenceplanner.multiProduct;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import sequenceplanner.IO.ReadFromVolvoFile;
+//import sequenceplanner.IO.ReadFromVolvoFile;
 import sequenceplanner.general.SP;
 import static org.junit.Assert.*;
 
@@ -27,9 +27,9 @@ public class readFileCreateOperations {
     public void test1() {
         mSP = new SP();
 
-        ReadFromVolvoFile r = new ReadFromVolvoFile("C:\\Users\\patrik\\Desktop\\Fixture.txt", null, mSP.getModel());
-        assertTrue(r.run());
-        r.printInfo();
+//        ReadFromVolvoFile r = new ReadFromVolvoFile("C:\\Users\\patrik\\Desktop\\Fixture.txt", null, mSP.getModel());
+//        assertTrue(r.run());
+//        r.printInfo();
 
     }
     

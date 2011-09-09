@@ -7,13 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import sequenceplanner.model.Model;
 import sequenceplanner.model.NameCacheMap;
 import sequenceplanner.model.data.Data;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.view.operationView.Constants;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 
@@ -48,7 +46,7 @@ public class SPGraphModel extends mxGraphModel {
 
    @Override
    public Object createRoot() {
-      mxCell root = new Cell("Process");
+      Cell root = new Cell("Process");
       root.insert(new Cell(new Data("root", -1)));
       return root;
    }
@@ -80,9 +78,9 @@ public class SPGraphModel extends mxGraphModel {
       for (int i = 0; i < sops.length; i++) {
          OperationData d = ((OperationData) sops[i].getValue());
 
-         d.setPostcondition(Model.updateCondition(nameCache,
-               d.getPSequenceCondition(), d.getPResourceBooking(), showPath));
-
+//         d.setPrecondition(Model.updateCondition(nameCache,
+//               d.getSequenceCondition(), d.getResourceBooking(), showPath));
+         
          updatePreconditions(sops[i], showPath);
       }
    }

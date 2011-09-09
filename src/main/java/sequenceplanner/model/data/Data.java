@@ -1,53 +1,73 @@
 package sequenceplanner.model.data;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
 
 /**
  *
  * @author Erik Ohlson
  */
-public class Data  implements Cloneable {
+public class Data extends Observable implements Cloneable {
 
-    public static final int FOLDER=0;
-    public static final int OPERATION=1;
-    public static final int RESOURCE=2;
-    public static final int RESOURCE_VARIABLE=3;
-    public static final int LIASON=4;
-    public static final int VIEW=5;
+    public enum Type {
 
-    private String name;
+        NAME("name"), DESC("description");
+        private final String type;
+
+        Type(String iType) {
+            this.type = iType;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    };
+    public static final int FOLDER = 0;
+    public static final int OPERATION = 1;
+    public static final int RESOURCE = 2;
+    public static final int RESOURCE_VARIABLE = 3;
+    public static final int LIASON = 4;
+    public static final int VIEW = 5;
+
+    
     private int id;
-    private int type;
-
     private boolean copy = false;
-
-    Hashtable<String, String> attributes;
+    private Map<Type, String> mAttributes;
 
     public Data(String name, int id) {
-       this(name, FOLDER, id);
-    }
-
-    public Data(String name, int type, int id) {
-        this.name = name;
+        mAttributes = new HashMap<Type, String>();
         this.id = id;
-        attributes = new Hashtable<String, String>();
+        setName(name);
+        setDescription("");
     }
 
     public String getName() {
-        return name;
+        return getAttribute(Type.NAME);
     }
 
     public void setName(String name) {
-        this.name = name;
+        setAttribute(Type.NAME, name);
+        setChanged();
+        notifyObservers(name);
     }
 
-       public void setCopy(boolean copy) {
-       this.copy = copy;
-   }
+    public String getDescription() {
+        return getAttribute(Type.DESC);
+    }
 
-       public boolean getCopy() {
-           return copy;
-       }
+    public void setDescription(String iDescription) {
+        setAttribute(Type.DESC, iDescription);
+    }
+
+    public void setCopy(boolean copy) {
+        this.copy = copy;
+    }
+
+    public boolean getCopy() {
+        return copy;
+    }
 
     public int getId() {
         return id;
@@ -57,43 +77,38 @@ public class Data  implements Cloneable {
         this.id = id;
     }
 
-    public String getAttribute(String key) {
-        String ret = attributes.get(key);
+    public String getAttribute(Type iType) {
+        final String ret = mAttributes.get(iType);
         if (ret == null) {
             return "";
         }
-
-        return "";
+        return ret;
     }
 
-    public void setAttribute(String key, String value) {
-        attributes.put(key, value);
+    public void setAttribute(Type iType, String value) {
+        mAttributes.put(iType, value);
     }
 
-   @Override
-   public Object clone() {
-      return this;
-   }
+    @Override
+    public Object clone() {
+        return this;
+    }
 
-   @Override
-   public String toString() {
-      return "Id: " + Integer.toString(id) + " Name: " + name;
-   }
-
-
+    @Override
+    public String toString() {
+        return "Id: " + Integer.toString(id) + " Name: " + getName();
+    }
 
     @Override
     public boolean equals(Object obj) {
 
-        if(obj instanceof Data) {
+        if (obj instanceof Data) {
             Data t = (Data) obj;
 
-           return getName().equals(t.getName()) && getId() == t.getId();
-    
+            return getName().equals(t.getName()) && getId() == t.getId();
+
         }
 
         return false;
     }
-
-
 }

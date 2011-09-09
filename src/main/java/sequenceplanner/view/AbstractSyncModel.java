@@ -40,18 +40,22 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
       System.out.println("Destroy this view");
    }
 
+    @Override
    public Object getChild(Object parent, int index) {
-      return model.getChild(parent, index);
+      return Model.getChild(parent, index);
    }
 
+    @Override
    public int getChildCount(Object parent) {
       return model.getChildCount(parent);
    }
 
+    @Override
    public int getIndexOfChild(Object parent, Object child) {
       return model.getIndexOfChild(parent, child);
    }
 
+    @Override
    public Object getRoot() {
       return root[root.length-1];
    }
@@ -62,6 +66,7 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
       changeStructure(new TreeNode[] { root });
    }
 
+    @Override
    public boolean isLeaf(Object node) {
       if(getChildCount(node) == 0) {
          return true;
@@ -71,10 +76,12 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
    }
    private ArrayList<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
+    @Override
    public void addTreeModelListener(TreeModelListener l) {
       listeners.add(l);
    }
 
+    @Override
    public void removeTreeModelListener(TreeModelListener l) {
       listeners.remove(l);
    }
@@ -85,6 +92,7 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
       changeStructure(path);
    }
 
+    @Override
    public void insert(TreeNode insertedNode, TreeNode[] path, int place) {
 
       path = convertPath(path, root[root.length-1]);
@@ -107,6 +115,7 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
 
 
 
+    @Override
    public void remove(TreeNode removedNode, TreeNode[] previusPath, int place) {
       //Is this root removed
       for (int i = 0; i < root.length; i++) {
@@ -146,6 +155,7 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
 
    }
 
+    @Override
    public void dataChange(TreeNode changedNode, TreeNode[] path, int place) {
       int[] ch = { place };
 
@@ -202,6 +212,7 @@ public abstract class AbstractSyncModel implements TreeModel, IModel.SyncModelLi
       
    }
 
+    @Override
    public void valueForPathChanged(TreePath path, Object newValue) {
       
    }

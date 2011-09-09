@@ -2,8 +2,8 @@ package sequenceplanner.model.SOP;
 
 import java.util.HashSet;
 import java.util.Set;
-import sequenceplanner.algorithms.visualization.IRelateTwoOperations;
-import sequenceplanner.algorithms.visualization.RelateTwoOperations;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
+import sequenceplanner.visualization.algorithms.RelateTwoOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -12,32 +12,33 @@ import sequenceplanner.model.data.OperationData;
  */
 public abstract class ASopNode implements ISopNode {
 
-    private Object mType = null;
+    private String mTypeAsString = "";
+    /**
+     * Counter for unique ids
+     */
+    public static int mUniqueIdCounter = 1;
+    private int mUniqueid;
     /**
      * Set containing the first ISopNode in all sequences that are children to this node.<br/>
      */
     private Set<ISopNode> mSequenceSet = null;
-    private ISopNode mPredecessor = null;
     private ISopNode mSuccessor = null;
     private int mSuccessorRelation = -1;
 
-    public ASopNode() {
+    public ASopNode(final String iTypeAsString) {
         mSequenceSet = new HashSet<ISopNode>();
+        this.mTypeAsString = iTypeAsString;
+        this.mUniqueid = mUniqueIdCounter++;
+    }
+
+    @Override
+    public int getUniquefId() {
+        return mUniqueid;
     }
 
     @Override
     public Set<ISopNode> getFirstNodesInSequencesAsSet() {
         return mSequenceSet;
-    }
-
-    @Override
-    public Object getNodeType() {
-        return mType;
-    }
-
-    @Override
-    public ISopNode getPredecessorNode() {
-        return mPredecessor;
     }
 
     @Override
@@ -51,13 +52,8 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
-    public void setNodeType(Object iType) {
-        mType = iType;
-    }
-
-    @Override
-    public void setPredecessorNode(ISopNode iPredecessor) {
-        mPredecessor = iPredecessor;
+    public boolean removeFromSequenceSet(ISopNode iNodeToRemove) {
+        return getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
     }
 
     @Override
@@ -72,23 +68,36 @@ public abstract class ASopNode implements ISopNode {
 
     @Override
     public void setSuccessorRelation(int iRelation) {
-        if(iRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 ||
+        if (iRelation == IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12 ||
                 iRelation == IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12) {
             this.mSuccessorRelation = iRelation;
         }
     }
 
-    
+    @Override
+    public boolean sequenceSetIsEmpty() {
+        if (getFirstNodesInSequencesAsSet().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Is only overwritten by {@link SopNodeOperation}
+     * @return
+     */
+    @Override
+    public OperationData getOperation() {
+        return null;
+    }
 
     @Override
     public String typeToString() {
         String returnString = "";
-        if (getNodeType() instanceof OperationData) {
-            OperationData opData = (OperationData) getNodeType();
-            returnString += opData.getName();
-        } else if (getNodeType() instanceof String) {
-            String s = (String) getNodeType();
-            returnString += s;
+        if (this instanceof SopNodeOperation) {
+            returnString += getOperation().getName();
+        } else if (this instanceof SopNode || this instanceof SopNodeAlternative || this instanceof SopNodeArbitrary || this instanceof SopNodeParallel) {
+            returnString += mTypeAsString;
         } else {
             returnString += null;
         }
@@ -104,14 +113,10 @@ public abstract class ASopNode implements ISopNode {
         String returnString = "";
         //-----------------------------------------------------------------------
         returnString += iNewLinePrefix + "Node type: ";
-        if (getNodeType() != null) {
-            returnString += typeToString();
-        } else {
-            returnString += null;
-        }
+        returnString += typeToString();
         returnString += "\n";
         //-----------------------------------------------------------------------
-        if (!getFirstNodesInSequencesAsSet().isEmpty()) {
+        if (!sequenceSetIsEmpty()) {
             returnString += iNewLinePrefix + "Sequence set: {";
             for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
                 if (!returnString.endsWith("{")) {
@@ -124,12 +129,6 @@ public abstract class ASopNode implements ISopNode {
                 }
             }
             returnString += "}\n";
-        }
-        //-----------------------------------------------------------------------
-        if (getPredecessorNode() != null) {
-            returnString += iNewLinePrefix + "Predecessor: ";
-            returnString += getPredecessorNode().typeToString();
-            returnString += "\n";
         }
         //-----------------------------------------------------------------------
         if (getSuccessorNode() != null) {

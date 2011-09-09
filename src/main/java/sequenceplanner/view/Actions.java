@@ -2,6 +2,7 @@ package sequenceplanner.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
 
@@ -40,6 +41,21 @@ public class Actions {
         }
     }
 
+    public static class InsertOperation implements ActionListener {
+
+        private TreeNode toRemove = null;
+
+        public InsertOperation() {
+//            this.toRemove = toRemove;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Model m = getAbstractView(e).getModel();
+            m.createModelOperationNode();
+        }
+    }
+
     /**
      *
      */
@@ -64,15 +80,18 @@ public class Actions {
     public static class OpenResourceView implements ActionListener {
 
         private TreeNode root = null;
+        private GUIController mGUIController;
 
-        public OpenResourceView(TreeNode root) {
+        public OpenResourceView(TreeNode root, final GUIController iGUIController) {
             this.root = root;
+            this.mGUIController = iGUIController;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // getAbstractView(e).getSPContainer().createResourceView(root);
-        }
+            mGUIController.getView().addResourceView();
+            //getAbstractView(e).getSPContainer().createResourceView(root);
+            }
     }
 
     //TODO : get this working again!
