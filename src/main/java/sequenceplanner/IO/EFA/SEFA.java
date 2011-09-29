@@ -1,67 +1,42 @@
 package sequenceplanner.IO.EFA;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import java.util.Collection;
+import net.sourceforge.waters.model.module.EdgeProxy;
 import org.supremica.external.avocades.common.EFA;
+import org.supremica.external.avocades.common.Module;
 
 /**
- * Has to do with EFA. Should be merged with the general EFA conversion classes...
+ * Data structure for storage of EFAs.<br/>
  * @author patrik
  */
 public class SEFA {
 
-    private EFA efa = null;
-    private String name = null;
-    private ArrayList<JPanel> jPanel = null;
-    public ArrayList<HashMap<String, JTextArea>> transitions = null;
-    final static String FROM = "from";
-    final static String TO = "to";
-    final static String EVENT = "event";
-    final static String GUARD = "guard";
-    final static String ACTION = "action";
+    private EFA mEfa = null;
     public final static String SINGLE_LOCATION_NAME = "pm";
 
-    public SEFA(String name, SModule sm) {
-        efa = new EFA(name, sm.getModule());
-        this.name = name;
-        sm.addAutomaton(this);
-        jPanel = new ArrayList<JPanel>();
-        transitions = new ArrayList<HashMap<String, JTextArea>>();
+    public SEFA(String name, Module iModule) {
+        mEfa = new EFA(name, iModule);
+        iModule.addAutomaton(mEfa);
     }
 
     public EFA getEFA() {
-        return efa;
+        return mEfa;
     }
 
     public String getName() {
-        return name;
+        return mEfa.getName();
     }
 
-    public ArrayList<JPanel> getTransitionsAsJPanel() {
-        return jPanel;
-    }
-
-    public ArrayList<HashMap<String, JTextArea>> getTransitions() {
-        return transitions;
+    public Collection<EdgeProxy> getTransitions() {
+        return mEfa.getTransitions();
     }
 
     public void addState(String name, boolean accepting, boolean initial) {
-        efa.addState(name, accepting, initial);
+        mEfa.addState(name, accepting, initial);
     }
 
     public void addTransition(String from, String to, String event, String guard, String action) {
-        HashMap<String, JTextArea> transString = new HashMap<String, JTextArea>(5);
-        transitions.add(transString);
-
-        //Save this transition
-        transString.put(FROM, new JTextArea(from));
-        transString.put(TO, new JTextArea(to));
-        transString.put(EVENT, new JTextArea(event));
-        transString.put(GUARD, new JTextArea(guard));
-        transString.put(ACTION, new JTextArea(action));
-
+        mEfa.addTransition(from, to, event, guard, action);
     }
 
     /**
@@ -70,6 +45,22 @@ public class SEFA {
      */
     public void addStandardSelfLoopTransition(SEGA ega) {
         addTransition(SINGLE_LOCATION_NAME, SINGLE_LOCATION_NAME, ega.getEvent(), ega.getGuard(), ega.getAction());
+    }
+
+    public void addStandardSelfLoopTransition(final Transition iTrans) {
+        final SEGA sega = new SEGA(iTrans.getmLabel());
+        for (final String guard : iTrans.getmGuardConjunctionSet()) {
+            sega.andGuard(guard);
+        }
+        for (final String action : iTrans.getmActionSet()) {
+            sega.addAction(action);
+        }
+
+        final Boolean uncontrollable = (Boolean) iTrans.getAttribute(Transition.UNCONTROLLABLE);
+        if (uncontrollable == null | uncontrollable == false) {
+            mEfa.addEvent(iTrans.getmLabel(), "uncontrollable");
+        }
+        addStandardSelfLoopTransition(sega);
     }
 }
 

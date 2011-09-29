@@ -1,22 +1,81 @@
 package sequenceplanner.expression;
 
-import sequenceplanner.expression.ILiteral;
-import sequenceplanner.condition.ConditionOperator;
-import sequenceplanner.condition.ConditionStatement;
-
 /**
- *
+ * Implementation of a three-tuple literal.<br/>
+ * Variable, operator, and value.<br/>
+ * Contains a number of operators that can be used to relate variables to values.<br/>
+ * Eg var1 == 2<br/>
  * @author patrik
  */
-public class Literal extends ConditionStatement implements ILiteral{
+public class Literal implements ILiteral {
 
-    public Literal(String variable, Operator op, String value, ConditionOperator previousOperator, ConditionOperator nextOperator) {
-        super(variable, op, value, previousOperator, nextOperator);
+    private final Object mVariable;
+    private final Object mValue;
+    private final LiteralOperator mLiteralOperator;
+    private boolean mIsNegative = false;
+
+    public Literal(Object mVariable, LiteralOperator mLiteralOperator, Object mValue) {
+        this.mVariable = mVariable;
+        this.mLiteralOperator = mLiteralOperator;
+        this.mValue = mValue;
     }
 
-    public Literal(String variable, Operator op, String value) {
-        super(variable, op, value);
+    public void setIsNegative(final boolean iIsNegative) {
+        mIsNegative = iIsNegative;
     }
 
-    
+    @Override
+    public Object getValue() {
+        return mValue;
+    }
+
+    @Override
+    public Object getVariable() {
+        return mVariable;
+    }
+
+    @Override
+    public LiteralOperator getLiteralOperator() {
+        return mLiteralOperator;
+    }
+
+    @Override
+    public boolean isNegative() {
+        return mIsNegative;
+    }
+
+    @Override
+    public String toString() {
+        String returnString = "";
+        if (mIsNegative) {
+            returnString += "neg ";
+        }
+
+        returnString += getVariable().toString() + " " + getLiteralOperator().toString() + " " + getValue().toString();
+        return returnString;
+    }
+
+    public enum LiteralOperator {
+
+        Equal("=="),
+        NotEqual("!="),
+        Greater(">"),
+        Less("<"),
+        GreaterEq(">="),
+        LessEq("<="),
+        Assign("="),
+        Inc("+="),
+        Dec("-="),
+        PointAt("->");
+        private final String opSign;
+
+        LiteralOperator(String sign) {
+            opSign = sign;
+        }
+
+        @Override
+        public String toString() {
+            return opSign;
+        }
+    };
 }

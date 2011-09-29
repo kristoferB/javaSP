@@ -11,6 +11,7 @@ import net.sourceforge.waters.subject.module.BinaryExpressionSubject;
 import net.sourceforge.waters.subject.module.GraphSubject;
 import net.sourceforge.waters.subject.module.IdentifierSubject;
 import net.sourceforge.waters.subject.module.IntConstantSubject;
+import net.sourceforge.waters.subject.module.LabelBlockSubject;
 import net.sourceforge.waters.subject.module.ModuleSubject;
 import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
 import net.sourceforge.waters.subject.module.NodeSubject;
@@ -46,10 +47,16 @@ public class Test_buildModule {
         //To create an automaton:
         SimpleIdentifierSubject sis = new SimpleIdentifierSubject("auto2");
         SimpleComponentSubject automaton = new SimpleComponentSubject(sis, ComponentKind.PLANT, new GraphSubject());
-        
+        ms.getComponentListModifiable().add(automaton);
+
+        //create a location
         NodeSubject ns = factory.createSimpleNodeProxy("S1");
         automaton.getGraph().getNodesModifiable().add(ns);
-        ms.getComponentListModifiable().add(automaton);
+
+        //create a self loop
+        LabelBlockSubject lbs = factory.createLabelBlockProxy();
+        lbs.getEventListModifiable();
+        
 
         //To create a variable:
         IdentifierSubject var = new SimpleIdentifierSubject("Var1");
@@ -66,23 +73,29 @@ public class Test_buildModule {
         final List<VariableMarkingSubject> markings;
         final IdentifierSubject accepting =
                 factory.createSimpleIdentifierProxy(EventDeclProxy.DEFAULT_MARKING_NAME);
-        final BinaryOperator and = CompilerOperatorTable.getInstance().getAndOperator();
+        final BinaryOperator or = CompilerOperatorTable.getInstance().getOrOperator();
         final BinaryOperator boM = CompilerOperatorTable.getInstance().getEqualsOperator();
         final IntConstantSubject markedval =
                 factory.createIntConstantProxy(4);
-        final BinaryExpressionSubject left =
+        final BinaryExpressionSubject left1 =
                 factory.createBinaryExpressionProxy(boM, var.clone(), markedval);
+        final IntConstantSubject markedval2 =
+                factory.createIntConstantProxy(3);
+        final BinaryExpressionSubject left2 =
+                factory.createBinaryExpressionProxy(boM, var.clone(), markedval2);
+        final BinaryExpressionSubject left =
+                factory.createBinaryExpressionProxy(or, left1, left2);
         final IntConstantSubject markedval1 =
                 factory.createIntConstantProxy(5);
         final BinaryExpressionSubject right =
                 factory.createBinaryExpressionProxy(boM, var.clone(), markedval1);
         final BinaryExpressionSubject expr =
-                factory.createBinaryExpressionProxy(and, left, right);
+                factory.createBinaryExpressionProxy(or, left, right);
         final VariableMarkingSubject marking =
                 factory.createVariableMarkingProxy(accepting, expr);
         markings = Collections.singletonList(marking);
 
-        VariableComponentSubject variable = new VariableComponentSubject(var, bes, true, besStart,markings);
+        VariableComponentSubject variable = new VariableComponentSubject(var, bes, true, besStart, markings);
         ms.getComponentListModifiable().add(variable);
 
 

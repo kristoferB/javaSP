@@ -10,8 +10,7 @@ import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Has to do with EFA. Should be merged with the general EFA conversion classes...
- * Help class for creation of transitions with event, guards and actions
+ * Help class for creation of transitions with Event, Guards, and Actions.<br/>
  * @author patrik
  */
 public class SEGA extends EGA {
@@ -54,22 +53,6 @@ public class SEGA extends EGA {
         return ioGuard;
     }
 
-//    public void addGuardBasedOnSPCondition(String iCondition, String iOpVariablePrefix, ModelParser iModelParser) {
-//        //Example of raw precondition 18_f A (143_iV19_f)
-//
-//        //add precondition to guard
-//        if (!iCondition.equals("")) {
-//
-//            //Change all ID to iOpVariablePrefix+ID
-//            for (OpNode opNode : iModelParser.getOperations()) {
-//                iCondition = iCondition.replaceAll(opNode.getStringId(), iOpVariablePrefix + opNode.getStringId());
-//            }
-//
-//            iCondition = guardFromSPtoEFASyntaxTranslation(iCondition);
-//
-//            andGuard(iCondition);
-//        }
-//    }
     public void addGuardBasedOnSPCondition(String iCondition, final String iOpVariablePrefix, final Set<Integer> iSet) {
         //Example of raw precondition 18_f A (143_iV19_f)
 

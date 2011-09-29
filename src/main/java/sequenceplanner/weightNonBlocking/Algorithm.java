@@ -28,9 +28,9 @@ import org.supremica.automata.algorithms.SynchronizationType;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
 import org.supremica.automata.algorithms.SynthesizerOptions;
+import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
-import sequenceplanner.IO.EFA.SModule;
 import sequenceplanner.algorithm.AAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.condition.Condition;
@@ -58,7 +58,7 @@ public class Algorithm extends AAlgorithm {
     Set<Block> mBlockToLiftSet;
     Resource mResource;
     Map<Double, Integer> mWeightMap;
-    SModule mModule;
+    EmptyModule mModule;
     SEFA mEfa;
     ISopNode mRootSopNode;
 
@@ -67,8 +67,8 @@ public class Algorithm extends AAlgorithm {
         addAlgorithmListener(iListener);
         mSeamSet = new HashSet<Seam>();
         mBlockToLiftSet = new HashSet<Block>();
-        mModule = new SModule("temp");
-        mEfa = new SEFA("Weight", mModule);
+        mModule = new EmptyModule("temp", null);
+        mEfa = new SEFA("Weight", mModule.getAvocadesModule());
     }
 
     /**
@@ -111,14 +111,14 @@ public class Algorithm extends AAlgorithm {
         printMapToModuleComments();
 
         final ModuleSubject ms = buildModuleSubject2();
-        saveSupervisorAsWmodFile("C:\\Users\\patrik\\Desktop\\weight.wmod");
+        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\");
         reachabilityToGuards(ms);
 
         //Create automata--------------------------------------------------------
 //        final ModuleSubject ms = buildModuleSubject();
-//        saveSupervisorAsWmodFile("C:\\Users\\patrik\\Desktop\\weight.wmod"); //Send .wmod to Desktop
+//        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\"); //Send .wmod to Desktop
 //        final Automata automata = flattenOut(ms);
-//        final Automaton supervisor = synthesize(automata);
+//        final Automaton supervisor = getExtractedGuards(automata);
 
 //        //Check------------------------------------------------------------------
 //        //Supervisor exists?
@@ -153,7 +153,7 @@ public class Algorithm extends AAlgorithm {
         //Add reachability graph automaton
         extendedAutomata.addAutomaton(efaMRautomaton);
 
-        saveSupervisorAsWmodFile("C:\\Users\\patrik\\Desktop\\weight.wmod"); //Send .wmod to Desktop
+        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\"); //Send .wmod to Desktop
 
         //Synthesize
         final EditorSynthesizerOptions options = new EditorSynthesizerOptions();
@@ -324,7 +324,7 @@ public class Algorithm extends AAlgorithm {
             }
         }
 
-        return mModule.generateTransitions();
+        return mModule.getModuleSubject();
     }
 
     ModuleSubject buildModuleSubject2() {
@@ -378,7 +378,7 @@ public class Algorithm extends AAlgorithm {
             mEfa.addStandardSelfLoopTransition(ega);
         }
 
-        return mModule.generateTransitions();
+        return mModule.getModuleSubject();
     }
 
     /**
@@ -446,7 +446,7 @@ public class Algorithm extends AAlgorithm {
     }
 
     Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA(iModuleSubject);
+        return (Automata) EmptyModule.getDFA(iModuleSubject);
     }
 
     Automaton synthesize(Automata iAutomata) {
@@ -470,10 +470,6 @@ public class Algorithm extends AAlgorithm {
             }
         }
         return null;
-    }
-
-    boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return SModule.saveToWMODFile(iFilePath, mModule.getModuleSubject());
     }
 
     List<List<Double>> powerSet(List<Double> list) {

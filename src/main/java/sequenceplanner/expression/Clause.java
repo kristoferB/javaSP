@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * More or less a class that cotains a list for {@link ILiteral}s.</br>
  * @author patrik
  */
-public class Clause implements IClause {
+public class Clause {
 
+    private boolean isNegative = false;
     private final List<ILiteral> mLiterals;
 
     public Clause() {
         mLiterals = new ArrayList<ILiteral>();
     }
 
-    @Override
     public List<ILiteral> getLiteralList() {
         return mLiterals;
     }
@@ -27,13 +27,24 @@ public class Clause implements IClause {
         mLiterals.add(iLiteral);
     }
 
+    public boolean isNegative() {
+        return isNegative;
+    }
+
+    public void setIsNegative(boolean isNegative) {
+        this.isNegative = isNegative;
+    }
+
     @Override
     public String toString() {
-        String returnString = "| ";
+        String returnString = "";
+        if (mLiterals.isEmpty()) {
+            return returnString;
+        }
+        returnString += "| ";
         for (final ILiteral literal : mLiterals) {
             returnString += literal.toString() + " | ";
         }
-        returnString = "\n";
         return returnString;
     }
 }

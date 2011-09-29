@@ -6,12 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Data structure for transitions.
+ * Data structure for transitions.<br/>
+ * No support for {@link Location} objects today.
+ * My intention was to model a transition without implementation requirements on start and finish states.
+ * This should have enabled both modeling the states as locations in a EFA or as values in a variable domain.<br/>
+ * To conclude: it should be no difference between locations and values inside SP!<br/>
  * @author patrik
  */
 public class Transition {
 
-    final public static String CONTROLABLE = "CONTROLABLE";
+    final public static String UNCONTROLLABLE = "uc";
 
     final private String mLabel;
     final private Set<String> mGuardConjunctionSet;

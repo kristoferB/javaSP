@@ -15,9 +15,9 @@ import org.supremica.automata.algorithms.SynchronizationType;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
 import org.supremica.automata.algorithms.SynthesizerOptions;
+import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
-import sequenceplanner.IO.EFA.SModule;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -33,8 +33,10 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     private final Set<ConditionData> mConditionsToInclude;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
-    private SModule mModule = new SModule("temp");
-    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
+    private EmptyModule mmModule = new EmptyModule("temp", null);
+//    private SModule mModule = new SModule("temp");
+//    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
+    private SEFA mmEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mmModule.getAvocadesModule());
 
     public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude) {
         this.mConditionsToInclude = iConditionsToInclude;
@@ -42,7 +44,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA(iModuleSubject);
+        return EmptyModule.getDFA(iModuleSubject);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
         SEGA ega;
         //Create center in flower automaton
-        mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
+        mmEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
         for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
             if (!(node instanceof SopNodeOperation)) {
@@ -84,7 +86,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
                 marking = 2;
             }
-            mModule.addIntVariable(varName, 0, 2, 0, marking);
+            mmModule.addIntVariable(varName, 0, 2, 0, marking);
             //-------------------------------------------------------------------
 
             //Add transition to start execute operation--------------------------
@@ -93,7 +95,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD, mConditionsToInclude);
             ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=1");
-            mEfa.addStandardSelfLoopTransition(ega);
+            mmEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
 
             //Add transition to finish execute operation-------------------------
@@ -102,11 +104,11 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD, mConditionsToInclude);
             ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=2");
-            mEfa.addStandardSelfLoopTransition(ega);
+            mmEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
         }
 
-        return mModule.generateTransitions();
+        return mmModule.getModuleSubject();
     }
 
     @Override
@@ -166,6 +168,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mModule.saveToWMODFile(iFilePath, mModule.getModuleSubject());
+        return mmModule.saveToWMODFile(iFilePath);
     }
 }

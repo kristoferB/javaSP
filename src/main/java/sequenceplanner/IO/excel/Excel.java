@@ -24,7 +24,7 @@ public class Excel {
 
     private String mFilePath = "";
     private Workbook mWorkbook = null;
-    private Map<String,SheetTable> mSheetMap = null;
+    private Map<String, SheetTable> mSheetMap = null;
 
     public Excel() {
         this("");
@@ -36,14 +36,14 @@ public class Excel {
      */
     public Excel(String iFilePath) {
         mFilePath = iFilePath;
-        mSheetMap = new HashMap<String,SheetTable>();
+        mSheetMap = new HashMap<String, SheetTable>();
     }
 
     /**
      * Get all sheets in workbook
      * @return all sheets, name of sheet is key
      */
-    public Map<String,SheetTable> getSheets() {
+    public Map<String, SheetTable> getSheets() {
         return mSheetMap;
     }
 
@@ -132,7 +132,7 @@ public class Excel {
         for (int i = 0; i < s.getRows(); ++i) {
             for (int j = 0; j < s.getColumns(); ++j) {
                 final String content = s.getCell(j, i).getContents();
-                if(!st.setCellValue(i, j, content)) {
+                if (!st.setCellValue(i, j, content)) {
                     return false;
                 }
             }
@@ -176,5 +176,13 @@ public class Excel {
             returnString += sheet + "\n" + mSheetMap.get(sheet).toString();
         }
         return returnString;
+    }
+
+    public static String columnLetterEquivalent(int iCol) {
+        iCol += 65; //Ascii for A
+        if (iCol >= 65 || iCol <= 90) {
+            return Character.toString((char) iCol);
+        }
+        return Integer.toString(iCol - 65);
     }
 }
