@@ -13,21 +13,16 @@ import net.sourceforge.waters.subject.module.EventDeclSubject;
 import net.sourceforge.waters.subject.module.ModuleSubject;
 import net.sourceforge.waters.xsd.base.EventKind;
 import org.supremica.automata.Arc;
-import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
 import org.supremica.automata.BDD.EFA.BDDExtendedSynthesizer;
 import org.supremica.automata.ExtendedAutomata;
 import org.supremica.automata.ExtendedAutomaton;
 import org.supremica.automata.State;
-import org.supremica.automata.algorithms.AutomataSynthesizer;
 import org.supremica.automata.algorithms.EFAMonlithicReachability;
 import org.supremica.automata.algorithms.EditorSynthesizerOptions;
 import org.supremica.automata.algorithms.Guard.BDDExtendedGuardGenerator;
-import org.supremica.automata.algorithms.SynchronizationOptions;
-import org.supremica.automata.algorithms.SynchronizationType;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
-import org.supremica.automata.algorithms.SynthesizerOptions;
 import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
@@ -50,6 +45,10 @@ import sequenceplanner.model.data.OperationData;
  * weights for the {@link Block}s in each seam. The weight to lift has to be less
  * than the payload for given resource.<br/>
  * DARPA<br/>
+ * För att köra från kommandoprompten:
+ * Skapa jar fil av SP, sedan:
+ * java -jar SP.jar weightDARPA “hela sökvägen till xml-filen med dubbel backslash”
+ * Ex: C:\\Users\\patrik\\Desktop\\seamAssembly_Multiblocks.xml
  * @author patrik
  */
 public class Algorithm extends AAlgorithm {
@@ -110,27 +109,26 @@ public class Algorithm extends AAlgorithm {
         discretizeDoubleToInteger(weightSet);
         printMapToModuleComments();
 
-        final ModuleSubject ms = buildModuleSubject2();
-        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\");
-        reachabilityToGuards(ms);
+//        final ModuleSubject ms = buildModuleSubject2();
+//        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\");
+//        reachabilityToGuards(ms);
 
         //Create automata--------------------------------------------------------
-//        final ModuleSubject ms = buildModuleSubject();
+        final ModuleSubject ms = buildModuleSubject();
 //        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\"); //Send .wmod to Desktop
-//        final Automata automata = flattenOut(ms);
-//        final Automaton supervisor = getExtractedGuards(automata);
+        final Automaton supervisor = EmptyModule.flattenOutAndGetMonolithicSupervisor(ms);
 
-//        //Check------------------------------------------------------------------
-//        //Supervisor exists?
-//        if (supervisor == null || supervisor.nbrOfStates() == 0) {
-//            fireNewMessageEvent("No supervisor found, no assembly sequence exists!");
-//            return;
-//        }
-//
-//        mRootSopNode = createOperationsFromAutomaton(supervisor);
-//        returnList.add(mRootSopNode);
-//
-//        fireFinishedEvent(returnList);
+        //Check------------------------------------------------------------------
+        //Supervisor exists?
+        if (supervisor == null || supervisor.nbrOfStates() == 0) {
+            fireNewMessageEvent("No supervisor found, no assembly sequence exists!");
+            return;
+        }
+
+        mRootSopNode = createOperationsFromAutomaton(supervisor);
+        returnList.add(mRootSopNode);
+
+        fireFinishedEvent(returnList);
     }
 
     void reachabilityToGuards(ModuleSubject ms) {
@@ -443,33 +441,6 @@ public class Algorithm extends AAlgorithm {
             return mWeightMap.get(iDouble);
         }
         return mWeightMap.get(mResource.mPayload);
-    }
-
-    Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) EmptyModule.getDFA(iModuleSubject);
-    }
-
-    Automaton synthesize(Automata iAutomata) {
-        if (iAutomata != null) {
-
-            final SynthesizerOptions syntho = new SynthesizerOptions();
-            syntho.setSynthesisType(SynthesisType.NONBLOCKING);
-            syntho.setSynthesisAlgorithm(SynthesisAlgorithm.MONOLITHIC);
-            syntho.setPurge(true);
-
-            final SynchronizationOptions syncho = new SynchronizationOptions();
-            syncho.setSynchronizationType(SynchronizationType.FULL);
-
-            final AutomataSynthesizer as = new AutomataSynthesizer(iAutomata, syncho, syntho);
-
-            try {
-                iAutomata = as.execute();
-                return iAutomata.getFirstAutomaton();
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
-        }
-        return null;
     }
 
     List<List<Double>> powerSet(List<Double> list) {

@@ -22,10 +22,11 @@ import static org.junit.Assert.*;
  */
 public class Test_RAS implements IAlgorithmListener {
 
-    private String mfilePath;
+    private static String mfilePath;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        mfilePath = "C:\\Users\\patrik\\Desktop\\";
     }
 
     @AfterClass
@@ -38,8 +39,8 @@ public class Test_RAS implements IAlgorithmListener {
         final CreateOperationsAndResources coar = new CreateOperationsAndResources("COAR_Thread");
         coar.addAlgorithmListener(this);
         final List<Object> initList = new ArrayList<Object>();
-        mfilePath = "C:\\Users\\patrik\\Desktop\\FLEXAplus5productsNobuffers.xls";
-        initList.add(mfilePath);
+        
+        initList.add(mfilePath + "FLEXAplus5productsNobuffers.xls");
 
         coar.init(initList);
         coar.start();
@@ -64,7 +65,7 @@ public class Test_RAS implements IAlgorithmListener {
 
     public void method3(final ModuleBase iMB) {
         final String comment = "From excel file: " + mfilePath;
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB);
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB, mfilePath);
     }
 
     @Override

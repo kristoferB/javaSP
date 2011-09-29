@@ -13,17 +13,22 @@ import net.sourceforge.waters.subject.module.ModuleSubject;
 import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
 import net.sourceforge.waters.xsd.base.EventKind;
 import org.supremica.automata.Automata;
+import org.supremica.automata.Automaton;
 import org.supremica.automata.BDD.EFA.BDDExtendedSynthesizer;
 import org.supremica.automata.ExtendedAutomata;
 import org.supremica.automata.ExtendedAutomaton;
 import org.supremica.automata.IO.ProjectBuildFromWaters;
 import org.supremica.automata.Project;
 import org.supremica.automata.VariableHelper;
+import org.supremica.automata.algorithms.AutomataSynthesizer;
 import org.supremica.automata.algorithms.EFAMonlithicReachability;
 import org.supremica.automata.algorithms.EditorSynthesizerOptions;
 import org.supremica.automata.algorithms.Guard.BDDExtendedGuardGenerator;
+import org.supremica.automata.algorithms.SynchronizationOptions;
+import org.supremica.automata.algorithms.SynchronizationType;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
+import org.supremica.automata.algorithms.SynthesizerOptions;
 import org.supremica.external.avocades.common.Module;
 
 /**
@@ -220,5 +225,45 @@ public abstract class AModule {
 
     public Automata getDFA() {
         return getDFA(getModuleSubject());
+    }
+
+    /**
+     * Non-blocking and controllable monolithic synthesis for DFA<br/>
+     * @param iAutomata
+     * @return Purged supervisor if ok else null
+     */
+    public static Automaton getMonolithicSupervisor(Automata iAutomata) {
+        if (iAutomata != null) {
+
+            final SynthesizerOptions syntho = new SynthesizerOptions();
+            syntho.setSynthesisType(SynthesisType.NONBLOCKINGCONTROLLABLE);
+            syntho.setSynthesisAlgorithm(SynthesisAlgorithm.MONOLITHIC);
+            syntho.setPurge(true);
+
+            final SynchronizationOptions syncho = new SynchronizationOptions();
+            syncho.setSynchronizationType(SynchronizationType.FULL);
+
+            final AutomataSynthesizer as = new AutomataSynthesizer(iAutomata, syncho, syntho);
+
+            try {
+                iAutomata = as.execute();
+                return iAutomata.getFirstAutomaton();
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
+        }
+        return null;
+    }
+
+    public static Automaton flattenOutAndGetMonolithicSupervisor(final ModuleSubject iModuleSubject) {
+        final Automata automata = getDFA(iModuleSubject);
+        if (automata == null) {
+            return null;
+        }
+        return getMonolithicSupervisor(automata);
+    }
+
+    public Automaton fattenOutAndGetMonolithicSupervisor() {
+        return flattenOutAndGetMonolithicSupervisor(getModuleSubject());
     }
 }

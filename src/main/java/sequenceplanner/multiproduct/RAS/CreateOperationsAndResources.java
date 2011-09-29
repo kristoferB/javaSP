@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import sequenceplanner.IO.excel.Excel;
 import sequenceplanner.IO.excel.SheetTable;
 import sequenceplanner.algorithm.AAlgorithm;
-import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.expression.Clause;
 import sequenceplanner.expression.Literal;
 import sequenceplanner.expression.Literal.LiteralOperator;

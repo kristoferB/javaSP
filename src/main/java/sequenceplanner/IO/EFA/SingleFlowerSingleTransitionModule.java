@@ -12,7 +12,7 @@ public class SingleFlowerSingleTransitionModule extends AModule {
 
     private final SEFA mSingleEFA;
 
-    public SingleFlowerSingleTransitionModule(String iModuleName, String iModuleComment, ModuleBase iModuleBase) {
+    public SingleFlowerSingleTransitionModule(String iModuleName, String iModuleComment, ModuleBase iModuleBase, String iFilePath) {
         super(iModuleName, iModuleComment);
 
         mSingleEFA = new SEFA("MartinFabian", getAvocadesModule());
@@ -26,7 +26,7 @@ public class SingleFlowerSingleTransitionModule extends AModule {
             mSingleEFA.addStandardSelfLoopTransition(trans);
         }
 
-        saveToWMODFile("C:\\Users\\patrik\\Desktop\\");
+        saveToWMODFile(iFilePath);
 
         getExtractedGuards(2);
     }
