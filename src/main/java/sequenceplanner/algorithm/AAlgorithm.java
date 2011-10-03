@@ -63,6 +63,13 @@ public abstract class AAlgorithm implements IAlgorithm, Runnable {
     private Set<IAlgorithmListener> mListeners;
     private boolean mGoOn = true;
 
+    @Override
+    public abstract void init(List<Object> iList);
+        
+    @Override
+    public abstract void run();
+    
+    
     public AAlgorithm(String iThreadName) {
         this.mListeners = new HashSet<IAlgorithmListener>();
         this.mWorkThread = new Thread(this, iThreadName);
