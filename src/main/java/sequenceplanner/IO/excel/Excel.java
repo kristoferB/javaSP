@@ -79,7 +79,7 @@ public class Excel {
      * To parse from excel workbook to internal data type.<br/>
      * @return true if parse was ok else false
      */
-    public boolean init() {
+    public boolean runParse() {
         if (!mFilePath.equals("")) {
             FileInputStream fs = null;
             try {

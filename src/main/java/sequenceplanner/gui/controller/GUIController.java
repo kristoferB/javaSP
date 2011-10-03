@@ -85,7 +85,7 @@ public class GUIController {
         mGuiView.addSaveL(new SaveListener());
         mGuiView.addSaveAsL(new SaveAsListener());
         mGuiView.addCloseL(new CloseListener());
-        mGuiView.addOperationsFromFileL(new AddOperationsFromFileListener());
+        mGuiView.addOperationsFromPSTextFileL(new AddOperationsFromFileListener("PSTextFile"));
         mGuiView.addExitL(new ExitListener());
 
         //Edit
@@ -406,6 +406,12 @@ public class GUIController {
 
     class AddOperationsFromFileListener implements ActionListener {
 
+        private final String mTypeOfImport;
+
+        public AddOperationsFromFileListener(String mTypeOfImport) {
+            this.mTypeOfImport = mTypeOfImport;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (askForSaveOfModel("Save project before import?")) {
@@ -414,14 +420,16 @@ public class GUIController {
                 if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     final File file = dialog.getSelectedFile();
 
-                    parseTextFile(file);
+                    if (mTypeOfImport.equals("PSTextFile")) {
+                        parseTextFile(file);
+                    }
                 }
             }
         }
     }
 
     /**
-     * Parses a text file.
+     * Parses a text file. Process Simulate style.<br/>
      * @param iFile
      */
     public void parseTextFile(final File iFile) {

@@ -1,6 +1,7 @@
 package sequenceplanner.multiProduct;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import org.junit.AfterClass;
@@ -22,11 +23,12 @@ import static org.junit.Assert.*;
  */
 public class Test_RAS implements IAlgorithmListener {
 
-    private static String mfilePath;
+    private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
+    private static String mFileName = "FLEXAplusNoBuffers.xls";
+    private static int mSecondsToRunSynthesisThread = 70;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        mfilePath = "C:\\Users\\patrik\\Desktop\\";
     }
 
     @AfterClass
@@ -39,15 +41,14 @@ public class Test_RAS implements IAlgorithmListener {
         final CreateOperationsAndResources coar = new CreateOperationsAndResources("COAR_Thread");
         coar.addAlgorithmListener(this);
         final List<Object> initList = new ArrayList<Object>();
-        
-        initList.add(mfilePath + "FLEXAplus5productsNobuffers.xls");
+
+        initList.add(mFilePath + mFileName);
 
         coar.init(initList);
         coar.start();
 
-
         try {
-            Thread.sleep(40000);
+            Thread.sleep(mSecondsToRunSynthesisThread * 1000);
         } catch (InterruptedException ie) {
         }
 
@@ -64,8 +65,10 @@ public class Test_RAS implements IAlgorithmListener {
     }
 
     public void method3(final ModuleBase iMB) {
-        final String comment = "From excel file: " + mfilePath;
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB, mfilePath);
+        String comment = "File path: " + mFilePath + "\n";
+        comment += "Excel file name: " + mFileName + "\n";
+        comment += "File generated: " + Calendar.getInstance().getTime();
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB, mFilePath);
     }
 
     @Override

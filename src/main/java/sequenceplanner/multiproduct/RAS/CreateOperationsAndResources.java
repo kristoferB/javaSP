@@ -83,7 +83,7 @@ public class CreateOperationsAndResources extends AAlgorithm {
 
     private boolean parseExcelFile() {
         final Excel excel = new Excel(mFilePath);
-        if (!excel.init()) {
+        if (!excel.runParse()) {
             return false;
         }
         mSheetTableMap = excel.getSheets();
