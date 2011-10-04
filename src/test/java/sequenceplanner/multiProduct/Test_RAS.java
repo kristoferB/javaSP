@@ -1,7 +1,6 @@
 package sequenceplanner.multiProduct;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import org.junit.AfterClass;
@@ -9,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.IO.EFA.ModuleBase;
 import sequenceplanner.IO.EFA.SingleFlowerSingleTransitionModule;
+import sequenceplanner.IO.EFA.SingleFlowerSingleTransitionModule_Test;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.multiproduct.RAS.CreateOperationsAndResources;
@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 public class Test_RAS implements IAlgorithmListener {
 
     private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
-    private static String mFileName = "FLEXAplusNoBuffers.xls";
-    private static int mSecondsToRunSynthesisThread = 70;
+    private static String mFileName = "ProductTypesTest.xls";
+    private static int mSecondsToRunSynthesisThread = 5;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -65,10 +65,17 @@ public class Test_RAS implements IAlgorithmListener {
     }
 
     public void method3(final ModuleBase iMB) {
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", addFileInfoToComment(), iMB, mFilePath);
+    }
+
+    public void method4(final ModuleBase iMB, final ModuleBase iMBresources) {
+        final SingleFlowerSingleTransitionModule_Test testModule = new SingleFlowerSingleTransitionModule_Test("TestNormalWay", addFileInfoToComment(), iMB, iMBresources, mFilePath);
+    }
+
+    private String addFileInfoToComment() {
         String comment = "File path: " + mFilePath + "\n";
-        comment += "Excel file name: " + mFileName + "\n";
-        comment += "File generated: " + Calendar.getInstance().getTime();
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB, mFilePath);
+        comment += "Excel file name: " + mFileName;
+        return comment;
     }
 
     @Override
@@ -84,10 +91,12 @@ public class Test_RAS implements IAlgorithmListener {
 
         if (iFromAlgorithm instanceof CreateTransitionsAndVariables) {
             final ModuleBase moduleBase = (ModuleBase) iList.get(0);
+            final ModuleBase moduleBaseResources = (ModuleBase) iList.get(1);
             System.out.println(moduleBase.toString());
 
             //Start next step
-            method3(moduleBase);
+//            method3(moduleBase); //Normal execution. Works good for not to big examples
+            method4(moduleBase, moduleBaseResources); //Prototype execution.
         }
 
     }

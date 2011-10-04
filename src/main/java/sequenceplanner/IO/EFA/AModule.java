@@ -1,10 +1,12 @@
 package sequenceplanner.IO.EFA;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import net.sourceforge.waters.model.compiler.CompilerOperatorTable;
+import net.sourceforge.waters.model.des.TransitionProxy;
 import net.sourceforge.waters.model.expr.EvalException;
 import net.sourceforge.waters.model.marshaller.DocumentManager;
 import net.sourceforge.waters.model.marshaller.JAXBModuleMarshaller;
@@ -115,6 +117,13 @@ public abstract class AModule {
             final File file = new File(iFilePath + iModuleSubject.getName() + ".wmod");
             final ModuleSubjectFactory factory = new ModuleSubjectFactory();
             JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+
+            String comment = "";
+            if (iModuleSubject.getComment() != null) {
+                comment = iModuleSubject.getComment() + "\n";
+            }
+            iModuleSubject.setComment(comment + "File originally created: " + Calendar.getInstance().getTime());
+
             marshaller.marshal(iModuleSubject, file);
             return true;
         } catch (Exception t) {
@@ -265,5 +274,47 @@ public abstract class AModule {
 
     public Automaton fattenOutAndGetMonolithicSupervisor() {
         return flattenOutAndGetMonolithicSupervisor(getModuleSubject());
+    }
+
+    /**
+     *
+     * @param iAutomaton {@link Automaton} to translate from
+     * @param oModuleBase {@link ModuleBase} to translate to
+     * @return always true
+     */
+    public static boolean translateAutomatonToModuleBase(final Automaton iAutomaton, final ModuleBase oModuleBase, final String iVariableLabel) {
+
+        //Create variable for state set and add to module base object
+        final Map<String, Integer> stateMap = new HashMap<String, Integer>(); //Each state is represented as a value
+        final String initState = Integer.toString(helpMethodTranslateAutomatonToModuleBase(iAutomaton.getInitialState().getName(), stateMap));
+        final IVariable var = new VariableSameInitMarkedValue(iVariableLabel, "0", Integer.toString(iAutomaton.nbrOfStates() - 1), initState);
+        oModuleBase.storeVariable(var);
+
+        for (final TransitionProxy transProxy : iAutomaton.getTransitions()) {
+            final String eventLabel = transProxy.getEvent().getName();
+            final int sourceState = helpMethodTranslateAutomatonToModuleBase(transProxy.getSource().getName(), stateMap);
+            final int targetState = helpMethodTranslateAutomatonToModuleBase(transProxy.getTarget().getName(), stateMap);
+
+            final Transition trans = oModuleBase.createTransition(eventLabel, true);
+            trans.setStartLocation(var, sourceState);
+            trans.setFinishLocation(var, targetState);
+        }
+
+        return true;
+    }
+
+    /**
+     * Just to store variable states in <i>iMap</i>
+     * @param iVariableLabel
+     * @param iMap
+     * @return
+     */
+    private static int helpMethodTranslateAutomatonToModuleBase(final String iVariableLabel, final Map<String, Integer> iMap) {
+        if (iMap.containsKey(iVariableLabel)) {
+            return iMap.get(iVariableLabel);
+        }
+        final int size = iMap.size();
+        iMap.put(iVariableLabel, size);
+        return size;
     }
 }

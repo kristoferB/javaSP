@@ -61,7 +61,7 @@ public class ModuleBase {
         returnString += "Transitions:\n";
 
         for (final Transition trans : getTransitionSet()) {
-            returnString += trans.getmLabel() + " " + "g:" + trans.getmGuardConjunctionSet() + " " + "a:" + trans.getmActionSet();
+            returnString += trans.getLabel() + " " + "g:" + trans.getmGuardConjunctionSet() + " " + "a:" + trans.getmActionSet();
             returnString += "\n";
         }
 

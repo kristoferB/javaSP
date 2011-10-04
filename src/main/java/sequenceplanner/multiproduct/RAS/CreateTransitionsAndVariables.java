@@ -33,6 +33,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
     private Set<Operation> mOperationSet = null;
     private Set<Variable> mVariableSet = null;
     private ModuleBase mModuleBase = null;
+    private ModuleBase mModuleBaseResourceInfo = null;
 
     public CreateTransitionsAndVariables(String iThreadName) {
         super(iThreadName);
@@ -43,6 +44,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
         mOperationSet = (Set<Operation>) iList.get(0);
         mVariableSet = (Set<Variable>) iList.get(1);
         mModuleBase = new ModuleBase();
+        mModuleBaseResourceInfo = new ModuleBase(); //To only store info about resource. To be used in second loop, when product types have been flatten out.
     }
 
     @Override
@@ -58,6 +60,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
 
         final List<Object> returnList = new ArrayList<Object>();
         returnList.add(mModuleBase);
+        returnList.add(mModuleBaseResourceInfo);
         fireFinishedEvent(returnList);
     }
 
@@ -89,6 +92,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
         for (final ILiteral literal : iOp.mResourceConjunction.getLiteralList()) {
             final Resource resource = (Resource) literal.getVariable();
             mModuleBase.storeVariable(resource);
+            mModuleBaseResourceInfo.storeVariable(resource);
         }
     }
 
@@ -103,7 +107,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 final String eventLabel = op.getEventLabel() + "_" + op.mPreOperationDNFClauseList.indexOf(clause);
 
                 final Transition trans = mModuleBase.createTransition(eventLabel, true);
-
+                
                 //Go to execution/finish state
                 for (final Operation op1 : op.getOperationSet()) {
                     if (op1.getAttribute(Operation.NO_RESOURCE_BOOKING) == null) {
@@ -143,11 +147,13 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 final Map<Resource, List<Integer>> bookUnbookMap = createBookUnbookMap(beforeOpSet, op.getOperationSet());
 
                 //Book and unbook resources
+                Transition resourceTrans = mModuleBaseResourceInfo.createTransition(eventLabel, true); //To store resource guards and actions
                 for (final Resource resource : bookUnbookMap.keySet()) {
                     final List<Integer> valueList = bookUnbookMap.get(resource);
                     if (valueList.get(0) > 0) {
                         final String guard = resource.getVarLabel() + ">=" + valueList.get(0);
                         trans.andGuard(guard);
+                        resourceTrans.andGuard(guard);
                     }
                     final Integer actionValue = valueList.get(1) * (-1);
                     String action = resource.getVarLabel() + "=" + resource.getVarLabel();
@@ -157,6 +163,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                         }
                         action += actionValue;
                         trans.andAction(action);
+                        resourceTrans.andAction(action);
                     }
                 }
 
