@@ -45,6 +45,7 @@ public class CreateOperationsAndResources extends AAlgorithm {
 
     final private Set<Operation> mOperationSet;
     final private Set<Variable> mVariableSet; //To store "extra" variables defined in Excel file
+    final private Set<String> mProductTypeSet; //To store product types defined among operations
     private String mFilePath = "";
     private Map<String, SheetTable> mSheetTableMap;
     private final String needToStart = "^";
@@ -55,6 +56,7 @@ public class CreateOperationsAndResources extends AAlgorithm {
         super(iThreadName);
         mOperationSet = new HashSet<Operation>();
         mVariableSet = new HashSet<Variable>();
+        mProductTypeSet = new HashSet<String>();
     }
 
     @Override
@@ -65,19 +67,31 @@ public class CreateOperationsAndResources extends AAlgorithm {
     @Override
     public void run() {
 
-        getStatus("Parse excel file...");
+        if (!getStatus("Parse excel file...")) {
+            return;
+        }
         if (!parseExcelFile()) {
             return;
         }
 
-        getStatus("Create operations...");
+        if (!getStatus("Create operations...")) {
+            return;
+        }
         if (!OperationCreation()) {
+            return;
+        }
+
+        if (!getStatus("Check for product types...")) {
+            return;
+        }
+        if (!checkForProductTypes()) {
             return;
         }
 
         final List<Object> returnList = new ArrayList<Object>();
         returnList.add(mOperationSet);
         returnList.add(mVariableSet);
+        returnList.add(mProductTypeSet);
         fireFinishedEvent(returnList);
     }
 
@@ -246,8 +260,11 @@ public class CreateOperationsAndResources extends AAlgorithm {
                         //Extra--------------------------------------------------
                         matcher = Pattern.compile(needToStart + "extra:" + any).matcher(st.getCellValue(row, col));
                         if (matcher.find()) {
-                            final String key = matcher.group(1);
-                            attributeMap.put(key, true);
+                            final String[] keyValue = matcher.group(1).split(":", 2);
+                            attributeMap.put(keyValue[0], true);
+                            if (keyValue.length == 2) {
+                                attributeMap.put(keyValue[0], keyValue[1]);
+                            }
                         }//------------------------------------------------------
                     }
 
@@ -340,5 +357,19 @@ public class CreateOperationsAndResources extends AAlgorithm {
 
         mOperationSet.add(op);
         return op;
+    }
+
+    /**
+     * Loops operation set to check for product types among attributes
+     * @return always true
+     */
+    private boolean checkForProductTypes() {
+        for (final Operation op : mOperationSet) {
+            final Object value = op.getAttribute(Operation.PRODUCT_TYPE);
+            if (value != null) {
+                mProductTypeSet.add((String) value);
+            }
+        }
+        return true;
     }
 }

@@ -32,7 +32,13 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
 
     private Set<Operation> mOperationSet = null;
     private Set<Variable> mVariableSet = null;
+    private String mProductTypeValue = null;
     private ModuleBase mModuleBase = null;
+    /**
+     * Storage for two things:<br/>
+     * 1) What resource variables that are used.<br/>
+     * 2) Guards and actions that are attached to transitions and has to do with resource booking/unbooking.
+     */
     private ModuleBase mModuleBaseResourceInfo = null;
 
     public CreateTransitionsAndVariables(String iThreadName) {
@@ -43,24 +49,30 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
     public void init(List<Object> iList) {
         mOperationSet = (Set<Operation>) iList.get(0);
         mVariableSet = (Set<Variable>) iList.get(1);
+        if (iList.size() > 2) {
+            mProductTypeValue = (String) iList.get(2);
+        }
         mModuleBase = new ModuleBase();
-        mModuleBaseResourceInfo = new ModuleBase(); //To only store info about resource. To be used in second loop, when product types have been flatten out.
+        mModuleBaseResourceInfo = new ModuleBase();
     }
 
     @Override
     public void run() {
 
-        getStatus("Store Variables...");
+        if(!getStatus("Store Variables...")) {
+            return;
+        }
         createVariables();
 
-        getStatus("Create Transitions...");
+        if(!getStatus("Create Transitions...")) {
+            return;
+        }
         createTransitions();
-
-        getStatus("Finished with Variables and Transitions!");
 
         final List<Object> returnList = new ArrayList<Object>();
         returnList.add(mModuleBase);
         returnList.add(mModuleBaseResourceInfo);
+        returnList.add(mProductTypeValue);
         fireFinishedEvent(returnList);
     }
 
@@ -107,7 +119,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 final String eventLabel = op.getEventLabel() + "_" + op.mPreOperationDNFClauseList.indexOf(clause);
 
                 final Transition trans = mModuleBase.createTransition(eventLabel, true);
-                
+
                 //Go to execution/finish state
                 for (final Operation op1 : op.getOperationSet()) {
                     if (op1.getAttribute(Operation.NO_RESOURCE_BOOKING) == null) {
@@ -170,6 +182,15 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 //Extra guards and actions
                 extraGuardsActions(op, Operation.EXTRA_GUARDS, trans);
                 extraGuardsActions(op, Operation.EXTRA_ACTIONS, trans);
+
+                //Add avoidance if wrong product type
+                //Avoidance == transition is always false
+                final Object value = op.getAttribute(Operation.PRODUCT_TYPE);
+                if (value != null && mProductTypeValue != null) {
+                    if (!((String) value).equals(mProductTypeValue)) {
+                        trans.andGuard("0");
+                    }
+                }
             }
         }
     }

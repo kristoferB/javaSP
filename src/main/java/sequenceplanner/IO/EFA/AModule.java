@@ -277,12 +277,17 @@ public abstract class AModule {
     }
 
     /**
-     *
+     * Translates parameter <i>iAutomaton</i> to a {@link ModuleBase} object given in parameter <i>oModuleBase</i>.<br/>
+     * The states are stored as values in a {@link IVariable} domain. The label of the variable is given as parameter <i>iVariableLabel</i>.<br/>
      * @param iAutomaton {@link Automaton} to translate from
      * @param oModuleBase {@link ModuleBase} to translate to
-     * @return always true
+     * @param iVariableLabel name for product type variable
+     * @return true if ok else false
      */
     public static boolean translateAutomatonToModuleBase(final Automaton iAutomaton, final ModuleBase oModuleBase, final String iVariableLabel) {
+        if (iAutomaton == null || oModuleBase == null || iVariableLabel == null) {
+            return false;
+        }
 
         //Create variable for state set and add to module base object
         final Map<String, Integer> stateMap = new HashMap<String, Integer>(); //Each state is represented as a value
@@ -299,6 +304,33 @@ public abstract class AModule {
             trans.setStartLocation(var, sourceState);
             trans.setFinishLocation(var, targetState);
         }
+
+        return true;
+    }
+
+    /**
+     * This module is flatten out and syntheized.<br/>
+     * The resulting supervisor is translated to a {@link ModuleBase} object given as parameter <i>oModuleBase</i>.
+     * @param oModuleBase
+     * @param iProductTypeVariableLabel
+     * @return
+     */
+    public boolean translateAutomatonToModuleBase(final ModuleBase oModuleBase, final String iProductTypeVariableLabel) {
+        if (oModuleBase == null || iProductTypeVariableLabel == null) {
+            return false;
+        }
+
+        final Automata automata = getDFA();
+        if (automata == null) {
+            return false;
+        }
+
+        final Automaton automaton = getMonolithicSupervisor(automata);
+        if (automaton == null) {
+            return false;
+        }
+
+        translateAutomatonToModuleBase(automaton, oModuleBase, iProductTypeVariableLabel);
 
         return true;
     }

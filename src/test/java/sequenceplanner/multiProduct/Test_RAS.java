@@ -8,12 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.IO.EFA.ModuleBase;
 import sequenceplanner.IO.EFA.SingleFlowerSingleTransitionModule;
-import sequenceplanner.IO.EFA.SingleFlowerSingleTransitionModule_Test;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.multiproduct.RAS.CreateOperationsAndResources;
 import sequenceplanner.multiproduct.RAS.CreateTransitionsAndVariables;
 import sequenceplanner.multiproduct.RAS.Operation;
+import sequenceplanner.multiproduct.RAS.PreProcessingProductTypes;
 import sequenceplanner.multiproduct.RAS.Variable;
 import static org.junit.Assert.*;
 
@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 public class Test_RAS implements IAlgorithmListener {
 
     private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
-    private static String mFileName = "ProductTypesTest.xls";
-    private static int mSecondsToRunSynthesisThread = 5;
+    private static String mFileName = "FLEXAplusNoBuffers.xls";
+    private static int mSecondsToRunSynthesisThread = 15;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -65,11 +65,23 @@ public class Test_RAS implements IAlgorithmListener {
     }
 
     public void method3(final ModuleBase iMB) {
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", addFileInfoToComment(), iMB, mFilePath);
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", addFileInfoToComment(), iMB);
+        sfstModule.saveToWMODFile(mFilePath);
+        sfstModule.getExtractedGuards(2);
     }
 
-    public void method4(final ModuleBase iMB, final ModuleBase iMBresources) {
-        final SingleFlowerSingleTransitionModule_Test testModule = new SingleFlowerSingleTransitionModule_Test("TestNormalWay", addFileInfoToComment(), iMB, iMBresources, mFilePath);
+    public void method5(final Set<Operation> iOpSet, final Set<Variable> iVariableSet, final Set<String> iProductTypeSet) {
+        final PreProcessingProductTypes pppt = new PreProcessingProductTypes("Thread_pppt");
+        pppt.addAlgorithmListener(this);
+        final List<Object> initList = new ArrayList<Object>();
+        initList.add(iOpSet);
+        initList.add(iVariableSet);
+        initList.add(iProductTypeSet);
+        initList.add(mFilePath);
+        initList.add(addFileInfoToComment());
+        pppt.init(initList);
+        pppt.start();
+
     }
 
     private String addFileInfoToComment() {
@@ -84,9 +96,11 @@ public class Test_RAS implements IAlgorithmListener {
 
             final Set<Operation> opSet = (Set<Operation>) iList.get(0);
             final Set<Variable> variableSet = (Set<Variable>) iList.get(1);
+            final Set<String> productTypeSet = (Set<String>) iList.get(2);
 
             //Start next step
-            method2(opSet, variableSet);
+//            method2(opSet, variableSet); //Normal execution. Works good for not to big examples
+            method5(opSet, variableSet, productTypeSet); //Add Preprocessing step
         }
 
         if (iFromAlgorithm instanceof CreateTransitionsAndVariables) {
@@ -95,8 +109,7 @@ public class Test_RAS implements IAlgorithmListener {
             System.out.println(moduleBase.toString());
 
             //Start next step
-//            method3(moduleBase); //Normal execution. Works good for not to big examples
-            method4(moduleBase, moduleBaseResources); //Prototype execution.
+            method3(moduleBase); //Normal execution. Works good for not to big examples
         }
 
     }
