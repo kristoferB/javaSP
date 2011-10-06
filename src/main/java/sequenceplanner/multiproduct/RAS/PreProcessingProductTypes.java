@@ -14,7 +14,6 @@ import sequenceplanner.algorithm.IAlgorithmListener;
 /**
  * Each product type is preprocessed separate.<br/>
  * Then all product types are synthesized togheter.<br/>
- * DOES NOT HANDLE WHEN TWO EVENTS PER OPERATION (UNCONTROLLABLE CHOICE).<br/>
  * DOES NOT HANDLE JOIN PRODUCT TYPES (do sync instead of synthesis?).<br/>
  * @author patrik
  */
@@ -48,7 +47,7 @@ public class PreProcessingProductTypes extends AAlgorithm implements IAlgorithmL
         CreateTransitionsAndVariables ctav;
 
         for (final String productType : mProductTypeSet) {
-            if (!getStatus("Started preprocessing of product type: " + productType + "...")) {
+            if (!getStatus("Start preprocessing of product type: " + productType + " ...")) {
                 return;
             }
 
@@ -65,7 +64,8 @@ public class PreProcessingProductTypes extends AAlgorithm implements IAlgorithmL
 
     private synchronized void addToModuleBase(final ModuleBase iMBProduct, final ModuleBase iMBResourcesProduct, final String iProductType) {
         final ModuleBase moduleBaseReturnedFromMonolithicSynthesis = new ModuleBase();
-        final SingleFlowerSingleTransitionModule module = new SingleFlowerSingleTransitionModule("TestRASProducttype", mComment, iMBProduct);
+        final SingleFlowerSingleTransitionModule module = new SingleFlowerSingleTransitionModule("TestRASPreprecessing_productType_"+iProductType, mComment, iMBProduct);
+//        module.saveToWMODFile(mFilePath);
         module.translateAutomatonToModuleBase(moduleBaseReturnedFromMonolithicSynthesis, Operation.PRODUCT_TYPE + iProductType);
 
         //Add product variable to module base, (just one variable)
@@ -93,12 +93,19 @@ public class PreProcessingProductTypes extends AAlgorithm implements IAlgorithmL
 
         //Go on with synthesis when all product types have been preprocessed.
         if (mFinishedPreprocesses == mProductTypeSet.size()) {
+
+            fireNewMessageEvent("Preprocessing took " + getDurationForRunMethod());
+            if(!getStatus("Start processing of supervisor...")) {
+                return;
+            }
+
             final SingleFlowerSingleTransitionModule sfstm = new SingleFlowerSingleTransitionModule("TestPreProcessedRASmodel", mComment, mFinalModuleBase);
             sfstm.saveToWMODFile(mFilePath);
             sfstm.getExtractedGuards(2);
+            
+            fireFinishedEvent(null);
+            return;
         }
-
-        fireFinishedEvent(null);
     }
 
     @Override
@@ -116,7 +123,7 @@ public class PreProcessingProductTypes extends AAlgorithm implements IAlgorithmL
 
     @Override
     public void newMessageFromAlgorithm(String iMessage, IAlgorithm iFromAlgorithm) {
-        System.out.println(iMessage);
+//        System.out.println(iMessage);
     }
 
     private static Transition getTransitionCopy(final String iTransLabel, final ModuleBase iModuleBase) {

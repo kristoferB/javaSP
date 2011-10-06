@@ -1,5 +1,6 @@
 package sequenceplanner.algorithm;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,14 +63,14 @@ public abstract class AAlgorithm implements IAlgorithm, Runnable {
     private Thread mWorkThread;
     private Set<IAlgorithmListener> mListeners;
     private boolean mGoOn = true;
+    private long mRunMethodStarts = 0;
 
     @Override
     public abstract void init(List<Object> iList);
-        
+
     @Override
     public abstract void run();
-    
-    
+
     public AAlgorithm(String iThreadName) {
         this.mListeners = new HashSet<IAlgorithmListener>();
         this.mWorkThread = new Thread(this, iThreadName);
@@ -101,6 +102,7 @@ public abstract class AAlgorithm implements IAlgorithm, Runnable {
 
     @Override
     public void start() {
+        mRunMethodStarts = Calendar.getInstance().getTimeInMillis();
         mWorkThread.start();
     }
 
@@ -119,5 +121,10 @@ public abstract class AAlgorithm implements IAlgorithm, Runnable {
         }
 
         return true;
+    }
+
+    protected String getDurationForRunMethod() {
+        final long timeDifference = Calendar.getInstance().getTimeInMillis() - mRunMethodStarts;
+        return timeDifference / 1000 + "." + timeDifference % 1000 + " seconds";
     }
 }

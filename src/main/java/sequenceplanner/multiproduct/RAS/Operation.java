@@ -91,7 +91,7 @@ public class Operation implements IVariable {
             Integer minValue = Integer.MAX_VALUE;
             for (final ILiteral literal : mResourceConjunction.getLiteralList()) {
                 final Resource resource = (Resource) literal.getVariable();
-                Integer resourceValue = Integer.valueOf(resource.getVarUpperBound());
+                final Integer resourceValue = Integer.valueOf(resource.getVarUpperBound());
                 if (resourceValue < minValue) {
                     minValue = resourceValue;
                 }
