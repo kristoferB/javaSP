@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionElement;
-import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.ConditionOperator;
-import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionElement;
+import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.ConditionOperator;
+import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.data.OperationData;
 
 /**

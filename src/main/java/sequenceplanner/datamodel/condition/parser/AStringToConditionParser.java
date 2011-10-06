@@ -1,12 +1,12 @@
-package sequenceplanner.condition.parser;
+package sequenceplanner.datamodel.condition.parser;
 
-import sequenceplanner.condition.*;
+import sequenceplanner.datamodel.condition.*;
 import java.util.ArrayList;
 import java.util.regex.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import sequenceplanner.condition.ConditionStatement.Operator;
+import sequenceplanner.datamodel.condition.ConditionStatement.Operator;
 
 /**
  * To parse a {@link String} <code>s</code> to a {@link ConditionExpression}.<br/>

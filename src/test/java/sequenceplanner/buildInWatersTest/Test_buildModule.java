@@ -99,7 +99,7 @@ public class Test_buildModule {
         ms.getComponentListModifiable().add(variable);
 
 
-        assertTrue(saveToWMODFile("C:\\Users\\patrik\\Desktop\\buildWaterModule.wmod", ms));
+        assertTrue(saveToWMODFile("buildWaterModule.wmod", ms));
 
     }
 

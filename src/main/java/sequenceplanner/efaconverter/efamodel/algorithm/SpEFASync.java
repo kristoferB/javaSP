@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionOperator;
+import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionOperator;
 import sequenceplanner.efaconverter.efamodel.SpEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.efaconverter.efamodel.SpEvent;

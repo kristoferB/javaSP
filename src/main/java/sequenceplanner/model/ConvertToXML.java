@@ -173,7 +173,7 @@ public class ConvertToXML {
 
                     condition.setCondKey(conditionDataKey.getName());
 
-                    final sequenceplanner.condition.Condition conditionToSave = iOpData.getConditions().get(conditionDataKey).get(iConditionType);
+                    final sequenceplanner.datamodel.condition.Condition conditionToSave = iOpData.getConditions().get(conditionDataKey).get(iConditionType);
                     String guard = conditionToSave.getGuard().toString();
                     guard = guard.substring(1, guard.length() - 1);
                     String action = conditionToSave.getAction().toString();

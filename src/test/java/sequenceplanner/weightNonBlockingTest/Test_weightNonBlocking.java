@@ -78,7 +78,7 @@ public class Test_weightNonBlocking implements IAlgorithmListener {
         final ISopNode rootNode = (ISopNode) iList.get(0);
         final OperationView ow = mSP.getGUIController().mOpViewController.createOperationView();
         ow.drawGraph(rootNode);
-        mSP.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\weight.sopx");
+        // mSP.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\weight.sopx");
     }
 
     @Override

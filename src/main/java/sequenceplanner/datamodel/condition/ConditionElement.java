@@ -1,4 +1,4 @@
-package sequenceplanner.condition;
+package sequenceplanner.datamodel.condition;
 
 /**
  * This class defines the elements that are used in a condition.

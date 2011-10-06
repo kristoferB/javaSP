@@ -1,4 +1,4 @@
-package sequenceplanner.condition.parser;
+package sequenceplanner.datamodel.condition.parser;
 
 /**
  * Pattern for parse of guard {@link String} from user text input to a {@link ConditionExpression}.

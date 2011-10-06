@@ -12,7 +12,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;

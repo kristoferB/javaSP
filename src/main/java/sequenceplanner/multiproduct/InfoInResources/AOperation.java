@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.condition.ConditionElement;
+import sequenceplanner.datamodel.condition.ConditionElement;
 import sequenceplanner.model.data.OperationData;
 
 /**
  *
  * @author patrik
  */
-abstract class AOperation {
+public abstract class AOperation {
 
     OperationData mOperationData;
     Set<Resource> mResourceSet;
@@ -40,7 +40,6 @@ abstract class AOperation {
         return map;
     }
 
-    @Override
     public boolean equals(Object iObj) {
         if (iObj instanceof AOperation) {
             final AOperation op = (AOperation) iObj;
@@ -51,7 +50,6 @@ abstract class AOperation {
         return false;
     }
 
-    @Override
     public int hashCode() {
         int hash = 5;
         hash = 37 * hash + (this.mOperationData != null ? this.mOperationData.hashCode() : 0);
@@ -59,7 +57,6 @@ abstract class AOperation {
         return hash;
     }
 
-    @Override
     public String toString() {
         return mOperationData.getName();
     }

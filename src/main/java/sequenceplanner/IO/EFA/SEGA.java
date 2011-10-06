@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import org.supremica.external.avocades.common.EGA;
 import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;

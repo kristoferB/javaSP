@@ -3,7 +3,7 @@ package sequenceplanner.model.SOP.algorithms;
 import sequenceplanner.model.SOP.*;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData.CellData;
 import sequenceplanner.model.data.ViewData.CellDataLayout;

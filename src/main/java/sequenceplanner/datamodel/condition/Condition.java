@@ -1,4 +1,4 @@
-package sequenceplanner.condition;
+package sequenceplanner.datamodel.condition;
 
 import java.util.HashMap;
 import java.util.Map;

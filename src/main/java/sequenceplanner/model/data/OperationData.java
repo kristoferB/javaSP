@@ -3,7 +3,7 @@ package sequenceplanner.model.data;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 

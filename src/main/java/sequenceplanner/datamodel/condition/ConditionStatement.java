@@ -1,4 +1,4 @@
-package sequenceplanner.condition;
+package sequenceplanner.datamodel.condition;
 
 /**
  *
