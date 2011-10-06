@@ -19,6 +19,10 @@ import sequenceplanner.datamodel.condition.ConditionStatement.Operator;
  */
 public abstract class AStringToConditionParser {
 
+    public static final String needToStart = "^";
+    public static final String leftp = "(\\()";
+    public static final String any = "(.*)";
+
     public AStringToConditionParser() {
     }
     private static Map<String, Operator> statementOperatorMap = new HashMap<String, Operator>();
@@ -81,9 +85,6 @@ public abstract class AStringToConditionParser {
      * @return <code>true</code> if parse was ok else <code>false</code>
      */
     private boolean parseConditionString(String iConditionString, final ConditionExpression iConditionExpression) {
-        final String needToStart = "^";
-        final String leftp = "(\\()";
-        final String any = "(.*)";
 
         Matcher matcher;
 

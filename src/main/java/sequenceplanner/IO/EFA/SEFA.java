@@ -48,18 +48,38 @@ public class SEFA {
     }
 
     public void addStandardSelfLoopTransition(final Transition iTrans) {
-        final SEGA sega = new SEGA(iTrans.getmLabel());
+        //Create SEGA for transition
+        final SEGA sega = new SEGA(iTrans.getLabel());
+
+        Transition.Location location;
+        //Add guard for start location
+        location = iTrans.getStartLocation();
+        if (location != null) {
+            sega.andGuard(location.mVariable.getVarLabel() + "==" + location.mValue);
+        }
+        //Add action for finish location
+        location = iTrans.getFinishLocation();
+        if (location != null) {
+            sega.addAction(location.mVariable.getVarLabel() + "=" + location.mValue);
+        }
+
+        //Add guards
         for (final String guard : iTrans.getmGuardConjunctionSet()) {
             sega.andGuard(guard);
         }
+
+        //Add actions
         for (final String action : iTrans.getmActionSet()) {
             sega.addAction(action);
         }
 
+        //Set event uncontrollable if required
         final Boolean uncontrollable = (Boolean) iTrans.getAttribute(Transition.UNCONTROLLABLE);
         if (uncontrollable == null | uncontrollable == false) {
-            mEfa.addEvent(iTrans.getmLabel(), "uncontrollable");
+            mEfa.addEvent(iTrans.getLabel(), "uncontrollable");
         }
+
+        //add to this SEFA
         addStandardSelfLoopTransition(sega);
     }
 }

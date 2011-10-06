@@ -16,7 +16,6 @@ import java.util.Set;
 public class Transition {
 
     final public static String UNCONTROLLABLE = "uc";
-
     final private String mLabel;
     final private Set<String> mGuardConjunctionSet;
     final private Set<String> mActionSet;
@@ -31,20 +30,66 @@ public class Transition {
         mAttributeMap = new HashMap<String, Object>();
     }
 
-    public Location getmFinishLocation() {
+    public Location getFinishLocation() {
         return mFinishLocation;
     }
 
-    public void setmFinishLocation(Location mFinishLocation) {
-        this.mFinishLocation = mFinishLocation;
+    /**
+     *
+     * @param iLocation
+     * @return true if ok else false
+     */
+    public boolean setFinishLocation(Location iLocation) {
+        if (iLocation == null) {
+            return false;
+        }
+        setFinishLocation(iLocation.mVariable, iLocation.mValue);
+        return true;
     }
 
-    public Location getmStartLocation() {
+    /**
+     *
+     * @param iVariable
+     * @param iValue
+     * @return true if ok else false
+     */
+    public boolean setFinishLocation(IVariable iVariable, int iValue) {
+        if (iVariable == null) {
+            return false;
+        }
+        this.mFinishLocation = new Location(iVariable, iValue);
+        return true;
+    }
+
+    public Location getStartLocation() {
         return mStartLocation;
     }
 
-    public void setmStartLocation(Location mStartLocation) {
-        this.mStartLocation = mStartLocation;
+    /**
+     *
+     * @param iLocation
+     * @return true if ok else false
+     */
+    public boolean setStartLocation(Location iLocation) {
+        if (iLocation == null) {
+            return false;
+        }
+        setStartLocation(iLocation.mVariable, iLocation.mValue);
+        return true;
+    }
+
+    /**
+     *
+     * @param iVariable
+     * @param iValue
+     * @return true if ok else false
+     */
+    public boolean setStartLocation(IVariable iVariable, int iValue) {
+        if (iVariable == null) {
+            return false;
+        }
+        this.mStartLocation = new Location(iVariable, iValue);
+        return true;
     }
 
     public Set<String> getmActionSet() {
@@ -55,8 +100,24 @@ public class Transition {
         return mGuardConjunctionSet;
     }
 
-    public String getmLabel() {
+    public String getLabel() {
         return mLabel;
+    }
+
+    public Transition copy() {
+        final Transition cTrans = new Transition(mLabel);
+        cTrans.setStartLocation(getStartLocation());
+        cTrans.setFinishLocation(getFinishLocation());
+        for (final String guard : getmGuardConjunctionSet()) {
+            cTrans.andGuard(guard);
+        }
+        for (final String action : getmActionSet()) {
+            cTrans.andAction(action);
+        }
+        for (final String key : mAttributeMap.keySet()) {
+            cTrans.setAttribute(key, getAttribute(key));
+        }
+        return cTrans;
     }
 
     /**
@@ -102,16 +163,17 @@ public class Transition {
 
     public class Location {
 
-        final private IVariable mVariable;
-        final private Integer mValue;
+        final IVariable mVariable;
+        final int mValue;
 
-        public Location(IVariable mVariable, Integer mValue) {
-            this.mVariable = mVariable;
-            this.mValue = mValue;
+        public Location(IVariable iVariable, int iValue) {
+            this.mVariable = iVariable;
+            this.mValue = iValue;
         }
 
-        public String getLocation() {
-            return mVariable.getVarLabel() + "==" + mValue;
+        @Override
+        public String toString() {
+            return mVariable + " == " + mValue;
         }
     }
 }

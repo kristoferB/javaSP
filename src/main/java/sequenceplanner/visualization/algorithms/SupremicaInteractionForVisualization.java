@@ -18,6 +18,7 @@ import org.supremica.automata.algorithms.SynthesizerOptions;
 import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -120,9 +121,10 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         //Loop states and events to fill map-------------------------------------
         for (final StateProxy sp : iAutomaton.getStates()) {
             String stateName = sp.getName();
-            if(nr++%100==0) {
-                System.out.println(nr);
+            if(nr%1000==0) {
+                GUIView.printToConsole("On state " + nr + " in state space");
             }
+            ++nr;
             for (final Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
                 //Remove the single EFA location "pm"
                 stateName = stateName.replaceAll("." + SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME + ".", "");
@@ -160,6 +162,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 iAutomata = as.execute();
                 return iAutomata.getFirstAutomaton();
             } catch (Exception e) {
+                GUIView.printToConsole("Error in synthesis. I can not go on!");
                 System.out.println(e.toString());
             }
         }

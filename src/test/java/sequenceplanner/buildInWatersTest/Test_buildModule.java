@@ -23,6 +23,7 @@ import net.sourceforge.waters.xsd.base.ComponentKind;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import sequenceplanner.IO.EFA.AModule;
 import static org.junit.Assert.*;
 
 /**
@@ -42,7 +43,7 @@ public class Test_buildModule {
     @Test
     public void Test1() {
         ModuleSubjectFactory factory = ModuleSubjectFactory.getInstance();
-        ModuleSubject ms = factory.createModuleProxy("Module1", null);
+        ModuleSubject ms = factory.createModuleProxy("buildWaterModule", null);
 
         //To create an automaton:
         SimpleIdentifierSubject sis = new SimpleIdentifierSubject("auto2");
@@ -56,7 +57,7 @@ public class Test_buildModule {
         //create a self loop
         LabelBlockSubject lbs = factory.createLabelBlockProxy();
         lbs.getEventListModifiable();
-        
+
 
         //To create a variable:
         IdentifierSubject var = new SimpleIdentifierSubject("Var1");
@@ -98,24 +99,7 @@ public class Test_buildModule {
         VariableComponentSubject variable = new VariableComponentSubject(var, bes, true, besStart, markings);
         ms.getComponentListModifiable().add(variable);
 
+        assertTrue(AModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\", ms));
 
-        assertTrue(saveToWMODFile("buildWaterModule.wmod", ms));
-
-    }
-
-    public static boolean saveToWMODFile(final String iFilePath, final ModuleSubject iModuleSubject) {
-        try {
-            final File file = new File(iFilePath);
-//            iModuleSubject.setName(file.getName().replaceAll(".wmod", ""));
-            final ModuleSubjectFactory factory = ModuleSubjectFactory.getInstance();
-            // Save module to file
-            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
-            marshaller.marshal(iModuleSubject, file);
-
-            return true;
-        } catch (Exception t) {
-            t.printStackTrace();
-        }
-        return false;
     }
 }

@@ -23,6 +23,7 @@ public class Operation implements IVariable {
     public static final String NO_RESOURCE_BOOKING = "no_res";
     public static final String EXTRA_ACTIONS = "extra_actions";
     public static final String EXTRA_GUARDS = "extra_guards";
+    public static final String PRODUCT_TYPE = "pt";
     private String mLabel;
     /**
      * By defalut add a cluase without any literals. This simplifies algorithms.
@@ -90,7 +91,7 @@ public class Operation implements IVariable {
             Integer minValue = Integer.MAX_VALUE;
             for (final ILiteral literal : mResourceConjunction.getLiteralList()) {
                 final Resource resource = (Resource) literal.getVariable();
-                Integer resourceValue = Integer.valueOf(resource.getVarUpperBound());
+                final Integer resourceValue = Integer.valueOf(resource.getVarUpperBound());
                 if (resourceValue < minValue) {
                     minValue = resourceValue;
                 }

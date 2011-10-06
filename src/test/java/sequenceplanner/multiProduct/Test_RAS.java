@@ -13,6 +13,7 @@ import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.multiproduct.RAS.CreateOperationsAndResources;
 import sequenceplanner.multiproduct.RAS.CreateTransitionsAndVariables;
 import sequenceplanner.multiproduct.RAS.Operation;
+import sequenceplanner.multiproduct.RAS.PreProcessingProductTypes;
 import sequenceplanner.multiproduct.RAS.Variable;
 import static org.junit.Assert.*;
 
@@ -22,11 +23,12 @@ import static org.junit.Assert.*;
  */
 public class Test_RAS implements IAlgorithmListener {
 
-    private static String mfilePath;
+    private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
+    private static String mFileName = "FLEXAplusNoBuffers.xls"; //ProductTypesTest.xls";
+    private static int mSecondsToRunSynthesisThread = 10;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        mfilePath = "C:\\Users\\patrik\\Desktop\\";
     }
 
     @AfterClass
@@ -39,15 +41,14 @@ public class Test_RAS implements IAlgorithmListener {
         final CreateOperationsAndResources coar = new CreateOperationsAndResources("COAR_Thread");
         coar.addAlgorithmListener(this);
         final List<Object> initList = new ArrayList<Object>();
-        
-        initList.add(mfilePath + "FLEXAplus5productsNobuffers.xls");
+
+        initList.add(mFilePath + mFileName);
 
         coar.init(initList);
         coar.start();
 
-
         try {
-            Thread.sleep(40000);
+            Thread.sleep(mSecondsToRunSynthesisThread * 1000);
         } catch (InterruptedException ie) {
         }
 
@@ -64,8 +65,29 @@ public class Test_RAS implements IAlgorithmListener {
     }
 
     public void method3(final ModuleBase iMB) {
-        final String comment = "From excel file: " + mfilePath;
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", comment, iMB, mfilePath);
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", addFileInfoToComment(), iMB);
+        sfstModule.saveToWMODFile(mFilePath);
+        sfstModule.getExtractedGuards(2);
+    }
+
+    public void method5(final Set<Operation> iOpSet, final Set<Variable> iVariableSet, final Set<String> iProductTypeSet) {
+        final PreProcessingProductTypes pppt = new PreProcessingProductTypes("Thread_pppt");
+        pppt.addAlgorithmListener(this);
+        final List<Object> initList = new ArrayList<Object>();
+        initList.add(iOpSet);
+        initList.add(iVariableSet);
+        initList.add(iProductTypeSet);
+        initList.add(mFilePath);
+        initList.add(addFileInfoToComment());
+        pppt.init(initList);
+        pppt.start();
+
+    }
+
+    private String addFileInfoToComment() {
+        String comment = "File path: " + mFilePath + "\n";
+        comment += "Excel file name: " + mFileName;
+        return comment;
     }
 
     @Override
@@ -74,17 +96,20 @@ public class Test_RAS implements IAlgorithmListener {
 
             final Set<Operation> opSet = (Set<Operation>) iList.get(0);
             final Set<Variable> variableSet = (Set<Variable>) iList.get(1);
+            final Set<String> productTypeSet = (Set<String>) iList.get(2);
 
             //Start next step
-            method2(opSet, variableSet);
+//            method2(opSet, variableSet); //Normal execution. Works good for not to big examples
+            method5(opSet, variableSet, productTypeSet); //Add Preprocessing step
         }
 
         if (iFromAlgorithm instanceof CreateTransitionsAndVariables) {
             final ModuleBase moduleBase = (ModuleBase) iList.get(0);
+            final ModuleBase moduleBaseResources = (ModuleBase) iList.get(1);
             System.out.println(moduleBase.toString());
 
             //Start next step
-            method3(moduleBase);
+            method3(moduleBase); //Normal execution. Works good for not to big examples
         }
 
     }

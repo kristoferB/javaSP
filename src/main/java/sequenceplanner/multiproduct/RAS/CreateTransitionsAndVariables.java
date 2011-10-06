@@ -32,7 +32,14 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
 
     private Set<Operation> mOperationSet = null;
     private Set<Variable> mVariableSet = null;
+    private String mProductTypeValue = null;
     private ModuleBase mModuleBase = null;
+    /**
+     * Storage for two things:<br/>
+     * 1) What resource variables that are used.<br/>
+     * 2) Guards and actions that are attached to transitions and has to do with resource booking/unbooking.
+     */
+    private ModuleBase mModuleBaseResourceInfo = null;
 
     public CreateTransitionsAndVariables(String iThreadName) {
         super(iThreadName);
@@ -42,22 +49,30 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
     public void init(List<Object> iList) {
         mOperationSet = (Set<Operation>) iList.get(0);
         mVariableSet = (Set<Variable>) iList.get(1);
+        if (iList.size() > 2) {
+            mProductTypeValue = (String) iList.get(2);
+        }
         mModuleBase = new ModuleBase();
+        mModuleBaseResourceInfo = new ModuleBase();
     }
 
     @Override
     public void run() {
 
-        getStatus("Store Variables...");
+        if(!getStatus("Store Variables...")) {
+            return;
+        }
         createVariables();
 
-        getStatus("Create Transitions...");
+        if(!getStatus("Create Transitions...")) {
+            return;
+        }
         createTransitions();
-
-        getStatus("Finished with Variables and Transitions!");
 
         final List<Object> returnList = new ArrayList<Object>();
         returnList.add(mModuleBase);
+        returnList.add(mModuleBaseResourceInfo);
+        returnList.add(mProductTypeValue);
         fireFinishedEvent(returnList);
     }
 
@@ -89,6 +104,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
         for (final ILiteral literal : iOp.mResourceConjunction.getLiteralList()) {
             final Resource resource = (Resource) literal.getVariable();
             mModuleBase.storeVariable(resource);
+            mModuleBaseResourceInfo.storeVariable(resource);
         }
     }
 
@@ -113,25 +129,29 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 }
 
                 //Check that predecessor operations are active
-                Transition localTrans; //This can either be the controllable transitions or the extra uncontrollable transitions
+                //This can either be the controllable transition or the extra uncontrollable transition
+                Transition firstTrans;
                 if (op.getAttribute(Transition.UNCONTROLLABLE) == null) {
-                    localTrans = trans;
+                    firstTrans = trans;
                 } else { //Add an extra uncontrollable transition before the real transitions
-                    localTrans = mModuleBase.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, false);
+                    firstTrans = mModuleBase.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, false);
                     final String action1 = op.getUcVarLabel() + "=" + op.getUcVarLabel() + "+1";
-                    localTrans.andAction(action1);
+                    firstTrans.andAction(action1);
+                    //The "original" transition can occur after the uncontrollable "first"-transition
                     final String guard2 = op.getUcVarLabel() + ">" + "0";
                     trans.andGuard(guard2);
                     final String action2 = op.getUcVarLabel() + "=" + op.getUcVarLabel() + "-1";
                     trans.andAction(action2);
                 }
 
+                //Add guards and actions to check that predecessor operations are active
+                //firstTrans can either be the normal controllable trans or the uncontrollable trans
                 for (final ILiteral literal : clause.getLiteralList()) {
                     final Operation preOp = (Operation) literal.getVariable();
                     final String guard = preOp.getVarLabel() + ">" + "0";
-                    localTrans.andGuard(guard);
+                    firstTrans.andGuard(guard);
                     final String action = preOp.getVarLabel() + "=" + preOp.getVarLabel() + "-1";
-                    localTrans.andAction(action);
+                    firstTrans.andAction(action);
                 }
 
                 //Create booking-unbooking map
@@ -142,12 +162,19 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 }
                 final Map<Resource, List<Integer>> bookUnbookMap = createBookUnbookMap(beforeOpSet, op.getOperationSet());
 
+                //To store resource guards and actions, used in preprocessing step
+                final Transition resourceTrans = mModuleBaseResourceInfo.createTransition(eventLabel, true);
+                if (op.getAttribute(Transition.UNCONTROLLABLE) != null) {
+                    mModuleBaseResourceInfo.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, false);
+                }
+
                 //Book and unbook resources
                 for (final Resource resource : bookUnbookMap.keySet()) {
                     final List<Integer> valueList = bookUnbookMap.get(resource);
                     if (valueList.get(0) > 0) {
                         final String guard = resource.getVarLabel() + ">=" + valueList.get(0);
                         trans.andGuard(guard);
+                        resourceTrans.andGuard(guard);
                     }
                     final Integer actionValue = valueList.get(1) * (-1);
                     String action = resource.getVarLabel() + "=" + resource.getVarLabel();
@@ -157,12 +184,23 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                         }
                         action += actionValue;
                         trans.andAction(action);
+                        resourceTrans.andAction(action);
                     }
                 }
 
                 //Extra guards and actions
                 extraGuardsActions(op, Operation.EXTRA_GUARDS, trans);
                 extraGuardsActions(op, Operation.EXTRA_ACTIONS, trans);
+
+                //Add avoidance if wrong product type
+                //Avoidance == transition is always false
+                final Object value = op.getAttribute(Operation.PRODUCT_TYPE);
+                if (value != null && mProductTypeValue != null) {
+                    if (!((String) value).equals(mProductTypeValue)) {
+                        trans.andGuard("0");
+                        firstTrans.andGuard("0");
+                    }
+                }
             }
         }
     }

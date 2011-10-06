@@ -13,6 +13,7 @@ import sequenceplanner.datamodel.condition.ConditionElement;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.datamodel.condition.parser.GuardAsTextInputToConditionParser;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
@@ -53,17 +54,17 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
     public boolean run() {
 
         if (!readFromFile()) {
-            System.out.println("Can not read file!");
+            GUIView.printToConsole("Can not read file!");
             return false;
         }
 
         if (!splitLines()) {
-            System.out.println("Can not read line!");
+            GUIView.printToConsole("Can not read line!");
             return false;
         }
 
         if (!addDataToModel()) {
-            System.out.println("Can not parse data to Model!");
+            GUIView.printToConsole("Can not parse data to Model!");
             return false;
         }
 
@@ -78,7 +79,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
 
     public boolean addDataToModel() {
         if (mDataInFile.isEmpty()) {
-            System.out.println("No operations or signals to create!");
+            GUIView.printToConsole("No operations or signals to create!");
             return false;
         }
 
@@ -93,7 +94,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         for (final ADataFromFile data : mDataInFile) {
             //Init---------------------------------------------------------------
             if (data.mName == null || data.mId == null) {
-                System.out.println("Problem with name: " + data.mName + " or id: " + data.mId);
+                GUIView.printToConsole("Problem with name: " + data.mName + " or id: " + data.mId);
                 return false;
             }
             final String name = data.mName;
@@ -112,7 +113,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             if (data instanceof SignalDataFromFile) {
                 final ResourceVariableData rvd = getVariable(data, name, idInModel);
                 if (rvd == null) {
-                    System.out.println("Problem with variable, name: " + data.mName + " or id: " + data.mId);
+                    GUIView.printToConsole("Problem with variable, name: " + data.mName + " or id: " + data.mId);
                     return false;
                 }
 
@@ -171,6 +172,9 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
 
             //Change id in file to id in Model
             ce = changeIds(ce);
+            if (ce == null) {
+                return false;
+            }
 
             //Add condition if parse was ok
             final Condition conditon = new Condition();
@@ -193,6 +197,9 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
 
             //Change id in file to id in Model
             ce = changeIds(ce);
+            if (ce == null) {
+                return false;
+            }
 
             //Add condition if parse was ok
             final Condition conditon = new Condition();
@@ -205,7 +212,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             return true;
         }
 
-        System.out.println("Condition " + iCondition + " for operation " + iOpData.getName() + " is not right!");
+        GUIView.printToConsole("Condition " + iCondition + " for operation " + iOpData.getName() + " is not right!");
         return false;
     }
 
@@ -219,7 +226,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         int returnInt = -1;
 
         if (iCondition == null) {
-            System.out.println("Condition " + iCondition + " is not right");
+            GUIView.printToConsole("Condition " + iCondition + " is not right");
             return null;
         }
 
@@ -261,7 +268,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         //From int to String
         String conditionTypeString = "";
         if (returnInt == -1) {
-            System.out.println("Condition " + iCondition + " is not right");
+            GUIView.printToConsole("Condition " + iCondition + " is not right");
             return null;
         } else if (returnInt == 0) {
             conditionTypeString = "Mix";
@@ -281,7 +288,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         //Init-----------------------------------------------------------
         final Integer init = Integer.parseInt(localData.mInit);
         if (init == null) {
-            System.out.println("Not right init value for: " + iData.mName);
+            GUIView.printToConsole("Not right init value for: " + iData.mName);
             return null;
         }
         rvd.setInitialValue(init);
@@ -289,13 +296,13 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         //Domain---------------------------------------------------------
         final String[] minMax = localData.mDomain.split("\\.\\.");
         if (minMax.length != 2) {
-            System.out.println("Not right domain value for: " + iData.mName + " length: " + minMax.length);
+            GUIView.printToConsole("Not right domain value for: " + iData.mName + " length: " + minMax.length);
             return null;
         }
         final Integer min = Integer.parseInt(minMax[0].replaceAll(" ", ""));
         final Integer max = Integer.parseInt(minMax[1].replaceAll(" ", ""));
         if (min == null || max == null) {
-            System.out.println("Not right domain value for: " + iData.mName);
+            GUIView.printToConsole("Not right domain value for: " + iData.mName);
             return null;
         }
         rvd.setMin(min);
@@ -328,7 +335,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
                     if (mExternalInternalIdMap.containsKey(externalVariable)) {
                         conditionStatement.setVariable("id" + mExternalInternalIdMap.get(externalVariable).toString());
                     } else {
-                        System.out.println("Problem to change external to internal id");
+                        GUIView.printToConsole("Problem to change external to internal id. External Variable: " + externalVariable);
                         return null;
                     }
                 } catch (ClassCastException cce) {
@@ -343,7 +350,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
     public boolean splitLines() {
 
         if (mReadLineSet == null || mReadLineSet.isEmpty()) {
-            System.out.println("No lines to read from in file!");
+            GUIView.printToConsole("No lines to read from in file!");
             return false;
         }
         for (final String line : mReadLineSet) {
@@ -352,7 +359,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             for (final String property : splitLine) {
                 final String[] splitProperty = property.split(":");
                 if (splitProperty.length != 2) {
-                    System.out.println("Syntax is not right for property: " + property + " at line: " + line);
+                    GUIView.printToConsole("Syntax is not right for property: " + property + " at line: " + line);
                     return false;
                 }
                 final String propKey = splitProperty[0].replaceAll(" ", "");
@@ -368,7 +375,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
             final int typeOfData = checkDataFromFile(localPropertySetMap);
 
             if (typeOfData == 0) {
-                System.out.println("Problem with line: " + line);
+                GUIView.printToConsole("Problem with line: " + line);
                 return false;
             }
 
