@@ -43,11 +43,12 @@ public class OpConnectionProdRes implements Connection {
     @Override
     public boolean equals(Object obj){
         if (this == obj) return true;
-        if (!(obj instanceof this.getClass()) return false;
-        
+        if (!(obj instanceof OpConnectionProdRes)) return false;
+        if (this.id.equals( ((OpConnectionProdRes)obj).getID()));
+        return false;
     }
     
-   
+  
     
     /**
      * A hash code.
@@ -56,7 +57,7 @@ public class OpConnectionProdRes implements Connection {
      */
     @Override
     public int hashCode(){
-        
+        return id.hashCode();
     }
     
 }

@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <seams>
+    <seam id="s1">
+      <blockref block="b2" />
+      <blockref block="b3" />
+    </seam>
+    <seam id="s2">
+      <blockref block="b3" />
+      <blockref block="b5" />
+    </seam>
+    <seam id="s3">
+      <blockref block="b3" />
+      <blockref block="b4" />
+    </seam>
+    <seam id="s4">
+      <blockref block="b5" />
+      <blockref block="b4" />
+    </seam>
+  </seams>
+  <blocks>
+    <block id="b1" name="Tank" />
+    <block id="b2" name="Body">
+      <capacity name="mass" value="20000.0" unit="kilogram" />
+    </block>
+    <block id="b3" name="Turret">
+      <capacity name="mass" value="400.0" unit="kilogram" />
+    </block>
+    <block id="b4" name="Lift Point" />
+    <block id="b5" name="Barrel">
+      <capacity name="mass" value="150.0" unit="kilogram" />
+    </block>
+    <block id="b6" name="Lift Point" />
+  </blocks>
+  <resources>
+    <resource id="r1" name="Gantry" type="Crane">
+      <capacity name="payload Capacity" value="500.0" unit="kilogram" />
+      <capability name="MoveBlockToResource">
+        <formal name="block" type="Block" />
+        <formal name="resource" type="Resource" />
+        <capacity name="xlength Capacity" value="3.0" unit="meter" />
+        <capacity name="ylength Capacity" value="4.0" unit="meter" />
+      </capability>
+      <capability name="LiftBlock">
+        <formal name="block" type="Block" />
+        <capacity name="xlength Capacity" value="3.0" unit="meter" />
+        <capacity name="ylength Capacity" value="4.0" unit="meter" />
+      </capability>
+      <capability name="MoveToResource">
+        <formal name="resource" type="Resource" />
+      </capability>
+      <capability name="DropBlock" />
+    </resource>
+    <resource id="r2" name="GluePro" type="GlueGun">
+      <capability name="GlueBlocks">
+        <formal name="b1" type="Block" />
+        <formal name="b2" type="Block" />
+        <capacity name="xlength Capacity" value="2.0" unit="meter" />
+      </capability>
+      <capability name="GlueBlocks2">
+        <formal name="b1" type="Block" />
+        <formal name="b2" type="Block" />
+        <formal name="lifter" type="Resource" />
+        <capacity name="xlength Capacity" value="2.0" unit="meter" />
+      </capability>
+      <capability name="ApplyGlueToBlocks">
+        <formal name="b1" type="Block" />
+        <formal name="b2" type="Block" />
+      </capability>
+    </resource>
+  </resources>
+  <operations>
+    <operation id="o1" type="GlueBlocks" resource="r2">
+      <seamref seam="s1" />
+      <actual formal="b1">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="b2">
+        <blockref block="b3" />
+      </actual>
+    </operation>
+    <operation id="o2" type="MoveBlockToResource" />
+    <operation id="o3" type="LiftBlock" />
+    <operation id="o4" type="DropBlock" />
+    <operation id="o5" type="MoveToResource" />
+    <operation id="o6" type="ApplyGlueToBlocks" />
+    <operation id="o7" type="MoveBlockToResource" resource="r1">
+      <actual formal="block">
+        <blockref block="b3" />
+      </actual>
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o8" type="LiftBlock" resource="r1">
+      <actual formal="block">
+        <blockref block="b3" />
+      </actual>
+    </operation>
+    <operation id="o9" type="MoveToResource" resource="r1">
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o10" type="DropBlock" resource="r1" />
+    <operation id="o11" type="GlueBlocks2" resource="r2">
+      <seamref seam="s1" />
+      <actual formal="b1">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="b2">
+        <blockref block="b3" />
+      </actual>
+      <actual formal="lifter">
+        <resourceref resource="r1" />
+      </actual>
+    </operation>
+    <operation id="o12" type="MoveBlockToResource" resource="r1">
+      <actual formal="block">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o13" type="LiftBlock" resource="r1">
+      <actual formal="block">
+        <blockref block="b2" />
+      </actual>
+    </operation>
+    <operation id="o14" type="MoveToResource" resource="r1">
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o15" type="DropBlock" resource="r1" />
+    <operation id="o16" type="MoveBlockToResource" resource="r1">
+      <actual formal="block">
+        <blockref block="b3" />
+      </actual>
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o17" type="LiftBlock" resource="r1">
+      <actual formal="block">
+        <blockref block="b3" />
+      </actual>
+    </operation>
+    <operation id="o18" type="MoveToResource" resource="r1">
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o19" type="DropBlock" resource="r1" />
+    <operation id="o20" type="ApplyGlueToBlocks" resource="r2">
+      <actual formal="b1">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="b2">
+        <blockref block="b3" />
+      </actual>
+    </operation>
+    <operation id="o21" type="GlueBlocks3" resource="r2">
+      <seamref seam="s1" />
+      <actual formal="b1">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="b2">
+        <blockref block="b3" />
+      </actual>
+      <actual formal="lifter">
+        <resourceref resource="r1" />
+      </actual>
+    </operation>
+    <operation id="o22" type="MoveBlockToResource" />
+    <operation id="o23" type="LiftBlock" resource="r1">
+      <actual formal="block" />
+    </operation>
+    <operation id="o24" type="MoveToResource" resource="r1">
+      <actual formal="resource" />
+    </operation>
+    <operation id="o25" type="DropBlock" resource="r1" />
+    <operation id="o26" type="MoveBlockToResource" resource="r1">
+      <actual formal="block">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o27" type="LiftBlock" resource="r1">
+      <actual formal="block">
+        <blockref block="b2" />
+      </actual>
+    </operation>
+    <operation id="o28" type="MoveToResource" resource="r1">
+      <actual formal="resource">
+        <resourceref resource="r2" />
+      </actual>
+    </operation>
+    <operation id="o29" type="DropBlock" resource="r1" />
+    <operation id="o30" type="ApplyGlueToBlocks" resource="r2">
+      <actual formal="b1">
+        <blockref block="b2" />
+      </actual>
+      <actual formal="b2">
+        <blockref block="b3" />
+      </actual>
+    </operation>
+  </operations>
+</assembly>
