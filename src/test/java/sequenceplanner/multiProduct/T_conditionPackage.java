@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_conditionPackage {
+public class T_conditionPackage {
 
     SP sp = new SP();
 

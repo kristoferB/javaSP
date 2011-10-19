@@ -11,9 +11,9 @@ import sequenceplanner.model.data.Data;
  *
  * @author Erik Ohlson
  */
-public class TreeNodeTest  {
+public class T_TreeNode  {
 
-    public TreeNodeTest() {
+    public T_TreeNode() {
     }
 
 

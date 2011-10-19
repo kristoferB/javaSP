@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * DARPA
  * @author patrik
  */
-public class Test_weightNonBlocking implements IAlgorithmListener {
+public class T_weightNonBlocking implements IAlgorithmListener {
 
     static SP mSP = new SP();
 

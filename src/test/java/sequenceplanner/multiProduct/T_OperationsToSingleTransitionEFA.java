@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_OperationsToSingleTransitionEFA {
+public class T_OperationsToSingleTransitionEFA {
 
     SP mSP = new SP();
 

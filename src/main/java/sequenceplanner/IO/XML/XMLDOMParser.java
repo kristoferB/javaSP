@@ -3,8 +3,11 @@ package sequenceplanner.IO.XML;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,28 +20,44 @@ import sequenceplanner.model.Model;
 
 /**
  *
- * XMLParser to load an Intentional workbench XML-file
- * and to file the old Model
+ * XMLParser to load an XML-file as a document. ObjectifXML classes are added
+ * in constructor that translate the element into a data model.
+ *
  * 
  * @author kbe
  */
-public class DwbXmlOldModel {
+public class XMLDOMParser {
 
     Map<String,Set<ObjectifyXML>> elementTypes;
+    Map<String,Object> modelTypes; // Object should change to a model interface!
     
    
-    public DwbXmlOldModel(Set<ObjectifyXML> objectifiers) {        
+    public XMLDOMParser(Set<ObjectifyXML> objectifiers) {        
         elementTypes = new HashMap<String,Set<ObjectifyXML>>();
+        modelTypes = new  HashMap<String,Object>();
         for (ObjectifyXML o : objectifiers){
             if (elementTypes.containsKey(o.getElementTag())){
-                
+                if (elementTypes.get(o.getElementTag()) != null){
+                    elementTypes.get(o.getElementTag()).add(o);
+                }
             } else {
-                
+                Set<ObjectifyXML> so = new HashSet<ObjectifyXML>(); so.add(o);
+                elementTypes.put(o.getElementTag(), so);
+            }
+            
+            if (!modelTypes.containsKey(o.getModelClass().getName())){                
+                try {
+                    modelTypes.put(o.getModelClass().getName(), o.getModelClass().newInstance());
+                } catch (InstantiationException ex) {
+                    Logger.getLogger(XMLDOMParser.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(XMLDOMParser.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
     
-    public Model loadModelFromFile(String path){
+    public Set loadModelFromFile(String path){
         Document d;
         try{
             d = parse(path);
@@ -46,7 +65,7 @@ public class DwbXmlOldModel {
             System.out.println(ex.toString());
             return null;
         }       
-        return populateModel(d);
+        return populateModels(d);
     }
     
     
@@ -54,17 +73,30 @@ public class DwbXmlOldModel {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File("temp/sp.xml"));  
     }
     
-    
-    
-    private Model populateModel(Document d){
-        m = new Model(); // global variabel
-        addNodesToModel("operations", "operation", d);
-        addNodesToModel("resources", "resource", d);
-        addNodesToModel("seams", "seams", d);
-        addNodesToModel("views", "view", d);       
-        return m;
+ 
+    private Set populateModels(Document d){        
+        for (String tag : this.elementTypes.keySet()){
+            NodeList nl = d.getElementsByTagName(tag);
+            for (ObjectifyXML o : elementTypes.get(tag)){
+                Object model = modelTypes.get(o.getModelClass().getName());
+                if (model != null){
+                    for (int i=0 ; i<nl.getLength();i++){
+                        if (nl.item(i).getNodeType() == Node.ELEMENT_NODE){
+                            o.addElementToModel((Element) nl.item(i), model);
+                        }
+                    }
+                }
+            }
+        }
+        if (modelTypes.values() != null){
+            return new HashSet(modelTypes.values());
+        }
+        return new HashSet(); 
     }
    
+
+    
+/*    Old code, to be removed but saved here if to be used somewhere else...
     private void addElement(Element e){
         if (e.getTagName().equals("operation")){
             addOperationToModel(e);
@@ -72,9 +104,7 @@ public class DwbXmlOldModel {
             throw new UnsupportedOperationException("Not yet implemented");
         }
     }
-   
-    
-    
+      
     private void addNodesToModel(String rootTag, String nodeTag, Document d) {
         Node opRoot = getRootElement(d, rootTag);
         if (opRoot != null)
@@ -106,13 +136,10 @@ public class DwbXmlOldModel {
     }
 
     
-    
-    
-    
     private void addOperationToModel(Element e) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-    
+*/    
     
     
 }

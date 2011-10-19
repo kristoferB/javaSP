@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 // * Method calls in {@link SupervisorFromExcelFile}
 // * @author patrik
 // */
-public class TestExcelSupervisor {
+public class T_ExcelSupervisor {
 
-    public TestExcelSupervisor() {
+    public T_ExcelSupervisor() {
     }
 
     @BeforeClass

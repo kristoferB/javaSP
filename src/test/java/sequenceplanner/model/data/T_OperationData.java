@@ -17,9 +17,9 @@ import org.junit.Test;
 // *
 // * @author hamid2
 // */
-public class OperationDataTest {
+public class T_OperationData {
 
-    public OperationDataTest() {
+    public T_OperationData() {
     }
 
 

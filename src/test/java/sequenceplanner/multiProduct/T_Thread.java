@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_Thread {
+public class T_Thread {
 
     SP mSP = new SP();
 

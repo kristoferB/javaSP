@@ -16,12 +16,12 @@ import static org.junit.Assert.*;
  *
  * @author Qw4z1
  */
-public class SPGraphTest {
+public class T_SPGraph {
 
     static SPGraph graph;
     static mxIGraphModel model;
 
-    public SPGraphTest() {
+    public T_SPGraph() {
     }
 
     @BeforeClass

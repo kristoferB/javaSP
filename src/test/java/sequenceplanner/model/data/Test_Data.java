@@ -11,9 +11,9 @@ import org.junit.Test;
  *
  * @author erik
  */
-public class DataTest {
+public class Test_Data {
 
-    public DataTest() {
+    public Test_Data() {
     }
 
     @BeforeClass

@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
  * To test properties
  * @author patrik
  */
-public class PropertyTests {
+public class T_Property {
 
-    public PropertyTests() {
+    public T_Property() {
     }
 
     @BeforeClass

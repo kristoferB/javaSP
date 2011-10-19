@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_RAS implements IAlgorithmListener {
+public class T_RAS implements IAlgorithmListener {
 
     private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
     private static String mFileName = "FLEXAplusNoBuffers.xls"; //ProductTypesTest.xls";

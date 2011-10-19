@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class CreateEFAOperationsTest {
+public class T_CreateEFAOperations {
 
     SP mSP = new SP();
 
