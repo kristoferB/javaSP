@@ -57,7 +57,7 @@ public class XMLDOMParser {
         }
     }
     
-    public Set loadModelFromFile(String path){
+    public Set<Object> loadModelFromFile(String path){
         Document d;
         try{
             d = parse(path);
@@ -74,7 +74,7 @@ public class XMLDOMParser {
     }
     
  
-    private Set populateModels(Document d){        
+    private Set<Object> populateModels(Document d){        
         for (String tag : this.elementTypes.keySet()){
             NodeList nl = d.getElementsByTagName(tag);
             for (ObjectifyXML o : elementTypes.get(tag)){
@@ -89,9 +89,9 @@ public class XMLDOMParser {
             }
         }
         if (modelTypes.values() != null){
-            return new HashSet(modelTypes.values());
+            return new HashSet<Object>(modelTypes.values());
         }
-        return new HashSet(); 
+        return new HashSet<Object>(); 
     }
    
 

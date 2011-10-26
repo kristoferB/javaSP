@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import java.util.List;
@@ -71,26 +72,24 @@ public class OperationViewController implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("OVC");
+        //System.out.println("OVC");
         if (arg instanceof OperationData) {
             OperationData od = (OperationData) arg;
-            System.out.println("operation update: " + od.getName());
-//            for (OperationView operationView : views) {
-//                //if operation view contains od with this id, update od
-//                Hashtable cells = operationView.getGraphModel().getCells();
-//
-//                for (int i = 2; i < cells.size(); i++) {
-//                    Cell c = (Cell) cells.get(Integer.toString(i));
-//
-//                    if (c != null && c.getValue() != null && c.getValue() instanceof OperationData) {
-//                        OperationData data = (OperationData) operationView.getGraphModel().getValue(c);
-//                        if (data.getId() == od.getId()) {
-//                            //replace old operation data with the updated version
-//                            operationView.getGraph().setValue(c, od);
-//                        }
-//                    }
-//                }
-//            }
+            //System.out.println("operation update: " + od.getName());
+            for (OperationView operationView : views) {
+                //if operation view contains od with this id, update od
+                Map cells = operationView.getGraphModel().getCells();
+                for (Object c : cells.values()){
+                    if (operationView.getGraph().isOperation(c) || operationView.getGraph().isSOP(c)){
+                        OperationData data = (OperationData) operationView.getGraphModel().getValue(c);
+                        if (data.getId() == od.getId()) {
+                            //replace old operation data with the updated version
+                            operationView.getGraph().setValue(c, od);
+                        }
+                    }
+                }
+                //operationView.redrawGraph();
+            }
         }
     }
 
