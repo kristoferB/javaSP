@@ -504,6 +504,7 @@ public class SPGraph extends mxGraph {
 //                d.setPrecondition(Model.updateCondition(((SPGraphModel) getModel()).getNameCache(),
 //                        d.getSequenceCondition(), d.getResourceBooking()));
                 updateCellSize(cell, true);
+                this.majorUpdate();
 
 
             } finally {
@@ -616,10 +617,10 @@ public class SPGraph extends mxGraph {
         return isType(cell, true, false, false, false, false);
     }
 
-    public boolean isType(Object cell, boolean operation,
-            boolean sop, boolean parallel, boolean alternative, boolean arbitrary) {
+    public boolean isType(Object cell, boolean operation, boolean sop, boolean parallel, boolean alternative, boolean arbitrary) {
+        if (cell == null) return false;
+        if (!(cell instanceof Cell) ) return false;
         Cell c = (Cell) cell;
-
         return (c.isSOP() && sop) || (c.isOperation() && operation) || (c.isAlternative() && alternative) || (c.isParallel() && parallel) || (c.isArbitrary() && arbitrary);
     }
 

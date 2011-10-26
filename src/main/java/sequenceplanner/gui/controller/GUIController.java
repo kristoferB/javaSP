@@ -381,8 +381,9 @@ public class GUIController {
 
                 if (mGuiModel.getModel().getOperation(id) != null) {
                     mGuiModel.getModel().getOperation(id).getNodeData().setName(field.getText());
+                    mOpViewController.update(null, mGuiModel.getModel().getOperation(id).getNodeData());
                 }
-                mOpViewController.update(null, ctrl.getModel()); //not used...
+                //mOpViewController.update(null, mGuiModel.getModel()); //not used...
             }
         }
     }
@@ -499,7 +500,10 @@ public class GUIController {
                     if (mGuiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
                         clickedCell.setValue(addPropertyPanelView((OperationData) mGuiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
                     } else {
-                        clickedCell.setValue(addPropertyPanelView((OperationData) clickedCell.getValue()));
+                        OperationData data = (OperationData) clickedCell.getValue();
+                        TreeNode dataNode = new TreeNode(data);
+                        mGuiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
+                        clickedCell.setValue(addPropertyPanelView(data));
                     }
 
 
