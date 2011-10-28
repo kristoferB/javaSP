@@ -23,9 +23,11 @@ import static org.junit.Assert.*;
  */
 public class Test_RAS implements IAlgorithmListener {
 
-    private static String mFilePath = "C:\\Users\\patrik\\Desktop\\";
-    private static String mFileName = "FLEXAplusNoBuffers.xls"; //ProductTypesTest.xls";
-    private static int mSecondsToRunSynthesisThread = 10;
+    private static final String mFilePath = "C:\\Users\\patrik\\Desktop\\";
+//    private static final String mFileName = "FLEXAplusNoBuffers.xls";
+//    private static final String mFileName = "ProductTypesTest.xls";
+    private static final String mFileName = "Benchmark2_RAS.xls";
+    private static final int mSecondsToRunSynthesisThread = 30;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
