@@ -116,7 +116,7 @@ public class RelationsForOperationSet {
                             " to " + internalOpName);
 
                     //Print location sets----------------------------------------
-                    if ((relationInt == IRelateTwoOperations.OTHER) || (relationInt == IRelateTwoOperations.ARBITRARY_ORDER)) {
+                    if ((relationInt == IRelateTwoOperations.OTHER)) {
                         System.out.print(printLocationSet(externalOpName, "u", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(opDataInternal)));
                         System.out.print("| ");
                         System.out.print(printLocationSet(externalOpName, "d", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(opDataInternal)));
