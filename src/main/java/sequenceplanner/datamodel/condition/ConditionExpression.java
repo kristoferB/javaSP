@@ -218,14 +218,18 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
 
     @Override
     public String toString() {
-        String result = "(";
+        String result = "";
         for (ConditionElement e : this) {
-            result += e;
+            if (!e.toString().isEmpty()){
+                if (!e.toString().startsWith("("))
+                    result += "(" + e + ")";
+                else result += e;
+            }
             if (e.hasNextOperator()) { //if case added by Patrik 110612
                 result += e.getNextOperator().getOperatorType().toString();
             }
         }
-        return result + ")";
+        return result;
     }
 
     class ConditionElementIterator implements Iterator<ConditionElement> {

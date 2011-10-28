@@ -1,212 +1,317 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <variables>
+    <variable id="v1" init="20000" min="0" max="20550" />
+    <variable id="v2" init="400"  min="0" max="20550"/>
+    <variable id="v3" init="150"  min="0" max="20550"/>
+    <variable id="v4" />
+    <variable id="v5" />
+  </variables>
   <seams>
-    <seam id="s1">
+    <seam id="s1" var="v4">
       <blockref block="b2" />
       <blockref block="b3" />
     </seam>
-    <seam id="s2">
+    <seam id="s2" var="v5">
       <blockref block="b3" />
       <blockref block="b5" />
-    </seam>
-    <seam id="s3">
-      <blockref block="b3" />
-      <blockref block="b4" />
-    </seam>
-    <seam id="s4">
-      <blockref block="b5" />
-      <blockref block="b4" />
     </seam>
   </seams>
   <blocks>
     <block id="b1" name="Tank" />
     <block id="b2" name="Body">
-      <capacity name="mass" value="20000.0" unit="kilogram" />
+      <capacity name="mass" value="20000" unit="kilogram" var="v1" />
     </block>
     <block id="b3" name="Turret">
-      <capacity name="mass" value="400.0" unit="kilogram" />
+      <capacity name="mass" value="400" unit="kilogram" var="v2" />
     </block>
     <block id="b4" name="Lift Point" />
     <block id="b5" name="Barrel">
-      <capacity name="mass" value="150.0" unit="kilogram" />
+      <capacity name="mass" value="150" unit="kilogram" var="v3" />
     </block>
     <block id="b6" name="Lift Point" />
   </blocks>
   <resources>
-    <resource id="r1" name="Gantry" type="Crane">
-      <capacity name="payload Capacity" value="500.0" unit="kilogram" />
-      <capability name="MoveBlockToResource">
-        <formal name="block" type="Block" />
-        <formal name="resource" type="Resource" />
-        <capacity name="xlength Capacity" value="3.0" unit="meter" />
-        <capacity name="ylength Capacity" value="4.0" unit="meter" />
-      </capability>
-      <capability name="LiftBlock">
-        <formal name="block" type="Block" />
-        <capacity name="xlength Capacity" value="3.0" unit="meter" />
-        <capacity name="ylength Capacity" value="4.0" unit="meter" />
-      </capability>
-      <capability name="MoveToResource">
-        <formal name="resource" type="Resource" />
-      </capability>
-      <capability name="DropBlock" />
-    </resource>
-    <resource id="r2" name="GluePro" type="GlueGun">
-      <capability name="GlueBlocks">
-        <formal name="b1" type="Block" />
-        <formal name="b2" type="Block" />
-        <capacity name="xlength Capacity" value="2.0" unit="meter" />
-      </capability>
-      <capability name="GlueBlocks2">
-        <formal name="b1" type="Block" />
-        <formal name="b2" type="Block" />
-        <formal name="lifter" type="Resource" />
-        <capacity name="xlength Capacity" value="2.0" unit="meter" />
-      </capability>
-      <capability name="ApplyGlueToBlocks">
-        <formal name="b1" type="Block" />
-        <formal name="b2" type="Block" />
-      </capability>
-    </resource>
+    <resource id="r1" name="Gantry" type="Crane" />
+    <resource id="r2" name="Stationary GlueGun" type="GlueGun" />
+    <resource id="r3" name="Mobile GlueGun" type="GlueGun" />
   </resources>
   <operations>
-    <operation id="o1" type="GlueBlocks" resource="r2">
-      <seamref seam="s1" />
-      <actual formal="b1">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="b2">
-        <blockref block="b3" />
-      </actual>
+    <operation id="o1" type="GlueBlocks" resource="r3" seam="s1">
+      <postaction>
+        <Assign>
+          <variableref id="v1" />
+          <Plus>
+            <variableref id="v1" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v1" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
     </operation>
-    <operation id="o2" type="MoveBlockToResource" />
-    <operation id="o3" type="LiftBlock" />
-    <operation id="o4" type="DropBlock" />
-    <operation id="o5" type="MoveToResource" />
-    <operation id="o6" type="ApplyGlueToBlocks" />
-    <operation id="o7" type="MoveBlockToResource" resource="r1">
-      <actual formal="block">
-        <blockref block="b3" />
-      </actual>
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o2" type="MoveToBlock" resource="r1" />
+    <operation id="o3" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o8" type="LiftBlock" resource="r1">
-      <actual formal="block">
-        <blockref block="b3" />
-      </actual>
+    <operation id="o4" type="MoveToBlock" resource="r1" />
+    <operation id="o5" type="DropBlock" resource="r1" />
+    <operation id="o6" type="MoveToBlock" resource="r3" />
+    <operation id="o7" type="ApplyGlueToBlocks" resource="r3" />
+    <operation id="o8" type="Alternative" seam="s2" />
+    <operation id="o9" type="GlueBlocks" resource="r2" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
     </operation>
-    <operation id="o9" type="MoveToResource" resource="r1">
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o10" type="MoveToBlock" resource="r1" />
+    <operation id="o11" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o10" type="DropBlock" resource="r1" />
-    <operation id="o11" type="GlueBlocks2" resource="r2">
-      <seamref seam="s1" />
-      <actual formal="b1">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="b2">
-        <blockref block="b3" />
-      </actual>
-      <actual formal="lifter">
-        <resourceref resource="r1" />
-      </actual>
+    <operation id="o12" type="MoveToResource" resource="r1" />
+    <operation id="o13" type="DropBlock" resource="r1" />
+    <operation id="o14" type="MoveToBlock" resource="r1" />
+    <operation id="o15" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o12" type="MoveBlockToResource" resource="r1">
-      <actual formal="block">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o16" type="MoveToResource" resource="r1" />
+    <operation id="o17" type="DropBlock" resource="r1" />
+    <operation id="o18" type="ApplyGlueToBlocks" resource="r2" />
+    <operation id="o19" type="GlueBlocks" resource="r2" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
     </operation>
-    <operation id="o13" type="LiftBlock" resource="r1">
-      <actual formal="block">
-        <blockref block="b2" />
-      </actual>
+    <operation id="o20" type="MoveToBlock" resource="r1" />
+    <operation id="o21" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o14" type="MoveToResource" resource="r1">
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o22" type="MoveToResource" resource="r1" />
+    <operation id="o23" type="DropBlock" resource="r1" />
+    <operation id="o24" type="MoveToBlock" resource="r1" />
+    <operation id="o25" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o15" type="DropBlock" resource="r1" />
-    <operation id="o16" type="MoveBlockToResource" resource="r1">
-      <actual formal="block">
-        <blockref block="b3" />
-      </actual>
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o26" type="MoveToResource" resource="r1" />
+    <operation id="o27" type="DropBlock" resource="r1" />
+    <operation id="o28" type="ApplyGlueToBlocks" resource="r2" />
+    <operation id="o29" type="GlueBlocks" resource="r3" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
     </operation>
-    <operation id="o17" type="LiftBlock" resource="r1">
-      <actual formal="block">
-        <blockref block="b3" />
-      </actual>
+    <operation id="o30" type="MoveToBlock" resource="r1" />
+    <operation id="o31" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o18" type="MoveToResource" resource="r1">
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
+    <operation id="o32" type="MoveToBlock" resource="r1" />
+    <operation id="o33" type="DropBlock" resource="r1" />
+    <operation id="o34" type="MoveToBlock" resource="r3" />
+    <operation id="o35" type="ApplyGlueToBlocks" resource="r3" />
+    <operation id="o36" type="GlueBlocks" resource="r3" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
     </operation>
-    <operation id="o19" type="DropBlock" resource="r1" />
-    <operation id="o20" type="ApplyGlueToBlocks" resource="r2">
-      <actual formal="b1">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="b2">
-        <blockref block="b3" />
-      </actual>
+    <operation id="o37" type="MoveToBlock" resource="r1" />
+    <operation id="o38" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
     </operation>
-    <operation id="o21" type="GlueBlocks3" resource="r2">
-      <seamref seam="s1" />
-      <actual formal="b1">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="b2">
-        <blockref block="b3" />
-      </actual>
-      <actual formal="lifter">
-        <resourceref resource="r1" />
-      </actual>
-    </operation>
-    <operation id="o22" type="MoveBlockToResource" />
-    <operation id="o23" type="LiftBlock" resource="r1">
-      <actual formal="block" />
-    </operation>
-    <operation id="o24" type="MoveToResource" resource="r1">
-      <actual formal="resource" />
-    </operation>
-    <operation id="o25" type="DropBlock" resource="r1" />
-    <operation id="o26" type="MoveBlockToResource" resource="r1">
-      <actual formal="block">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
-    </operation>
-    <operation id="o27" type="LiftBlock" resource="r1">
-      <actual formal="block">
-        <blockref block="b2" />
-      </actual>
-    </operation>
-    <operation id="o28" type="MoveToResource" resource="r1">
-      <actual formal="resource">
-        <resourceref resource="r2" />
-      </actual>
-    </operation>
-    <operation id="o29" type="DropBlock" resource="r1" />
-    <operation id="o30" type="ApplyGlueToBlocks" resource="r2">
-      <actual formal="b1">
-        <blockref block="b2" />
-      </actual>
-      <actual formal="b2">
-        <blockref block="b3" />
-      </actual>
-    </operation>
+    <operation id="o39" type="MoveToBlock" resource="r1" />
+    <operation id="o40" type="DropBlock" resource="r1" />
+    <operation id="o41" type="MoveToBlock" resource="r3" />
+    <operation id="o42" type="ApplyGlueToBlocks" resource="r3" />
   </operations>
+  <specs>
+    <spec>
+      <parallel>
+        <opref id="o1">
+          <sequence>
+            <parallel>
+              <sequence>
+                <opref id="o2" />
+                <opref id="o3" />
+                <opref id="o4" />
+                <opref id="o5" />
+              </sequence>
+              <opref id="o6" />
+            </parallel>
+            <opref id="o7" />
+          </sequence>
+        </opref>
+        <opref id="o8">
+          <alternative>
+            <opref id="o9">
+              <sequence>
+                <arbitrary>
+                  <sequence>
+                    <opref id="o10" />
+                    <opref id="o11" />
+                    <opref id="o12" />
+                    <opref id="o13" />
+                  </sequence>
+                  <sequence>
+                    <opref id="o14" />
+                    <opref id="o15" />
+                    <opref id="o16" />
+                    <opref id="o17" />
+                  </sequence>
+                </arbitrary>
+                <opref id="o18" />
+              </sequence>
+            </opref>
+            <opref id="o19">
+              <sequence>
+                <arbitrary>
+                  <sequence>
+                    <opref id="o20" />
+                    <opref id="o21" />
+                    <opref id="o22" />
+                    <opref id="o23" />
+                  </sequence>
+                  <sequence>
+                    <opref id="o24" />
+                    <opref id="o25" />
+                    <opref id="o26" />
+                    <opref id="o27" />
+                  </sequence>
+                </arbitrary>
+                <opref id="o28" />
+              </sequence>
+            </opref>
+            <opref id="o29">
+              <sequence>
+                <parallel>
+                  <sequence>
+                    <opref id="o30" />
+                    <opref id="o31" />
+                    <opref id="o32" />
+                    <opref id="o33" />
+                  </sequence>
+                  <opref id="o34" />
+                </parallel>
+                <opref id="o35" />
+              </sequence>
+            </opref>
+            <opref id="o36">
+              <sequence>
+                <parallel>
+                  <sequence>
+                    <opref id="o37" />
+                    <opref id="o38" />
+                    <opref id="o39" />
+                    <opref id="o40" />
+                  </sequence>
+                  <opref id="o41" />
+                </parallel>
+                <opref id="o42" />
+              </sequence>
+            </opref>
+          </alternative>
+        </opref>
+      </parallel>
+    </spec>
+  </specs>
 </assembly>

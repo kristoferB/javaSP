@@ -933,27 +933,30 @@ public class Model extends Observable implements IModel {
         return operations;
     }
 
-    public LinkedList<TreeNode> getAllVariables() {
+    public List<TreeNode> getAllVariables() {
+        List<TreeNode> variables = getVariableFromNode(this.resourceRoot);
+        variables.addAll(getVariableFromNode(this.variableRoot));   
+        return variables;
+    }
+    
+    private List<TreeNode> getVariableFromNode(TreeNode node){
         LinkedList<TreeNode> variables = new LinkedList<TreeNode>();
 
-        if (variableRoot == null || variableRoot.getChildCount() == 0) {
+        if (node == null || node.getChildCount() == 0) {
             return variables;
         }
 
         Stack<TreeNode> children = new Stack<TreeNode>();
-        for (int i = 0; i < variableRoot.getChildCount(); i++) {
-            if (Model.isVariable(variableRoot.getChildAt(i).getNodeData())) {
-                children.push(variableRoot.getChildAt(i));
-            }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            children.push(node.getChildAt(i));
         }
 
         while (!children.isEmpty()) {
             TreeNode temp = children.pop();
-            variables.add(temp);
+            if (Model.isVariable(temp.getNodeData()))
+                variables.add(temp);
             for (int i = 0; i < temp.getChildCount(); i++) {
-                if (Model.isVariable(temp.getChildAt(i).getNodeData())) {
-                    children.push(temp.getChildAt(i));
-                }
+                children.push(temp.getChildAt(i));
             }
         }
         return variables;

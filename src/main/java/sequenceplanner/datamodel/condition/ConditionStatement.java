@@ -2,6 +2,8 @@ package sequenceplanner.datamodel.condition;
 
 /**
  *
+ * Should be made immutable
+ * 
  * @author kbe
  */
 public class ConditionStatement extends ConditionElement {
@@ -146,7 +148,7 @@ public class ConditionStatement extends ConditionElement {
 
 
     public boolean evaluate(String variableValue){
-        if (variableValue.equals(MULTIPLE_VALUES)) return true; // multipleValue location
+        //if (variableValue.equals(MULTIPLE_VALUES)) return true; // multipleValue location
         try{
             int intVar = Integer.parseInt(variableValue);
             int intValue = Integer.parseInt(value);

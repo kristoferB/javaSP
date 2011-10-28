@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -32,9 +34,14 @@ public class XMLDOMParser {
     Map<String,Object> modelTypes; // Object should change to a model interface!
     
    
-    public XMLDOMParser(Set<ObjectifyXML> objectifiers) {        
+    public XMLDOMParser(Set<ObjectifyXML> objectifiers, Set<Object> models) {        
         elementTypes = new HashMap<String,Set<ObjectifyXML>>();
         modelTypes = new  HashMap<String,Object>();
+        
+        for (Object model : models){
+            modelTypes.put(model.getClass().getName(),model);
+        }
+        
         for (ObjectifyXML o : objectifiers){
             if (elementTypes.containsKey(o.getElementTag())){
                 if (elementTypes.get(o.getElementTag()) != null){
@@ -44,7 +51,7 @@ public class XMLDOMParser {
                 Set<ObjectifyXML> so = new HashSet<ObjectifyXML>(); so.add(o);
                 elementTypes.put(o.getElementTag(), so);
             }
-            
+                                  
             if (!modelTypes.containsKey(o.getModelClass().getName())){                
                 try {
                     modelTypes.put(o.getModelClass().getName(), o.getModelClass().newInstance());
@@ -74,24 +81,39 @@ public class XMLDOMParser {
     }
     
  
-    private Set<Object> populateModels(Document d){        
-        for (String tag : this.elementTypes.keySet()){
-            NodeList nl = d.getElementsByTagName(tag);
-            for (ObjectifyXML o : elementTypes.get(tag)){
-                Object model = modelTypes.get(o.getModelClass().getName());
-                if (model != null){
-                    for (int i=0 ; i<nl.getLength();i++){
-                        if (nl.item(i).getNodeType() == Node.ELEMENT_NODE){
-                            o.addElementToModel((Element) nl.item(i), model);
-                        }
-                    }
-                }
-            }
+    private Set<Object> populateModels(Document d){ 
+        for (Element e : getChildren(d)){
+            elementRecursive(e);
         }
+                
         if (modelTypes.values() != null){
             return new HashSet<Object>(modelTypes.values());
         }
         return new HashSet<Object>(); 
+    }
+    
+    private void elementRecursive(Element e) {
+        for (Element child : getChildren(e)){
+            if (elementTypes.containsKey(child.getTagName())){
+                for (ObjectifyXML o : elementTypes.get(child.getTagName())){
+                    o.addElementToModel(child, modelTypes.get(o.getModelClass().getName()));
+                }
+            }
+            elementRecursive(child);
+        }
+    }
+    
+    
+    private List<Element> getChildren(Node e){
+        List<Element> children = new LinkedList<Element>();
+        if (e == null) return children;
+        NodeList list = e.getChildNodes();
+        for (int i=0 ; i<list.getLength() ; i++){
+            if (list.item(i) instanceof Element)
+                children.add((Element) list.item(i));
+        }
+        
+        return children;
     }
    
 
@@ -139,7 +161,9 @@ public class XMLDOMParser {
     private void addOperationToModel(Element e) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-*/    
+*/
+
+    
     
     
 }

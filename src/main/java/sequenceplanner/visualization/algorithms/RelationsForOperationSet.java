@@ -10,6 +10,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * To find relations between a set of operations given in a {@link ISopNode}.<br/>
@@ -24,10 +25,10 @@ public class RelationsForOperationSet {
     private RelationContainer mRC = null;
     private String mWmodPath = "";
 
-    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<ConditionData> iConditionsToInclude) {
+    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<ConditionData> iConditionsToInclude, final Set<ResourceVariableData> resources) {
         setmRC(iRC);
         mWmodPath = iWmodPath;
-        formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude);
+        formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude, resources);
     }
 
     /**

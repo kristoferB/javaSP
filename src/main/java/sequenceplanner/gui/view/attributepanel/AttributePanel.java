@@ -80,6 +80,7 @@ public class AttributePanel extends JPanel {
      */
     public void setOperationName(String name) {
         this.operationIdTextField.setText(name);
+        
     }
 
     /**

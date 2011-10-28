@@ -37,6 +37,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 
         conditionButtonGroup = new javax.swing.ButtonGroup();
         actionGuardButtonGroup = new javax.swing.ButtonGroup();
+        conditionTypeTextField = new javax.swing.JTextField();
         expresionTextField = new javax.swing.JTextField();
         preRadioButton = new javax.swing.JRadioButton();
         postRadioButton = new javax.swing.JRadioButton();
@@ -49,6 +50,10 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 
         actionGuardButtonGroup.add(guardRadioButton);
         actionGuardButtonGroup.add(actionRadioButton);
+        
+        conditionTypeTextField.setText("Enter condition type");
+        conditionTypeTextField.setToolTipText("Enter condition type");
+        conditionTypeTextField.setActionCommand("save");
 
         expresionTextField.setText("Enter SP condtition");
         expresionTextField.setToolTipText("Enter SP condition");
@@ -77,6 +82,8 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(conditionTypeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))                   
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(expresionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -95,6 +102,8 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conditionTypeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(expresionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -112,6 +121,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     private javax.swing.ButtonGroup actionGuardButtonGroup;
     private javax.swing.JRadioButton actionRadioButton;
     private javax.swing.ButtonGroup conditionButtonGroup;
+    private javax.swing.JTextField conditionTypeTextField;
     private javax.swing.JTextField expresionTextField;
     private javax.swing.JRadioButton guardRadioButton;
     private javax.swing.JRadioButton postRadioButton;
@@ -121,6 +131,7 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public void addSaveButtonListener(ActionListener l){
         saveButton.addActionListener(l);
         expresionTextField.addActionListener(l);
+        conditionTypeTextField.addActionListener(l);
     }
 
     /**
@@ -130,10 +141,15 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     public String getConditionString(){
         return expresionTextField.getText();
     }
+    
+    public String getConditionTypeString(){
+        return conditionTypeTextField.getText();
+    }
 
     public void opendToEdit(Object source) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    
 
     /**
 * Sets the text in the textfield to the String specified in the argument
@@ -141,6 +157,10 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
 */
     public void setConditionString(String conditionString){
         expresionTextField.setText(conditionString);
+    }
+    
+    public void setConditionTypeString(String conditionTypeString){
+        conditionTypeTextField.setText(conditionTypeString);
     }
 
     public boolean getPreButtonStatus (){
@@ -165,5 +185,9 @@ public class OperationAttributeEditor extends javax.swing.JPanel {
     }
     public void clearTextField() {
         expresionTextField.setText("");
+    }
+    
+     public void clearConditionTypeField() {
+        conditionTypeTextField.setText("");
     }
 }

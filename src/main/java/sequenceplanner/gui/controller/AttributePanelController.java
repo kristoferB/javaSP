@@ -16,6 +16,7 @@ import sequenceplanner.datamodel.condition.parser.AStringToConditionParser;
 import sequenceplanner.datamodel.condition.parser.ActionAsTextInputToConditionParser;
 import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.ConditionOperator.Type;
 import sequenceplanner.datamodel.condition.parser.GuardAsTextInputToConditionParser;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
@@ -50,11 +51,12 @@ public class AttributePanelController implements ActionListener, FocusListener, 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("save")) {
-            System.out.println("AttributePanelController: save condition");
+            //System.out.println("AttributePanelController: save condition");
             if (!attributeEditor.getConditionString().isEmpty()) {
                 System.out.println("AttributePanelController: condition string to add: " + attributeEditor.getConditionString());
-                setCondition(attributeEditor.getConditionString());
+                setCondition(attributeEditor.getConditionString(), attributeEditor.getConditionTypeString());
             }
+
         } else if (e.getActionCommand().equalsIgnoreCase("edit")) {
             attributeEditor.opendToEdit(e.getSource());
         } else if (e.getActionCommand().equalsIgnoreCase("set description")) {
@@ -106,56 +108,82 @@ public class AttributePanelController implements ActionListener, FocusListener, 
      * Adds a set of conditions to the OperationData object acting as model
      * @param conditionString String conditions as a string in the SP form.
      */
-    private void setCondition(String conditionString) {
+    private void setCondition(String conditionString, String conditionTypeString) {
         //ConditionType should be selected from the choises of the radiobuttons
-        final Condition condition = new Condition();
-        boolean correctCondition = true;
+
+        Map<ConditionType, Condition> conditionMap = null;
+        for (ConditionData c : this.opData.getConditions().keySet()){
+            if (c.getName().equals(conditionTypeString)){
+                conditionMap = this.opData.getConditions().get(c);
+                break;
+            }
+        }
+        if (conditionMap == null){
+            conditionMap = new HashMap<ConditionType, Condition>();
+        }
+
+        Condition condition = null;
+        if (attributeEditor.getPreButtonStatus()) {
+            if (conditionMap.containsKey(ConditionType.PRE)){
+                condition = conditionMap.get(ConditionType.PRE);
+            } else {
+                condition = new Condition();
+                conditionMap.put(ConditionType.PRE, condition);
+            }
+         } else { //post
+            if (conditionMap.containsKey(ConditionType.POST)){
+                condition = conditionMap.get(ConditionType.POST);
+            } else {
+                condition = new Condition();
+                conditionMap.put(ConditionType.POST, condition);
+            }
+         }
+
         if (attributeEditor.getGuardButtonStatus()) {//Guard
             final AStringToConditionParser parser = new GuardAsTextInputToConditionParser();
             final ConditionExpression ce = new ConditionExpression();
             if (parser.run(conditionString, ce)) {
-                condition.setGuard(ce);
+                condition.getGuard().appendElement(Type.AND, ce);
             } else {
                 JOptionPane.showMessageDialog(null, "This is not a correct guard!\n" + "This is: (id1234<e&id1002!=e&&(id1003==12342&id1004!=e))&&id1005==2&id1006!=e&&id1007==e||(id1008==2&id1009!=f)");
-                correctCondition = false;
+                return;
             }
-
         } else { //action
             final AStringToConditionParser parser = new ActionAsTextInputToConditionParser();
             final ConditionExpression ce = new ConditionExpression();
             if (parser.run(conditionString, ce)) {
-                condition.setAction(ce);
+                condition.getAction().appendElement(Type.AND, ce);
             } else {
                 JOptionPane.showMessageDialog(null, "This is not a correct action!\n" + "This is: (id1234=100&id1002+=2&&(id1003=123|id1004=2))&&id1005-=2&id1006+=99&&id1007=7");
-                correctCondition = false;
+                return;
             }
         }
-        if (correctCondition) {
-            Map<ConditionType, Condition> map = new HashMap<ConditionType, Condition>();
-            if (attributeEditor.getPreButtonStatus()) {
-                map.put(ConditionType.PRE, condition);
-            } else { //post
-                map.put(ConditionType.POST, condition);
-            }
 
-            //Check if name should be stored with default name or if other name has been given.
-            ConditionData conditionData = attributeEditor.mConditionData;
+        ConditionData conditionData = attributeEditor.mConditionData;
 
-            if (conditionData == null ){
+        if (conditionData == null ){
+            if (conditionTypeString.isEmpty() || conditionTypeString.equals("Enter condition type")) {
                 conditionData = new ConditionData("Algebraic" + opData.getAlgebraicCounter());
                 opData.increaseAlgebraicCounter();
+            } else {
+                conditionData = new ConditionData(conditionTypeString);
             }
+        } else {
+            if (!conditionData.getName().equals(conditionTypeString)){
+                conditionData.setName(conditionTypeString);
+            }
+        }
+        this.opData.getConditions().put(conditionData, conditionMap);
 
-            //Set condition
-            opData.setConditions(conditionData, map);
 
-            //Reset condition name
-            attributeEditor.mConditionData = null;
 
-            this.attributeEditor.clearTextField();
+        //Reset condition name
+        attributeEditor.mConditionData = null;
+
+        this.attributeEditor.clearTextField();
+
         }
 
-    }
 
     private void setDescription() {
         opData.setDescription(attributePanel.getDescriptionPanel().getDescription());

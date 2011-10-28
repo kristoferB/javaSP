@@ -7,6 +7,7 @@ import sequenceplanner.algorithm.AAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.data.ConditionData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * To manage the user interaction for {@link PerformVisualization}.<br/>
@@ -19,6 +20,7 @@ public class VisualizationAlgorithm extends AAlgorithm {
     private ISopNode mHasToFinish;
     private Set<ConditionData> mConditionsToIncludeSet;
     private IPerformVisualization mVisualization = null;
+    private Set<ResourceVariableData> resources;
 
     public VisualizationAlgorithm(String iThreadName, IAlgorithmListener iAL) {
         super(iThreadName);
@@ -31,6 +33,7 @@ public class VisualizationAlgorithm extends AAlgorithm {
         this.mOperationsToView = (ISopNode) iList.get(1);
         this.mHasToFinish = (ISopNode) iList.get(2);
         this.mConditionsToIncludeSet = (Set<ConditionData>) iList.get(3);
+        if (iList.size()>4) resources = (Set<ResourceVariableData>) iList.get(4);
     }
 
     @Override
@@ -39,8 +42,9 @@ public class VisualizationAlgorithm extends AAlgorithm {
         if (!getStatus("Started...")) {
             return;
         }
-        mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod", mConditionsToIncludeSet);
+        mVisualization = new PerformVisualization("C:/beforeSynthesis.wmod", mConditionsToIncludeSet);
 
+        mVisualization.addResources(this.resources);
         mVisualization.addOset(mAllOperations);
 
         if (!mVisualization.addOsubset(mOperationsToView)) {

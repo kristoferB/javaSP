@@ -1,6 +1,8 @@
 package sequenceplanner.visualization.algorithms;
 
+import java.util.Set;
 import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -84,4 +86,6 @@ public interface IPerformVisualization {
      * @return true if possible to create view else false
      */
     public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView);
+
+    public void addResources(Set<ResourceVariableData> resources);
 }

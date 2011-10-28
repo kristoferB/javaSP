@@ -48,6 +48,14 @@ public class InputArguments {
                 final File file = new File(path);
                 mGUIController.weightNonBlockingPlusVisualization(file);
             }
+            
+            //Lift non-blocking problem + visualization DARPA--------------------
+            matcher = Pattern.compile("intentional").matcher(command);
+            if (matcher.find()) {
+                System.out.println("Intentional");
+                final String path = input;
+                mGUIController.intentionalXMLVisualize(path);
+            }
         }
     }
 }

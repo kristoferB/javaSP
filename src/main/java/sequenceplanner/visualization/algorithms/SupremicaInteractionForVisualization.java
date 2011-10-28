@@ -25,6 +25,7 @@ import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * SP->EFA translation based on {@link SModule}, {@link SEFA}, and {@link SEGA}.<br/>
@@ -33,14 +34,16 @@ import sequenceplanner.model.data.OperationData;
 public class SupremicaInteractionForVisualization implements ISupremicaInteractionForVisualization {
 
     private final Set<ConditionData> mConditionsToInclude;
+    private final Set<ResourceVariableData> resources;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
     private EmptyModule mmModule = new EmptyModule("temp", null);
 //    private SModule mModule = new SModule("temp");
 //    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
     private SEFA mmEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mmModule.getAvocadesModule());
 
-    public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude) {
+    public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude, Set<ResourceVariableData> resources) {
         this.mConditionsToInclude = iConditionsToInclude;
+        this.resources = resources;
     }
 
     @Override
@@ -68,6 +71,12 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 return null;
             }
         }
+        
+        // Add resource variables
+        for (ResourceVariableData r : resources){
+            String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + r.getId();
+            mmModule.addIntVariable(varName, r.getMin(), r.getMax(), r.getInitialValue(), null);
+        }
 
         SEGA ega;
         //Create center in flower automaton
@@ -89,6 +98,9 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             }
             mmModule.addIntVariable(varName, 0, 2, 0, marking);
             //-------------------------------------------------------------------
+            
+
+            
 
             //Add transition to start execute operation--------------------------
             ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());

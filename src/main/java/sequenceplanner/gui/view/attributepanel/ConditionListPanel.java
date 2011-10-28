@@ -147,6 +147,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         editor.mConditionData = conditionKey;
         //Place the String in the input text window
         editor.setConditionString(conditionString);
+        
+        editor.setConditionTypeString(conditionKey.getName());
 
         deleteCondition(conditionKey.getName());
     }

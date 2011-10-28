@@ -9,7 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -460,6 +462,20 @@ public class GUIController {
         }
         GUIView.printToConsole("Problem to run weight non-blocking algorithm!");
     }
+    
+    
+    // Det känns inte så bra att ha dessa metoder här! KB
+    public void intentionalXMLVisualize(String path){
+        Set<Object> models =  new HashSet<Object>(); models.add(this.getGUIModel().getModel());
+        sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML parser =
+                new sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML(path,models);
+                
+        
+        // Fixa bättre hantering av modellen i parsern. Skall kunna skicka in den.
+        this.mGuiModel.setModel(parser.getModel());
+              
+    }
+    
 
     class AddShortCommandsListener implements ActionListener {
 
@@ -501,20 +517,16 @@ public class GUIController {
             createPopup(e);
             OperationView v = oV;
             //If double click
-            if (e.getClickCount() == 2) {
+            if (e.getClickCount() == 1) {
                 //If operation is clicked
                 Cell clickedCell = (Cell) v.getGraphComponent().getCellAt(e.getX(), e.getY());
                 if (clickedCell != null && v.getGraph().isOperation(clickedCell) || v.getGraph().isSOP(clickedCell)) {
-                    if (mGuiModel.getModel().getOperation(clickedCell.getUniqueId()) != null) {
+                    if (!((OperationData) clickedCell.getValue()).getName().isEmpty()){
+                        if (mGuiModel.getModel().getOperation(clickedCell.getUniqueId()) == null) {
+                            mGuiModel.getModel().saveOperationData(new TreeNode[]{new TreeNode((OperationData) clickedCell.getValue())});                        
+                        }
                         clickedCell.setValue(addPropertyPanelView((OperationData) mGuiModel.getModel().getOperation(clickedCell.getUniqueId()).getNodeData()));
-                    } else {
-                        OperationData data = (OperationData) clickedCell.getValue();
-                        TreeNode dataNode = new TreeNode(data);
-                        mGuiModel.getModel().saveOperationData(new TreeNode[]{dataNode});
-                        clickedCell.setValue(addPropertyPanelView(data));
                     }
-
-
                 }
             }
         }
