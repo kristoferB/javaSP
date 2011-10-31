@@ -56,6 +56,8 @@ public class RelationIdentification {
     private void initStateName() {
         //Remove Single EFA from automaton name (the name is Single) + extra substrings
         //From sup(oX||oY||Single) -> oX||oY
+        
+        String test = mAutomaton.getInitialState().getName();
         mStateNameExplanation = mAutomaton.getName().replaceAll("sup\\(", "").replaceAll("\\)", "");
         mStateNameExplanation = mStateNameExplanation.replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.Type.BIG_FLOWER_EFA_NAME.toString() + "\\|\\|", "\\|\\|").
                 replaceAll("\\|\\|" + ISupremicaInteractionForVisualization.Type.BIG_FLOWER_EFA_NAME.toString(), "").
@@ -118,8 +120,8 @@ public class RelationIdentification {
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     System.out.println("Mismatch between events in supervisor and subset!");
                     System.out.println("The supervisor is so strict that not all operations ("+ eventToLookFor+") can finish!");
-                    return false;
-                }
+                    //return false;
+                } else {
                 final Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);
 
                 //Init of map where result is stored
@@ -137,7 +139,7 @@ public class RelationIdentification {
                         opLocationSetMap.get(serialnrOperationMap.get(i)).add(opLocation);
                     }
                 }
-            }
+            }}
         }
         return true;
     }

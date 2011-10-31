@@ -667,7 +667,7 @@ public class Model extends Observable implements IModel {
             result = isResource(pData) || parent == getResourceRoot();
 
         } else if (isVariable(cData)) {
-            result = isResource(pData);
+            result = isResource(pData) || parent == getResourceRoot();
 
         } else if (isLiason(cData)) {
             result = isLiason(pData) || parent == getLiasonRoot();

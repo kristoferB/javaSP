@@ -1,11 +1,9 @@
 package sequenceplanner.IO.XML.IntentionalXML;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,8 +16,11 @@ import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
+import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
+import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization.Type;
 
 /**
  * This objectifier takes operation elements from an xml file from 
@@ -80,14 +81,14 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         if (!e.hasAttribute("id")) return false;
         OperationData od = new OperationData(e.getAttribute("id"),m.newId());
       
-        parseOperationContent(e,od); 
+        parseOperationContent(e,od,m); 
         m.createModelOperationNode(od);
        
         return true;
     }
 
     
-    private boolean parseOperationContent(Element e, OperationData od) {
+    private boolean parseOperationContent(Element e, OperationData od, Model m) {
         if (e==null || od == null) return false;
         
         for (Element child : getChildren(e)){
@@ -96,7 +97,7 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
                         child.getTagName().equals("preaction")||
                         child.getTagName().equals("postaction")){
                     
-                    appendCondition(child,od);
+                    appendCondition(child,od,m);
              }
             // find more content here
         }
@@ -104,7 +105,7 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         return true;
     }
 
-    private void appendCondition(Element e, OperationData od) {
+    private void appendCondition(Element e, OperationData od, Model m) {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
         if (!conds.containsKey(condDataType)){
             Map<ConditionType,Condition> newCond = new HashMap<ConditionType,Condition>();
@@ -115,33 +116,36 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         
         Map<ConditionType,Condition> parserCondition = conds.get(condDataType);
         ConditionExpression expr = null;
+        ConditionOperator.Type type = ConditionOperator.Type.AND;
         if (e.getTagName().equals("precondition"))
             expr = parserCondition.get(ConditionsFromSopNode.ConditionType.PRE).getGuard();            
         else if (e.getTagName().equals("postcondition"))
             expr = parserCondition.get(ConditionsFromSopNode.ConditionType.POST).getGuard(); 
-        else if (e.getTagName().equals("preaction"))
-            expr = parserCondition.get(ConditionsFromSopNode.ConditionType.PRE).getAction(); 
-        else if (e.getTagName().equals("postaction"))
+        else if (e.getTagName().equals("preaction")){
+            expr = parserCondition.get(ConditionsFromSopNode.ConditionType.PRE).getAction();
+            type = ConditionOperator.Type.SEMIKOLON;
+        }else if (e.getTagName().equals("postaction")){
             expr = parserCondition.get(ConditionsFromSopNode.ConditionType.POST).getAction(); 
-        
+            type = ConditionOperator.Type.SEMIKOLON;
+        }
         if (expr != null){
             for (Element child : getChildren(e)){
-                expr.appendElement(ConditionOperator.Type.AND, getConditionElement(child));
+                expr.appendElement(type, getConditionElement(child,m));
             }
         }
   
     }
 
-    private ConditionElement getConditionElement(Element e) {   
+    private ConditionElement getConditionElement(Element e, Model m) {   
         String variable = "";
         String value = "";
         ConditionStatement.Operator op = ConditionStatement.Operator.Equal;
         
         if (e.getTagName().equals("Ge")){
-            op = ConditionStatement.Operator.Equal;
+            op = ConditionStatement.Operator.GreaterEq;
             for (Element child : getChildren(e)){
                 if (child.getTagName().equals("variableref")){
-                    variable = child.getAttribute("id");
+                    variable = getVarId(child.getAttribute("id"),m);
                 }
                 if (child.getTagName().equals("double")){
                     value = child.getAttribute("value");
@@ -151,14 +155,14 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
             op = ConditionStatement.Operator.Assign;
             for (Element child : getChildren(e)){
                 if (child.getTagName().equals("variableref")){
-                    variable = child.getAttribute("id");
+                    variable = getVarId(child.getAttribute("id"),m);
                 }                
                 if (child.getTagName().equals("Plus")){
                     String plusString = "";
                     for (Element p : getChildren(child)){
                         if (p.getTagName().equals("variableref") && p.hasAttribute("id")){
                             if (!plusString.equals("")) plusString += "+";
-                            plusString += p.getAttribute("id");
+                            plusString += getVarId(p.getAttribute("id"),m);
                         }
                     } 
                     value = plusString;
@@ -166,8 +170,7 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
             }      
         }
         
-        if (variable.equals("") || value.equals("")) return null;
-        
+        if (variable.equals("") || value.equals("")) return null;    
         return new ConditionStatement(variable,op, value); 
     }
     
@@ -181,6 +184,17 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         }
         
         return set;
+    }
+    
+    private String getVarId(String variableName,Model m){               
+        for (TreeNode n : m.getAllVariables()){
+            if (n.getNodeData() instanceof ResourceVariableData){
+                if (n.getNodeData().getName().equals(variableName)){
+                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
+                }
+            }
+        }
+        return variableName;                                
     }
 
 

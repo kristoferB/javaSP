@@ -16,6 +16,7 @@ import net.sourceforge.waters.subject.module.ModuleSubjectFactory;
 import net.sourceforge.waters.xsd.base.EventKind;
 import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
+import org.supremica.automata.BDD.EFA.BDDExtendedAutomata;
 import org.supremica.automata.BDD.EFA.BDDExtendedSynthesizer;
 import org.supremica.automata.ExtendedAutomata;
 import org.supremica.automata.ExtendedAutomaton;
@@ -190,9 +191,19 @@ public abstract class AModule {
     public static ModuleSubject getMonolithicReachabilityModule(final ModuleSubject iModuleSubject) {
         //Easier to work with extended automata than module subject
         final ExtendedAutomata extendedAutomata = new ExtendedAutomata(iModuleSubject);
+        
+        
+        // Testar lite
+        int storlek = extendedAutomata.getExtendedAutomataList().size();
+        //EditorSynthesizerOptions option =  EditorSynthesizerOptions.getDefaultSynthesizerOptions();
+        //BDDExtendedAutomata bdd = new BDDExtendedAutomata(extendedAutomata,option);
+        
+        
+        
 
         //Only one flower/efa/automaton
         final ExtendedAutomaton efa = extendedAutomata.getExtendedAutomataList().iterator().next();
+        String s = efa.getComponent().getName();
 
         //Calculate reachability graph and save as extended automaton
         final EFAMonlithicReachability efaMR = new EFAMonlithicReachability(efa.getComponent(), extendedAutomata.getVars(), efa.getAlphabet());

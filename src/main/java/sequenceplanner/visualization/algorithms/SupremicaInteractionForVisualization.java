@@ -48,6 +48,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public Automata flattenOut(ModuleSubject iModuleSubject) {
+        iModuleSubject = EmptyModule.getMonolithicReachabilityModule(iModuleSubject);
         return EmptyModule.getDFA(iModuleSubject);
     }
 

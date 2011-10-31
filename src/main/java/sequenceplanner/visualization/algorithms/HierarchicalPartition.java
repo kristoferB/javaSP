@@ -67,12 +67,16 @@ public class HierarchicalPartition {
                         subset.remove(localParentOp);
                     }
                 }
-                subset.removeAll(hasNoParentWithChildrenMap.get(parentOp)); //Remove all children that have parentOp as parent
-                if (!hasStrictHierarchicalRelation(parentOp, childOp, subset, iRC)) {
-                    hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
-                } else {
+                // Testar att inte excludera dessa från sina föräldrar. Relationer borde istället kunna visas med "smarta" precond.
+                // Dock måste vi verifiera att detta är korrekt och att det inte skapas felaktiga relationer. 
+                // Det vi utnyttjar är att alla op kan beskrivas som parallella...
+                
+                //subset.removeAll(hasNoParentWithChildrenMap.get(parentOp)); //Remove all children that have parentOp as parent
+                //if (!hasStrictHierarchicalRelation(parentOp, childOp, subset, iRC)) {
+                //    hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
+                //} else {
                     updateHierarchicalRelation(parentOp, root, childOp, iRC);
-                }
+                //}
             }
         }
         //-----------------------------------------------------------------------

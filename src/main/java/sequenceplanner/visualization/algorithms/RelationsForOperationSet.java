@@ -58,7 +58,7 @@ public class RelationsForOperationSet {
 
         System.out.println("start synthesis");
 
-        saveFormalModel(mWmodPath);
+        //saveFormalModel(mWmodPath);
 
         //synthesis
         final Automaton automaton = formalMethods.synthesize(automata);
