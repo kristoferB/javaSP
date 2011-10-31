@@ -120,7 +120,7 @@ public class RelationIdentification {
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     System.out.println("Mismatch between events in supervisor and subset!");
                     System.out.println("The supervisor is so strict that not all operations ("+ eventToLookFor+") can finish!");
-                    //return false;
+                    return false;
                 } else {
                 final Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);
 
