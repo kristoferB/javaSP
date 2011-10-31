@@ -42,7 +42,7 @@ public class VisualizationAlgorithm extends AAlgorithm {
         if (!getStatus("Started...")) {
             return;
         }
-        mVisualization = new PerformVisualization("C:/beforeSynthesis.wmod", mConditionsToIncludeSet);
+        mVisualization = new PerformVisualization("C:/", mConditionsToIncludeSet);
 
         mVisualization.addResources(this.resources);
         mVisualization.addOset(mAllOperations);

@@ -36,7 +36,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
     private final Set<ConditionData> mConditionsToInclude;
     private final Set<ResourceVariableData> resources;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
-    private EmptyModule mmModule = new EmptyModule("temp", null);
+    private EmptyModule mmModule = new EmptyModule("visualizationBeforeSynthesisModule", null);
 //    private SModule mModule = new SModule("temp");
 //    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
     private SEFA mmEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mmModule.getAvocadesModule());
