@@ -58,7 +58,7 @@ public class RelationsForOperationSet {
 
         System.out.println("start synthesis");
 
-        //saveFormalModel(mWmodPath);
+        saveFormalModel(mWmodPath);
 
         //synthesis
         final Automaton automaton = formalMethods.synthesize(automata);
@@ -67,6 +67,8 @@ public class RelationsForOperationSet {
             System.out.println("Problem with synthesis!");
             return 0;
         }
+        
+        saveFormalModel("D:/");
 
         System.out.println("end synthesis");
 
@@ -137,6 +139,7 @@ public class RelationsForOperationSet {
         String returnString = "";
         returnString += iOpWithEvent + "" + iEvent;
         returnString += " " + iOpWithLocations + ":";
+        if (iLocationSet == null) return returnString;
         for (final String s : iLocationSet) {
             returnString += s;
         }

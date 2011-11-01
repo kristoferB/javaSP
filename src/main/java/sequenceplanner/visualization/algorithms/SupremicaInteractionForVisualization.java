@@ -92,6 +92,12 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             final int id = opData.getId();
             final String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + id;
 
+            // test
+            
+            
+            
+            //end test
+            
             //Add integer variable for operation---------------------------------
             Integer marking = null;
             if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
@@ -100,7 +106,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             mmModule.addIntVariable(varName, 0, 2, 0, marking);
             //-------------------------------------------------------------------
             
-
             
 
             //Add transition to start execute operation--------------------------
@@ -124,6 +129,8 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
         return mmModule.getModuleSubject();
     }
+    
+    
 
     @Override
     public Map<String, Set<String>> getStateSpaceForEventSetMap(final Automaton iAutomaton) {

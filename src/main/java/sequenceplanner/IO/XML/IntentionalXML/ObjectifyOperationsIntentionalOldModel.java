@@ -142,7 +142,7 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         ConditionStatement.Operator op = ConditionStatement.Operator.Equal;
         
         if (e.getTagName().equals("Ge")){
-            op = ConditionStatement.Operator.GreaterEq;
+            op = ConditionStatement.Operator.LessEq;
             for (Element child : getChildren(e)){
                 if (child.getTagName().equals("variableref")){
                     variable = getVarId(child.getAttribute("id"),m);

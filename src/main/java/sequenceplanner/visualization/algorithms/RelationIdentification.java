@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.supremica.automata.Automaton;
+import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -28,7 +32,7 @@ public class RelationIdentification {
     public boolean run() {
         initStateName();
         initEventOperationLocationSetMapForRelationContainer();
-        if (!findEventOperationRelations()) {
+        if (!findEventOperationRelationsTest()) {
             return false;
         }
         initOperationRelationMapForRelationContainer();
@@ -141,6 +145,69 @@ public class RelationIdentification {
                 }
             }}
         }
+        return true;
+    }
+    
+    private boolean findEventOperationRelationsTest(){
+        
+        for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
+            for (final String eventType : mRC.getEventOperationLocationSetMap(opDataExternal).keySet()) {
+                final String eventToLookFor = ISupremicaInteractionForVisualization.Type.EVENT_PREFIX.toString() + opDataExternal.getId() + eventType;
+                if (!mEventStateSetMap.containsKey(eventToLookFor)) {
+                    
+                    // Temp solution, just a test. add this to relation container ASAP
+                    for (ISopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
+                        if (n.getOperation().equals(opDataExternal)){
+                            mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet().remove(n);
+                            break;
+                        }
+                    }
+                    System.out.println("Mismatch between events in supervisor and subset!");
+                    System.out.println("The supervisor is so strict that not all operations ("+ eventToLookFor+") can finish!");
+                    //return false;
+                } else {
+                    Set<String> stateNameSet = mEventStateSetMap.get(eventToLookFor);
+                    Map<OperationData, Set<String>> opLocationSetMap =
+                            mRC.getEventOperationLocationSetMap(opDataExternal).get(eventType);
+
+                    Pattern p = Pattern.compile("id\\d+\\=\\d+");
+                    Pattern pIDs = Pattern.compile("id\\d+");
+                    Pattern pID = Pattern.compile("\\d+");
+                    Pattern pLocs = Pattern.compile("\\=\\d+");
+                    Pattern pLoc = Pattern.compile("\\d+");
+                    //Matcher m = p.matcher("aaaaab");
+                    //boolean b = m.matches();
+                    
+                    for (String stateName : stateNameSet) {
+                        Matcher m = p.matcher(stateName);
+                        while(m.find()){
+                            String location = m.group();
+                            Matcher mIDs = pIDs.matcher(location);
+                            if (mIDs.find()){
+                                Matcher mID = pID.matcher(mIDs.group());
+                                if (mID.find()){
+                                    OperationData d = getOperationWithStringId(mID.group());
+                                    Matcher mLocs = pLocs.matcher(location);
+                                    if (mLocs.find()){
+                                        Matcher mLoc = pLoc.matcher(mLocs.group());
+                                        if (mLoc.find())
+                                            location = mLoc.group();
+                                            
+                                    }
+                                    if (opLocationSetMap.containsKey(d)){
+                                        opLocationSetMap.get(d).add(location);
+                                    } else if (d != null){                                    
+                                        Set<String> set = new HashSet<String>();
+                                        set.add(location);
+                                        opLocationSetMap.put(d, set);
+                                    }
+                                }                               
+                            }
+                        }
+                    }                    
+                }   
+            }
+        }          
         return true;
     }
 }

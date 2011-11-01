@@ -140,6 +140,7 @@ public class RelateTwoOperations implements IRelateTwoOperations {
     }
 
     private boolean compareSetToRefSet(final Set iSetToCompare, final Set iReferenceSet) {
+        if (iSetToCompare == null) return false;
         if (!(iReferenceSet.size() == iSetToCompare.size())) {
             return false;
         }
