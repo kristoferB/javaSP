@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
   <variables>
-    <variable id="v1" init="20000" min="0" max="20550" />
-    <variable id="v2" init="400"  min="0" max="20550"/>
-    <variable id="v3" init="150"  min="0" max="20550"/>
+    <variable id="v1" value="20000.0"/>
+    <variable id="v2" value="400.0"/>
+    <variable id="v3" value="150.0"/>
     <variable id="v4" />
     <variable id="v5" />
   </variables>
@@ -312,6 +312,12 @@
           </alternative>
         </opref>
       </parallel>
+    </spec>
+    <spec>
+        <arbitrary>
+            <opref id="o1" />
+            <opref id="o8" />
+        </arbitrary>
     </spec>
   </specs>
 </assembly>

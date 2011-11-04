@@ -1,7 +1,6 @@
 package sequenceplanner;
 
 import java.awt.Rectangle;
-import java.io.File;
 import javax.swing.SwingUtilities;
 
 
@@ -11,7 +10,6 @@ import org.apache.log4j.Logger;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.gui.model.GUIModel;
 import sequenceplanner.gui.view.GUIView;
-import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 
 /**
  *
@@ -56,7 +54,9 @@ public class SequencePlanner {
      */
     public static void main(final String[] args) {
 // Docking windwos should be run in the Swing thread
-
+        
+        if (argsThatRunWithoutWindow(args)) return;
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -70,7 +70,7 @@ public class SequencePlanner {
 
             }
         });
-
+        
 
     }
 
@@ -78,5 +78,19 @@ public class SequencePlanner {
         BasicConfigurator.configure();
         Logger l = Logger.getRootLogger();
         Logger.getRootLogger().setLevel(Level.ALL);
+    }
+    
+    private static boolean argsThatRunWithoutWindow(final String[] args){
+        
+        //Is there a second argument?
+        if (args.length < 2) return false;
+        
+        if (!args[0].equals("intentionalNoWindow")) return false;
+        
+        if (args.length != 3) return false;
+        
+        sequenceplanner.IO.XML.IntentionalXML.IntentionalWithoutWindowExecuter exec =
+                new sequenceplanner.IO.XML.IntentionalXML.IntentionalWithoutWindowExecuter(args[1],args[2]);
+        return true;
     }
 }

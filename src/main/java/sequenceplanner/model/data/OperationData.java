@@ -24,6 +24,7 @@ public class OperationData extends Data {
     public static final int ACTION_EQ = 2;
     //Maps the pre and post conditions according to ConditionType, Condition
     private Map<ConditionData, Map<ConditionType, Condition>> mConditionMap;
+    
 
     public OperationData(String name, int id) {
         super(name, id);
@@ -64,5 +65,26 @@ public class OperationData extends Data {
 
     public void removeCondition(ConditionData condKey) {
         mConditionMap.remove(condKey);
+    }
+    
+    public void addCondition(ConditionData condKey,ConditionType type, Condition c){
+        if (c == null || condKey == null) return;
+        Map<ConditionType, Condition> map = this.mConditionMap.get(condKey);
+        if (map == null){
+            map= new HashMap<ConditionType, Condition>();
+            map.put(type, c);
+            this.mConditionMap.put(condKey, map);
+            return;
+        }
+        
+        Condition cond = map.get(type);
+        if (cond == null){
+            map.put(type, c);
+            return;
+        }
+        
+        cond.appendCondition(c);
+        
+        
     }
 }

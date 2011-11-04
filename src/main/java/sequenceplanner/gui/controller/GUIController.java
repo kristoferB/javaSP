@@ -237,9 +237,9 @@ public class GUIController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (askForSaveOfModel("Save project before open?")) {
+            //if (askForSaveOfModel("Save project before open?")) {
                 openModel();
-            }
+            //}
         }
     }
 
@@ -470,6 +470,7 @@ public class GUIController {
         sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML parser =
                 new sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML(path,models);
                 
+        
         
         // Fixa bättre hantering av modellen i parsern. Skall kunna skicka in den.
         this.mGuiModel.setModel(parser.getModel());

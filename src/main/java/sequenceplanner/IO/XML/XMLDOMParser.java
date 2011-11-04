@@ -2,6 +2,8 @@ package sequenceplanner.IO.XML;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,28 +31,37 @@ import sequenceplanner.model.Model;
  * @author kbe
  */
 public class XMLDOMParser {
-
-    Map<String,Set<ObjectifyXML>> elementTypes;
-    Map<String,Object> modelTypes; // Object should change to a model interface!
+    
+    // Map<rootTags, Map<elementTag, set<ObjectifyXML>>>
+    private Map<String,Map<String,Set<ObjectifyXML>>> tagMap; 
+    // Map<Model class name, model instance>
+    // Object should change to a model interface!
+    private Map<String,Object> modelTypes; 
     
    
-    public XMLDOMParser(Set<ObjectifyXML> objectifiers, Set<Object> models) {        
-        elementTypes = new HashMap<String,Set<ObjectifyXML>>();
+    public XMLDOMParser(Set<ObjectifyXML> objectifiers, Set<Object> models) {  
+        tagMap = new HashMap<String,Map<String,Set<ObjectifyXML>>>();
         modelTypes = new  HashMap<String,Object>();
         
-        for (Object model : models){
-            modelTypes.put(model.getClass().getName(),model);
+        if (models != null){
+            for (Object model : models)
+                modelTypes.put(model.getClass().getName(),model);        
         }
         
-        for (ObjectifyXML o : objectifiers){
-            if (elementTypes.containsKey(o.getElementTag())){
-                if (elementTypes.get(o.getElementTag()) != null){
-                    elementTypes.get(o.getElementTag()).add(o);
-                }
-            } else {
-                Set<ObjectifyXML> so = new HashSet<ObjectifyXML>(); so.add(o);
-                elementTypes.put(o.getElementTag(), so);
+        
+        for (ObjectifyXML o : objectifiers){                
+            Map<String,Set<ObjectifyXML>> rT = tagMap.get(o.getRootTag());
+            if (rT == null){
+                rT = new HashMap<String,Set<ObjectifyXML>>();
+                tagMap.put(o.getRootTag(), rT);
+            }                       
+            
+            Set<ObjectifyXML> sO = rT.get(o.getElementTag());
+            if (sO == null){
+                sO = new HashSet<ObjectifyXML>();
+                rT.put(o.getElementTag(), sO);
             }
+            sO.add(o);                   
                                   
             if (!modelTypes.containsKey(o.getModelClass().getName())){                
                 try {
@@ -82,25 +93,39 @@ public class XMLDOMParser {
     
  
     private Set<Object> populateModels(Document d){ 
-        for (Element e : getChildren(d)){
-            elementRecursive(e);
+        Element root = d.getDocumentElement();
+        
+        Deque<Element> stack = new ArrayDeque();
+        for (Element e : getChildren(root)){
+            stack.push(e);
         }
-                
+        
+        while (!stack.isEmpty()){
+            Element e = stack.pop();
+            if (!addElementToModels(root,e))
+                for (Element c : getChildren(e)) stack.push(c);
+        }
+                   
         if (modelTypes.values() != null){
             return new HashSet<Object>(modelTypes.values());
         }
         return new HashSet<Object>(); 
     }
     
-    private void elementRecursive(Element e) {
-        for (Element child : getChildren(e)){
-            if (elementTypes.containsKey(child.getTagName())){
-                for (ObjectifyXML o : elementTypes.get(child.getTagName())){
-                    o.addElementToModel(child, modelTypes.get(o.getModelClass().getName()));
-                }
-            }
-            elementRecursive(child);
+    private boolean addElementToModels(Element root, Element e){
+        if (root == null | e == null) return false;
+        
+        Map<String,Set<ObjectifyXML>> rT = tagMap.get(root.getTagName());
+        if (rT == null) return false;         
+            
+        Set<ObjectifyXML> sO = rT.get(e.getTagName());
+        if (sO == null) return false;
+        
+        for (ObjectifyXML o : sO){
+            if (o.validateRootTag(root))
+                o.addElementToModel(e, modelTypes.get(o.getModelClass().getName()));
         }
+        return true;
     }
     
     
@@ -108,7 +133,7 @@ public class XMLDOMParser {
         List<Element> children = new LinkedList<Element>();
         if (e == null) return children;
         NodeList list = e.getChildNodes();
-        for (int i=0 ; i<list.getLength() ; i++){
+        for (int i=list.getLength()-1 ; i>=0 ; i--){
             if (list.item(i) instanceof Element)
                 children.add((Element) list.item(i));
         }

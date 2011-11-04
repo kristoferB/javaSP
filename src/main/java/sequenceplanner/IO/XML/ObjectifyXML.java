@@ -1,5 +1,6 @@
 package sequenceplanner.IO.XML;
 
+import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -13,6 +14,8 @@ import org.w3c.dom.Element;
 public interface ObjectifyXML {
     
     public String getRootTag();
+    
+    public boolean validateRootTag(Element e);
     
     public String getElementTag();
     
@@ -28,7 +31,7 @@ public interface ObjectifyXML {
      */
     public boolean addElementToModel(Element e, Object model);
     
-    public Element addModelToDocument(Object m, Document d); 
+    public boolean addModelToElement(Object model, Element e); 
     
     
 }

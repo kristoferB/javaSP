@@ -60,6 +60,15 @@ public class Condition {
 
         return newVars;
     }
+    
+    public void appendCondition(Condition c) {
+        if (c==null) return;
+        if (!c.getGuard().isEmpty())
+            this.guard.appendElement(ConditionOperator.Type.AND, c.getGuard());
+        if (!c.getAction().isEmpty())
+            this.action.appendElement(ConditionOperator.Type.SEMIKOLON, c.getAction());
+    }
+    
 
     private boolean reqGuardEvaluater(ConditionElement element, Map<String,String> variableValues){
         if (element == null) return true;
@@ -109,6 +118,8 @@ public class Condition {
     public String toString(){
         return this.guard.toString() + '/' + this.action.toString();
     }
+
+    
 
 
 }

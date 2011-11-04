@@ -14,13 +14,10 @@ import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.*;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
-import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ViewData;
-import sequenceplanner.view.operationView.OperationView;
 
 
 /**
@@ -31,51 +28,37 @@ import sequenceplanner.view.operationView.OperationView;
  * 
  * @author kbe
  */
-public class ObjectifySOPIntentionalOldModel implements ObjectifyXML {
+public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentionalOldModel {
 
-    private static final String elementTag = "spec";
-    private static final String rootTag = "specs";
-    private static final Class model = Model.class;
-    
+    private static final String elementTag = "specs";
+    private static final String rootTag = "assembly";
+    private static final String objectTag = "spec";
 
     public ObjectifySOPIntentionalOldModel() {
+        super(rootTag,elementTag);
     }
         
     
     @Override
-    public String getRootTag() {
-        return rootTag;
-    }
-
-    @Override
-    public String getElementTag() {
-        return elementTag;
-    }
-
-    @Override
-    public Class getModelClass() {
-        return model;
-    }
-    
-    
-    @Override
-    public Element addModelToDocument(Object m, Document d) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean addElementToModel(Element e, Object model) {
-        if (!(this.model.isInstance(model))) return false;       
-        if (!(e.getTagName().equals(elementTag))) return false;
+    public boolean addModelToElement(Object model, Element e){
+        Element element = e.getOwnerDocument().createElement(elementTag);
+        e.appendChild(element);
         
-        // Add check of XML document structure so it matches expected...
-        ISopNode sop = createSOP(e, (Model) model);
-        //System.out.println(sop);
-        return saveSOPToModel(sop, (Model) model);
+        return false; //addSOPstoElement((Model) model, eRoot);
+    }
+
+    
+    @Override
+    protected boolean addElement(Element e, Model m){
+        if (!e.getTagName().equals(objectTag)) return false;
+        ISopNode sop = createSOP(e, m);
+        System.out.println(sop.toString());
+        return saveSOPToModel(sop,m);
+        
     }
     
 
-    private ISopNode createSOP(Element e, Model m) {
+    private ISopNode createSOP(Element e, Model m) {       
         ISopNode root = new SopNode();
         for (Element child : getChildren(e)){
             ISopNode n = resolveSopNode(child, m);
@@ -142,10 +125,17 @@ public class ObjectifySOPIntentionalOldModel implements ObjectifyXML {
         ConditionsFromSopNode cfsn = new ConditionsFromSopNode(sop);
         Map<OperationData, Map<ConditionType, Condition>> map = cfsn.getmOperationConditionMap();
         for (TreeNode node : m.getAllOperations()){
-            Map<ConditionType, Condition> cond = map.get(node.getNodeData());
+            Map<ConditionType, Condition> cond = map.get((OperationData)node.getNodeData());
             if (cond != null){
-                ((OperationData) node.getNodeData()).getConditions().put(new ConditionData("IDW_SOP"), cond);
-            }
+                ((OperationData) node.getNodeData()).addCondition(
+                        new ConditionData("IDW_SOP"), 
+                        ConditionType.PRE,
+                        cond.get(ConditionType.PRE));
+                ((OperationData) node.getNodeData()).addCondition(
+                        new ConditionData("IDW_SOP"), 
+                        ConditionType.POST,
+                        cond.get(ConditionType.POST));
+                }
         }
         
         
@@ -166,24 +156,46 @@ public class ObjectifySOPIntentionalOldModel implements ObjectifyXML {
         //throw new UnsupportedOperationException("Not yet implemented");
     }
     
-    
-    private List<Element> getChildren(Element e){
-        List<Element> children = new LinkedList<Element>();
-        if (e == null) return children;
-        NodeList list = e.getChildNodes();
-        for (int i=0 ; i<list.getLength() ; i++){
-            if (list.item(i) instanceof Element)
-                children.add((Element) list.item(i));
-        }
-        
-        return children;
+    private boolean addSOPstoElement(Model m, Element eRoot) {
+        TreeNode viewRoot = m.getViewRoot();
+        for (int i=0 ; i< viewRoot.getChildCount();i++){
+            TreeNode n = viewRoot.getChildAt(i);
+            if (n.getNodeData() instanceof ViewData){
+                ViewData data = (ViewData) n.getNodeData();
+                ISopNode sop = data.mSopNodeForGraphPlus.getRootSopNode(false);
+                if (sop != null){
+                    Element eSop = eRoot.getOwnerDocument().createElement(elementTag);
+                    eRoot.appendChild(eSop);
+                    convertSopToElement(sop,eSop);
+                }
+            }
+        }        
+        return true;
     }
 
-
-
-    
-
-
+    private void convertSopToElement(ISopNode sop, Element e) {
+        if (sop == null || e == null) return;
+        Element newElement = null;
+        if (sop instanceof SopNode){
+            newElement = e;
+        }else if (sop instanceof SopNodeOperation){
+            String opName = null;
+            if (sop.getOperation() != null){
+                opName = sop.getOperation().getName();
+            } else opName = "noName";
+            newElement = e.getOwnerDocument().createElement("opref");
+            newElement.setAttribute("id", opName);           
+            e.appendChild(newElement);
+        } else {
+            newElement = e.getOwnerDocument().createElement(sop.typeToString());
+            e.appendChild(newElement);
+        }
+        
+        for (ISopNode n : sop.getFirstNodesInSequencesAsSet()){
+            convertSopToElement(n,newElement);
+        }
+        
+    }
 
     
 }

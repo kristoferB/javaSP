@@ -1,5 +1,6 @@
 package sequenceplanner.IO.XML.IntentionalXML;
 
+import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sequenceplanner.IO.XML.ObjectifyXML;
@@ -15,68 +16,49 @@ import sequenceplanner.model.data.ResourceVariableData;
  * 
  * @author kbe
  */
-public class ObjectifyVariableIntentionalOldModel implements ObjectifyXML {
+public class ObjectifyVariableIntentionalOldModel extends AbstractObjectifyIntentionalOldModel {
 
-    private static final String elementTag = "variable";
-    private static final String rootTag = "variables";
-    private static final Class model = Model.class;
+    private static final String elementTag = "variables";
+    private static final String rootTag = "assembly";
+    private static final String objectTag = "variable";
+    private static final int maxForInt = 1000000;
     
 
     public ObjectifyVariableIntentionalOldModel() {
+        super(rootTag,elementTag);
     }
         
     
     @Override
-    public String getRootTag() {
-        return rootTag;
-    }
-
-    @Override
-    public String getElementTag() {
-        return elementTag;
-    }
-
-    @Override
-    public Class getModelClass() {
-        return model;
-    }
-    
-    
-    @Override
-    public Element addModelToDocument(Object m, Document d) {
+    public boolean addModelToElement(Object model, Element e){
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean addElementToModel(Element e, Object model) {
-        if (!(this.model.isInstance(model))) return false;       
-        if (!(e.getTagName().equals(elementTag))) return false;
+    protected boolean addElement(Element e, Model m){
+        if (!e.getTagName().equals(objectTag)) return false;
+        if (e.getAttribute("id").equals("")) return false;
         
-        // Add check of XML document structure so it matches expected...
-                
-        return addVariable(e,(Model) model);
-    }
-    
-    private boolean addVariable(Element e, Model m){
-        if (e.getAttribute("id").equals("") || 
-            e.getAttribute("init").equals("") ||
-            e.getAttribute("min").equals("") ||
-            e.getAttribute("max").equals("")
-                )
-            return false;
-        
-        int init,min,max = 0;
-        try{
-            init = Integer.parseInt(e.getAttribute("init"));
-            min = Integer.parseInt(e.getAttribute("min"));
-            max = Integer.parseInt(e.getAttribute("max"));
-            
-        } catch(NumberFormatException exept){
-            return false;
+        String id = e.getAttribute("id");
+        String value = e.getAttribute("value");
+        int init = 0;
+        int min  = 0;
+        int max = 1;
+        Integer Type = ResourceVariableData.BINARY;
+       
+        if (!value.equals("")){
+            try{
+                float f = Float.parseFloat(value);
+                init = Math.round(f);
+                max = maxForInt;   
+                Type = ResourceVariableData.INTEGER;
+            } catch(NumberFormatException exept){
+                return false;
+            }
         }
-         
+                  
         ResourceVariableData var = new ResourceVariableData(e.getAttribute("id"), m.newId());
-        var.setType(ResourceVariableData.INTEGER);
+        var.setType(Type);
         var.setInitialValue(init);
         var.setMax(max);
         var.setMin(min);
@@ -84,11 +66,5 @@ public class ObjectifyVariableIntentionalOldModel implements ObjectifyXML {
         m.insertChild(m.getResourceRoot(), variable);
         return true;          
     }
-    
-    
-    
-
-
-
     
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,51 +34,26 @@ import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualiz
  * 
  * @author kbe
  */
-public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
+public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyIntentionalOldModel{
 
-    private static final String elementTag = "operation";
-    private static final String rootTag = "operations";
-    private static final Class model = Model.class;
+    private static final String elementTag = "operations";
+    private static final String rootTag = "assembly";
+    private static final String objectTag = "operation";
     
-    private final ConditionData condDataType = new  ConditionData("DWB"); 
+    private final ConditionData condDataType = new ConditionData("DWB"); 
 
     public ObjectifyOperationsIntentionalOldModel() {
+        super(rootTag,elementTag);
     }
         
-    
     @Override
-    public String getRootTag() {
-        return rootTag;
-    }
-
-    @Override
-    public String getElementTag() {
-        return elementTag;
-    }
-
-    @Override
-    public Class getModelClass() {
-        return model;
-    }
-    
-    
-    @Override
-    public Element addModelToDocument(Object m, Document d) {
+    public boolean addModelToElement(Object model, Element e) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean addElementToModel(Element e, Object model) {
-        if (!(this.model.isInstance(model))) return false;       
-        if (!(e.getTagName().equals(elementTag))) return false;
+    }    
         
-        // Add check of XML document structure so it matches expected...
-                
-        return addOperation(e,(Model) model);
-    }
-    
-    // Currently only adds all operation flat, i.e no hierarchy
-    private boolean addOperation(Element e, Model m){
+    @Override
+    protected boolean addElement(Element e, Model m){
+        if (!e.getTagName().equals(objectTag)) return false;
         if (!e.hasAttribute("id")) return false;
         OperationData od = new OperationData(e.getAttribute("id"),m.newId());
       
@@ -88,9 +64,7 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
     }
 
     
-    private boolean parseOperationContent(Element e, OperationData od, Model m) {
-        if (e==null || od == null) return false;
-        
+    private boolean parseOperationContent(Element e, OperationData od, Model m) {        
         for (Element child : getChildren(e)){
             if (child.getTagName().equals("precondition")||
                         child.getTagName().equals("postcondition") ||
@@ -109,8 +83,8 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
         if (!conds.containsKey(condDataType)){
             Map<ConditionType,Condition> newCond = new HashMap<ConditionType,Condition>();
-            newCond.put(ConditionsFromSopNode.ConditionType.PRE, new Condition());
-            newCond.put(ConditionsFromSopNode.ConditionType.POST, new Condition());
+            newCond.put(ConditionType.PRE, new Condition());
+            newCond.put(ConditionType.POST, new Condition());
             conds.put(condDataType, newCond);
         }
         
@@ -133,7 +107,12 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
                 expr.appendElement(type, getConditionElement(child,m));
             }
         }
-  
+        
+        // Remove empty
+        Condition pre = parserCondition.get(ConditionType.PRE);
+        Condition post = parserCondition.get(ConditionType.POST);       
+        if (pre!=null && !pre.hasGuard() && !pre.hasAction())  parserCondition.remove(ConditionType.PRE);
+        if (post!=null && !post.hasGuard() && !post.hasAction())  parserCondition.remove(ConditionType.POST);
     }
 
     private ConditionElement getConditionElement(Element e, Model m) {   
@@ -174,17 +153,6 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
         return new ConditionStatement(variable,op, value); 
     }
     
-    private List<Element> getChildren(Element e){
-        List<Element> set = new LinkedList<Element>();
-        if (e==null) return set;
-        NodeList list = e.getChildNodes();
-        for (int i=0 ; i<list.getLength() ; i++){
-            if (list.item(i) instanceof Element)
-                set.add((Element) list.item(i));
-        }
-        
-        return set;
-    }
     
     private String getVarId(String variableName,Model m){               
         for (TreeNode n : m.getAllVariables()){
@@ -194,8 +162,17 @@ public class ObjectifyOperationsIntentionalOldModel implements ObjectifyXML {
                 }
             }
         }
+        for (TreeNode n : m.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData){
+                if (n.getNodeData().getName().equals(variableName)){
+                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
+                }
+            }
+        }
         return variableName;                                
     }
+
+
 
 
     

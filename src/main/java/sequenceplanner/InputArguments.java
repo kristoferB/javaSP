@@ -49,7 +49,7 @@ public class InputArguments {
                 mGUIController.weightNonBlockingPlusVisualization(file);
             }
             
-            //Lift non-blocking problem + visualization DARPA--------------------
+            // Intentional xml
             matcher = Pattern.compile("intentional").matcher(command);
             if (matcher.find()) {
                 System.out.println("Intentional");

@@ -48,6 +48,9 @@ public class RelationsForOperationSet {
             return 0;
         }
 
+        saveFormalModel(mWmodPath);
+
+        
         //flatten out (EFA->DFA, Module -> Automata)
         final Automata automata = formalMethods.flattenOut(ms);
         if (automata == null) {
