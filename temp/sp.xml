@@ -71,7 +71,7 @@
     <operation id="o6" type="MoveToBlock" resource="r3" />
     <operation id="o7" type="ApplyGlueToBlocks" resource="r3" />
     <operation id="o8" type="Alternative" seam="s2" />
-    <operation id="o9" type="GlueBlocks" resource="r2" seam="s2">
+    <operation id="o9" type="GlueBlocks" resource="r2">
       <postaction>
         <Assign>
           <variableref id="v2" />
@@ -114,7 +114,7 @@
     <operation id="o16" type="MoveToResource" resource="r1" />
     <operation id="o17" type="DropBlock" resource="r1" />
     <operation id="o18" type="ApplyGlueToBlocks" resource="r2" />
-    <operation id="o19" type="GlueBlocks" resource="r2" seam="s2">
+    <operation id="o19" type="GlueBlocks" resource="r2">
       <postaction>
         <Assign>
           <variableref id="v3" />
@@ -157,7 +157,7 @@
     <operation id="o26" type="MoveToResource" resource="r1" />
     <operation id="o27" type="DropBlock" resource="r1" />
     <operation id="o28" type="ApplyGlueToBlocks" resource="r2" />
-    <operation id="o29" type="GlueBlocks" resource="r3" seam="s2">
+    <operation id="o29" type="GlueBlocks" resource="r3">
       <postaction>
         <Assign>
           <variableref id="v2" />
@@ -190,7 +190,7 @@
     <operation id="o33" type="DropBlock" resource="r1" />
     <operation id="o34" type="MoveToBlock" resource="r3" />
     <operation id="o35" type="ApplyGlueToBlocks" resource="r3" />
-    <operation id="o36" type="GlueBlocks" resource="r3" seam="s2">
+    <operation id="o36" type="GlueBlocks" resource="r3">
       <postaction>
         <Assign>
           <variableref id="v3" />
@@ -312,12 +312,6 @@
           </alternative>
         </opref>
       </parallel>
-    </spec>
-    <spec>
-        <arbitrary>
-            <opref id="o1" />
-            <opref id="o8" />
-        </arbitrary>
     </spec>
   </specs>
 </assembly>

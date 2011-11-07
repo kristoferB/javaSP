@@ -10,14 +10,14 @@ import sequenceplanner.model.Model;
  *
  * @author kbe
  */
-public class saveIntentionalXML {
+public class SaveIntentionalXML {
     
     //private final ObjectifyOperationsIntentionalOldModel op = new ObjectifyOperationsIntentionalOldModel();
     //private final ObjectifyVariableIntentionalOldModel var = new ObjectifyVariableIntentionalOldModel();
     private final ObjectifySOPIntentionalOldModel sop = new ObjectifySOPIntentionalOldModel();
 
 
-    public saveIntentionalXML(String fileToSave, Object model){
+    public SaveIntentionalXML(String fileToSave, Object model){
         //parse for old Model:
         Set<ObjectifyXML> s = new HashSet<ObjectifyXML>(); 
         s.add(sop);

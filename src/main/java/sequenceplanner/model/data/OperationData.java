@@ -25,7 +25,13 @@ public class OperationData extends Data {
     //Maps the pre and post conditions according to ConditionType, Condition
     private Map<ConditionData, Map<ConditionType, Condition>> mConditionMap;
     
-
+    // Temp fixes for Interntional. To be fixed in a better way
+    public boolean hasToFinish = false;
+    public String seam = "";
+    public String resource = "";
+    
+    
+    
     public OperationData(String name, int id) {
         super(name, id);
         algebraicCounter = 1;

@@ -48,7 +48,7 @@ public class RelationsForOperationSet {
             return 0;
         }
 
-        saveFormalModel(mWmodPath);
+        //saveFormalModel(mWmodPath);
 
         
         //flatten out (EFA->DFA, Module -> Automata)
@@ -61,7 +61,7 @@ public class RelationsForOperationSet {
 
         System.out.println("start synthesis");
 
-        saveFormalModel(mWmodPath);
+        //saveFormalModel(mWmodPath);
 
         //synthesis
         final Automaton automaton = formalMethods.synthesize(automata);
@@ -71,7 +71,6 @@ public class RelationsForOperationSet {
             return 0;
         }
         
-        saveFormalModel("D:/");
 
         System.out.println("end synthesis");
 

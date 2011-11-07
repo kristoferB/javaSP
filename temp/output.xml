@@ -1,1 +1,39 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><assembly><specs/></assembly>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <specs>
+    <spec>
+      <sequence>
+        <opref id="o1">
+          <sequence>
+            <parallel>
+              <sequence>
+                <opref id="o2"/>
+                <opref id="o3"/>
+                <opref id="o4"/>
+                <opref id="o5"/>
+                <opref id="o6"/>
+              </sequence>
+            </parallel>
+            <opref id="o7"/>
+          </sequence>
+        </opref>
+        <opref id="o8">
+          <opref id="o29">
+            <sequence>
+              <parallel>
+                <sequence>
+                  <opref id="o30"/>
+                  <opref id="o31"/>
+                  <opref id="o32"/>
+                  <opref id="o33"/>
+                  <opref id="o34"/>
+                </sequence>
+              </parallel>
+              <opref id="o35"/>
+            </sequence>
+          </opref>
+        </opref>
+      </sequence>
+    </spec>
+  </specs>
+</assembly>

@@ -56,6 +56,12 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
         if (!e.getTagName().equals(objectTag)) return false;
         if (!e.hasAttribute("id")) return false;
         OperationData od = new OperationData(e.getAttribute("id"),m.newId());
+        
+        if (e.hasAttribute("seam")){
+            od.hasToFinish = true;
+            od.seam = e.getAttribute("seam");
+        }
+        od.resource = e.getAttribute("resource");
       
         parseOperationContent(e,od,m); 
         m.createModelOperationNode(od);
@@ -66,18 +72,135 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
     
     private boolean parseOperationContent(Element e, OperationData od, Model m) {        
         for (Element child : getChildren(e)){
-            if (child.getTagName().equals("precondition")||
-                        child.getTagName().equals("postcondition") ||
-                        child.getTagName().equals("preaction")||
-                        child.getTagName().equals("postaction")){
-                    
-                    appendCondition(child,od,m);
+            if (child.getTagName().equals("precondition"))
+                appendCondition(child,od,m,ConditionType.PRE,true,false);
+            else if (child.getTagName().equals("postcondition"))
+                appendCondition(child,od,m,ConditionType.POST,true,false);
+            else if (child.getTagName().equals("preaction"))
+                appendCondition(child,od,m,ConditionType.PRE,false,true);
+            else if (child.getTagName().equals("postaction"))
+                appendCondition(child,od,m,ConditionType.POST,false,true);
+            
              }
             // find more content here
-        }
-
+        
         return true;
     }
+    
+    
+    
+    private boolean appendCondition(Element e,
+                                    OperationData od, 
+                                    Model m, 
+                                    ConditionType condType,
+                                    boolean guard,
+                                    boolean action)
+    {
+        if ((guard && action) || (!guard && !action)) return false;
+        
+        Condition condition = new Condition();   
+        if (guard) condition.setGuard(createExpression(e,m));
+        else if (action) condition.setAction(createExpression(e,m));
+        
+        ConditionData typeName = null;
+        if (!e.getAttribute("name").isEmpty()) typeName = new ConditionData(e.getAttribute("name"));
+        else typeName = condDataType;
+        od.addCondition(typeName, condType, condition);
+           
+        return true;
+    }
+
+
+
+    
+    private String getVarId(String variableName,Model m){               
+        for (TreeNode n : m.getAllVariables()){
+            if (n.getNodeData() instanceof ResourceVariableData){
+                if (n.getNodeData().getName().equals(variableName)){
+                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
+                }
+            }
+        }
+        for (TreeNode n : m.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData){
+                if (n.getNodeData().getName().equals(variableName)){
+                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
+                }
+            }
+        }
+        return variableName;                                
+    }
+
+    private ConditionExpression createExpression(Element e, Model m) {
+        ConditionExpression expr = new ConditionExpression();
+
+        ConditionOperator.Type operator = ConditionOperator.Type.AND;
+        if (e.getTagName().equals("OR")) operator = ConditionOperator.Type.OR;
+        
+        for (Element child : getChildren(e)){
+            if (child.getTagName().equals("AND") || child.getTagName().equals("OR")){
+                expr.appendElement(operator, createExpression(child,m));
+            } else{
+                ConditionStatement.Operator op = ConditionStatement.Operator.Equal;
+                if (child.getTagName().equals("Le")) op = ConditionStatement.Operator.LessEq;
+                else if (child.getTagName().equals("Lt")) op = ConditionStatement.Operator.Less;
+                else if (child.getTagName().equals("Ge")) op = ConditionStatement.Operator.GreaterEq;
+                else if (child.getTagName().equals("Gt")) op = ConditionStatement.Operator.Greater;    
+                else if (child.getTagName().equals("Ne")) op = ConditionStatement.Operator.NotEqual;
+                else if (child.getTagName().equals("Assign")){
+                    op = ConditionStatement.Operator.Assign;
+                    operator = ConditionOperator.Type.SEMIKOLON;
+                }
+                
+                String variable = "";
+                String value = "";
+                for (Element node : getChildren(child)){
+                    if (variable.isEmpty()){
+                        variable = getStatment(node,m);
+                    } else if (value.isEmpty()){
+                        value = getStatment(node,m);
+                    }
+                }
+                if (!variable.equals("") && !value.equals("")){
+                    expr.appendElement(operator, new ConditionStatement(variable,op, value));                     
+                } 
+            }
+        }
+        return expr;
+    }
+    
+    private String getStatment(Element e, Model m){
+        if (e.getTagName().equals("variableref")){
+            return getVarId(e.getAttribute("id"),m);
+        }
+        if (e.getTagName().equals("double")){
+            return e.getAttribute("value");
+        }
+        if (e.getTagName().equals("Plus")){
+            String plusString = "";
+            for (Element p : getChildren(e)){
+                if (!plusString.equals("")) plusString += "+";
+                plusString += getStatment(p,m);
+            }           
+            return plusString;
+        }
+        if (e.getTagName().equals("Minus")){
+            String minusString = "";
+            for (Element p : getChildren(e)){
+                if (!minusString.equals("")) minusString += "-";
+                minusString += getStatment(p,m);
+            }           
+            return minusString;
+        }
+        
+        return "";
+    }
+
+
+    
+    
+    
+    
 
     private void appendCondition(Element e, OperationData od, Model m) {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
@@ -114,6 +237,9 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
         if (pre!=null && !pre.hasGuard() && !pre.hasAction())  parserCondition.remove(ConditionType.PRE);
         if (post!=null && !post.hasGuard() && !post.hasAction())  parserCondition.remove(ConditionType.POST);
     }
+
+    
+
 
     private ConditionElement getConditionElement(Element e, Model m) {   
         String variable = "";
@@ -153,31 +279,6 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
         return new ConditionStatement(variable,op, value); 
     }
     
-    
-    private String getVarId(String variableName,Model m){               
-        for (TreeNode n : m.getAllVariables()){
-            if (n.getNodeData() instanceof ResourceVariableData){
-                if (n.getNodeData().getName().equals(variableName)){
-                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
-                }
-            }
-        }
-        for (TreeNode n : m.getAllOperations()){
-            if (n.getNodeData() instanceof OperationData){
-                if (n.getNodeData().getName().equals(variableName)){
-                    return Type.OPERATION_VARIABLE_PREFIX.toString() + n.getNodeData().getId();
-                }
-            }
-        }
-        return variableName;                                
-    }
-
-
-
-
-    
-
-
 
 
 

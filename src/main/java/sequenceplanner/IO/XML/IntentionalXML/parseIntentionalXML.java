@@ -10,19 +10,20 @@ import sequenceplanner.model.Model;
  *
  * @author kbe
  */
-public class parseIntentionalXML {
+public class ParseIntentionalXML {
     
     private final ObjectifyOperationsIntentionalOldModel op = new ObjectifyOperationsIntentionalOldModel();
     private final ObjectifyVariableIntentionalOldModel var = new ObjectifyVariableIntentionalOldModel();
     private final ObjectifySOPIntentionalOldModel sop = new ObjectifySOPIntentionalOldModel();
     private final ObjectifyResourceIntentionalOldModel res = new ObjectifyResourceIntentionalOldModel();
+    private final ObjectifySeamIntentionalOldModel seam = new ObjectifySeamIntentionalOldModel();
     private final Model oldModel;
 
 
-    public parseIntentionalXML(String xmlPath, Set<Object> models){
+    public ParseIntentionalXML(String xmlPath, Set<Object> models){
         //parse for old Model:
         Set<ObjectifyXML> s = new HashSet<ObjectifyXML>(); 
-        s.add(op); s.add(var);s.add(sop);s.add(res);
+        s.add(op); s.add(var);s.add(sop);s.add(res);s.add(seam);
         XMLDOMParser xmlp = new  XMLDOMParser(s,models); 
         Set<Object> filledModels = xmlp.loadModelFromFile(xmlPath) ;      
        
@@ -32,7 +33,12 @@ public class parseIntentionalXML {
                model = (Model) m;
                break;
            }
-        }
+        }                
+        
+        CreateBooking.createBookingForSeams(model);
+        CreateBooking.createBookingForResources(model);
+        model.sops.clear();
+        
         oldModel = model;    
     }    
    

@@ -9,6 +9,9 @@ import sequenceplanner.model.data.OperationData;
 public class SopNodeOperation extends ASopNode{
 
     private OperationData mOperation = null;
+    
+    // temp fix for interntional
+    public String bookResource = "";
 
     public SopNodeOperation(final OperationData iOperation) {
         super("operation");

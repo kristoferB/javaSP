@@ -467,8 +467,8 @@ public class GUIController {
     // Det känns inte så bra att ha dessa metoder här! KB
     public void intentionalXMLVisualize(String path){
         Set<Object> models =  new HashSet<Object>(); models.add(this.getGUIModel().getModel());
-        sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML parser =
-                new sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML(path,models);
+        sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML parser =
+                new sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML(path,models);
                 
         
         

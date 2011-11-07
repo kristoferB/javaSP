@@ -13,7 +13,9 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
+import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 
 /**
@@ -21,46 +23,64 @@ import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
  * @author kbe
  */
 public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
+    
+    Model model;
+    String fileToSave;
 
     public IntentionalWithoutWindowExecuter(String fileToLoad, String fileToSave) {
-        sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML parser =
-                new sequenceplanner.IO.XML.IntentionalXML.parseIntentionalXML(fileToLoad,null);
+        sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML parser =
+                new sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML(fileToLoad,null);
                 
-        Model m = parser.getModel();
+        this.model = parser.getModel();
+        this.fileToSave = fileToSave;
         
         // Algorithms:
-        createVisualizationForAllOperations(m);
+        createVisualizationForAllOperations();
         
-        // save
-        sequenceplanner.IO.XML.IntentionalXML.saveIntentionalXML save=
-                new sequenceplanner.IO.XML.IntentionalXML.saveIntentionalXML(fileToSave,m);
+        
         
     }
     
-    private void createVisualizationForAllOperations(Model m){
+    private void createVisualizationForAllOperations(){
         //Call Visualization Algorithm---------------------------------------
-            VisualizationAlgorithm mVisualizationAlgorithm = new VisualizationAlgorithm("Intentional", this);
+       
+        VisualizationAlgorithm mVisualizationAlgorithm = new VisualizationAlgorithm("Intentional", this);
 
-            final ISopNode allOperationsNode = new SopNode();
-            final ISopNode hasToFinishNode = new SopNode();
-            final ISopNode operationsToViewNode = new SopNode();
-            
-            Set<SopNodeOperation> allopsAsNodes = convertOperationsToNodes(m);
-            allOperationsNode.getFirstNodesInSequencesAsSet().addAll(allopsAsNodes);
-            operationsToViewNode.getFirstNodesInSequencesAsSet().addAll(allopsAsNodes);
-            
-            
-            //init
-            final List<Object> list = new ArrayList<Object>();
-            list.add(allOperationsNode);
-            list.add(operationsToViewNode);
-            list.add(hasToFinishNode);
-            list.add(conditionNameToIncludeSet);
-            list.add(resources);
-            mVisualizationAlgorithm.init(list);
+        final ISopNode allOperationsNode = new SopNode();
+        final ISopNode hasToFinishNode = new SopNode();
+        final ISopNode operationsToViewNode = new SopNode();
 
-            //start
-            mVisualizationAlgorithm.start();
+        Set<SopNodeOperation> allOpsAsNodes = convertOperationsToNodes(model);
+        allOperationsNode.getFirstNodesInSequencesAsSet().addAll(allOpsAsNodes);
+        operationsToViewNode.getFirstNodesInSequencesAsSet().addAll(allOpsAsNodes);
+        Set<ConditionData> conditionNameToIncludeSet = new HashSet<ConditionData>();
+
+        for (SopNodeOperation op : allOpsAsNodes){
+            if (op.getOperation().hasToFinish){
+                hasToFinishNode.addNodeToSequenceSet(op);
+            }
+            conditionNameToIncludeSet.addAll(op.getOperation().getConditions().keySet());
+        }
+
+        Set<ResourceVariableData> resources = new HashSet<ResourceVariableData>();
+        for (TreeNode n : model.getAllVariables()){
+            if (n.getNodeData() instanceof ResourceVariableData){
+                resources.add((ResourceVariableData)n.getNodeData());
+            }
+        }
+
+
+        //init
+        final List<Object> list = new ArrayList<Object>();
+        list.add(allOperationsNode);
+        list.add(operationsToViewNode);
+        list.add(hasToFinishNode);
+        list.add(conditionNameToIncludeSet);
+        list.add(resources);
+        mVisualizationAlgorithm.init(list);
+
+        //start
+        mVisualizationAlgorithm.start();
     }
     
     private void createVisualizationForEachViewInModel(Model m){
@@ -84,14 +104,13 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
 
         if (iList.get(0) instanceof ISopNode) {
             final ISopNode sopNode = (ISopNode) iList.get(0);
-
-            newMessageFromAlgorithm("...drawing...", null);
-
-            //Translate datastructure to graph in operation view.
-            //mOpView.drawGraph(sopNode);
-
-            newMessageFromAlgorithm("...finished", null);
+            model.sops.add(sopNode);          
         }
+        
+        // save
+        sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML save=
+                new sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML(fileToSave,model);
+        
     }
 
     @Override

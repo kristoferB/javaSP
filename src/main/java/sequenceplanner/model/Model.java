@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import sequenceplanner.datamodel.condition.Condition;
 
+import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
@@ -63,6 +64,11 @@ public class Model extends Observable implements IModel {
     // Holds the root to the View folder, to enhance redability of code.
     protected TreeNode viewRoot;
 
+    // Temporary fixes for intentional 
+    // The sop are here due to bad integration with View. Must be fixed.
+    public Set<Seam> seams = new HashSet<Seam>();
+    public Set<ISopNode> sops = new HashSet<ISopNode>();
+    
     public Model() {
         init();
     }
@@ -931,6 +937,16 @@ public class Model extends Observable implements IModel {
             }
         }
         return operations;
+    }
+    
+    public List<TreeNode> getAllViews() {
+        List<TreeNode> views = new LinkedList();
+        for (int i=0; i<getViewRoot().getChildCount();i++){
+            if (getViewRoot().getChildAt(i).getNodeData() instanceof ViewData){
+                views.add(getViewRoot().getChildAt(i));
+            }
+        } 
+        return views;
     }
 
     public List<TreeNode> getAllVariables() {

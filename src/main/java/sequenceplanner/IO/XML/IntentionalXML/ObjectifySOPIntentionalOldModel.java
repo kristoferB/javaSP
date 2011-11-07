@@ -10,6 +10,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import sequenceplanner.IO.XML.ObjectifyXML;
 import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionOperator;
+import sequenceplanner.datamodel.condition.ConditionOperator.Type;
+import sequenceplanner.datamodel.condition.ConditionStatement;
+import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.*;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
@@ -41,10 +45,15 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     
     @Override
     public boolean addModelToElement(Object model, Element e){
+        if (!(model instanceof Model)) return false;
+        if (!e.getTagName().equals(rootTag)) return false;
+        e.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        e.setAttribute("xsi:noNamespaceSchemaLocation", "SeamAssembly.xsd");
+        
+        
         Element element = e.getOwnerDocument().createElement(elementTag);
         e.appendChild(element);
-        
-        return false; //addSOPstoElement((Model) model, eRoot);
+        return addSOPstoElement(element, (Model)model);
     }
 
     
@@ -52,7 +61,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     protected boolean addElement(Element e, Model m){
         if (!e.getTagName().equals(objectTag)) return false;
         ISopNode sop = createSOP(e, m);
-        System.out.println(sop.toString());
+        //System.out.println(sop.toString());
         return saveSOPToModel(sop,m);
         
     }
@@ -121,6 +130,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     }
     
     private boolean saveSOPToModel(ISopNode sop, Model m) {
+        m.sops.add(sop);
         
         ConditionsFromSopNode cfsn = new ConditionsFromSopNode(sop);
         Map<OperationData, Map<ConditionType, Condition>> map = cfsn.getmOperationConditionMap();
@@ -141,61 +151,69 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         
         return true;
         
-        
-//        SopNodeToolboxSetOfOperations toolbox = new SopNodeToolboxSetOfOperations();
-//        
-//        int id = m.newId();
-//        ViewData vd = new ViewData("Intentional "+id,id);
-//        OperationView ov = new OperationView(m, vd);
-//        m.getViewRoot().insert(new TreeNode(vd));
-//        
-//        toolbox.drawNode(sop, ov.getGraph());
-//        return true;
-        
-        
-        //throw new UnsupportedOperationException("Not yet implemented");
+       
     }
     
-    private boolean addSOPstoElement(Model m, Element eRoot) {
-        TreeNode viewRoot = m.getViewRoot();
-        for (int i=0 ; i< viewRoot.getChildCount();i++){
-            TreeNode n = viewRoot.getChildAt(i);
-            if (n.getNodeData() instanceof ViewData){
-                ViewData data = (ViewData) n.getNodeData();
-                ISopNode sop = data.mSopNodeForGraphPlus.getRootSopNode(false);
-                if (sop != null){
-                    Element eSop = eRoot.getOwnerDocument().createElement(elementTag);
-                    eRoot.appendChild(eSop);
-                    convertSopToElement(sop,eSop);
-                }
-            }
-        }        
+    private boolean addSOPstoElement(Element eRoot, Model m) {
+        for (ISopNode sop : m.sops){
+           if (sop != null){
+                Element eSop = eRoot.getOwnerDocument().createElement(objectTag);
+                eRoot.appendChild(eSop);
+                convertSopToElement(sop,eSop);
+            } 
+        }       
         return true;
     }
 
     private void convertSopToElement(ISopNode sop, Element e) {
         if (sop == null || e == null) return;
+        Element insert = e;
         Element newElement = null;
+        
+        if (sop.getSuccessorNode() != null && !e.getTagName().equals("sequence")){
+            newElement = e.getOwnerDocument().createElement("sequence");  
+            e.appendChild(newElement);
+            insert = newElement;           
+        }
+        
         if (sop instanceof SopNode){
-            newElement = e;
-        }else if (sop instanceof SopNodeOperation){
+            newElement = insert;
+        } else if (sop instanceof SopNodeOperation){
             String opName = null;
             if (sop.getOperation() != null){
                 opName = sop.getOperation().getName();
             } else opName = "noName";
-            newElement = e.getOwnerDocument().createElement("opref");
+            newElement = insert.getOwnerDocument().createElement("opref");
             newElement.setAttribute("id", opName);           
-            e.appendChild(newElement);
-        } else {
-            newElement = e.getOwnerDocument().createElement(sop.typeToString());
-            e.appendChild(newElement);
+            insert.appendChild(newElement);
+        } else if (sop instanceof SopNodeAlternative){
+            newElement = insert.getOwnerDocument().createElement("alternative");
+            insert.appendChild(newElement);
+        } else if (sop instanceof SopNodeParallel){
+            newElement = insert.getOwnerDocument().createElement("parallel");
+            insert.appendChild(newElement);
+        } else if (sop instanceof SopNodeArbitrary){
+            newElement = insert.getOwnerDocument().createElement("arbitrary");
+            insert.appendChild(newElement);
+        }                
+        
+        if (!sop.sequenceSetIsEmpty() && sop.getFirstNodesInSequencesAsSet().size() > 1){
+            Element parra = newElement.getOwnerDocument().createElement("sequence");  
+            newElement.appendChild(parra);
+            newElement = parra;  
         }
         
         for (ISopNode n : sop.getFirstNodesInSequencesAsSet()){
             convertSopToElement(n,newElement);
         }
+
+        if (sop.getSuccessorNode() != null){
+            convertSopToElement(sop.getSuccessorNode(),insert);
+        }
         
     }
+
+
 
     
 }

@@ -95,6 +95,7 @@
                     </execution>
                 </executions>
             </plugin>
+            
 	<!-- Should do some work with assembly-plugin and jar-plugin to make a real install file -->
         </plugins>
     </build>

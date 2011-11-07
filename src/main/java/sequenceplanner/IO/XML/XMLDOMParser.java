@@ -88,7 +88,7 @@ public class XMLDOMParser {
     
     
     private Document parse(String path) throws SAXException, IOException, ParserConfigurationException {        
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File("temp/sp.xml"));  
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(path));  
     }
     
  

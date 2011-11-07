@@ -80,6 +80,8 @@ public class XMLDOMSaver {
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
             xformer.setOutputProperty(OutputKeys.METHOD, "xml");
             xformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+            xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             xformer.transform(source, result);
             
         } catch (IOException ex) {
@@ -102,7 +104,7 @@ public class XMLDOMSaver {
         Element e = d.createElement(this.rootElement);
         d.appendChild(e);
         for (ObjectifyXML o : this.objectifiers){
-            o.addModelToElement(this.modelTypes.get(o.getModelClass()), e);
+            o.addModelToElement(this.modelTypes.get(o.getModelClass().getName()), e);
         }
         
     }

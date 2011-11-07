@@ -738,7 +738,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public static synchronized void printToConsole(String text) {
-        console.append(text + "\n");
+        if (console != null)
+            console.append(text + "\n");
         System.out.println("printToConsole: " + text);
     }
 
