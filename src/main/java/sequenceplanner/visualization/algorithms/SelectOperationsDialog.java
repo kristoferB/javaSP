@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,7 @@ import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -206,6 +208,14 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
                     conditionNameToIncludeSet.add(condition);
                 }
             }
+            
+            Set<ResourceVariableData> resources = new HashSet<ResourceVariableData>();
+            for (TreeNode n : mModel.getAllVariables()){
+                if (n.getNodeData() instanceof ResourceVariableData){
+                    resources.add((ResourceVariableData)n.getNodeData());
+                }
+            }
+            
             //Call Visualization Algorithm---------------------------------------
             mVisualizationAlgorithm = new VisualizationAlgorithm("FromVisualizationDialog", this);
 
@@ -215,6 +225,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
             list.add(operationsToViewNode);
             list.add(hasToFinishNode);
             list.add(conditionNameToIncludeSet);
+            list.add(resources);
             mVisualizationAlgorithm.init(list);
 
             //start
@@ -298,5 +309,8 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
         jlStatus.setText("Status: " + iMessage);
         repaint();
     }
+    
+    // Should not be done here
+    
 }
 

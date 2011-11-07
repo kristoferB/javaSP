@@ -15,15 +15,17 @@ import org.supremica.automata.algorithms.SynchronizationType;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
 import org.supremica.automata.algorithms.SynthesizerOptions;
+import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
-import sequenceplanner.IO.EFA.SModule;
+import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * SP->EFA translation based on {@link SModule}, {@link SEFA}, and {@link SEGA}.<br/>
@@ -32,17 +34,22 @@ import sequenceplanner.model.data.OperationData;
 public class SupremicaInteractionForVisualization implements ISupremicaInteractionForVisualization {
 
     private final Set<ConditionData> mConditionsToInclude;
+    private final Set<ResourceVariableData> resources;
     private Set<Integer> mAllOperationSet = new HashSet<Integer>(); //All operations
-    private SModule mModule = new SModule("temp");
-    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
+    private EmptyModule mmModule = new EmptyModule("visualizationBeforeSynthesisModule", null);
+//    private SModule mModule = new SModule("temp");
+//    private SEFA mEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mModule);
+    private SEFA mmEfa = new SEFA(Type.BIG_FLOWER_EFA_NAME.toString(), mmModule.getAvocadesModule());
 
-    public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude) {
+    public SupremicaInteractionForVisualization(final Set<ConditionData> iConditionsToInclude, Set<ResourceVariableData> resources) {
         this.mConditionsToInclude = iConditionsToInclude;
+        this.resources = resources;
     }
 
     @Override
     public Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA(iModuleSubject);
+        iModuleSubject = EmptyModule.getMonolithicReachabilityModule(iModuleSubject);
+        return EmptyModule.getDFA(iModuleSubject);
     }
 
     @Override
@@ -65,10 +72,16 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 return null;
             }
         }
+        
+        // Add resource variables
+        for (ResourceVariableData r : resources){
+            String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + r.getId();
+            mmModule.addIntVariable(varName, r.getMin(), r.getMax(), r.getInitialValue(), null);
+        }
 
         SEGA ega;
         //Create center in flower automaton
-        mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
+        mmEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
         for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
             if (!(node instanceof SopNodeOperation)) {
@@ -79,13 +92,21 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             final int id = opData.getId();
             final String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + id;
 
+            // test
+            
+            
+            
+            //end test
+            
             //Add integer variable for operation---------------------------------
             Integer marking = null;
             if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
                 marking = 2;
             }
-            mModule.addIntVariable(varName, 0, 2, 0, marking);
+            mmModule.addIntVariable(varName, 0, 2, 0, marking);
             //-------------------------------------------------------------------
+            
+            
 
             //Add transition to start execute operation--------------------------
             ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
@@ -93,7 +114,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD, mConditionsToInclude);
             ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=1");
-            mEfa.addStandardSelfLoopTransition(ega);
+            mmEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
 
             //Add transition to finish execute operation-------------------------
@@ -102,12 +123,14 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD, mConditionsToInclude);
             ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION, mConditionsToInclude);
             ega.addAction(varName + "=2");
-            mEfa.addStandardSelfLoopTransition(ega);
+            mmEfa.addStandardSelfLoopTransition(ega);
             //-------------------------------------------------------------------
         }
 
-        return mModule.generateTransitions();
+        return mmModule.getModuleSubject();
     }
+    
+    
 
     @Override
     public Map<String, Set<String>> getStateSpaceForEventSetMap(final Automaton iAutomaton) {
@@ -118,9 +141,10 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         //Loop states and events to fill map-------------------------------------
         for (final StateProxy sp : iAutomaton.getStates()) {
             String stateName = sp.getName();
-            if(nr++%100==0) {
-                System.out.println(nr);
+            if(nr%1000==0) {
+                GUIView.printToConsole("On state " + nr + " in state space");
             }
+            ++nr;
             for (final Arc arc : iAutomaton.getStateWithName(stateName).getOutgoingArcs()) {
                 //Remove the single EFA location "pm"
                 stateName = stateName.replaceAll("." + SEFA.SINGLE_LOCATION_NAME, "").replaceAll(SEFA.SINGLE_LOCATION_NAME + ".", "");
@@ -158,6 +182,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 iAutomata = as.execute();
                 return iAutomata.getFirstAutomaton();
             } catch (Exception e) {
+                GUIView.printToConsole("Error in synthesis. I can not go on!");
                 System.out.println(e.toString());
             }
         }
@@ -166,6 +191,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mModule.saveToWMODFile(iFilePath, mModule.getModuleSubject());
+        return mmModule.saveToWMODFile(iFilePath);
     }
 }

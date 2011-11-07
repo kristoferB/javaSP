@@ -6,33 +6,36 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.sourceforge.waters.subject.module.EventDeclSubject;
 import net.sourceforge.waters.subject.module.ModuleSubject;
+import net.sourceforge.waters.xsd.base.EventKind;
 import org.supremica.automata.Arc;
-import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
+import org.supremica.automata.BDD.EFA.BDDExtendedSynthesizer;
+import org.supremica.automata.ExtendedAutomata;
+import org.supremica.automata.ExtendedAutomaton;
 import org.supremica.automata.State;
-import org.supremica.automata.algorithms.AutomataSynthesizer;
-import org.supremica.automata.algorithms.SynchronizationOptions;
-import org.supremica.automata.algorithms.SynchronizationType;
+import org.supremica.automata.algorithms.EFAMonlithicReachability;
+import org.supremica.automata.algorithms.EditorSynthesizerOptions;
+import org.supremica.automata.algorithms.Guard.BDDExtendedGuardGenerator;
 import org.supremica.automata.algorithms.SynthesisAlgorithm;
 import org.supremica.automata.algorithms.SynthesisType;
-import org.supremica.automata.algorithms.SynthesizerOptions;
+import sequenceplanner.IO.EFA.EmptyModule;
 import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
-import sequenceplanner.IO.EFA.SModule;
 import sequenceplanner.algorithm.AAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeOperation;
-import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
@@ -42,6 +45,10 @@ import sequenceplanner.model.data.OperationData;
  * weights for the {@link Block}s in each seam. The weight to lift has to be less
  * than the payload for given resource.<br/>
  * DARPA<br/>
+ * För att köra från kommandoprompten:
+ * Skapa jar fil av SP, sedan:
+ * java -jar SP.jar weightDARPA “hela sökvägen till xml-filen med dubbel backslash”
+ * Ex: C:\\Users\\patrik\\Desktop\\seamAssembly_Multiblocks.xml
  * @author patrik
  */
 public class Algorithm extends AAlgorithm {
@@ -50,7 +57,7 @@ public class Algorithm extends AAlgorithm {
     Set<Block> mBlockToLiftSet;
     Resource mResource;
     Map<Double, Integer> mWeightMap;
-    SModule mModule;
+    EmptyModule mModule;
     SEFA mEfa;
     ISopNode mRootSopNode;
 
@@ -59,8 +66,8 @@ public class Algorithm extends AAlgorithm {
         addAlgorithmListener(iListener);
         mSeamSet = new HashSet<Seam>();
         mBlockToLiftSet = new HashSet<Block>();
-        mModule = new SModule("temp");
-        mEfa = new SEFA("Weight", mModule);
+        mModule = new EmptyModule("temp", null);
+        mEfa = new SEFA("Weight", mModule.getAvocadesModule());
     }
 
     /**
@@ -79,8 +86,11 @@ public class Algorithm extends AAlgorithm {
         //Get weights------------------------------------------------------------
         //The sum of each powerset element gives all possible weight sums.
         final List<Double> weightList = new ArrayList<Double>();
+        final List<Double> toCheckList = new ArrayList<Double>();
         for (final Seam seam : mSeamSet) {
             weightList.add(seam.toAdd.mWeight);
+            toCheckList.add(seam.toAdd.mWeight);
+            weightList.add(seam.addTo.mWeight);
         }
         weightList.add(mResource.mPayload);
 
@@ -89,7 +99,7 @@ public class Algorithm extends AAlgorithm {
 
         //Check------------------------------------------------------------------
         //The resource can lift(execute) all seams(operations)
-        for (final Double d : weightList) {
+        for (final Double d : toCheckList) {
             if (!weightSet.contains(d)) {
                 fireNewMessageEvent("Resoruce cannot lift all blocks.");
                 return;
@@ -99,11 +109,14 @@ public class Algorithm extends AAlgorithm {
         discretizeDoubleToInteger(weightSet);
         printMapToModuleComments();
 
+//        final ModuleSubject ms = buildModuleSubject2();
+//        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\");
+//        reachabilityToGuards(ms);
+
         //Create automata--------------------------------------------------------
-        final ModuleSubject ms = mainAlgorithm();
-//        saveSupervisorAsWmodFile("C:\\Users\\patrik\\Desktop\\weight.wmod"); //Send .wmod to Desktop
-        final Automata automata = flattenOut(ms);
-        final Automaton supervisor = synthesize(automata);
+        final ModuleSubject ms = buildModuleSubject();
+//        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\"); //Send .wmod to Desktop
+        final Automaton supervisor = EmptyModule.flattenOutAndGetMonolithicSupervisor(ms);
 
         //Check------------------------------------------------------------------
         //Supervisor exists?
@@ -116,6 +129,60 @@ public class Algorithm extends AAlgorithm {
         returnList.add(mRootSopNode);
 
         fireFinishedEvent(returnList);
+    }
+
+    void reachabilityToGuards(ModuleSubject ms) {
+        //Easier to work with extended automata than module subject
+        final ExtendedAutomata extendedAutomata = new ExtendedAutomata(ms);
+
+        //Only one flower/efa/automaton
+        final ExtendedAutomaton efa = extendedAutomata.getExtendedAutomataList().iterator().next();
+
+        //Calculate reachability graph and save as extended automaton
+        final EFAMonlithicReachability efaMR = new EFAMonlithicReachability(efa.getComponent(), extendedAutomata.getVars(), efa.getAlphabet());
+
+        final ExtendedAutomaton efaMRautomaton = new ExtendedAutomaton(extendedAutomata, efaMR.createEFA());
+
+        //Remove flower and variables
+        ms.getComponentListModifiable().clear();
+        extendedAutomata.getExtendedAutomataList().clear();
+        extendedAutomata.getVars().clear();
+
+        //Add reachability graph automaton
+        extendedAutomata.addAutomaton(efaMRautomaton);
+
+        mModule.saveToWMODFile("C:\\Users\\patrik\\Desktop\\"); //Send .wmod to Desktop
+
+        //Synthesize
+        final EditorSynthesizerOptions options = new EditorSynthesizerOptions();
+
+        options.setSynthesisType(SynthesisType.NONBLOCKING);
+        options.setSynthesisAlgorithm(SynthesisAlgorithm.PARTITIONBDD);
+//        options.setSynthesisAlgorithm(SynthesisAlgorithm.MONOLITHICBDD);
+        final BDDExtendedSynthesizer bddSynthesizer = new BDDExtendedSynthesizer(extendedAutomata, options);
+        bddSynthesizer.synthesize(options);
+
+        //Guard extraction
+        final Vector<String> eventNames = new Vector<String>();
+
+        for (final EventDeclSubject sigmaS : ms.getEventDeclListModifiable()) {
+            if (sigmaS.getKind() == EventKind.CONTROLLABLE)// || sigmaS.getKind() == EventKind.UNCONTROLLABLE)
+            {
+                eventNames.add(sigmaS.getName());
+            }
+        }
+
+        options.setExpressionType(1); //0=fromForbiddenStates, 1=fromAllowedStates, 2=mix
+        bddSynthesizer.generateGuard(eventNames, options);
+        final Map<String, BDDExtendedGuardGenerator> event2guard = bddSynthesizer.getEventGuardMap();
+
+        //Print guards
+        for (final String event : event2guard.keySet()) {
+            final BDDExtendedGuardGenerator bddegg = event2guard.get(event);
+            final String guard = bddegg.getGuard();
+            System.out.println("event with guard " + event + " " + guard);
+
+        }
     }
 
     ISopNode createOperationsFromAutomaton(Automaton iAutomation) {
@@ -218,7 +285,7 @@ public class Algorithm extends AAlgorithm {
         iOpAfter.setConditions(new ConditionData(iOpBefore.getName() + "_"), map);
     }
 
-    ModuleSubject mainAlgorithm() {
+    ModuleSubject buildModuleSubject() {
 
         //Create center in flower automaton
         mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
@@ -229,11 +296,11 @@ public class Algorithm extends AAlgorithm {
 
         //Add integer variable for weights
         //Each toAdd can occur in many seams, so a set is required.
-        final Map<String,Double> variableWeightMap = new HashMap<String, Double>();
+        final Map<String, Double> variableWeightMap = new HashMap<String, Double>();
         for (final Seam seam : mSeamSet) {
             variableWeightMap.put(seam.toAdd.variable(), seam.toAdd.mWeight);
         }
-        for(final String variable : variableWeightMap.keySet()) {
+        for (final String variable : variableWeightMap.keySet()) {
             mModule.addIntVariable(variable, 0, mWeightMap.size() - 1, mWeightMap.get(variableWeightMap.get(variable)), null);
         }
 
@@ -255,7 +322,61 @@ public class Algorithm extends AAlgorithm {
             }
         }
 
-        return mModule.generateTransitions();
+        return mModule.getModuleSubject();
+    }
+
+    ModuleSubject buildModuleSubject2() {
+
+        //Create center in flower automaton
+        mEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
+
+        for (final Seam seam : mSeamSet) {
+            mBlockToLiftSet.add(seam.toAdd);
+        }
+
+        //Add integer variable for weights
+        //Each toAdd can occur in many seams, so a set is required.
+        final Map<String, Double> variableWeightMap = new HashMap<String, Double>();
+        for (final Seam seam : mSeamSet) {
+            variableWeightMap.put(seam.toAdd.variable(), seam.toAdd.mWeight);
+            variableWeightMap.put(seam.addTo.variable(), seam.addTo.mWeight);
+        }
+        for (final String variable : variableWeightMap.keySet()) {
+            mModule.addIntVariable(variable, 0, 100000, variableWeightMap.get(variable).intValue(), null);
+        }
+
+
+        for (final Seam seam : mSeamSet) {
+
+            //Add integer variable for lift of block-----------------------------
+            mModule.addIntVariable(seam.executed(), 0, 1, 0, 1);
+
+            //Add transition for seam
+            //Event------------------------------------------------------
+            final String event1 = seam.eventLabel();
+//            System.out.println(event1);
+            SEGA ega = new SEGA(event1);
+
+            //Guard------------------------------------------------------
+            final String guard1 = seam.toAdd.variable() + "<" + mResource.mPayload.intValue();
+            ega.andGuard(guard1);
+            final String guard3 = seam.executed() + "==" + "0";
+            ega.andGuard(guard3);
+
+            //Action-----------------------------------------------------
+            final String action1 = seam.toAdd.variable() + "=" + seam.toAdd.variable() + "+" + seam.addTo.variable();
+            ega.addAction(action1);
+            final String action2 = seam.addTo.variable() + "=" + seam.addTo.variable() + "+" + seam.toAdd.variable();
+            ega.addAction(action2);
+
+            final String action3 = seam.executed() + "=" + "1";
+            ega.addAction(action3);
+
+            //Add transition---------------------------------------------
+            mEfa.addStandardSelfLoopTransition(ega);
+        }
+
+        return mModule.getModuleSubject();
     }
 
     /**
@@ -320,37 +441,6 @@ public class Algorithm extends AAlgorithm {
             return mWeightMap.get(iDouble);
         }
         return mWeightMap.get(mResource.mPayload);
-    }
-
-    Automata flattenOut(ModuleSubject iModuleSubject) {
-        return (Automata) mModule.getDFA(iModuleSubject);
-    }
-
-    Automaton synthesize(Automata iAutomata) {
-        if (iAutomata != null) {
-
-            final SynthesizerOptions syntho = new SynthesizerOptions();
-            syntho.setSynthesisType(SynthesisType.NONBLOCKING);
-            syntho.setSynthesisAlgorithm(SynthesisAlgorithm.MONOLITHIC);
-            syntho.setPurge(true);
-
-            final SynchronizationOptions syncho = new SynchronizationOptions();
-            syncho.setSynchronizationType(SynchronizationType.FULL);
-
-            final AutomataSynthesizer as = new AutomataSynthesizer(iAutomata, syncho, syntho);
-
-            try {
-                iAutomata = as.execute();
-                return iAutomata.getFirstAutomaton();
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
-        }
-        return null;
-    }
-
-    boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mModule.saveToWMODFile(iFilePath, mModule.getModuleSubject());
     }
 
     List<List<Double>> powerSet(List<Double> list) {

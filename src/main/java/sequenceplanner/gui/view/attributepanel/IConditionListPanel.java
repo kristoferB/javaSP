@@ -1,6 +1,6 @@
 package sequenceplanner.gui.view.attributepanel;
 
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.model.data.ConditionData;
 
 /**

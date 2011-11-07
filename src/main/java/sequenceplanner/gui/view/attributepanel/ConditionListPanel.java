@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.gui.controller.AttributeMouseAdapter;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
@@ -147,6 +147,8 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
         editor.mConditionData = conditionKey;
         //Place the String in the input text window
         editor.setConditionString(conditionString);
+        
+        editor.setConditionTypeString(conditionKey.getName());
 
         deleteCondition(conditionKey.getName());
     }

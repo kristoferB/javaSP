@@ -3,7 +3,7 @@ package sequenceplanner.efaconverter.efamodel.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
-import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.efaconverter.efamodel.SpLocation;
 import sequenceplanner.efaconverter.efamodel.SpTransition;
 

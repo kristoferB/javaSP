@@ -12,8 +12,9 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
-import sequenceplanner.condition.Condition;
+import sequenceplanner.datamodel.condition.Condition;
 
+import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
@@ -63,6 +64,11 @@ public class Model extends Observable implements IModel {
     // Holds the root to the View folder, to enhance redability of code.
     protected TreeNode viewRoot;
 
+    // Temporary fixes for intentional 
+    // The sop are here due to bad integration with View. Must be fixed.
+    public Set<Seam> seams = new HashSet<Seam>();
+    public Set<ISopNode> sops = new HashSet<ISopNode>();
+    
     public Model() {
         init();
     }
@@ -667,7 +673,7 @@ public class Model extends Observable implements IModel {
             result = isResource(pData) || parent == getResourceRoot();
 
         } else if (isVariable(cData)) {
-            result = isResource(pData);
+            result = isResource(pData) || parent == getResourceRoot();
 
         } else if (isLiason(cData)) {
             result = isLiason(pData) || parent == getLiasonRoot();
@@ -932,28 +938,41 @@ public class Model extends Observable implements IModel {
         }
         return operations;
     }
+    
+    public List<TreeNode> getAllViews() {
+        List<TreeNode> views = new LinkedList();
+        for (int i=0; i<getViewRoot().getChildCount();i++){
+            if (getViewRoot().getChildAt(i).getNodeData() instanceof ViewData){
+                views.add(getViewRoot().getChildAt(i));
+            }
+        } 
+        return views;
+    }
 
-    public LinkedList<TreeNode> getAllVariables() {
+    public List<TreeNode> getAllVariables() {
+        List<TreeNode> variables = getVariableFromNode(this.resourceRoot);
+        variables.addAll(getVariableFromNode(this.variableRoot));   
+        return variables;
+    }
+    
+    private List<TreeNode> getVariableFromNode(TreeNode node){
         LinkedList<TreeNode> variables = new LinkedList<TreeNode>();
 
-        if (variableRoot == null || variableRoot.getChildCount() == 0) {
+        if (node == null || node.getChildCount() == 0) {
             return variables;
         }
 
         Stack<TreeNode> children = new Stack<TreeNode>();
-        for (int i = 0; i < variableRoot.getChildCount(); i++) {
-            if (Model.isVariable(variableRoot.getChildAt(i).getNodeData())) {
-                children.push(variableRoot.getChildAt(i));
-            }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            children.push(node.getChildAt(i));
         }
 
         while (!children.isEmpty()) {
             TreeNode temp = children.pop();
-            variables.add(temp);
+            if (Model.isVariable(temp.getNodeData()))
+                variables.add(temp);
             for (int i = 0; i < temp.getChildCount(); i++) {
-                if (Model.isVariable(temp.getChildAt(i).getNodeData())) {
-                    children.push(temp.getChildAt(i));
-                }
+                children.push(temp.getChildAt(i));
             }
         }
         return variables;

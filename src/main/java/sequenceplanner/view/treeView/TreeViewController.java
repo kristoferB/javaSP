@@ -185,6 +185,25 @@ public class TreeViewController {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() >= 1) {
+                TreePath path = view.tree.getPathForLocation(e.getX(), e.getY());
+                if (path != null) {
+                    TreeNode t = (TreeNode) path.getLastPathComponent();
+                    if (Model.isOperation(t.getNodeData())){
+                        controller.addPropertyPanelView((OperationData) t.getNodeData());
+                    }
+                    
+                    if (Model.isView(t.getNodeData())) {
+                        if (e.getClickCount() >= 2) {
+                            controller.getView().setOperationViewFocus(t);
+                        }
+                    }
+                    
+                    
+                }
+            }
+            
+            
             if (e.getClickCount() >= 2) {
                 TreePath path = view.tree.getPathForLocation(e.getX(), e.getY());
 

@@ -5,6 +5,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
+import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.view.operationView.OperationView;
 
 /**
@@ -26,6 +27,7 @@ public class PerformVisualization implements IPerformVisualization {
     private RelationContainer mRC;
     private String mWmodPath = "";
     private Set<ConditionData> mConditionsToInclude;
+    private Set<ResourceVariableData> resources;
 
 
     /**
@@ -73,7 +75,7 @@ public class PerformVisualization implements IPerformVisualization {
 
     @Override
     public RelationContainer identifyRelations() {
-        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath, mConditionsToInclude);
+        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath, mConditionsToInclude,this.resources);
         switch (rfos.run()) {
             case 0: //Errors have occured
                 return null;
@@ -110,5 +112,9 @@ public class PerformVisualization implements IPerformVisualization {
 
     public void setmRC(RelationContainer mRC) {
         this.mRC = mRC;
+    }
+    
+    public void addResources(Set<ResourceVariableData> resources){
+        this.resources = resources;
     }
 }

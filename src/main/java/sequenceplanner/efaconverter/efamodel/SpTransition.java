@@ -1,8 +1,8 @@
 
 package sequenceplanner.efaconverter.efamodel;
 
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionExpression;
 
 /**
  *

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-import sequenceplanner.condition.Condition;
-import sequenceplanner.condition.ConditionElement;
-import sequenceplanner.condition.ConditionExpression;
-import sequenceplanner.condition.ConditionStatement;
+import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionElement;
+import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
@@ -25,7 +25,6 @@ class Operation extends AOperation {
         super(iOperationData);
     }
 
-    @Override
     Set<String> getPredecessors() {
         final Set<String> returnSet = new HashSet<String>();
         final Map<ConditionData, Map<ConditionType, Condition>> map = mOperationData.getConditions();
@@ -68,7 +67,7 @@ class Operation extends AOperation {
         return returnSet;
     }
 
-    @Override
+
     ConditionElement inOperation() {
         if (mResourceSet.size() == 1) {
         }

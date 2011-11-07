@@ -4,6 +4,9 @@
  */
 package sequenceplanner.IO.XML;
 
+import sequenceplanner.IO.XML.IntentionalXML.ObjectifyVariableIntentionalOldModel;
+import sequenceplanner.IO.XML.IntentionalXML.ObjectifyOperationsIntentionalOldModel;
+import sequenceplanner.IO.XML.IntentionalXML.ObjectifySOPIntentionalOldModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -102,9 +105,12 @@ public class T_DOMParser {
     @Test
     public void parse() throws SAXException, IOException {
         //temp/sp.xml
-       ObjectifyOperationsIntentionalOldModel obj = new ObjectifyOperationsIntentionalOldModel();
-       Set<ObjectifyXML> s = new HashSet<ObjectifyXML>(); s.add(obj);
-       XMLDOMParser xmlp = new  XMLDOMParser(s); 
+       ObjectifyOperationsIntentionalOldModel op = new ObjectifyOperationsIntentionalOldModel();
+       ObjectifyVariableIntentionalOldModel var = new ObjectifyVariableIntentionalOldModel();
+       ObjectifySOPIntentionalOldModel sop = new ObjectifySOPIntentionalOldModel();
+       Set<ObjectifyXML> s = new HashSet<ObjectifyXML>(); 
+       s.add(op); s.add(var);s.add(sop);
+       XMLDOMParser xmlp = new  XMLDOMParser(s,new HashSet<Object>()); 
        Set<Object> models = xmlp.loadModelFromFile("temp/sp.xml") ;      
        
        Model model = null;
@@ -112,20 +118,7 @@ public class T_DOMParser {
            if (m instanceof Model){
                model = (Model) m;
            }
-       }
-       
-       ISopNode top = createTestSOP(model);
-       System.out.println(top.toString());
-       
-       ConditionsFromSopNode condGenerator = new ConditionsFromSopNode(top);
-       ConditionData cd = new ConditionData("testSOP");
-       merger(condGenerator.getmOperationConditionMap(),cd);
-       
-       sequenceplanner.general.SP sp= new sequenceplanner.general.SP();
-       Model temp = sp.getModel();
-       temp = model;
-       sp.visualizeGUI();
-               
+       }             
        
     }    
     

@@ -13,4 +13,26 @@ public class ConditionData extends Data {
     public ConditionData(String name) {
         super(name, Model.newId());
     }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj instanceof ConditionData) {
+            Data t = (ConditionData) obj;
+
+         return getName().equals(t.getName());
+
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+    
+    
+    
 }

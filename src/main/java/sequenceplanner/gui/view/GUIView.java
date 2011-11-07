@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -494,7 +492,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     private JMenu fileMenu, importMenu, edit, convert, mp, em, windows, visualization, help;
     private JMenuItem newOperationView, newResourceView, exit, preferences, addAll,
             open, save, saveAs, close, defaultWindows, saveEFAo, saveEFAr, saveCost, saveOptimal, identifyr,
-            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromFile,
+            printProduct, efaForTrans, updateAfterTrans, efaForMP, bruteForceVisualization, addOperationsFromPSTextFile,
             normalEFA, reduceEFA, about, shortCommands;
 
     ;
@@ -509,7 +507,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         fileMenu.add(close = new JMenuItem("Close"));
         fileMenu.addSeparator();
         importMenu = new JMenu("Import");
-        importMenu.add(addOperationsFromFile = new JMenuItem("From .txt"));
+        importMenu.add(addOperationsFromPSTextFile = new JMenuItem("From .txt (Process Simulate style)"));
         fileMenu.add(importMenu);
         fileMenu.addSeparator();
         fileMenu.add(exit = new JMenuItem("Exit"));
@@ -669,8 +667,8 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
         bruteForceVisualization.addActionListener(l);
     }
 
-    public void addOperationsFromFileL(ActionListener l) {
-        addOperationsFromFile.addActionListener(l);
+    public void addOperationsFromPSTextFileL(ActionListener l) {
+        addOperationsFromPSTextFile.addActionListener(l);
     }
 
     public void addShortCommandsL(ActionListener l) {
@@ -740,7 +738,9 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
     }
 
     public static synchronized void printToConsole(String text) {
-        console.append(text + "\n");
+        if (console != null)
+            console.append(text + "\n");
+        System.out.println("printToConsole: " + text);
     }
 
     @Override

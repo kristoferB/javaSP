@@ -10,6 +10,7 @@ import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * To find relations between a set of operations given in a {@link ISopNode}.<br/>
@@ -24,10 +25,10 @@ public class RelationsForOperationSet {
     private RelationContainer mRC = null;
     private String mWmodPath = "";
 
-    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<ConditionData> iConditionsToInclude) {
+    public RelationsForOperationSet(final RelationContainer iRC, final String iWmodPath, final Set<ConditionData> iConditionsToInclude, final Set<ResourceVariableData> resources) {
         setmRC(iRC);
         mWmodPath = iWmodPath;
-        formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude);
+        formalMethods = new SupremicaInteractionForVisualization(iConditionsToInclude, resources);
     }
 
     /**
@@ -47,6 +48,9 @@ public class RelationsForOperationSet {
             return 0;
         }
 
+        //saveFormalModel(mWmodPath);
+
+        
         //flatten out (EFA->DFA, Module -> Automata)
         final Automata automata = formalMethods.flattenOut(ms);
         if (automata == null) {
@@ -57,7 +61,7 @@ public class RelationsForOperationSet {
 
         System.out.println("start synthesis");
 
-        saveFormalModel(mWmodPath);
+        //saveFormalModel(mWmodPath);
 
         //synthesis
         final Automaton automaton = formalMethods.synthesize(automata);
@@ -66,6 +70,7 @@ public class RelationsForOperationSet {
             System.out.println("Problem with synthesis!");
             return 0;
         }
+        
 
         System.out.println("end synthesis");
 
@@ -115,7 +120,7 @@ public class RelationsForOperationSet {
                             " to " + internalOpName);
 
                     //Print location sets----------------------------------------
-                    if ((relationInt == IRelateTwoOperations.OTHER) || (relationInt == IRelateTwoOperations.ARBITRARY_ORDER)) {
+                    if ((relationInt == IRelateTwoOperations.OTHER)) {
                         System.out.print(printLocationSet(externalOpName, "u", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_UP.toString()).get(opDataInternal)));
                         System.out.print("| ");
                         System.out.print(printLocationSet(externalOpName, "d", internalOpName, mRC.getEventOperationLocationSetMap(opDataExternal).get(ISupremicaInteractionForVisualization.Type.EVENT_DOWN.toString()).get(opDataInternal)));
@@ -136,6 +141,7 @@ public class RelationsForOperationSet {
         String returnString = "";
         returnString += iOpWithEvent + "" + iEvent;
         returnString += " " + iOpWithLocations + ":";
+        if (iLocationSet == null) return returnString;
         for (final String s : iLocationSet) {
             returnString += s;
         }

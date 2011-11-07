@@ -3,7 +3,7 @@ package sequenceplanner.algorithm;
 import java.util.List;
 
 /**
- *
+ * See {@link AAlgorithm}.<br/>
  * @author patrik
  */
 public interface IAlgorithm {
