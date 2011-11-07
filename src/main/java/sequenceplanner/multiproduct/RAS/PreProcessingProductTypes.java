@@ -65,7 +65,8 @@ public class PreProcessingProductTypes extends AAlgorithm implements IAlgorithmL
     private synchronized void addToModuleBase(final ModuleBase iMBProduct, final ModuleBase iMBResourcesProduct, final String iProductType) {
         final ModuleBase moduleBaseReturnedFromMonolithicSynthesis = new ModuleBase();
         final SingleFlowerSingleTransitionModule module = new SingleFlowerSingleTransitionModule("TestRASPreprecessing_productType_"+iProductType, mComment, iMBProduct);
-//        module.saveToWMODFile(mFilePath);
+        module.saveToWMODFile(mFilePath);
+        //Monolithic synthesis on system. Only one product at a time, all other transitions have gurad "and 0".
         module.translateAutomatonToModuleBase(moduleBaseReturnedFromMonolithicSynthesis, Operation.PRODUCT_TYPE + iProductType);
 
         //Add product variable to module base, (just one variable)

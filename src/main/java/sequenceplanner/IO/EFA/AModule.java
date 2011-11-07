@@ -290,7 +290,7 @@ public abstract class AModule {
         }
 
         //Create variable for state set and add to module base object
-        final Map<String, Integer> stateMap = new HashMap<String, Integer>(); //Each state is represented as a value
+        final Map<String, Integer> stateMap = new HashMap<String, Integer>(); //Each state is represented as a value. Enough with a list...
         final String initState = Integer.toString(helpMethodTranslateAutomatonToModuleBase(iAutomaton.getInitialState().getName(), stateMap));
         final IVariable var = new VariableSameInitMarkedValue(iVariableLabel, "0", Integer.toString(iAutomaton.nbrOfStates() - 1), initState);
         oModuleBase.storeVariable(var);
@@ -304,6 +304,13 @@ public abstract class AModule {
             trans.setStartLocation(var, sourceState);
             trans.setFinishLocation(var, targetState);
         }
+
+        //To get mapping between state names in "iAutomaton" and values in "var".
+//        String automatonName = iAutomaton.getName();
+//        automatonName = automatonName.replaceFirst("sup\\(", "");
+//        automatonName = automatonName.substring(0, automatonName.length()-1);
+//        System.out.println(automatonName);
+//        System.out.println(stateMap);
 
         return true;
     }
@@ -330,9 +337,8 @@ public abstract class AModule {
             return false;
         }
 
-        translateAutomatonToModuleBase(automaton, oModuleBase, iProductTypeVariableLabel);
+        return translateAutomatonToModuleBase(automaton, oModuleBase, iProductTypeVariableLabel);
 
-        return true;
     }
 
     /**

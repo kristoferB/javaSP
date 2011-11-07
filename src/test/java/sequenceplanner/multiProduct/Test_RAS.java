@@ -28,8 +28,9 @@ public class Test_RAS implements IAlgorithmListener {
 
 //    private static final String mFileName = "FLEXAplusNoBuffers.xls";
 //    private static final String mFileName = "FLEXAplus.xls";
-    private static final String mFileName = "ProductTypesTest.xls";
+//    private static final String mFileName = "ProductTypesTest.xls";
 //    private static final String mFileName = "Benchmark2_RAS.xls";
+    private static final String mFileName = "SimpleExampleRASpaper.xls";
 
     private static final int mSecondsToRunSynthesisThread = 30;
 
@@ -71,7 +72,7 @@ public class Test_RAS implements IAlgorithmListener {
     }
 
     public void method3(final ModuleBase iMB) {
-        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestOut", addFileInfoToComment(), iMB);
+        final SingleFlowerSingleTransitionModule sfstModule = new SingleFlowerSingleTransitionModule("TestRASmodel", addFileInfoToComment(), iMB);
         sfstModule.saveToWMODFile(mFilePath);
         sfstModule.getExtractedGuards(2);
     }
