@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_RemoveNode {
+public class T_RemoveNode {
 
     SP sp = new SP();
 

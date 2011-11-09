@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_RAS implements IAlgorithmListener {
+public class T_RAS implements IAlgorithmListener {
 
 //    private static final String mFilePath = "C:\\Users\\patrik\\Desktop\\";
     private static final String mFilePath = "Z:\\RAS_assembly\\Excel files for RAS models\\";
@@ -106,8 +106,8 @@ public class Test_RAS implements IAlgorithmListener {
             final Set<String> productTypeSet = (Set<String>) iList.get(2);
 
             //Start next step
-//            method2(opSet, variableSet); //Normal execution. Works good for not to big examples
-            method5(opSet, variableSet, productTypeSet); //Add Preprocessing step
+            method2(opSet, variableSet); //Normal execution. Works good for not to big examples
+//            method5(opSet, variableSet, productTypeSet); //Add Preprocessing step
         }
 
         if (iFromAlgorithm instanceof CreateTransitionsAndVariables) {

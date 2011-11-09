@@ -20,12 +20,12 @@ import sequenceplanner.model.data.OperationData;
  *
  * @author patrik
  */
-public class testVisualization {
+public class T_Visualization {
 
     static SP mSP;
     static PerformVisualization mVisualization;
 
-    public testVisualization() {
+    public T_Visualization() {
     }
 
     @BeforeClass

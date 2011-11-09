@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_SaveToAndLoadFromSOPXfile {
+public class T_SaveToAndLoadFromSOPXfile {
 
     SP sp = new SP();
 

@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @author patrik
  */
-public class Test_buildModule {
+public class T_buildModule {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
