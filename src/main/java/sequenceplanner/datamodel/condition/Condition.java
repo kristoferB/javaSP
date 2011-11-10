@@ -76,7 +76,7 @@ public class Condition {
         if (element.isExpression()){
             ConditionExpression ce = (ConditionExpression) element;
             elementBoolean = reqGuardEvaluater(ce.getExpressionRoot(), variableValues);
-        }else if (element.isStatment()){
+        }else if (element.isStatement()){
             elementBoolean = validateStatment((ConditionStatement)element,variableValues);
         }
         if (element.hasNextElement()){
@@ -104,7 +104,7 @@ public class Condition {
         for (ConditionElement e : ce) {
             if (e.isExpression()) {
                 newVars.putAll(variableUpdater((ConditionExpression) e, oldVars));
-            } else if (e.isStatment()){
+            } else if (e.isStatement()){
                 ConditionStatement cs =  (ConditionStatement) e;
                 if (newVars.containsKey(cs.getVariable())){
                     newVars.put(cs.getVariable(), cs.getNewVariableValue(newVars.get(cs.getValue())));

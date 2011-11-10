@@ -115,7 +115,7 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
                 if (expr.containsElement(ce)) {
                     return true;
                 }
-            } else if (e.isStatment()) {
+            } else if (e.isStatement()) {
                 if (e.equals(ce)) {
                     return true;
                 }
@@ -212,7 +212,7 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
     }
 
     @Override
-    public boolean isStatment() {
+    public boolean isStatement() {
         return false;
     }
 
