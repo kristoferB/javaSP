@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.datamodel.condition.ConditionElement;
+import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.ConditionOperator;
+import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.efaconverter.efamodel.SpEFA;
 import sequenceplanner.efaconverter.efamodel.SpEFAutomata;
 import sequenceplanner.efaconverter.efamodel.SpEvent;
@@ -91,7 +94,7 @@ public class SpEFASync {
             varList.putAll(location.getVariableValues());
             // Check all outgoing events in the local EFA
             for (SpTransition outTrans : localLocation.getOutTransitions()){
-                if (!disabledEvents.contains(outTrans.getEventLabel()) && outTrans.getCondition().evaluateGuard(varList)){
+                if (!disabledEvents.contains(outTrans.getEventLabel()) && evaluateGuard(outTrans.getCondition(),varList)){
                     localEnabledEvents.add(outTrans.getEventLabel());
                     if (enabledEvents.get(outTrans.getEventLabel()) != null){
                         enabledEvents.get(outTrans.getEventLabel()).put(localEFA.getName(), outTrans);
@@ -149,7 +152,7 @@ public class SpEFASync {
                 }
 
                 Condition transitionCondition = newTransitionCondition(enabledEvents.get(event));
-                newLocation.setVariableValues(transitionCondition.getUpdatedVariableValues(location.getVariableValues()));
+                newLocation.setVariableValues(getUpdatedVariableValues(transitionCondition,location.getVariableValues()));
                 if (newLocation.getLocalLocations().isEmpty())
                     newLocation.setLocalLocations(updateLocalLocations(enabledEvents.get(event)));
 
@@ -213,6 +216,67 @@ public class SpEFASync {
             if (i.hasNext()) s += "||";
         }
         return s;
+    }
+    
+    
+    private boolean evaluateGuard(Condition c,Map<String,String> variableValues){
+        if (variableValues == null || variableValues.isEmpty()) return true;
+        if (c.getGuard().isEmpty()) return true;
+        return reqGuardEvaluater(c.getGuard(),variableValues);
+    }
+
+    private Map<String, String> getUpdatedVariableValues(Condition c,Map<String, String> varibleValues){
+        if (varibleValues == null) return new HashMap<String, String>();
+
+        Map<String,String> newVars = variableUpdater(c.getAction(),varibleValues);
+        
+
+        return newVars;
+    }
+    
+    
+        private boolean reqGuardEvaluater(ConditionElement element, Map<String,String> variableValues){
+        if (element == null) return true;
+        boolean elementBoolean = true;
+        if (element.isExpression()){
+            ConditionExpression ce = (ConditionExpression) element;
+            elementBoolean = reqGuardEvaluater(ce.getExpressionRoot(), variableValues);
+        }else if (element.isStatement()){
+            elementBoolean = validateStatment((ConditionStatement)element,variableValues);
+        }
+        if (element.hasNextElement()){
+            if (element.getNextOperator().isOperationType(ConditionOperator.Type.AND)){
+                elementBoolean = elementBoolean && reqGuardEvaluater(element.getNextElement(),variableValues);
+            } else if (element.getNextOperator().isOperationType(ConditionOperator.Type.OR)){
+                elementBoolean = elementBoolean || reqGuardEvaluater(element.getNextElement(),variableValues);
+            }
+        }
+        return elementBoolean;
+    }
+
+
+
+    private boolean validateStatment(ConditionStatement statment, Map<String,String> variableValues){
+        String var = statment.getVariable();
+        if (variableValues.containsKey(var)){
+            return statment.evaluate(variableValues.get(var));
+        }
+        return true;
+    }
+
+    private Map<String, String> variableUpdater(ConditionExpression ce, Map<String,String> oldVars){
+        Map<String, String> newVars = new HashMap<String, String>(oldVars);
+        for (ConditionElement e : ce) {
+            if (e.isExpression()) {
+                newVars.putAll(variableUpdater((ConditionExpression) e, oldVars));
+            } else if (e.isStatement()){
+                ConditionStatement cs =  (ConditionStatement) e;
+                if (newVars.containsKey(cs.getVariable())){
+                    newVars.put(cs.getVariable(), cs.getNewVariableValue(newVars.get(cs.getValue())));
+                }
+            }
+        }
+        return newVars;
     }
 
 

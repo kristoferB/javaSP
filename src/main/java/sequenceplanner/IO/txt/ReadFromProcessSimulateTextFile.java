@@ -233,7 +233,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         final List<ConditionElement> conditionElementList = iCondition.getConditionElements();
 
         for (final ConditionElement conditionElement : conditionElementList) {
-            if (conditionElement.isStatment()) {
+            if (conditionElement.isStatement()) {
                 try {
                     final ConditionStatement conditionStatement = (ConditionStatement) conditionElement;
 
@@ -327,7 +327,7 @@ public class ReadFromProcessSimulateTextFile extends AWriteReadTextFile {
         final List<ConditionElement> conditionElementList = iCondition.getConditionElements();
 
         for (final ConditionElement conditionElement : conditionElementList) {
-            if (conditionElement.isStatment()) {
+            if (conditionElement.isStatement()) {
                 try {
                     final ConditionStatement conditionStatement = (ConditionStatement) conditionElement;
 

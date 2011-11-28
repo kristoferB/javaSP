@@ -150,6 +150,11 @@ public class RelationIdentification {
     
     private boolean findEventOperationRelationsTest(){
         
+        // Temp solution to handle parallel ops. We need to create a more general
+        // method for rel id. For example to handle reduction algorithms.
+        Set<ISopNode> parallelCandidates = new HashSet<ISopNode>();
+        String stateNameToCheckParallel = "";
+        
         for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
             for (final String eventType : mRC.getEventOperationLocationSetMap(opDataExternal).keySet()) {
                 final String eventToLookFor = ISupremicaInteractionForVisualization.Type.EVENT_PREFIX.toString() + opDataExternal.getId() + eventType;
@@ -159,10 +164,11 @@ public class RelationIdentification {
                     for (ISopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
                         if (n.getOperation().equals(opDataExternal)){
                             mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet().remove(n);
+                            parallelCandidates.add(n);
                             break;
                         }
                     }
-                    System.out.println("Mismatch between events in supervisor and subset!");
+                    //System.out.println("Mismatch between events in supervisor and subset!");
                     System.out.println("The supervisor is so strict that not all operations ("+ eventToLookFor+") can finish!");
                     //return false;
                 } else {
@@ -179,6 +185,7 @@ public class RelationIdentification {
                     //boolean b = m.matches();
                     
                     for (String stateName : stateNameSet) {
+                        if (stateNameToCheckParallel.isEmpty()) stateNameToCheckParallel = stateName;
                         Matcher m = p.matcher(stateName);
                         while(m.find()){
                             String location = m.group();
@@ -207,7 +214,36 @@ public class RelationIdentification {
                     }                    
                 }   
             }
-        }          
+        }   
+        
+        fixParallelOperation(parallelCandidates, stateNameToCheckParallel);
+        
         return true;
     }
+    
+    // A temporary solution
+    private void fixParallelOperation(Set<ISopNode> parallelCandidates,String stateName){
+        for (ISopNode n : parallelCandidates){
+            if (n.getOperation() != null){
+                Pattern p = Pattern.compile("id"+n.getOperation().getId()+"=-1");
+                Matcher m = p.matcher(stateName);
+                if (m.find()){
+                    addParallelOp(n);
+                }
+            }
+        }
+    }
+    
+    private void addParallelOp(ISopNode op){
+        Set<String> parallel = new HashSet<String>(); 
+        parallel.add("0"); parallel.add("1"); parallel.add("2");
+        for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
+            for (final String eventType : mRC.getEventOperationLocationSetMap(opDataExternal).keySet()) {
+                mRC.getEventOperationLocationSetMap(opDataExternal).get(eventType).put(op.getOperation(), parallel);              
+            }
+        }
+        mRC.getOsubsetSopNode().addNodeToSequenceSet(op);
+    }
+
+
 }

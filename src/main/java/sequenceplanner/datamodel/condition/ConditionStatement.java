@@ -110,7 +110,7 @@ public class ConditionStatement extends ConditionElement {
     }
 
     @Override
-    public boolean isStatment() {
+    public boolean isStatement() {
         return true;
     }
 
