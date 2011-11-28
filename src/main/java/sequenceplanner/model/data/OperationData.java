@@ -41,7 +41,16 @@ public class OperationData extends Data {
     }
 
     public void setConditions(ConditionData iConditionData, Map<ConditionType, Condition> conditionMap) {
-        this.mConditionMap.put(iConditionData, conditionMap);
+        if (this.mConditionMap.containsKey(iConditionData)){
+            mergeConditionMaps(this.mConditionMap.get(iConditionData),conditionMap);
+        } else 
+            this.mConditionMap.put(iConditionData, conditionMap);
+    }
+    
+    // We should refactor how conditions are stored! This is a temp fix
+    // to merge conditions instead of overwrite. 
+    private void mergeConditionMaps(Map<ConditionType, Condition> to, Map<ConditionType, Condition> from){
+        to.putAll(from);
     }
 
     public Map<String, String> getPreferences() {
