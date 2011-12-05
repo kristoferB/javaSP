@@ -5,7 +5,7 @@ import java.util.Set;
 import net.sourceforge.waters.subject.module.ModuleSubject;
 import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 
 /**
  * Interface for formal methods that are used for visualization.<br/>
@@ -32,15 +32,15 @@ public interface ISupremicaInteractionForVisualization {
 
     /**
      * DOES NOT HANDLE VARIABLES IN CONDITIONS!!!<br/>
-     * Creates a {@link ModuleSubject} from a {@link ISopNode}.<br/>
+     * Creates a {@link ModuleSubject} from a {@link SopNode}.<br/>
      * Each element (operation) in the sequence set to iOperationSet is modeled as a EFA variable with values {0,1,2}.<br/>
-     * If operation as {@link ISopNode} in iHasToFinishSet -> only value 2 is marked, else all values are marked.<br/>
+     * If operation as {@link SopNode} in iHasToFinishSet -> only value 2 is marked, else all values are marked.<br/>
      * @param iOperationSet Operations to take consideration to
      * @param iHasToFinishSet Operations with only Of as marked location
      * @return null if problem else a {@link ModuleSubject}
      */
     ModuleSubject getModuleSubject(
-            ISopNode iOperationSet, ISopNode iHasToFinishSet);
+            SopNode iOperationSet, SopNode iHasToFinishSet);
 
     /**
      * From EFA to DFA

@@ -32,8 +32,8 @@ import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
@@ -59,7 +59,7 @@ public class Algorithm extends AAlgorithm {
     Map<Double, Integer> mWeightMap;
     EmptyModule mModule;
     SEFA mEfa;
-    ISopNode mRootSopNode;
+    SopNode mRootSopNode;
 
     public Algorithm(IAlgorithmListener iListener) {
         super("weight nonBlocking");
@@ -185,16 +185,16 @@ public class Algorithm extends AAlgorithm {
         }
     }
 
-    ISopNode createOperationsFromAutomaton(Automaton iAutomation) {
-        final ISopNode rootNode = new SopNode();
+    SopNode createOperationsFromAutomaton(Automaton iAutomation) {
+        final SopNode rootNode = new SopNodeEmpty();
         if (createOperationFromOutgoingTransitions(iAutomation.getInitialState(), rootNode, rootNode)) {
             System.out.println(rootNode);
             return rootNode;
         }
-        return new SopNode();
+        return new SopNodeEmpty();
     }
 
-    ISopNode createOperationFromTransition(final String iName) {
+    SopNode createOperationFromTransition(final String iName) {
         //Create operation and add to model
         final String name = getSeamFromTransition(iName);
         if (name == null) {
@@ -205,13 +205,13 @@ public class Algorithm extends AAlgorithm {
         return new SopNodeOperation(opData);
     }
 
-    boolean createOperationFromOutgoingTransitions(final State iSourceState, final ISopNode iSopNode, final ISopNode iRootSopNode) {
+    boolean createOperationFromOutgoingTransitions(final State iSourceState, final SopNode iSopNode, final SopNode iRootSopNode) {
         //Successor or alternative
         if (iSourceState.getOutgoingArcs().size() == 1) {
             //init
             final Arc arc = iSourceState.getOutgoingArcs().iterator().next();
             final String name = arc.getLabel();
-            final ISopNode successorNode = createOperationFromTransition(name);
+            final SopNode successorNode = createOperationFromTransition(name);
             if (successorNode == null) {
                 return false;
             }
@@ -228,7 +228,7 @@ public class Algorithm extends AAlgorithm {
         } else {
             //Create alternative node as successor
             if (!iSourceState.getOutgoingArcs().isEmpty()) {
-                final ISopNode alternaitveNode = new SopNodeAlternative();
+                final SopNode alternaitveNode = new SopNodeAlternative();
                 if (iSopNode == iRootSopNode) {
                     iSopNode.addNodeToSequenceSet(alternaitveNode);
                 } else {
@@ -237,7 +237,7 @@ public class Algorithm extends AAlgorithm {
                 for (final Arc arc : iSourceState.getOutgoingArcs()) {
                     //init
                     final String name = arc.getLabel();
-                    final ISopNode childNode = createOperationFromTransition(name);
+                    final SopNode childNode = createOperationFromTransition(name);
                     if (childNode == null) {
                         return false;
                     }

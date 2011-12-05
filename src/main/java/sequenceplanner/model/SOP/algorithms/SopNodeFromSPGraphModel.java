@@ -12,9 +12,9 @@ import sequenceplanner.view.operationView.graphextension.Cell;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 /**
- * To translate a {@link SPGraphModel} object to a structure of {@link ISopNode} objects.<br/>
+ * To translate a {@link SPGraphModel} object to a structure of {@link SopNode} objects.<br/>
  * The {@link SPGraphModel} is given as parameter to constructor.<br/>
- * The result (root {@link ISopNode}) is available with the method getSopNodeRoot().<br/>
+ * The result (root {@link SopNode}) is available with the method getSopNodeRoot().<br/>
  * @author patrik
  */
 public class SopNodeFromSPGraphModel {
@@ -22,17 +22,17 @@ public class SopNodeFromSPGraphModel {
     private Set<Cell> mAllSopNodesAsCells = null;
     private Set<Cell> mChildSopNodesAsCells = null;
     private SPGraphModel mSPGraphModel = null;
-    private Map<ISopNode, Cell> mSopNodeCellMap = null;
-    private ISopNode mSopNodeRoot = null;
+    private Map<SopNode, Cell> mSopNodeCellMap = null;
+    private SopNode mSopNodeRoot = null;
 
     /**
      *
      * @param iSPGraphModel the graph to work with
      */
-    public SopNodeFromSPGraphModel(final SPGraphModel iSPGraphModel, final ISopNode iSopNodeRoot) {
+    public SopNodeFromSPGraphModel(final SPGraphModel iSPGraphModel, final SopNode iSopNodeRoot) {
         mSPGraphModel = iSPGraphModel;
         mSopNodeRoot = iSopNodeRoot;
-        mSopNodeCellMap = new HashMap<ISopNode, Cell>();
+        mSopNodeCellMap = new HashMap<SopNode, Cell>();
         filterHashTable();
         getChildCells();
         hierarchicalPartitioning();
@@ -41,18 +41,18 @@ public class SopNodeFromSPGraphModel {
 
     /**
      *
-     * @return The root {@link ISopNode}
+     * @return The root {@link SopNode}
      */
-    public ISopNode getSopNodeRoot() {
+    public SopNode getSopNodeRoot() {
         return mSopNodeRoot;
     }
 
     /**
-     * Each {@link ISopNode} key has a corresponding {@link Cell} value.<br/>
+     * Each {@link SopNode} key has a corresponding {@link Cell} value.<br/>
      * Could be used to get eg geometry info of cell object.<br/>
      * @return
      */
-    public Map<ISopNode, Cell> getNodeCellMap() {
+    public Map<SopNode, Cell> getNodeCellMap() {
         return mSopNodeCellMap;
     }
 
@@ -96,16 +96,16 @@ public class SopNodeFromSPGraphModel {
 
     /**
      * For parameter iCell:<br/>
-     * Create a new {@link ISopNode} based on Cell type (operation, operation sop, alternative, arbitrary, parallel).<br/>
+     * Create a new {@link SopNode} based on Cell type (operation, operation sop, alternative, arbitrary, parallel).<br/>
      * Recursively call this method with child cells to iCell.<br/>
      * Add the new node as child to parameter iParentNode
      * @param iCell current cell
      * @param iParentNode parent to iCell.
      * @return always true
      */
-    private boolean workWithCell(final Cell iCell, final ISopNode iParentNode) {
+    private boolean workWithCell(final Cell iCell, final SopNode iParentNode) {
         mAllSopNodesAsCells.remove(iCell);
-        final ISopNode node = setNewSopNode(iCell);
+        final SopNode node = setNewSopNode(iCell);
 
         if (iCell.getChildCount() > 0) {
             final Set<Object> children = objectToSet(SPGraphModel.getChildren(mSPGraphModel, iCell));
@@ -148,11 +148,11 @@ public class SopNodeFromSPGraphModel {
      * @param iParentNode
      * @return always true
      */
-    private boolean sequenceChildren(final ISopNode iParentNode) {
+    private boolean sequenceChildren(final SopNode iParentNode) {
 
         //Create map for incoming edges------------------------------------------
-        final Map<Set<Object>, ISopNode> incomingEdgesNodeMap = new HashMap<Set<Object>, ISopNode>();
-        for (final ISopNode node : iParentNode.getFirstNodesInSequencesAsSet()) {
+        final Map<Set<Object>, SopNode> incomingEdgesNodeMap = new HashMap<Set<Object>, SopNode>();
+        for (final SopNode node : iParentNode.getFirstNodesInSequencesAsSet()) {
             final Cell cell = mSopNodeCellMap.get(node);
             final Set<Object> incomingEdges = objectToSet(SPGraphModel.getIncomingEdges(mSPGraphModel, cell));
             final Set<Object> childEdges = objectToSet(SPGraphModel.getChildren(mSPGraphModel, cell));
@@ -161,14 +161,14 @@ public class SopNodeFromSPGraphModel {
         }//----------------------------------------------------------------------
 
         //loop child nodes and match edges---------------------------------------
-        final Set<ISopNode> nodesToRemoveForParent = new HashSet<ISopNode>();
-        for (final ISopNode node : iParentNode.getFirstNodesInSequencesAsSet()) {
+        final Set<SopNode> nodesToRemoveForParent = new HashSet<SopNode>();
+        for (final SopNode node : iParentNode.getFirstNodesInSequencesAsSet()) {
             matchEdges(node, incomingEdgesNodeMap, nodesToRemoveForParent);
             sequenceChildren(node);
         }//----------------------------------------------------------------------
 
         //remove nodes that not are first in sequence among children to parent---
-        for (final ISopNode node : nodesToRemoveForParent) {
+        for (final SopNode node : nodesToRemoveForParent) {
             iParentNode.removeFromSequenceSet(node);
         }//----------------------------------------------------------------------
 
@@ -181,7 +181,7 @@ public class SopNodeFromSPGraphModel {
      * @param iIncomingEdgesNodeMap
      * @param ioNodesToRemoveForParent
      */
-    private void matchEdges(final ISopNode iNode, final Map<Set<Object>, ISopNode> iIncomingEdgesNodeMap, final Set<ISopNode> ioNodesToRemoveForParent) {
+    private void matchEdges(final SopNode iNode, final Map<Set<Object>, SopNode> iIncomingEdgesNodeMap, final Set<SopNode> ioNodesToRemoveForParent) {
         final Cell cell = mSopNodeCellMap.get(iNode);
         final Set<Object> outgoingEdges = objectToSet(SPGraphModel.getOutgoingEdges(mSPGraphModel, cell));
         final Set<Object> childEdges = objectToSet(SPGraphModel.getChildren(mSPGraphModel, cell));
@@ -191,7 +191,7 @@ public class SopNodeFromSPGraphModel {
             for (final Set<Object> objInSet : iIncomingEdgesNodeMap.keySet()) {
                 for (final Object objIn : objInSet) {
                     if (objOut.equals(objIn)) {
-                        final ISopNode successorNode = iIncomingEdgesNodeMap.get(objInSet);
+                        final SopNode successorNode = iIncomingEdgesNodeMap.get(objInSet);
                         iNode.setSuccessorNode(successorNode);
                         iNode.setSuccessorRelation(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12);
                         ioNodesToRemoveForParent.add(successorNode);
@@ -216,21 +216,21 @@ public class SopNodeFromSPGraphModel {
     }
 
     /**
-     * Creates a {@link ISopNode} from a {@link Cell}.<br/>
+     * Creates a {@link SopNode} from a {@link Cell}.<br/>
      * Initial check that a node hasn't already been given for parameter iNewCell.<br/>
      * @param iNewCell the cell
      * @return the new node
      */
-    private ISopNode setNewSopNode(final Cell iNewCell) {
+    private SopNode setNewSopNode(final Cell iNewCell) {
         //Return node if this cell already has been worked with.
         if (mSopNodeCellMap.containsValue(iNewCell)) {
-            for (final ISopNode node : mSopNodeCellMap.keySet()) {
+            for (final SopNode node : mSopNodeCellMap.keySet()) {
                 if (mSopNodeCellMap.get(node).equals(iNewCell)) {
                     return node;
                 }
             }
         }
-        ISopNode newSopNode = null;
+        SopNode newSopNode = null;
 
         //Create node
         if (iNewCell != null) {

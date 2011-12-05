@@ -11,7 +11,7 @@ import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionElement;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.ConditionStatement;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.data.OperationData;
 
@@ -24,9 +24,9 @@ public class GetComplParallelOps {
     public GetComplParallelOps() {
     }
     
-    public Set<String> getParallelOps(final ISopNode AllOps){
+    public Set<String> getParallelOps(final SopNode AllOps){
         Set<OperationData> ops = new HashSet<OperationData>();
-        for (ISopNode n : AllOps.getFirstNodesInSequencesAsSet())
+        for (SopNode n : AllOps.getFirstNodesInSequencesAsSet())
             if (n.getOperation() !=null) ops.add(n.getOperation());
              
         return findParallelOps(createConnections(ops));

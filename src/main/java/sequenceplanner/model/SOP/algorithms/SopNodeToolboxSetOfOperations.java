@@ -18,19 +18,19 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
 
     @Override
-    public void drawNode(ISopNode iRootNode, SPGraph iGraph, Map<ISopNode, CellDataLayout> iCellDataMap) {
+    public void drawNode(SopNode iRootNode, SPGraph iGraph, Map<SopNode, CellDataLayout> iCellDataMap) {
         new DrawSopNode(iRootNode, iGraph, iCellDataMap);
     }
 
     @Override
-    public void drawNode(ISopNode iRootNode, SPGraph iGraph) {
+    public void drawNode(SopNode iRootNode, SPGraph iGraph) {
         new DrawSopNode(iRootNode, iGraph);
     }
 
     @Override
-    public Set<OperationData> getOperations(ISopNode iRootNode, boolean iGoDeep) {
+    public Set<OperationData> getOperations(SopNode iRootNode, boolean iGoDeep) {
         final Set<OperationData> opSet = new HashSet<OperationData>();
-        for (final ISopNode node : getNodes(iRootNode, iGoDeep)) {
+        for (final SopNode node : getNodes(iRootNode, iGoDeep)) {
             if (node instanceof SopNodeOperation) {
                 opSet.add(node.getOperation());
             }
@@ -44,25 +44,25 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
      * @param iSet
      * @return true if "operations in iSubsetToTest" \subseteq "operations in iSet" else false
      */
-    public boolean operationsAreSubset(ISopNode iSubsetToTest, ISopNode iSet) {
+    public boolean operationsAreSubset(SopNode iSubsetToTest, SopNode iSet) {
         final Set<OperationData> opSet = getOperations(iSet, true);
         final Set<OperationData> opSubset = getOperations(iSubsetToTest, true);
         return opSet.containsAll(opSubset);
     }
 
     @Override
-    public Map<OperationData, Map<ConditionType, Condition>> relationsToSelfContainedOperations(ISopNode iRootNode) {
+    public Map<OperationData, Map<ConditionType, Condition>> relationsToSelfContainedOperations(SopNode iRootNode) {
         final ConditionsFromSopNode cfsn = new ConditionsFromSopNode(iRootNode);
         cfsn.printOperationsWithConditions();
         return cfsn.getmOperationConditionMap();
     }
 
     @Override
-    public boolean removeNode(ISopNode iNodeToRemove, ISopNode iRootNode) {
+    public boolean removeNode(SopNode iNodeToRemove, SopNode iRootNode) {
         //Init relations for node to remove
-        final ISopNode parentNode = getParentIfNodeIsInSequenceSet(iNodeToRemove, iRootNode);
-        final ISopNode predecessorNode = getPredecessor(iNodeToRemove, iRootNode);
-        final ISopNode successorNode = iNodeToRemove.getSuccessorNode();
+        final SopNode parentNode = getParentIfNodeIsInSequenceSet(iNodeToRemove, iRootNode);
+        final SopNode predecessorNode = getPredecessor(iNodeToRemove, iRootNode);
+        final SopNode successorNode = iNodeToRemove.getSuccessorNode();
 
         //Has a parent
         if (parentNode != null) {
@@ -89,16 +89,16 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public void resolve(ISopNode iRootNode) {
+    public void resolve(SopNode iRootNode) {
         new ResolveSopNode(iRootNode);
     }
 
     @Override
-    public Set<ISopNode> getNodes(ISopNode iRootNode, boolean iGoDeep) {
-        Set<ISopNode> returnSet = new HashSet<ISopNode>();
+    public Set<SopNode> getNodes(SopNode iRootNode, boolean iGoDeep) {
+        Set<SopNode> returnSet = new HashSet<SopNode>();
 
         //Go through children
-        for (ISopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
+        for (SopNode node : iRootNode.getFirstNodesInSequencesAsSet()) {
 
             //Go trough successor (first node included)
             while (node != null) {
@@ -118,12 +118,12 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public ISopNode getBottomSuccessor(final ISopNode iNode) {
+    public SopNode getBottomSuccessor(final SopNode iNode) {
         if (iNode == null) {
             return null;
         }
 
-        ISopNode succ = iNode;
+        SopNode succ = iNode;
 
         while (succ.getSuccessorNode() != null) {
             succ = succ.getSuccessorNode();
@@ -133,10 +133,10 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public ISopNode getPredecessor(ISopNode iSuccessorNode, ISopNode iRootNode) {
-        final Set<ISopNode> nodeSet = getNodes(iRootNode, true);
-        for (final ISopNode node : nodeSet) {
-            final ISopNode successorNode = node.getSuccessorNode();
+    public SopNode getPredecessor(SopNode iSuccessorNode, SopNode iRootNode) {
+        final Set<SopNode> nodeSet = getNodes(iRootNode, true);
+        for (final SopNode node : nodeSet) {
+            final SopNode successorNode = node.getSuccessorNode();
             if (successorNode != null) {
                 if (iSuccessorNode.equals(successorNode)) {
                     return node;
@@ -147,8 +147,8 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
     }
 
     @Override
-    public ISopNode getParentIfNodeIsInSequenceSet(ISopNode iNode, ISopNode iRoot) {
-        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+    public SopNode getParentIfNodeIsInSequenceSet(SopNode iNode, SopNode iRoot) {
+        for (SopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
             //Check node, childnode to root
             if (node.equals(iNode)) {
                 return iRoot;
@@ -158,7 +158,7 @@ public class SopNodeToolboxSetOfOperations implements ISopNodeToolbox {
             while (node != null) {
 
                 //Check children to childnode
-                final ISopNode possibleReturnNode = getParentIfNodeIsInSequenceSet(iNode, node);
+                final SopNode possibleReturnNode = getParentIfNodeIsInSequenceSet(iNode, node);
                 if (possibleReturnNode != null) {
                     return possibleReturnNode;
                 }

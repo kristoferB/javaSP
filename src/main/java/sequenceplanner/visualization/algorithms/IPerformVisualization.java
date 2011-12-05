@@ -1,7 +1,7 @@
 package sequenceplanner.visualization.algorithms;
 
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.view.operationView.OperationView;
 
@@ -20,21 +20,21 @@ public interface IPerformVisualization {
      * @param iSopNode operations to base relation on.
      * @return true if ok else false
      */
-    public boolean addOset(final ISopNode iSopNode);
+    public boolean addOset(final SopNode iSopNode);
 
     /**
-     * Add Osubset as operations in {@link ISopNode}.<br/>
+     * Add Osubset as operations in {@link SopNode}.<br/>
      * @param iSopNode operations to find relations for.
      * @return true if operations in iSopNode \subseteq Oset else false
      */
-    public boolean addOsubset(final ISopNode iSopNode);
+    public boolean addOsubset(final SopNode iSopNode);
 
     /**
      * Add operations to Ofinish.<br/>
      * @param iSopNode operations that has to finish in synthesis.
      * @return true if operations in iSopNode \subseteq Oset else false
      */
-    public boolean addToOfinish(final ISopNode iSopNode);
+    public boolean addToOfinish(final SopNode iSopNode);
 
     /**
      * Brute force:<br/>
@@ -46,46 +46,46 @@ public interface IPerformVisualization {
     public RelationContainer identifyRelations();
 
     /**
-     * Algorithm for hierarchical partition of operations in an {@link ISopNode}.<br/>
+     * Algorithm for hierarchical partition of operations in an {@link SopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
     public boolean hierarchicalPartition(IRelationContainer ioRC);
 
     /**
-     * Algorithm for alternative partition of operations in {@link ISopNode}.<br/>
+     * Algorithm for alternative partition of operations in {@link SopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
     public boolean alternativePartition(IRelationContainer ioRC);
 
     /**
-     * Algorithm for arbitrary order partition of operations in {@link ISopNode}.<br/>
+     * Algorithm for arbitrary order partition of operations in {@link SopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
     public boolean arbitraryOrderPartition(IRelationContainer ioRC);
 
     /**
-     * Algorithm for parallel partition of operations in {@link ISopNode}.<br/>
+     * Algorithm for parallel partition of operations in {@link SopNode}.<br/>
      * @param ioNode contains operations to partition and their relations
      * @return true if ok else false
      */
     public boolean parallelPartition(IRelationContainer ioRC);
 
     /**
-     * Algorithm for sequenceing of operations in {@link ISopNode}.<br/>
+     * Algorithm for sequenceing of operations in {@link SopNode}.<br/>
      * @param iSopNode operations to sequence
      * @return true if ok else false
      */
     boolean sequenceing(IRelationContainer ioRC);
 
     /**
-     * Show {@link ISopNode} as view to user.<br/>
+     * Show {@link SopNode} as view to user.<br/>
      * @param iSopNode operations to visualize
      * @return true if possible to create view else false
      */
-    public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView);
+    public boolean sopNodeToGraphicalView(SopNode iSopNode, OperationView iView);
 
     public void addResources(Set<ResourceVariableData> resources);
 }

@@ -16,7 +16,7 @@ import sequenceplanner.datamodel.condition.Condition;
 
 import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -67,7 +67,7 @@ public class Model extends Observable implements IModel {
     // Temporary fixes for intentional 
     // The sop are here due to bad integration with View. Must be fixed.
     public Set<Seam> seams = new HashSet<Seam>();
-    public Set<ISopNode> sops = new HashSet<ISopNode>();
+    public Set<SopNode> sops = new HashSet<SopNode>();
     
     public Model() {
         init();
@@ -893,17 +893,17 @@ public class Model extends Observable implements IModel {
     /**
      * Returns a {@link Map} with all Sops in this Model.<br/>
      * Key: name of Sop as {@link String}.<br/>
-     * Value: rootSop as {@link ISopNode}.<br/>
+     * Value: rootSop as {@link SopNode}.<br/>
      * @return
      */
-    public Map<ViewData, ISopNode> getAllSOPs() {
-        final Map<ViewData, ISopNode> nameRootSopMap = new HashMap<ViewData, ISopNode>();
+    public Map<ViewData, SopNode> getAllSOPs() {
+        final Map<ViewData, SopNode> nameRootSopMap = new HashMap<ViewData, SopNode>();
         final TreeNode[] viewDataArray = getChildren(viewRoot);
 
         for (final TreeNode tn : viewDataArray) {
             if (isView(tn.getNodeData())) {
                 final ViewData viewData = (ViewData) tn.getNodeData();
-                final ISopNode root = viewData.mSopNodeForGraphPlus.getRootSopNode(false);
+                final SopNode root = viewData.mSopNodeForGraphPlus.getRootSopNode(false);
                 if (root != null) {
                     nameRootSopMap.put(viewData, root);
                 }
@@ -1026,10 +1026,10 @@ public class Model extends Observable implements IModel {
      * to the corresponding {@link OperationData} objects in this model.<br/>
      * @param iSopNode
      */
-    public void updateSopNodeStructureWithObjectsInModel(final ISopNode iSopNode) {
+    public void updateSopNodeStructureWithObjectsInModel(final SopNode iSopNode) {
         //Update sopNode with the operation objects in model.
-        final Set<ISopNode> nodeSet = new SopNodeToolboxSetOfOperations().getNodes(iSopNode, true);
-        for (final ISopNode node : nodeSet) {
+        final Set<SopNode> nodeSet = new SopNodeToolboxSetOfOperations().getNodes(iSopNode, true);
+        for (final SopNode node : nodeSet) {
             if (node instanceof SopNodeOperation) {
                 final OperationData opDataInView = node.getOperation();
                 final SopNodeOperation sopNodeInView = (SopNodeOperation) node;
@@ -1047,14 +1047,14 @@ public class Model extends Observable implements IModel {
 
     /**
      * Adds {@link Condition} to the {@link OperationData} objects in
-     * the root {@link ISopNode} for parameter <p>iViewData</p>.</br>
+     * the root {@link SopNode} for parameter <p>iViewData</p>.</br>
      * Each operation object has a map where parameter <p>iLabel</p> is key
      * and the condition is value.<br/>
      * @param iViewData has the root sop node
      * @param iLabel
      * @return true if ok else false
      */
-    public boolean setConditions(final ISopNode iSopNodeRoot, final ConditionData iConditionData) {
+    public boolean setConditions(final SopNode iSopNodeRoot, final ConditionData iConditionData) {
         //Check sopNode----------------------------------------------------------
         if (iSopNodeRoot == null) {
             return false;

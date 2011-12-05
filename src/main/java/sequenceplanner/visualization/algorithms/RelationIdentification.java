@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.supremica.automata.Automaton;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -152,7 +152,7 @@ public class RelationIdentification {
         
         // Temp solution to handle parallel ops. We need to create a more general
         // method for rel id. For example to handle reduction algorithms.
-        Set<ISopNode> parallelCandidates = new HashSet<ISopNode>();
+        Set<SopNode> parallelCandidates = new HashSet<SopNode>();
         String stateNameToCheckParallel = "";
         
         for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
@@ -161,7 +161,7 @@ public class RelationIdentification {
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     
                     // Temp solution, just a test. add this to relation container ASAP
-                    for (ISopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
+                    for (SopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
                         if (n.getOperation().equals(opDataExternal)){
                             mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet().remove(n);
                             parallelCandidates.add(n);
@@ -222,8 +222,8 @@ public class RelationIdentification {
     }
     
     // A temporary solution
-    private void fixParallelOperation(Set<ISopNode> parallelCandidates,String stateName){
-        for (ISopNode n : parallelCandidates){
+    private void fixParallelOperation(Set<SopNode> parallelCandidates,String stateName){
+        for (SopNode n : parallelCandidates){
             if (n.getOperation() != null){
                 Pattern p = Pattern.compile("id"+n.getOperation().getId()+"=-1");
                 Matcher m = p.matcher(stateName);
@@ -234,7 +234,7 @@ public class RelationIdentification {
         }
     }
     
-    private void addParallelOp(ISopNode op){
+    private void addParallelOp(SopNode op){
         Set<String> parallel = new HashSet<String>(); 
         parallel.add("0"); parallel.add("1"); parallel.add("2");
         for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {

@@ -6,8 +6,8 @@ import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.OperationData;
@@ -30,7 +30,7 @@ public class VisualizeAllOperationsInModel implements IAlgorithmListener {
     void init() {
         final Model model = mController.getModel();
         //Get operations
-        final ISopNode sopNode = new SopNode();
+        final SopNode sopNode = new SopNodeEmpty();
         final List<TreeNode> operaitonList= model.getAllOperations();
         for(final TreeNode tn : operaitonList) {
             final OperationData opData = (OperationData) tn.getNodeData();
@@ -54,8 +54,8 @@ public class VisualizeAllOperationsInModel implements IAlgorithmListener {
 
     @Override
     public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
-        if (iList.get(0) instanceof ISopNode) {
-            final ISopNode sopNode = (ISopNode) iList.get(0);
+        if (iList.get(0) instanceof SopNode) {
+            final SopNode sopNode = (SopNode) iList.get(0);
 
             final OperationView opView = mController.mOpViewController.createOperationView();
             

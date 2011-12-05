@@ -32,8 +32,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode;
 import sequenceplanner.model.TreeNode;
@@ -66,8 +66,8 @@ public class T_DOMParser {
     public void tearDown() {
     }
     
-    private ISopNode createTestSOP(Model m){
-        ISopNode sn = new SopNode();
+    private SopNode createTestSOP(Model m){
+        SopNode sn = new SopNodeEmpty();
         List<TreeNode> allOp = m.getAllOperations();
         Set<TreeNode> someOp = new HashSet<TreeNode>();
         Random random = new Random();
@@ -78,11 +78,11 @@ public class T_DOMParser {
         }
                
         
-        ISopNode last = null;
-        ISopNode first = null;
+        SopNode last = null;
+        SopNode first = null;
         for (TreeNode n : someOp){
             if (n.getNodeData() instanceof OperationData){
-                ISopNode opNode = new SopNodeOperation((OperationData) n.getNodeData());
+                SopNode opNode = new SopNodeOperation((OperationData) n.getNodeData());
                 if (last == null){ 
                     last = opNode; 
                     first = opNode;
@@ -120,7 +120,7 @@ public class T_DOMParser {
            }
        }
        
-//       ISopNode top = createTestSOP(model);
+//       SopNode top = createTestSOP(model);
 //       System.out.println(top.toString());
 //       
 //       ConditionsFromSopNode condGenerator = new ConditionsFromSopNode(top);

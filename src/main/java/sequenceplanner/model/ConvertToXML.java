@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -216,8 +216,8 @@ public class ConvertToXML {
         viewX.setIsHidden(iViewData.isHidden());
 
 
-        final Map<ISopNode, ViewData.CellData> nodeCellMap = iViewData.mNodeCellDataMap;
-        for (final ISopNode node : nodeCellMap.keySet()) {
+        final Map<SopNode, ViewData.CellData> nodeCellMap = iViewData.mNodeCellDataMap;
+        for (final SopNode node : nodeCellMap.keySet()) {
             //Init---------------------------------------------------------------
             final ViewData.CellData cellData = nodeCellMap.get(node);
             final ViewData.CellDataLayout cellDataLayout = iViewData.mNodeCellDataLayoutMap.get(node);
@@ -230,20 +230,20 @@ public class ConvertToXML {
 
             //Sequence set-------------------------------------------------------
             final CellData.SequenceSet ss = new CellData.SequenceSet();
-            for (final ISopNode childNode : node.getFirstNodesInSequencesAsSet()) {
+            for (final SopNode childNode : node.getFirstNodesInSequencesAsSet()) {
                 ss.getChildId().add(nodeCellMap.get(childNode).mRefId);
             }
             dataX.setSequenceSet(ss);
 
             //Successor----------------------------------------------------------
-            final ISopNode successorNode = node.getSuccessorNode();
+            final SopNode successorNode = node.getSuccessorNode();
             if (successorNode != null) {
                 final int successorRefId = iViewData.mNodeCellDataMap.get(successorNode).mRefId;
                 dataX.setSuccessor(successorRefId);
             }
 
             //Node type----------------------------------------------------------
-            if (node instanceof SopNode) {
+            if (node instanceof SopNodeEmpty) {
                 dataX.setType(0);
             } else if (node instanceof SopNodeOperation) {
                 final int operationId = node.getOperation().getId();

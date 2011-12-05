@@ -2,7 +2,7 @@ package sequenceplanner.visualization.algorithms;
 
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -11,17 +11,17 @@ import sequenceplanner.model.data.OperationData;
  */
 public interface IRelationContainer {
 
-    boolean setOsetSopNode(ISopNode iSopNode);
+    boolean setOsetSopNode(SopNode iSopNode);
 
-    ISopNode getOsetSopNode();
+    SopNode getOsetSopNode();
 
-    boolean setOsubsetSopNode(ISopNode iSopNode);
+    boolean setOsubsetSopNode(SopNode iSopNode);
 
-    ISopNode getOsubsetSopNode();
+    SopNode getOsubsetSopNode();
 
-    boolean setOfinishsetSopNode(ISopNode iSopNode);
+    boolean setOfinishsetSopNode(SopNode iSopNode);
 
-    ISopNode getOfinishsetSopNode();
+    SopNode getOfinishsetSopNode();
 
     Map<String, Map<OperationData, Set<String>>> getEventOperationLocationSetMap(OperationData iOpData);
 
@@ -31,7 +31,7 @@ public interface IRelationContainer {
 
     void setOperationRelationMap(Map<OperationData, Map<OperationData, Integer>> iOperationRelationMap);
 
-    ISopNode getRootNode();
+    SopNode getRootNode();
 
-    void setRootNode(ISopNode iSopNode);
+    void setRootNode(SopNode iSopNode);
 }

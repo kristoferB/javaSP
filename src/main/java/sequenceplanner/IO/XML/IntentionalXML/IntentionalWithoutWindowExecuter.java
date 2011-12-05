@@ -9,8 +9,8 @@ import java.util.Set;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
@@ -46,9 +46,9 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
        
         VisualizationAlgorithm mVisualizationAlgorithm = new VisualizationAlgorithm("Intentional", this);
 
-        final ISopNode allOperationsNode = new SopNode();
-        final ISopNode hasToFinishNode = new SopNode();
-        final ISopNode operationsToViewNode = new SopNode();
+        final SopNode allOperationsNode = new SopNodeEmpty();
+        final SopNode hasToFinishNode = new SopNodeEmpty();
+        final SopNode operationsToViewNode = new SopNodeEmpty();
 
         Set<SopNodeOperation> allOpsAsNodes = convertOperationsToNodes(model);
         allOperationsNode.getFirstNodesInSequencesAsSet().addAll(allOpsAsNodes);
@@ -102,8 +102,8 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
         @Override
     public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
 
-        if (iList.get(0) instanceof ISopNode) {
-            final ISopNode sopNode = (ISopNode) iList.get(0);
+        if (iList.get(0) instanceof SopNode) {
+            final SopNode sopNode = (SopNode) iList.get(0);
             model.sops.add(sopNode);          
         }
         

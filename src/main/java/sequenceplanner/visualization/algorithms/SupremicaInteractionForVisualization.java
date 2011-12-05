@@ -20,7 +20,7 @@ import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
@@ -53,7 +53,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
     }
 
     @Override
-    public ModuleSubject getModuleSubject(ISopNode iOperationSet, ISopNode iHasToFinishSet) {
+    public ModuleSubject getModuleSubject(SopNode iOperationSet, SopNode iHasToFinishSet) {
         //Check
         if (iOperationSet == null || iHasToFinishSet == null) {
             System.out.println("One or more parameters are null");
@@ -68,7 +68,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         
         
 //        //Create set for ids
-//        for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
+//        for (final SopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
 //            if (node instanceof SopNodeOperation) {
 //                mAllOperationSet.add(node.getOperation().getId());
 //            } else {
@@ -87,7 +87,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         //Create center in flower automaton
         mmEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
-        for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
+        for (final SopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
             if (!(node instanceof SopNodeOperation)) {
                 System.out.println("Node: " + node.typeToString() + " not an operation!");
                 return null;

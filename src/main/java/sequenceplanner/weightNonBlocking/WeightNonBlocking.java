@@ -7,7 +7,7 @@ import java.util.Set;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.gui.view.GUIView;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.OperationViewController;
 
@@ -59,7 +59,7 @@ public class WeightNonBlocking implements IAlgorithmListener {
             return;
         }
         if (iFromAlgorithm == mAlgorithm) {
-            final ISopNode rootNode = (ISopNode) iList.get(0);
+            final SopNode rootNode = (SopNode) iList.get(0);
             final OperationView ow = mOpViewController.createOperationView();
             ow.drawGraph(rootNode);
             return;

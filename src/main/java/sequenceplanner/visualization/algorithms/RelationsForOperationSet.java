@@ -6,17 +6,17 @@ import net.sourceforge.waters.subject.module.ModuleSubject;
 import org.supremica.automata.Automata;
 import org.supremica.automata.Automaton;
 import sequenceplanner.gui.view.GUIView;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceVariableData;
 
 /**
- * To find relations between a set of operations given in a {@link ISopNode}.<br/>
+ * To find relations between a set of operations given in a {@link SopNode}.<br/>
  * The relations should be found with respect to: <br/>
- * 1) some superset of operations also given as a {@link ISopNode}.<br/>
- * 2) some set \subset superset of operations that has to finish also given as a {@link ISopNode}.<br/>
+ * 1) some superset of operations also given as a {@link SopNode}.<br/>
+ * 2) some set \subset superset of operations that has to finish also given as a {@link SopNode}.<br/>
  * @author patrik
  */
 public class RelationsForOperationSet {

@@ -13,7 +13,7 @@ import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Creates conditions for {@link OperationData}s based on {@link ISopNode} parameter used at constructor call.<br/>
+ * Creates conditions for {@link OperationData}s based on {@link SopNode} parameter used at constructor call.<br/>
  * The result is to be found with method getmOperationConditionMap().<br/>
  * @author patrik
  */
@@ -37,7 +37,7 @@ public class ConditionsFromSopNode {
     private final ISopNodeToolbox mSopNodeToolbox = new SopNodeToolboxSetOfOperations();
     private final HashMap<OperationData, Map<ConditionType, Condition>> mOperationConditionMap = new HashMap<OperationData, Map<ConditionType, Condition>>(); //{pre,post}
 
-    public ConditionsFromSopNode(final ISopNode iRoot) {
+    public ConditionsFromSopNode(final SopNode iRoot) {
         run(iRoot);
     }
 
@@ -52,7 +52,7 @@ public class ConditionsFromSopNode {
         return mOperationConditionMap;
     }
 
-    public boolean run(final ISopNode iRoot) {
+    public boolean run(final SopNode iRoot) {
         if (!loopNode(iRoot)) {
             return false;
         }
@@ -60,15 +60,15 @@ public class ConditionsFromSopNode {
     }
 
     /**
-     * Each {@link ISopNode} in each sequence in the iRoot parameter is examined.<br/>
+     * Each {@link SopNode} in each sequence in the iRoot parameter is examined.<br/>
      * Conditions are added based on node type.<br/>
      * Children to each node are called recursively.<br/>
      * Conditions to possible successor node are added.<br/>
      * @param iRoot node whos child nodes should be examined
      * @return true if ok else false
      */
-    private boolean loopNode(final ISopNode iRoot) {
-        for (ISopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
+    private boolean loopNode(final SopNode iRoot) {
+        for (SopNode node : iRoot.getFirstNodesInSequencesAsSet()) {
 
             //Successor(s)-------------------------------------------------------
             while (node != null) {
@@ -85,7 +85,7 @@ public class ConditionsFromSopNode {
                 }
                 //---------------------------------------------------------------
 
-                final ISopNode successorNode = node.getSuccessorNode();
+                final SopNode successorNode = node.getSuccessorNode();
                 if (successorNode != null) {
 
                     //Add condition from node to successor node------------------
@@ -136,17 +136,17 @@ public class ConditionsFromSopNode {
      * @param iNode to look at
      * @return true if ok else false
      */
-    private boolean nodeTypeToCondition(final ISopNode iNode) {
+    private boolean nodeTypeToCondition(final SopNode iNode) {
 
         if (iNode instanceof SopNodeOperation) {
             if (iNode.sequenceSetIsEmpty()) {
                 //do nothing
             } else { //node is operation with child operations
-                final ISopNode parentNode = iNode; //is an operation
+                final SopNode parentNode = iNode; //is an operation
                 final OperationData parentOperation = iNode.getOperation();
 
                 //Precondition for child operations
-                for (final ISopNode childNode : mSopNodeToolbox.getNodes(parentNode, true)) { //Take all child operations, not only the first ones
+                for (final SopNode childNode : mSopNodeToolbox.getNodes(parentNode, true)) { //Take all child operations, not only the first ones
                     if (childNode instanceof SopNodeOperation) {
                         final OperationData childOperation = childNode.getOperation();
                         //set relation between parent and child operations
@@ -159,9 +159,9 @@ public class ConditionsFromSopNode {
 
                 //Postcondition for parent operation
                 final ConditionExpression postCondition = new ConditionExpression();
-                for (final ISopNode node : parentNode.getFirstNodesInSequencesAsSet()) {
+                for (final SopNode node : parentNode.getFirstNodesInSequencesAsSet()) {
                     //Get condition for when sequence that starts with node is finished
-                    final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+                    final SopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
                     final ConditionExpression finishCondition = new ConditionExpression();
                     getFinishConditionForNode(lastNode, finishCondition);
                     if (postCondition.isEmpty()) {
@@ -174,17 +174,17 @@ public class ConditionsFromSopNode {
             }
         } else if (iNode instanceof SopNodeAlternative) {
             //find operations that are first in each sequence.
-            final Map<ISopNode, Set<OperationData>> nodeOperationSetMap = new HashMap<ISopNode, Set<OperationData>>();
-            for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+            final Map<SopNode, Set<OperationData>> nodeOperationSetMap = new HashMap<SopNode, Set<OperationData>>();
+            for (final SopNode node : iNode.getFirstNodesInSequencesAsSet()) {
                 final Set<OperationData> operationSet = new HashSet<OperationData>();
                 findFirstOperationsForNode(node, operationSet);
                 nodeOperationSetMap.put(node, operationSet);
             }
             //add condition
-            for (final ISopNode altNode : iNode.getFirstNodesInSequencesAsSet()) {
-                final Set<ISopNode> nodesInAlternativeSet = iNode.getFirstNodesInSequencesAsSet();
+            for (final SopNode altNode : iNode.getFirstNodesInSequencesAsSet()) {
+                final Set<SopNode> nodesInAlternativeSet = iNode.getFirstNodesInSequencesAsSet();
 
-                for (final ISopNode otherNode : nodesInAlternativeSet) {
+                for (final SopNode otherNode : nodesInAlternativeSet) {
                     for (final OperationData altOperation : nodeOperationSetMap.get(altNode)) {
                         for (final OperationData otherOperation : nodeOperationSetMap.get(otherNode)) {
                             //add precondition to altOperation that otherOperation has to be _i
@@ -197,9 +197,9 @@ public class ConditionsFromSopNode {
             }
         } else if (iNode instanceof SopNodeArbitrary) {
             //find conditions for each sequence in iNode when it is initial or finished
-            final Map<ISopNode, ConditionExpression> sequenceConditionMap = new HashMap<ISopNode, ConditionExpression>();
+            final Map<SopNode, ConditionExpression> sequenceConditionMap = new HashMap<SopNode, ConditionExpression>();
 
-            for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+            for (final SopNode node : iNode.getFirstNodesInSequencesAsSet()) {
 
                 final ConditionExpression startCondition = new ConditionExpression();
 
@@ -218,7 +218,7 @@ public class ConditionsFromSopNode {
                 }
 
                 //Get condition for when sequence that starts with node is finished
-                final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+                final SopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
                 final ConditionExpression finishCondition = new ConditionExpression();
                 getFinishConditionForNode(lastNode, finishCondition);
 
@@ -230,12 +230,12 @@ public class ConditionsFromSopNode {
                 sequenceConditionMap.put(node, mergedCondition);
             }
             //add condition
-            for (final ISopNode thisSequenceNode : iNode.getFirstNodesInSequencesAsSet()) {
+            for (final SopNode thisSequenceNode : iNode.getFirstNodesInSequencesAsSet()) {
 
                 final Set<OperationData> firstOperationSet = new HashSet<OperationData>();
                 findFirstOperationsForNode(thisSequenceNode, firstOperationSet);
                 for (final OperationData opData : firstOperationSet) {
-                    for (final ISopNode otherSequenceNode : sequenceConditionMap.keySet()) {
+                    for (final SopNode otherSequenceNode : sequenceConditionMap.keySet()) {
                         if (otherSequenceNode != thisSequenceNode) {
                             andToOperationConditionMap(opData, ConditionType.PRE, sequenceConditionMap.get(otherSequenceNode));
                         }
@@ -244,7 +244,7 @@ public class ConditionsFromSopNode {
             }
         } else if (iNode instanceof SopNodeParallel) {
             //do nothing
-        } else if (iNode instanceof SopNode) {
+        } else if (iNode instanceof SopNodeEmpty) {
             //do nothing
         } else {
             System.out.println("nodeTypeToCondition node type found is that known");
@@ -263,12 +263,12 @@ public class ConditionsFromSopNode {
      * @param returnSet
      * @return true if ok else false
      */
-    private boolean findFirstOperationsForNode(final ISopNode iNode, Set<OperationData> returnSet) {
+    private boolean findFirstOperationsForNode(final SopNode iNode, Set<OperationData> returnSet) {
 
         if (iNode instanceof SopNodeOperation) {
             returnSet.add(iNode.getOperation());
-        } else if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
-            for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+        } else if (iNode instanceof SopNodeEmpty || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
+            for (final SopNode node : iNode.getFirstNodesInSequencesAsSet()) {
                 if (!findFirstOperationsForNode(node, returnSet)) {
                     return false;
                 }
@@ -289,24 +289,24 @@ public class ConditionsFromSopNode {
      * @param returnCondition
      * @return true if ok else false
      */
-    private boolean getFinishConditionForNode(final ISopNode iNode, final ConditionExpression returnCondition) {
+    private boolean getFinishConditionForNode(final SopNode iNode, final ConditionExpression returnCondition) {
 
         if (iNode instanceof SopNodeOperation) {
             final OperationData opData = iNode.getOperation();
             final ConditionStatement cs = createConditionStatment(opData, "2");
             returnCondition.changeExpressionRoot(cs);
 
-        } else if (iNode instanceof SopNode || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
+        } else if (iNode instanceof SopNodeEmpty || iNode instanceof SopNodeAlternative || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
 
-            for (final ISopNode node : iNode.getFirstNodesInSequencesAsSet()) {
-                final ISopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
+            for (final SopNode node : iNode.getFirstNodesInSequencesAsSet()) {
+                final SopNode lastNode = mSopNodeToolbox.getBottomSuccessor(node);
                 final ConditionExpression localReturnCondition = new ConditionExpression();
                 getFinishConditionForNode(lastNode, localReturnCondition);
 
                 if (returnCondition.isEmpty()) {
                     returnCondition.changeExpressionRoot(localReturnCondition);
                 } else {
-                    if (iNode instanceof SopNode || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
+                    if (iNode instanceof SopNodeEmpty || iNode instanceof SopNodeArbitrary || iNode instanceof SopNodeParallel) {
                         returnCondition.appendElement(ConditionOperator.Type.AND, localReturnCondition);
                     } else {// iNode instanceof SopNodeAlternative
                         returnCondition.appendElement(ConditionOperator.Type.OR, localReturnCondition);

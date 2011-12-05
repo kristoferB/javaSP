@@ -14,7 +14,7 @@ import org.junit.Test;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.general.SP;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.weightNonBlocking.Algorithm;
 import sequenceplanner.weightNonBlocking.Block;
@@ -75,7 +75,7 @@ public class T_weightNonBlocking implements IAlgorithmListener {
 
     @Override
     public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
-        final ISopNode rootNode = (ISopNode) iList.get(0);
+        final SopNode rootNode = (SopNode) iList.get(0);
         final OperationView ow = mSP.getGUIController().mOpViewController.createOperationView();
         ow.drawGraph(rootNode);
         // mSP.saveToSOPXFile("C:\\Users\\patrik\\Desktop\\weight.sopx");

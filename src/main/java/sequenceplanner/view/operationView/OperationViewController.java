@@ -19,8 +19,8 @@ import sequenceplanner.gui.controller.CellNameObserver;
 import sequenceplanner.visualization.algorithms.VisualizationAlgorithm;
 import sequenceplanner.gui.controller.GUIController;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -128,8 +128,8 @@ public class OperationViewController implements Observer{
             viewData.storeCellData();
 
             //Add observers to change name in cell when operation change name.
-            final Map<ISopNode, Cell> map = viewData.mSopNodeForGraphPlus.getNodeCellMap(false);
-            for (final ISopNode node : map.keySet()) {
+            final Map<SopNode, Cell> map = viewData.mSopNodeForGraphPlus.getNodeCellMap(false);
+            for (final SopNode node : map.keySet()) {
                 final Cell cell = map.get(node);
                 if (node instanceof SopNodeOperation) {
                     cell.setValue(node.getOperation());
@@ -176,8 +176,8 @@ public class OperationViewController implements Observer{
         if (iOpView == null) {
             return;
         }
-        ISopNode rootForOperationsToInclude = new SopNode();
-        final ISopNode rootForOperationsToView = new SopNode();
+        SopNode rootForOperationsToInclude = new SopNodeEmpty();
+        final SopNode rootForOperationsToView = new SopNodeEmpty();
         final Set<OperationData> operationsToView = new SopNodeToolboxSetOfOperations().getOperations(iOpView.mViewData.mSopNodeForGraphPlus.getRootSopNode(true), true);
 
         //To store id (as string) for operations to visualize
@@ -192,7 +192,7 @@ public class OperationViewController implements Observer{
         for (final TreeNode tn : allOperations) {
             if (Model.isOperation(tn.getNodeData())) {
                 final OperationData opData = (OperationData) tn.getNodeData();
-                final ISopNode opNode = new SopNodeOperation(opData);
+                final SopNode opNode = new SopNodeOperation(opData);
 
                 //Add to rootForOperationsToInclude
                 rootForOperationsToInclude.addNodeToSequenceSet(opNode);
@@ -217,7 +217,7 @@ public class OperationViewController implements Observer{
 //        final List<Object> list = new ArrayList<Object>();
 //        list.add(rootForOperationsToInclude);
 //        list.add(rootForOperationsToView);
-//        list.add(new SopNode());
+//        list.add(new SopNodeEmpty());
 //        list.add(null);
 //        sv.init(list);
 //
