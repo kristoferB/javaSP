@@ -48,7 +48,7 @@ public class RelationsForOperationSet {
             return 0;
         }
 
-        //saveFormalModel(mWmodPath);
+        saveFormalModel(mWmodPath);
 
         
         //flatten out (EFA->DFA, Module -> Automata)
