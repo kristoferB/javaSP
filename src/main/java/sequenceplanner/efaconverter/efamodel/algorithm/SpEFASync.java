@@ -19,7 +19,7 @@ import sequenceplanner.efaconverter.efamodel.SpTransition;
 import sequenceplanner.efaconverter.efamodel.SpVariable;
 
 /**
- *
+ * OLD! NOT WORKING. REMOVE
  * @author kbe
  */
 public class SpEFASync {
@@ -259,7 +259,7 @@ public class SpEFASync {
     private boolean validateStatment(ConditionStatement statment, Map<String,String> variableValues){
         String var = statment.getVariable();
         if (variableValues.containsKey(var)){
-            return statment.evaluate(variableValues.get(var));
+            //return statment.evaluate(variableValues.get(var));
         }
         return true;
     }
@@ -272,7 +272,7 @@ public class SpEFASync {
             } else if (e.isStatement()){
                 ConditionStatement cs =  (ConditionStatement) e;
                 if (newVars.containsKey(cs.getVariable())){
-                    newVars.put(cs.getVariable(), cs.getNewVariableValue(newVars.get(cs.getValue())));
+                    //newVars.put(cs.getVariable(), cs.getNewVariableValue(newVars.get(cs.getValue())));
                 }
             }
         }
