@@ -76,7 +76,7 @@ public abstract class ConditionElement {
 
     public abstract boolean isExpression();
 
-    public abstract boolean isStatment();
+    public abstract boolean isStatement();
 
     @Override
     public abstract boolean equals(Object obj);
@@ -86,7 +86,7 @@ public abstract class ConditionElement {
 
     @Override
     public ConditionElement clone() {
-        if (this.isStatment()) {
+        if (this.isStatement()) {
             final ConditionStatement cs = (ConditionStatement) this;
             final String variable = cs.getVariable();
             final ConditionStatement.Operator operator = cs.getOperator();

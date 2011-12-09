@@ -3,7 +3,7 @@ package sequenceplanner.visualization.algorithms;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -27,14 +27,14 @@ public abstract class ARelationContainer implements IRelationContainer {
      * See {@link IRelateTwoOperations} for map between value and Integer.
      */
     private Map<OperationData, Map<OperationData, Integer>> mOperationRelationMap = null;
-    private ISopNode mSopNodeOset = null;
-    private ISopNode mSopNodeOsubset = null;
-    private ISopNode mSopNodeOfinish = null;
+    private SopNode mSopNodeOset = null;
+    private SopNode mSopNodeOsubset = null;
+    private SopNode mSopNodeOfinish = null;
     /**
      * A pointer to the current root node.<br/>
      * Used in {@link HierarchicalPartition} and {@link RelationPartition}.<br/>
      */
-    private ISopNode mRoot = null;
+    private SopNode mRoot = null;
 
     public ARelationContainer() {
         mEventOperationLocationSetMap = new HashMap<OperationData, Map<String, Map<OperationData, Set<String>>>>();
@@ -50,7 +50,7 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public ISopNode getOfinishsetSopNode() {
+    public SopNode getOfinishsetSopNode() {
         return mSopNodeOfinish;
     }
 
@@ -63,12 +63,12 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public ISopNode getOsetSopNode() {
+    public SopNode getOsetSopNode() {
         return mSopNodeOset;
     }
 
     @Override
-    public ISopNode getOsubsetSopNode() {
+    public SopNode getOsubsetSopNode() {
         return mSopNodeOsubset;
     }
 
@@ -80,7 +80,7 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public boolean setOfinishsetSopNode(ISopNode iSopNode) {
+    public boolean setOfinishsetSopNode(SopNode iSopNode) {
         if (iSopNode == null || getOsetSopNode() == null) {
             return false;
         }
@@ -101,7 +101,7 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public boolean setOsetSopNode(ISopNode iSopNode) {
+    public boolean setOsetSopNode(SopNode iSopNode) {
         if(iSopNode == null) {
             return false;
         }
@@ -110,7 +110,7 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public boolean setOsubsetSopNode(ISopNode iSopNode) {
+    public boolean setOsubsetSopNode(SopNode iSopNode) {
         if (iSopNode == null || getOsetSopNode() == null) {
             return false;
         }
@@ -124,12 +124,12 @@ public abstract class ARelationContainer implements IRelationContainer {
     }
 
     @Override
-    public ISopNode getRootNode() {
+    public SopNode getRootNode() {
         return mRoot;
     }
 
     @Override
-    public void setRootNode(ISopNode iSopNode) {
+    public void setRootNode(SopNode iSopNode) {
         this.mRoot = iSopNode;
     }
 

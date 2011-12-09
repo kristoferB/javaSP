@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
 /**
- * Structures that elements in an {@link ISopNode} sequentially.<br/>
+ * Structures that elements in an {@link SopNode} sequentially.<br/>
  * @author patrik
  */
 public class Sequencing {
@@ -22,7 +22,7 @@ public class Sequencing {
 
     public Sequencing(final IRelationContainer iRC) {
         this.mRC = iRC;
-        final ISopNode startNode = mRC.getOsubsetSopNode();
+        final SopNode startNode = mRC.getOsubsetSopNode();
         sequence(mSNToolbox.getNodes(startNode, false), startNode);
         removeUnnecessarySOPNodes(mRC.getOsubsetSopNode());
     }
@@ -36,21 +36,21 @@ public class Sequencing {
      * @param iSop current parent to iNodes. Used for update of pointers.
      * @return The node in iNodes that occurs first sequentially, or one such node if iNodes contains "subsets" without sequentially relations.
      */
-    private ISopNode sequence(final Set<ISopNode> iNodes, final ISopNode iSop) {
+    private SopNode sequence(final Set<SopNode> iNodes, final SopNode iSop) {
         if (iNodes.isEmpty()) {
             return null;
         }
 
         //Extract one node as root and create set to loop from remaining nodes
-        final ISopNode root = iNodes.iterator().next();
+        final SopNode root = iNodes.iterator().next();
 
         //Take action if selected root is group
         processChildNodes(root);
 
-        final Set<ISopNode> rootPredSet = new HashSet<ISopNode>();
-        final Set<ISopNode> rootSuccSet = new HashSet<ISopNode>();
-        final Map<ISopNode, Integer> relationMap = new HashMap<ISopNode, Integer>();
-        for (final ISopNode n : iNodes) {
+        final Set<SopNode> rootPredSet = new HashSet<SopNode>();
+        final Set<SopNode> rootSuccSet = new HashSet<SopNode>();
+        final Map<SopNode, Integer> relationMap = new HashMap<SopNode, Integer>();
+        for (final SopNode n : iNodes) {
             int relation = -1;
 
             //Check if n is predecessor to root
@@ -71,15 +71,15 @@ public class Sequencing {
         //It is possible that current root has no sequential relation to some nodes.
         //But the nodes can have sequential relations to each other.
         //-> Test their internal relations later.
-        final Set<ISopNode> remainingSet = new HashSet<ISopNode>(iNodes);
+        final Set<SopNode> remainingSet = new HashSet<SopNode>(iNodes);
         remainingSet.remove(root);
         remainingSet.removeAll(rootPredSet);
         remainingSet.removeAll(rootSuccSet);
         sequence(remainingSet, iSop);
 
         //Sequence predecessor and successor nodes to root
-        final ISopNode topPred = sequence(rootPredSet, iSop);
-        final ISopNode topSucc = sequence(rootSuccSet, iSop);
+        final SopNode topPred = sequence(rootPredSet, iSop);
+        final SopNode topSucc = sequence(rootSuccSet, iSop);
 
         //Possible move of root and topSucc from iSop to successor lists
         updatePointers(root, topPred, topSucc, iSop, relationMap);
@@ -94,7 +94,7 @@ public class Sequencing {
      * @param iTopPred
      * @return iTopPred if iTopPred != null else iRoot
      */
-    private ISopNode structure(final ISopNode iRoot, final ISopNode iTopPred) {
+    private SopNode structure(final SopNode iRoot, final SopNode iTopPred) {
         if (iTopPred != null) {
             return iTopPred;
         } else {
@@ -110,8 +110,8 @@ public class Sequencing {
      * @param iSop current parent node
      * @param iRelationMap
      */
-    private void updatePointers(final ISopNode iRoot, final ISopNode iTopPred, final ISopNode iTopSucc, final ISopNode iSop, final Map<ISopNode, Integer> iRelationMap) {
-        final ISopNode bottomPred = mSNToolbox.getBottomSuccessor(iTopPred);
+    private void updatePointers(final SopNode iRoot, final SopNode iTopPred, final SopNode iTopSucc, final SopNode iSop, final Map<SopNode, Integer> iRelationMap) {
+        final SopNode bottomPred = mSNToolbox.getBottomSuccessor(iTopPred);
 
         if (bottomPred != null) {
             bottomPred.setSuccessorNode(iRoot);
@@ -131,7 +131,7 @@ public class Sequencing {
      * The sequence method is called with the child nodes to iNode
      * @param iNode
      */
-    private void processChildNodes(final ISopNode iNode) {
+    private void processChildNodes(final SopNode iNode) {
         if (!iNode.sequenceSetIsEmpty()) {
             //node has children
             sequence(mSNToolbox.getNodes(iNode, false), iNode);
@@ -144,7 +144,7 @@ public class Sequencing {
      * @param iPossibleSuccNode
      * @return sequence relation found, or -1 if no relation was found
      */
-    private int checkSequenceRelation(final ISopNode iPossiblePredNode, final ISopNode iPossibleSuccNode) {
+    private int checkSequenceRelation(final SopNode iPossiblePredNode, final SopNode iPossibleSuccNode) {
         final Set<OperationData> opPredSet = new HashSet<OperationData>();
         addOperationsToSet(iPossiblePredNode, opPredSet);
 
@@ -230,7 +230,7 @@ public class Sequencing {
      * @param iNode
      * @param ioSet
      */
-    private void addOperationsToSet(final ISopNode iNode, final Set<OperationData> ioSet) {
+    private void addOperationsToSet(final SopNode iNode, final Set<OperationData> ioSet) {
         if (iNode instanceof SopNodeOperation) {
 //            final OperationData opData = (OperationData) iNode.getNodeType();
             ioSet.add(iNode.getOperation());
@@ -245,19 +245,19 @@ public class Sequencing {
      * I.e. move child to SOPnode to iRoot.<br/>
      * @param iRoot
      */
-    private void removeUnnecessarySOPNodes(final ISopNode iRoot) {
+    private void removeUnnecessarySOPNodes(final SopNode iRoot) {
         //Do remove
-        final Set<ISopNode> setToLoop = new HashSet<ISopNode>(mSNToolbox.getNodes(iRoot, false));
-        for (final ISopNode child : setToLoop) {
-            if (child instanceof SopNode) {
+        final Set<SopNode> setToLoop = new HashSet<SopNode>(mSNToolbox.getNodes(iRoot, false));
+        for (final SopNode child : setToLoop) {
+            if (child instanceof SopNodeEmpty) {
                 if (child.getFirstNodesInSequencesAsSet().size() == 1) {
-                    final ISopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
+                    final SopNode childChild = child.getFirstNodesInSequencesAsSet().iterator().next();
                     //Move node one level up
                     iRoot.addNodeToSequenceSet(childChild);
                     iRoot.removeFromSequenceSet(child);
                     //Set successor relations
-                    final ISopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
-                    final ISopNode firstNodeAfterChild = child.getSuccessorNode();
+                    final SopNode lastNodeInChildChildSequence = mSNToolbox.getBottomSuccessor(childChild);
+                    final SopNode firstNodeAfterChild = child.getSuccessorNode();
                     lastNodeInChildChildSequence.setSuccessorNode(firstNodeAfterChild);
                     final int successorRelationType = child.getSuccessorRelation();
                     lastNodeInChildChildSequence.setSuccessorRelation(successorRelationType);
@@ -266,8 +266,8 @@ public class Sequencing {
         }
 
         //Loop children
-        final Set<ISopNode> setToLoop2 = new HashSet<ISopNode>(mSNToolbox.getNodes(iRoot, false));
-        for (final ISopNode child : setToLoop2) {
+        final Set<SopNode> setToLoop2 = new HashSet<SopNode>(mSNToolbox.getNodes(iRoot, false));
+        for (final SopNode child : setToLoop2) {
             removeUnnecessarySOPNodes(child);
         }
     }

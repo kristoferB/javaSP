@@ -28,7 +28,7 @@ import sequenceplanner.model.data.ViewData;
 import sequenceplanner.gui.view.attributepanel.AttributePanel;
 import sequenceplanner.model.ConvertFromXML;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.SopNodeFromViewData;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
@@ -219,12 +219,12 @@ public class GUIController {
         @Override
         public void actionPerformed(ActionEvent e) {
             final OperationView opView = mOpViewController.createOperationView();
-            final ISopNode rootNode = opView.mViewData.mSopNodeForGraphPlus.getRootSopNode(false);
+            final SopNode rootNode = opView.mViewData.mSopNodeForGraphPlus.getRootSopNode(false);
             final List<TreeNode> allOperationList = getModel().getAllOperations();
             for (final TreeNode tn : allOperationList) {
                 if (Model.isOperation(tn.getNodeData())) {
                     final OperationData opData = (OperationData) tn.getNodeData();
-                    final ISopNode newNode = new SopNodeOperation(opData);
+                    final SopNode newNode = new SopNodeOperation(opData);
                     rootNode.addNodeToSequenceSet(newNode);
                 }
             }

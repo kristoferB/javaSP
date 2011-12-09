@@ -6,8 +6,8 @@ import com.mxgraph.model.mxGeometry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.algorithms.SopNodeFromSPGraphModel;
 import sequenceplanner.view.operationView.OperationView;
 import sequenceplanner.view.operationView.graphextension.Cell;
@@ -23,8 +23,8 @@ public class ViewData extends Data {
 
     public ConditionData mConditionData;
     public SopNodeForGraphPlus mSopNodeForGraphPlus;
-    public Map<ISopNode, CellDataLayout> mNodeCellDataLayoutMap = new HashMap<ISopNode, CellDataLayout>();
-    public Map<ISopNode, CellData> mNodeCellDataMap = new HashMap<ISopNode, CellData>();
+    public Map<SopNode, CellDataLayout> mNodeCellDataLayoutMap = new HashMap<SopNode, CellDataLayout>();
+    public Map<SopNode, CellData> mNodeCellDataMap = new HashMap<SopNode, CellData>();
     private boolean isClosed;
 
     public boolean isClosed() {
@@ -63,13 +63,13 @@ public class ViewData extends Data {
         if(mSopNodeForGraphPlus == null) {
             return;
         }
-        final Map<ISopNode, Cell> map = mSopNodeForGraphPlus.getNodeCellMap(false);
+        final Map<SopNode, Cell> map = mSopNodeForGraphPlus.getNodeCellMap(false);
 
         mNodeCellDataMap.clear();
         mNodeCellDataLayoutMap.clear();
         Integer refIdCounter = 0;
 
-        for (final ISopNode node : map.keySet()) {
+        for (final SopNode node : map.keySet()) {
             final Cell cell = map.get(node);
 
             //Create new CellData
@@ -93,7 +93,7 @@ public class ViewData extends Data {
     }
 
     /**
-     * Inner class to extend {@link ISopNode} objects in view with GUI data
+     * Inner class to extend {@link SopNode} objects in view with GUI data
      */
     public static class CellData {
 
@@ -143,12 +143,12 @@ public class ViewData extends Data {
     }
 
     /**
-     * To store {@link ISopNode} structure info for this {@link OperationView}
+     * To store {@link SopNode} structure info for this {@link OperationView}
      */
     public class SopNodeForGraphPlus {
 
-        private ISopNode mRootSopNode = null;
-        private Map<ISopNode, Cell> mNodeCellMap = null;
+        private SopNode mRootSopNode = null;
+        private Map<SopNode, Cell> mNodeCellMap = null;
         private SPGraphModel mSPGraphModel;
 
         public SopNodeForGraphPlus(final SPGraphModel iSPGraphModel) {
@@ -156,14 +156,14 @@ public class ViewData extends Data {
             this.getSopNodeForGraphPlus();
         }
 
-        public ISopNode getRootSopNode(final boolean iUpDateBeforeReturn) {
+        public SopNode getRootSopNode(final boolean iUpDateBeforeReturn) {
             if (iUpDateBeforeReturn) {
                 this.getSopNodeForGraphPlus();
             }
             return mRootSopNode;
         }
 
-        public Map<ISopNode, Cell> getNodeCellMap(final boolean iUpDateBeforeReturn) {
+        public Map<SopNode, Cell> getNodeCellMap(final boolean iUpDateBeforeReturn) {
             if (iUpDateBeforeReturn) {
                 this.getSopNodeForGraphPlus();
             }
@@ -171,13 +171,13 @@ public class ViewData extends Data {
         }
 
         /**
-         * Convert graph from {@link SPGraphModel} to {@link ISopNode} structure.<br/>
-         * @param ioMap key: {@link ISopNode} object, value: {@link Cell} for node
-         * @return the root {@link ISopNode}
+         * Convert graph from {@link SPGraphModel} to {@link SopNode} structure.<br/>
+         * @param ioMap key: {@link SopNode} object, value: {@link Cell} for node
+         * @return the root {@link SopNode}
          */
         private void getSopNodeForGraphPlus() {
             //Create a new sop node root aka theSopNode
-            final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(mSPGraphModel, new SopNode());
+            final SopNodeFromSPGraphModel snfspgm = new SopNodeFromSPGraphModel(mSPGraphModel, new SopNodeEmpty());
             //get root sop
             mRootSopNode = snfspgm.getSopNodeRoot();
             //get Cell for each node

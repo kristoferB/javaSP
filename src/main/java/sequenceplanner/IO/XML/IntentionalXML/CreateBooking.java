@@ -6,7 +6,7 @@ import sequenceplanner.datamodel.condition.ConditionOperator;
 import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
@@ -29,27 +29,27 @@ public class CreateBooking {
     private CreateBooking() {}
     
     public static void createBookingForSeams(Model model){
-        for (ISopNode sop : model.sops){
+        for (SopNode sop : model.sops){
             createSeamBooking(sop,model);
             break;
         }
     }
     
     public static void createBookingForResources(Model model){
-        for (ISopNode sop : model.sops){
+        for (SopNode sop : model.sops){
             createResourceBooking(sop,model);
             break;
         }
     }
         
-    private static void createResourceBooking(ISopNode sop,Model model) {
+    private static void createResourceBooking(SopNode sop,Model model) {
         if (sop == null) return;
         
         if (sop.getOperation() != null && !sop.getOperation().resource.isEmpty() 
                                        && childrenHaveSameResource(sop,sop.getOperation().resource)){
             addBookingConditions(sop.getOperation().resource, sop.getOperation(), model);
         } else {
-            for (ISopNode n : sop.getFirstNodesInSequencesAsSet()){
+            for (SopNode n : sop.getFirstNodesInSequencesAsSet()){
                 createResourceBooking(n,model);
             }
         }
@@ -57,28 +57,28 @@ public class CreateBooking {
         createResourceBooking(sop.getSuccessorNode(),model);        
     }
     
-    private static boolean childrenHaveSameResource(ISopNode sop, String resource) {
-        ArrayDeque<ISopNode> stack = new ArrayDeque();
-        for (ISopNode n : sop.getFirstNodesInSequencesAsSet())
+    private static boolean childrenHaveSameResource(SopNode sop, String resource) {
+        ArrayDeque<SopNode> stack = new ArrayDeque();
+        for (SopNode n : sop.getFirstNodesInSequencesAsSet())
             stack.push(n);
                
         while (!stack.isEmpty()){
-            ISopNode n = stack.pop();
+            SopNode n = stack.pop();
             if (n.getOperation() != null && !n.getOperation().resource.isEmpty()
                     && !n.getOperation().resource.equals(resource)){
                 return false;
             } else {
-                for (ISopNode k : n.getFirstNodesInSequencesAsSet())
+                for (SopNode k : n.getFirstNodesInSequencesAsSet())
                     stack.push(k);        
             }                
         }
         return true;
     }
 
-    private static void createSeamBooking(ISopNode sop,Model model) {
+    private static void createSeamBooking(SopNode sop,Model model) {
         // For now, seams should not be on children
         if (sop == null) return;
-        for (ISopNode n : sop.getFirstNodesInSequencesAsSet()){
+        for (SopNode n : sop.getFirstNodesInSequencesAsSet()){
             if (n.getOperation() != null && !n.getOperation().seam.isEmpty()){
                 for (Seam seam : model.seams){
                     if (seam.getName().equals(n.getOperation().seam)){
@@ -150,10 +150,10 @@ public class CreateBooking {
     }
     
     // Not a good implementation. Must think this trough!
-    private static boolean sequenceHasSameResource(ISopNode n, String resource) {
+    private static boolean sequenceHasSameResource(SopNode n, String resource) {
         return false;
 //        if (n.getSuccessorNode() == null) return false;
-//        ISopNode next = n.getSuccessorNode();
+//        SopNode next = n.getSuccessorNode();
 //               
 //        while (next != null){
 //                    

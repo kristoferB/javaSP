@@ -32,8 +32,8 @@ import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.parser.GuardAsTextInputToConditionParser;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeAlternative;
 import sequenceplanner.model.SOP.SopNodeArbitrary;
 import sequenceplanner.model.SOP.SopNodeOperation;
@@ -163,7 +163,7 @@ public class ConvertFromXML {
         viewData.setHidden(viX.isIsHidden());
 
         for (CellData cellData : viX.getCellData()) {
-            final ISopNode sopNode = getSopNode(cellData);
+            final SopNode sopNode = getSopNode(cellData);
             //Data related to relations
             viewData.mNodeCellDataMap.put(sopNode, getCellDataRelations(cellData));
 
@@ -174,12 +174,12 @@ public class ConvertFromXML {
         return viewData;
     }
 
-    private ISopNode getSopNode(final CellData iCdX) {
+    private SopNode getSopNode(final CellData iCdX) {
         final int type = iCdX.getType();
-        ISopNode newSopNode = null;
+        SopNode newSopNode = null;
 
         if (type == 0) {
-            newSopNode = new SopNode();
+            newSopNode = new SopNodeEmpty();
         } else if (type == -2) {
             newSopNode = new SopNodeAlternative();
         } else if (type == -3) {

@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+
+  <schedule>
+    <opref id="o2" absTimeStart="123.00" absTimeStop="156.00"/>
+    <opref id="o3" />
+    <opref id="o4" />
+    <opref id="o5" />	
+  </schedule>
+
+  <specs>
+    <spec>
+      <parallel>
+        <opref id="o1">
+          <sequence>
+            <parallel>
+              <sequence>
+                <opref id="o2" />
+                <opref id="o3" />
+                <opref id="o4" />
+                <opref id="o5" />
+              </sequence>
+              <opref id="o6" />
+            </parallel>
+            <opref id="o7" />
+          </sequence>
+        </opref>
+        <opref id="o8">
+          <alternative>
+            <opref id="o9">
+              <sequence>
+                <arbitrary>
+                  <sequence>
+                    <opref id="o10" />
+                    <opref id="o11" />
+                    <opref id="o12" />
+                    <opref id="o13" />
+                  </sequence>
+                  <sequence>
+                    <opref id="o14" />
+                    <opref id="o15" />
+                    <opref id="o16" />
+                    <opref id="o17" />
+                  </sequence>
+                </arbitrary>
+                <opref id="o18" />
+              </sequence>
+            </opref>
+            <opref id="o19">
+              <sequence>
+                <arbitrary>
+                  <sequence>
+                    <opref id="o20" />
+                    <opref id="o21" />
+                    <opref id="o22" />
+                    <opref id="o23" />
+                  </sequence>
+                  <sequence>
+                    <opref id="o24" />
+                    <opref id="o25" />
+                    <opref id="o26" />
+                    <opref id="o27" />
+                  </sequence>
+                </arbitrary>
+                <opref id="o28" />
+              </sequence>
+            </opref>
+            <opref id="o29">
+              <sequence>
+                <parallel>
+                  <sequence>
+                    <opref id="o30" />
+                    <opref id="o31" />
+                    <opref id="o32" />
+                    <opref id="o33" />
+                  </sequence>
+                  <opref id="o34" />
+                </parallel>
+                <opref id="o35" />
+              </sequence>
+            </opref>
+            <opref id="o36">
+              <sequence>
+                <parallel>
+                  <sequence>
+                    <opref id="o37" />
+                    <opref id="o38" />
+                    <opref id="o39" />
+                    <opref id="o40" />
+                  </sequence>
+                  <opref id="o41" />
+                </parallel>
+                <opref id="o42" />
+              </sequence>
+            </opref>
+          </alternative>
+        </opref>
+      </parallel>
+    </spec>
+  </specs>
+</assembly>

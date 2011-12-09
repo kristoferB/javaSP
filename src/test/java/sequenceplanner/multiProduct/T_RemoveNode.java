@@ -4,9 +4,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sequenceplanner.general.SP;
-import sequenceplanner.model.SOP.ISopNode;
-import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.SopNodeParallel;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -33,18 +33,18 @@ public class T_RemoveNode {
     public void method1() {
         //build up data
         int id = 0;
-        final ISopNode rootNode = new SopNode();
-        final ISopNode parA = new SopNodeParallel();
+        final SopNode rootNode = new SopNodeEmpty();
+        final SopNode parA = new SopNodeParallel();
         rootNode.addNodeToSequenceSet(parA);
-        final ISopNode nodeA = new SopNodeOperation(new OperationData("nodeA", id++));
+        final SopNode nodeA = new SopNodeOperation(new OperationData("nodeA", id++));
         parA.addNodeToSequenceSet(nodeA);
-        final ISopNode parB = new SopNodeParallel();
+        final SopNode parB = new SopNodeParallel();
         parA.setSuccessorNode(parB);
-        final ISopNode nodeB = new SopNodeOperation(new OperationData("nodeB", id++));
+        final SopNode nodeB = new SopNodeOperation(new OperationData("nodeB", id++));
         parB.addNodeToSequenceSet(nodeB);
-        final ISopNode nodeC = new SopNodeOperation(new OperationData("nodeC", id++));
+        final SopNode nodeC = new SopNodeOperation(new OperationData("nodeC", id++));
         parB.addNodeToSequenceSet(nodeC);
-        final ISopNode nodeD = new SopNodeOperation(new OperationData("nodeD", id++));
+        final SopNode nodeD = new SopNodeOperation(new OperationData("nodeD", id++));
         parB.setSuccessorNode(nodeD);
         
 //        System.out.println("before");

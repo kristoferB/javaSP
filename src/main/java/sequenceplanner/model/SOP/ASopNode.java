@@ -10,7 +10,7 @@ import sequenceplanner.model.data.OperationData;
  *
  * @author patrik
  */
-public abstract class ASopNode implements ISopNode {
+public abstract class ASopNode implements SopNode {
 
     private String mTypeAsString = "";
     /**
@@ -19,14 +19,14 @@ public abstract class ASopNode implements ISopNode {
     public static int mUniqueIdCounter = 1;
     private int mUniqueid;
     /**
-     * Set containing the first ISopNode in all sequences that are children to this node.<br/>
+     * Set containing the first SopNode in all sequences that are children to this node.<br/>
      */
-    private Set<ISopNode> mSequenceSet = null;
-    private ISopNode mSuccessor = null;
+    private Set<SopNode> mSequenceSet = null;
+    private SopNode mSuccessor = null;
     private int mSuccessorRelation = -1;
 
     public ASopNode(final String iTypeAsString) {
-        mSequenceSet = new HashSet<ISopNode>();
+        mSequenceSet = new HashSet<SopNode>();
         this.mTypeAsString = iTypeAsString;
         this.mUniqueid = mUniqueIdCounter++;
     }
@@ -37,27 +37,27 @@ public abstract class ASopNode implements ISopNode {
     }
 
     @Override
-    public Set<ISopNode> getFirstNodesInSequencesAsSet() {
+    public Set<SopNode> getFirstNodesInSequencesAsSet() {
         return mSequenceSet;
     }
 
     @Override
-    public ISopNode getSuccessorNode() {
+    public SopNode getSuccessorNode() {
         return mSuccessor;
     }
 
     @Override
-    public void addNodeToSequenceSet(ISopNode iNode) {
+    public void addNodeToSequenceSet(SopNode iNode) {
         mSequenceSet.add(iNode);
     }
 
     @Override
-    public boolean removeFromSequenceSet(ISopNode iNodeToRemove) {
+    public boolean removeFromSequenceSet(SopNode iNodeToRemove) {
         return getFirstNodesInSequencesAsSet().remove(iNodeToRemove);
     }
 
     @Override
-    public void setSuccessorNode(ISopNode iSuccessor) {
+    public void setSuccessorNode(SopNode iSuccessor) {
         mSuccessor = iSuccessor;
     }
 
@@ -96,7 +96,7 @@ public abstract class ASopNode implements ISopNode {
         String returnString = "";
         if (this instanceof SopNodeOperation) {
             returnString += getOperation().getName();
-        } else if (this instanceof SopNode || this instanceof SopNodeAlternative || this instanceof SopNodeArbitrary || this instanceof SopNodeParallel) {
+        } else if (this instanceof SopNodeEmpty || this instanceof SopNodeAlternative || this instanceof SopNodeArbitrary || this instanceof SopNodeParallel) {
             returnString += mTypeAsString;
         } else {
             returnString += null;
@@ -118,7 +118,7 @@ public abstract class ASopNode implements ISopNode {
         //-----------------------------------------------------------------------
         if (!sequenceSetIsEmpty()) {
             returnString += iNewLinePrefix + "Sequence set: {";
-            for (final ISopNode node : getFirstNodesInSequencesAsSet()) {
+            for (final SopNode node : getFirstNodesInSequencesAsSet()) {
                 if (!returnString.endsWith("{")) {
                     returnString += ",";
                 }
@@ -145,7 +145,7 @@ public abstract class ASopNode implements ISopNode {
     public String inDepthToString() {
         String returnString = "";
         returnString += toString();
-        for (ISopNode node : getFirstNodesInSequencesAsSet()) {
+        for (SopNode node : getFirstNodesInSequencesAsSet()) {
             while (node != null) {
                 returnString += node.inDepthToString();
                 node = node.getSuccessorNode();
@@ -158,7 +158,7 @@ public abstract class ASopNode implements ISopNode {
     public String inDepthToString(final String iPrefix) {
         String returnString = "";
         returnString += toString(iPrefix);
-        for (ISopNode node : getFirstNodesInSequencesAsSet()) {
+        for (SopNode node : getFirstNodesInSequencesAsSet()) {
             while (node != null) {
                 returnString += node.inDepthToString(iPrefix + "..");
                 node = node.getSuccessorNode();

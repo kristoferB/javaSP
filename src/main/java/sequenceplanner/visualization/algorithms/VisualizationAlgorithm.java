@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import sequenceplanner.algorithm.AAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.ResourceVariableData;
 
@@ -15,9 +15,9 @@ import sequenceplanner.model.data.ResourceVariableData;
  */
 public class VisualizationAlgorithm extends AAlgorithm {
 
-    private ISopNode mAllOperations;
-    private ISopNode mOperationsToView;
-    private ISopNode mHasToFinish;
+    private SopNode mAllOperations;
+    private SopNode mOperationsToView;
+    private SopNode mHasToFinish;
     private Set<ConditionData> mConditionsToIncludeSet;
     private IPerformVisualization mVisualization = null;
     private Set<ResourceVariableData> resources;
@@ -29,9 +29,9 @@ public class VisualizationAlgorithm extends AAlgorithm {
 
     @Override
     public void init(List<Object> iList) {
-        this.mAllOperations = (ISopNode) iList.get(0);
-        this.mOperationsToView = (ISopNode) iList.get(1);
-        this.mHasToFinish = (ISopNode) iList.get(2);
+        this.mAllOperations = (SopNode) iList.get(0);
+        this.mOperationsToView = (SopNode) iList.get(1);
+        this.mHasToFinish = (SopNode) iList.get(2);
         this.mConditionsToIncludeSet = (Set<ConditionData>) iList.get(3);
         if (iList.size()>4) resources = (Set<ResourceVariableData>) iList.get(4);
     }

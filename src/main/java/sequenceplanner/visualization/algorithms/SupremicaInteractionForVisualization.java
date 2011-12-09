@@ -20,7 +20,7 @@ import sequenceplanner.IO.EFA.SEFA;
 import sequenceplanner.IO.EFA.SEGA;
 import sequenceplanner.gui.view.GUIView;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
@@ -53,7 +53,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
     }
 
     @Override
-    public ModuleSubject getModuleSubject(ISopNode iOperationSet, ISopNode iHasToFinishSet) {
+    public ModuleSubject getModuleSubject(SopNode iOperationSet, SopNode iHasToFinishSet) {
         //Check
         if (iOperationSet == null || iHasToFinishSet == null) {
             System.out.println("One or more parameters are null");
@@ -63,15 +63,19 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             return null;
         }
 
-        //Create set for ids
-        for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
-            if (node instanceof SopNodeOperation) {
-                mAllOperationSet.add(node.getOperation().getId());
-            } else {
-                System.out.println("Node: " + node.typeToString() + " not an operation!");
-                return null;
-            }
-        }
+        GetComplParallelOps pOPs = new GetComplParallelOps();
+        Set<String> parallelOps = pOPs.getParallelOps(iOperationSet);
+        
+        
+//        //Create set for ids
+//        for (final SopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
+//            if (node instanceof SopNodeOperation) {
+//                mAllOperationSet.add(node.getOperation().getId());
+//            } else {
+//                System.out.println("Node: " + node.typeToString() + " not an operation!");
+//                return null;
+//            }
+//        }
         
         // Add resource variables
         for (ResourceVariableData r : resources){
@@ -83,7 +87,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
         //Create center in flower automaton
         mmEfa.addState(SEFA.SINGLE_LOCATION_NAME, true, true);
 
-        for (final ISopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
+        for (final SopNode node : iOperationSet.getFirstNodesInSequencesAsSet()) {
             if (!(node instanceof SopNodeOperation)) {
                 System.out.println("Node: " + node.typeToString() + " not an operation!");
                 return null;
@@ -92,39 +96,39 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
             final int id = opData.getId();
             final String varName = Type.OPERATION_VARIABLE_PREFIX.toString() + id;
 
-            // test
+
+            if (parallelOps.contains(varName)){
+                mmModule.addIntVariable(varName, -1, -1, -1, null);
+            } else {
             
-            
-            
-            //end test
-            
-            //Add integer variable for operation---------------------------------
-            Integer marking = null;
-            if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
-                marking = 2;
+                //Add integer variable for operation---------------------------------
+                Integer marking = null;
+                if (new SopNodeToolboxSetOfOperations().getOperations(iHasToFinishSet, false).contains(opData)) {
+                    marking = 2;
+                }
+                mmModule.addIntVariable(varName, 0, 2, 0, marking);
+                //-------------------------------------------------------------------
+
+
+
+                //Add transition to start execute operation--------------------------
+                ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
+                ega.andGuard(varName + "==0");
+                ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD, mConditionsToInclude);
+                ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION, mConditionsToInclude);
+                ega.addAction(varName + "=1");
+                mmEfa.addStandardSelfLoopTransition(ega);
+                //-------------------------------------------------------------------
+
+                //Add transition to finish execute operation-------------------------
+                ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_DOWN.toString());
+                ega.andGuard(varName + "==1");
+                ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD, mConditionsToInclude);
+                ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION, mConditionsToInclude);
+                ega.addAction(varName + "=2");
+                mmEfa.addStandardSelfLoopTransition(ega);
+                //-------------------------------------------------------------------
             }
-            mmModule.addIntVariable(varName, 0, 2, 0, marking);
-            //-------------------------------------------------------------------
-            
-            
-
-            //Add transition to start execute operation--------------------------
-            ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
-            ega.andGuard(varName + "==0");
-            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_GUARD, mConditionsToInclude);
-            ega.addCondition(opData, ConditionType.PRE, Type.LOOK_FOR_ACTION, mConditionsToInclude);
-            ega.addAction(varName + "=1");
-            mmEfa.addStandardSelfLoopTransition(ega);
-            //-------------------------------------------------------------------
-
-            //Add transition to finish execute operation-------------------------
-            ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_DOWN.toString());
-            ega.andGuard(varName + "==1");
-            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_GUARD, mConditionsToInclude);
-            ega.addCondition(opData, ConditionType.POST, Type.LOOK_FOR_ACTION, mConditionsToInclude);
-            ega.addAction(varName + "=2");
-            mmEfa.addStandardSelfLoopTransition(ega);
-            //-------------------------------------------------------------------
         }
 
         return mmModule.getModuleSubject();

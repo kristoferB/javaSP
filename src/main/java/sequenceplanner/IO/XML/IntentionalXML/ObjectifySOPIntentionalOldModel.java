@@ -60,17 +60,17 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     @Override
     protected boolean addElement(Element e, Model m){
         if (!e.getTagName().equals(objectTag)) return false;
-        ISopNode sop = createSOP(e, m);
+        SopNode sop = createSOP(e, m);
         //System.out.println(sop.toString());
         return saveSOPToModel(sop,m);
         
     }
     
 
-    private ISopNode createSOP(Element e, Model m) {       
-        ISopNode root = new SopNode();
+    private SopNode createSOP(Element e, Model m) {       
+        SopNode root = new SopNodeEmpty();
         for (Element child : getChildren(e)){
-            ISopNode n = resolveSopNode(child, m);
+            SopNode n = resolveSopNode(child, m);
             if (n != null) root.addNodeToSequenceSet(n);
         }
         
@@ -78,8 +78,8 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         
     }
 
-    private ISopNode resolveSopNode(Element e, Model m) {
-        ISopNode node = null;
+    private SopNode resolveSopNode(Element e, Model m) {
+        SopNode node = null;
         if (e.getTagName().equals("sequence")){
             return createSequenceNode(e, m);
         } else if (e.getTagName().equals("parallel")){
@@ -95,7 +95,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         }
         
         for (Element child : getChildren(e)){
-            ISopNode n = resolveSopNode(child, m);
+            SopNode n = resolveSopNode(child, m);
             if (n != null) node.addNodeToSequenceSet(n);
         }
         
@@ -112,11 +112,11 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         return null;
     }
     
-    private ISopNode createSequenceNode(Element e, Model m) {
-        ISopNode first = null;
-        ISopNode last = null;
+    private SopNode createSequenceNode(Element e, Model m) {
+        SopNode first = null;
+        SopNode last = null;
         for (Element child : getChildren(e)){
-            ISopNode n = resolveSopNode(child, m);
+            SopNode n = resolveSopNode(child, m);
             if (n != null){
                 if (first == null){
                     first = n; last = n;
@@ -129,7 +129,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         return first;
     }
     
-    private boolean saveSOPToModel(ISopNode sop, Model m) {
+    private boolean saveSOPToModel(SopNode sop, Model m) {
         m.sops.add(sop);
         
         ConditionsFromSopNode cfsn = new ConditionsFromSopNode(sop);
@@ -155,7 +155,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     }
     
     private boolean addSOPstoElement(Element eRoot, Model m) {
-        for (ISopNode sop : m.sops){
+        for (SopNode sop : m.sops){
            if (sop != null){
                 Element eSop = eRoot.getOwnerDocument().createElement(objectTag);
                 eRoot.appendChild(eSop);
@@ -165,7 +165,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         return true;
     }
 
-    private void convertSopToElement(ISopNode sop, Element e) {
+    private void convertSopToElement(SopNode sop, Element e) {
         if (sop == null || e == null) return;
         Element insert = e;
         Element newElement = null;
@@ -176,7 +176,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
             insert = newElement;           
         }
         
-        if (sop instanceof SopNode){
+        if (sop instanceof SopNodeEmpty){
             newElement = insert;
         } else if (sop instanceof SopNodeOperation){
             String opName = null;
@@ -203,7 +203,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
             newElement = parra;  
         }
         
-        for (ISopNode n : sop.getFirstNodesInSequencesAsSet()){
+        for (SopNode n : sop.getFirstNodesInSequencesAsSet()){
             convertSopToElement(n,newElement);
         }
 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
@@ -12,7 +12,7 @@ import sequenceplanner.model.data.OperationData;
 /**
  * Class to perform hierarchical partition.<br/>
  * Partitions a set of operations according to <b>strict hierarchical relation</b>.<br/>
- * The {@link ISopNode} in the {@link IRelationContainer} object has to have all operations as first nodes in its set.
+ * The {@link SopNode} in the {@link IRelationContainer} object has to have all operations as first nodes in its set.
  * @author patrik
  */
 public class HierarchicalPartition {
@@ -26,7 +26,7 @@ public class HierarchicalPartition {
     }
 
     public boolean partition(IRelationContainer iRC) {
-        final ISopNode root = iRC.getRootNode();
+        final SopNode root = iRC.getRootNode();
         final Set<OperationData> allOpSet = mSNToolbox.getOperations(root,false);
         if (root == null || allOpSet == null) {
             System.out.println("HierarchicalPartition.partition: root or allOpSet is null");
@@ -83,7 +83,7 @@ public class HierarchicalPartition {
 
         //Recursive calls--------------------------------------------------------
         for (final OperationData parentOp : hasNoParentWithChildrenMap.keySet()) {
-            final ISopNode parentNode = mRCToolbox.getSopNode(parentOp, iRC.getOsubsetSopNode());
+            final SopNode parentNode = mRCToolbox.getSopNode(parentOp, iRC.getOsubsetSopNode());
             final Set<OperationData> childSet = hasNoParentWithChildrenMap.get(parentOp);
             if (!childSet.isEmpty()) {
                 iRC.setRootNode(parentNode);
@@ -103,12 +103,12 @@ public class HierarchicalPartition {
      * @param iRC
      * @return always true :)
      */
-    private boolean updateHierarchicalRelation(final OperationData iNewParent, final ISopNode iOldParent, final OperationData iChild, final IRelationContainer iRC) {
-        final ISopNode childNode = mRCToolbox.getSopNode(iChild, iOldParent);
+    private boolean updateHierarchicalRelation(final OperationData iNewParent, final SopNode iOldParent, final OperationData iChild, final IRelationContainer iRC) {
+        final SopNode childNode = mRCToolbox.getSopNode(iChild, iOldParent);
         iOldParent.removeFromSequenceSet(childNode);
 
-        final ISopNode parentNode = mRCToolbox.getSopNode(iNewParent, iOldParent);
-        final ISopNode newChildNode = new SopNodeOperation(iChild);
+        final SopNode parentNode = mRCToolbox.getSopNode(iNewParent, iOldParent);
+        final SopNode newChildNode = new SopNodeOperation(iChild);
         parentNode.addNodeToSequenceSet(newChildNode);
 
         return true;

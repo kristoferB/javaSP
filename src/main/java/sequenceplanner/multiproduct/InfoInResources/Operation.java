@@ -51,7 +51,7 @@ class Operation extends AOperation {
         if (iConditionExpression != null) {
             final List<ConditionElement> ceList = iConditionExpression.getConditionElements();
             for (final ConditionElement conditionElement : ceList) {
-                if (conditionElement.isStatment()) {
+                if (conditionElement.isStatement()) {
                     final ConditionStatement cs = (ConditionStatement) conditionElement;
                     if (cs.getValue().equals("2") && cs.getOperator().toString().equals(ConditionStatement.Operator.Equal.toString())) {
                         final String variable = cs.getVariable().replaceAll("id", "");

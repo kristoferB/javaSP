@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.supremica.automata.Automaton;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.OperationData;
 
@@ -150,19 +150,25 @@ public class RelationIdentification {
     
     private boolean findEventOperationRelationsTest(){
         
+        // Temp solution to handle parallel ops. We need to create a more general
+        // method for rel id. For example to handle reduction algorithms.
+        Set<SopNode> parallelCandidates = new HashSet<SopNode>();
+        String stateNameToCheckParallel = "";
+        
         for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
             for (final String eventType : mRC.getEventOperationLocationSetMap(opDataExternal).keySet()) {
                 final String eventToLookFor = ISupremicaInteractionForVisualization.Type.EVENT_PREFIX.toString() + opDataExternal.getId() + eventType;
                 if (!mEventStateSetMap.containsKey(eventToLookFor)) {
                     
                     // Temp solution, just a test. add this to relation container ASAP
-                    for (ISopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
+                    for (SopNode n : mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet()){
                         if (n.getOperation().equals(opDataExternal)){
                             mRC.getOsubsetSopNode().getFirstNodesInSequencesAsSet().remove(n);
+                            parallelCandidates.add(n);
                             break;
                         }
                     }
-                    System.out.println("Mismatch between events in supervisor and subset!");
+                    //System.out.println("Mismatch between events in supervisor and subset!");
                     System.out.println("The supervisor is so strict that not all operations ("+ eventToLookFor+") can finish!");
                     //return false;
                 } else {
@@ -179,6 +185,7 @@ public class RelationIdentification {
                     //boolean b = m.matches();
                     
                     for (String stateName : stateNameSet) {
+                        if (stateNameToCheckParallel.isEmpty()) stateNameToCheckParallel = stateName;
                         Matcher m = p.matcher(stateName);
                         while(m.find()){
                             String location = m.group();
@@ -207,7 +214,36 @@ public class RelationIdentification {
                     }                    
                 }   
             }
-        }          
+        }   
+        
+        fixParallelOperation(parallelCandidates, stateNameToCheckParallel);
+        
         return true;
     }
+    
+    // A temporary solution
+    private void fixParallelOperation(Set<SopNode> parallelCandidates,String stateName){
+        for (SopNode n : parallelCandidates){
+            if (n.getOperation() != null){
+                Pattern p = Pattern.compile("id"+n.getOperation().getId()+"=-1");
+                Matcher m = p.matcher(stateName);
+                if (m.find()){
+                    addParallelOp(n);
+                }
+            }
+        }
+    }
+    
+    private void addParallelOp(SopNode op){
+        Set<String> parallel = new HashSet<String>(); 
+        parallel.add("0"); parallel.add("1"); parallel.add("2");
+        for (final OperationData opDataExternal : new SopNodeToolboxSetOfOperations().getOperations(mRC.getOsubsetSopNode(), false)) {
+            for (final String eventType : mRC.getEventOperationLocationSetMap(opDataExternal).keySet()) {
+                mRC.getEventOperationLocationSetMap(opDataExternal).get(eventType).put(op.getOperation(), parallel);              
+            }
+        }
+        mRC.getOsubsetSopNode().addNodeToSequenceSet(op);
+    }
+
+
 }

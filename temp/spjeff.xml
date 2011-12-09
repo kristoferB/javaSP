@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <variables>
+    <variable id="v1" value="20000.0" />
+    <variable id="v2" value="400.0" />
+    <variable id="v3" value="150.0" />
+    <variable id="v4" />
+    <variable id="v5" />
+    <variable id="v6" />
+  </variables>
+  <seams>
+    <seam id="s1" var="v4">
+      <isJoined var="v6"/>	
+      <blockref block="b2" />
+      <blockref block="b3" />
+    </seam>
+    <seam id="s2" var="v5">
+      <blockref block="b3" />
+      <blockref block="b5" />
+    </seam>
+  </seams>
+  <blocks>
+    <block id="b1" name="Tank" />
+    <block id="b2" name="Body">
+      <capacity name="mass" value="20000.0" unit="kilogram" var="v1" />
+    </block>
+    <block id="b3" name="Turret">
+      <capacity name="mass" value="400.0" unit="kilogram" var="v2" />
+    </block>
+    <block id="b4" name="Lift Point" />
+    <block id="b5" name="Barrel">
+      <capacity name="mass" value="150.0" unit="kilogram" var="v3" />
+    </block>
+    <block id="b6" name="Lift Point" />
+  </blocks>
+  <resources>
+    <resource id="r1" name="Gantry" type="Crane" />
+    <resource id="r2" name="Stationary GlueGun" type="GlueGun" />
+    <resource id="r3" name="Mobile GlueGun" type="GlueGun" />
+  </resources>
+  <operations>
+    <operation id="o1" type="GlueBlocks" resource="r3" seam="s1">
+      <timeCost value="400.0" unit="second" />
+      <postaction>
+        <Assign>
+          <variableref id="v1" />
+          <Plus>
+            <variableref id="v1" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v1" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o2" type="MoveToBlock" resource="r1" />
+    <operation id="o3" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o4" type="MoveToBlock" resource="r1" />
+    <operation id="o5" type="DropBlock" resource="r1" />
+    <operation id="o6" type="MoveToBlock" resource="r3" />
+    <operation id="o7" type="ApplyGlueToBlocks" resource="r3" />
+    <operation id="o8" type="Alternative" seam="s2" />
+    <operation id="o9" type="GlueBlocks" resource="r2" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o10" type="MoveToBlock" resource="r1" />
+    <operation id="o11" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o12" type="MoveToResource" resource="r1" />
+    <operation id="o13" type="DropBlock" resource="r1" />
+    <operation id="o14" type="MoveToBlock" resource="r1" />
+    <operation id="o15" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o16" type="MoveToResource" resource="r1" />
+    <operation id="o17" type="DropBlock" resource="r1" />
+    <operation id="o18" type="ApplyGlueToBlocks" resource="r2" />
+    <operation id="o19" type="GlueBlocks" resource="r2" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o20" type="MoveToBlock" resource="r1" />
+    <operation id="o21" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o22" type="MoveToResource" resource="r1" />
+    <operation id="o23" type="DropBlock" resource="r1" />
+    <operation id="o24" type="MoveToBlock" resource="r1" />
+    <operation id="o25" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o26" type="MoveToResource" resource="r1" />
+    <operation id="o27" type="DropBlock" resource="r1" />
+    <operation id="o28" type="ApplyGlueToBlocks" resource="r2" />
+    <operation id="o29" type="GlueBlocks" resource="r3" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v2" />
+            <variableref id="v3" />
+          </Plus>
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o30" type="MoveToBlock" resource="r1" />
+    <operation id="o31" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v3" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o32" type="MoveToBlock" resource="r1" />
+    <operation id="o33" type="DropBlock" resource="r1" />
+    <operation id="o34" type="MoveToBlock" resource="r3" />
+    <operation id="o35" type="ApplyGlueToBlocks" resource="r3" />
+    <operation id="o36" type="GlueBlocks" resource="r3" seam="s2">
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <Plus>
+            <variableref id="v3" />
+            <variableref id="v2" />
+          </Plus>
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o37" type="MoveToBlock" resource="r1" />
+    <operation id="o38" type="LiftBlock" resource="r1">
+      <precondition>
+        <Ge>
+          <double value="500.0" />
+          <variableref id="v2" />
+        </Ge>
+      </precondition>
+    </operation>
+    <operation id="o39" type="MoveToBlock" resource="r1" />
+    <operation id="o40" type="DropBlock" resource="r1" />
+    <operation id="o41" type="MoveToBlock" resource="r3" />
+    <operation id="o42" type="ApplyGlueToBlocks" resource="r3" />
+  </operations>
+
+</assembly>

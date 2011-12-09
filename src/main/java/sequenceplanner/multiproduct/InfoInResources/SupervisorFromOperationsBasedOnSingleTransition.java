@@ -10,7 +10,7 @@ import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.condition.ConditionStatement;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
@@ -34,7 +34,7 @@ public class SupervisorFromOperationsBasedOnSingleTransition extends ASupervisor
     @Override
     String getProductType(OperationData opData) {
         final String opDataId = Integer.toString(opData.getId());
-        final Map<ViewData,ISopNode> sopRootSopNodeMap = mModel.getAllSOPs();
+        final Map<ViewData,SopNode> sopRootSopNodeMap = mModel.getAllSOPs();
         for(final ViewData key : sopRootSopNodeMap.keySet()) {
             for(final OperationData localOpData : new SopNodeToolboxSetOfOperations().getOperations(sopRootSopNodeMap.get(key), true)) {
                 final String localOpDataId = Integer.toString(localOpData.getId());

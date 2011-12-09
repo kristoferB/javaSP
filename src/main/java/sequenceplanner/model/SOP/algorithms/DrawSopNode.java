@@ -18,15 +18,15 @@ import sequenceplanner.view.operationView.graphextension.SPGraph;
 import sequenceplanner.view.operationView.graphextension.SPGraphModel;
 
 /**
- * Translates all nodes that are children to given {@link ISopNode} to {@link Cell}s in a {@link SPGraph}.<br/>
+ * Translates all nodes that are children to given {@link SopNode} to {@link Cell}s in a {@link SPGraph}.<br/>
  * @author patrik
  */
 public class DrawSopNode {
 
     private SPGraph mGraph = null;
-    private ISopNode mRoot = null;
-    private Map<ISopNode, Cell> mSopNodeCellMap = null;
-    private Map<ISopNode, CellDataLayout> mNodeCellDataLayoutMap;
+    private SopNode mRoot = null;
+    private Map<SopNode, Cell> mSopNodeCellMap = null;
+    private Map<SopNode, CellDataLayout> mNodeCellDataLayoutMap;
 //    private Map<ISopNode, CellData> mNodeCellDataMap = null;
 //    private Set<CellData> mCellDataSet = null;
     private ISopNodeToolbox mSNToolbox = new SopNodeToolboxSetOfOperations();
@@ -41,18 +41,18 @@ public class DrawSopNode {
         drawExampleSequence();
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph iGraph) {
+    public DrawSopNode(final SopNode iRoot, final SPGraph iGraph) {
         this(iRoot, iGraph, null);
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph mGraph, final Map<ISopNode, CellDataLayout> iCellDataMap) {
+    public DrawSopNode(final SopNode iRoot, final SPGraph mGraph, final Map<SopNode, CellDataLayout> iCellDataMap) {
         this.mRoot = iRoot;
         this.mGraph = mGraph;
         this.mNodeCellDataLayoutMap = iCellDataMap;
         addNodesToGraph();
     }
 
-    public DrawSopNode(final ISopNode iRoot, final SPGraph iGraph, final Map<ISopNode, CellDataLayout> iCellData3Map, boolean b) {
+    public DrawSopNode(final SopNode iRoot, final SPGraph iGraph, final Map<SopNode, CellDataLayout> iCellData3Map, boolean b) {
         this.mRoot = iRoot;
         this.mGraph = iGraph;
         this.mNodeCellDataLayoutMap = iCellData3Map;
@@ -60,7 +60,7 @@ public class DrawSopNode {
     }
 
     /**
-     * Adds a {@link ISopNode}s in parameter iRoot to {@link SPGraph}.<br/>
+     * Adds a {@link SopNode}s in parameter iRoot to {@link SPGraph}.<br/>
      * @param iRoot container for nodes
      */
     private void addNodesToGraph() {
@@ -68,9 +68,9 @@ public class DrawSopNode {
 //        init();
 
         //Create Cells and a map between cells and nodes.
-        mSopNodeCellMap = new HashMap<ISopNode, Cell>();
-        final Set<ISopNode> nodeSet = mSNToolbox.getNodes(mRoot, true);
-        for (final ISopNode node : nodeSet) {
+        mSopNodeCellMap = new HashMap<SopNode, Cell>();
+        final Set<SopNode> nodeSet = mSNToolbox.getNodes(mRoot, true);
+        for (final SopNode node : nodeSet) {
             mSopNodeCellMap.put(node, getCellForNode(node));
         }
 
@@ -101,13 +101,13 @@ public class DrawSopNode {
      * Doing the addition of nodes to the graph.<br/>
      * There are some different methods to add a Cell/Node dependent on where in the graph the cell should be added.<br/>
      * @param iRoot
-     * @param iNodeCellMap What type of {@link Cell} each {@link ISopNode} is
+     * @param iNodeCellMap What type of {@link Cell} each {@link SopNode} is
      */
-    private void recursiveCallToAllNodes(final ISopNode iRoot) {
+    private void recursiveCallToAllNodes(final SopNode iRoot) {
         //Problems to get a good layout if cells are not sorted from left to right.
-        final List<ISopNode> sortedList = sortSequenceSetBasedOnGeometry(iRoot.getFirstNodesInSequencesAsSet());
+        final List<SopNode> sortedList = sortSequenceSetBasedOnGeometry(iRoot.getFirstNodesInSequencesAsSet());
 
-        for (ISopNode node : sortedList) {
+        for (SopNode node : sortedList) {
 //            System.out.println("node to work with: " + node.typeToString());
             //First node---------------------------------------------------------
             //Especially first nodes are strange...
@@ -139,7 +139,7 @@ public class DrawSopNode {
 
             //Successor(s)-------------------------------------------------------
             while (node.getSuccessorNode() != null) {
-                final ISopNode successorNode = node.getSuccessorNode();
+                final SopNode successorNode = node.getSuccessorNode();
                 drawSequenceWithRespectToRelation(node, successorNode, mSopNodeCellMap);
                 //Children to successor node
                 recursiveCallToAllNodes(successorNode);
@@ -158,7 +158,7 @@ public class DrawSopNode {
      * @param iRelation
      * @param iNodeCellMap
      */
-    private void drawSequenceWithRespectToRelation(final ISopNode iPredNode, final ISopNode iSuccNode, final Map<ISopNode, Cell> iNodeCellMap) {
+    private void drawSequenceWithRespectToRelation(final SopNode iPredNode, final SopNode iSuccNode, final Map<SopNode, Cell> iNodeCellMap) {
         final Cell cellPred = iNodeCellMap.get(iPredNode);
         final Cell cellSucc = iNodeCellMap.get(iSuccNode);
 
@@ -193,11 +193,11 @@ public class DrawSopNode {
     }
 
     /**
-     * Get right {@link Cell} for each {@link ISopNode} type.<br/>
+     * Get right {@link Cell} for each {@link SopNode} type.<br/>
      * @param iNode to translate
      * @return corresponding Cell
      */
-    private Cell getCellForNode(final ISopNode iNode) {
+    private Cell getCellForNode(final SopNode iNode) {
 
         Cell returnCell = null;
         if (iNode instanceof SopNodeOperation) {
@@ -211,7 +211,7 @@ public class DrawSopNode {
             }
             returnCell.setValue(opData);
 
-        } else if (iNode instanceof SopNode) {
+        } else if (iNode instanceof SopNodeEmpty) {
             returnCell = CellFactory.getInstance().getOperation(SPGraphModel.TYPE_SOP);
             final Data newOpData = new OperationData("", -1);
             Model.giveId(newOpData);
@@ -247,13 +247,13 @@ public class DrawSopNode {
      * @param iSet
      * @return the set sorted as a {@link List}
      */
-    private List<ISopNode> sortSequenceSetBasedOnGeometry(final Set<ISopNode> iSet) {
-        final List<ISopNode> sortedList = new ArrayList<ISopNode>();
+    private List<SopNode> sortSequenceSetBasedOnGeometry(final Set<SopNode> iSet) {
+        final List<SopNode> sortedList = new ArrayList<SopNode>();
 
-        final Set<ISopNode> removeSet = new HashSet<ISopNode>(iSet);
+        final Set<SopNode> removeSet = new HashSet<SopNode>(iSet);
 
         while (!removeSet.isEmpty()) {
-            final ISopNode node = getTopLeftSopNode(removeSet);
+            final SopNode node = getTopLeftSopNode(removeSet);
             removeSet.remove(node);
             sortedList.add(node);
         }
@@ -266,12 +266,12 @@ public class DrawSopNode {
      * @param iSet
      * @return
      */
-    private ISopNode getTopLeftSopNode(final Set<ISopNode> iSet) {
+    private SopNode getTopLeftSopNode(final Set<SopNode> iSet) {
         //get start node
-        ISopNode bestNode = iSet.iterator().next();
+        SopNode bestNode = iSet.iterator().next();
 
         //Find top left
-        for (final ISopNode otherNode : iSet) {
+        for (final SopNode otherNode : iSet) {
             final Cell bestCell = mSopNodeCellMap.get(bestNode);
             final Cell otherCell = mSopNodeCellMap.get(otherNode);
 

@@ -2,7 +2,7 @@ package sequenceplanner.visualization.algorithms;
 
 import java.util.Map;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -55,15 +55,15 @@ public abstract class ARelationContainerToolbox implements IRelationContainerToo
     }
 
     /**
-     * Translate a {@link OperationData} to a {@link ISopNode}.<br/>
+     * Translate a {@link OperationData} to a {@link SopNode}.<br/>
      * The first node found that wrapps operation is returned.<br/>
      * @param iOpData operation to translate
      * @param iRoot look in children to this node
      * @return the first node found that wrapps operation is returned, null is returned if no node is found.
      */
     @Override
-    public ISopNode getSopNode(OperationData iOpData, ISopNode iRoot) {
-        for (final ISopNode node : mSopNodeToolbox.getNodes(iRoot, true)) {
+    public SopNode getSopNode(OperationData iOpData, SopNode iRoot) {
+        for (final SopNode node : mSopNodeToolbox.getNodes(iRoot, true)) {
             if(node instanceof SopNodeOperation) {
                 if(node.getOperation().equals(iOpData)) {
                     return node;

@@ -1,7 +1,7 @@
 package sequenceplanner.visualization.algorithms;
 
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.data.ConditionData;
@@ -41,17 +41,17 @@ public class PerformVisualization implements IPerformVisualization {
     }
 
     @Override
-    public boolean addOset(ISopNode iSopNode) {
+    public boolean addOset(SopNode iSopNode) {
         return mRC.setOsetSopNode(iSopNode);
     }
 
     @Override
-    public boolean addOsubset(ISopNode iSopNode) {
+    public boolean addOsubset(SopNode iSopNode) {
         return mRC.setOsubsetSopNode(iSopNode);
     }
 
     @Override
-    public boolean addToOfinish(ISopNode iSopNode) {
+    public boolean addToOfinish(SopNode iSopNode) {
         return mRC.setOfinishsetSopNode(iSopNode);
     }
 
@@ -100,7 +100,7 @@ public class PerformVisualization implements IPerformVisualization {
     }
 
     @Override
-    public boolean sopNodeToGraphicalView(ISopNode iSopNode, OperationView iView) {
+    public boolean sopNodeToGraphicalView(SopNode iSopNode, OperationView iView) {
         ISopNodeToolbox toolbox = new SopNodeToolboxSetOfOperations();
         toolbox.drawNode(iSopNode, iView.getGraph());
         return true;

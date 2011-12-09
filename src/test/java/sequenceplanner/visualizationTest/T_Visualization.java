@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import sequenceplanner.general.SP;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
 import sequenceplanner.model.TreeNode;
@@ -39,7 +39,7 @@ public class T_Visualization {
         mVisualization = new PerformVisualization("C:/Users/patrik/Desktop/beforeSynthesis.wmod", null);
 
         //Add all operations to Oset
-        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         mVisualization.addOset(allOpSet);
     }
 
@@ -57,7 +57,7 @@ public class T_Visualization {
         setIds.add(2008);
         setIds.add(2009);
         setIds.add(2010);
-        ISopNode allOpSet = getOperations(setIds);
+        SopNode allOpSet = getOperations(setIds);
         mVisualization.addOset(allOpSet);
 
         //Operations to view
@@ -67,7 +67,7 @@ public class T_Visualization {
         subsetIds.add(2008);
         subsetIds.add(2009);
         subsetIds.add(2010);
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that have to finish
@@ -75,7 +75,7 @@ public class T_Visualization {
         finishSetIds.add(2006);
         finishSetIds.add(2007);
         finishSetIds.add(2010);
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
 
         workWithAddedData();
@@ -92,7 +92,7 @@ public class T_Visualization {
 
         //Add operations---------------------------------------------------------
         //All operations
-        ISopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
+        SopNode allOpSet = getOperationsInModel(mSP.getModel().getOperationRoot());
         System.out.println("ALL OPERATIONS: \n" + allOpSet.toString());
         mVisualization.addOset(allOpSet);
 
@@ -103,7 +103,7 @@ public class T_Visualization {
         subsetIds.add(1015); //op10
         subsetIds.add(1017); //op12
         subsetIds.add(1020); //op15
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         System.out.println("OPERATIONS TO VIEW: \n" + subOpSet.toString());
         assertTrue(mVisualization.addOsubset(subOpSet));
 
@@ -112,7 +112,7 @@ public class T_Visualization {
         finishSetIds.add(1010); //op5
         finishSetIds.add(1015); //op10
         finishSetIds.add(1020); //op15
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         System.out.println("OPERATIONS THAT HAVE TO FINISH: \n" + finishSet.toString());
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
@@ -139,7 +139,7 @@ public class T_Visualization {
         setIds.add(1033);
         setIds.add(1034);
         setIds.add(1053);
-        ISopNode allOpSet = getOperations(setIds);
+        SopNode allOpSet = getOperations(setIds);
         mVisualization.addOset(allOpSet);
 
         //Operations to view
@@ -154,7 +154,7 @@ public class T_Visualization {
         subsetIds.add(1033);
         subsetIds.add(1034);
         subsetIds.add(1053);
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that have to finish, all operations have to finish :)
@@ -170,7 +170,7 @@ public class T_Visualization {
         finishSetIds.add(1033);
         finishSetIds.add(1034);
         finishSetIds.add(1053);
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 
@@ -190,7 +190,7 @@ public class T_Visualization {
         setIds.add(1105);
         setIds.add(1106);
         setIds.add(1107);
-        ISopNode allOpSet = getOperations(setIds);
+        SopNode allOpSet = getOperations(setIds);
         mVisualization.addOset(allOpSet);
 
         //Operations to view
@@ -199,7 +199,7 @@ public class T_Visualization {
         subsetIds.add(1105);
         subsetIds.add(1106);
         subsetIds.add(1107);
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that have to finish, all operations have to finish :)
@@ -209,7 +209,7 @@ public class T_Visualization {
         finishSetIds.add(1105);
         finishSetIds.add(1106);
         finishSetIds.add(1107);
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 
@@ -229,7 +229,7 @@ public class T_Visualization {
         setIds.add(1109);
         setIds.add(1110);
         setIds.add(1111);
-        ISopNode allOpSet = getOperations(setIds);
+        SopNode allOpSet = getOperations(setIds);
         mVisualization.addOset(allOpSet);
 
         //Operations to view
@@ -238,14 +238,14 @@ public class T_Visualization {
         subsetIds.add(1109);
         subsetIds.add(1110);
         subsetIds.add(1111);
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that have to finish, all operations have to finish :)
         //Operations that have to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
         finishSetIds.add(1111);
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 
@@ -264,11 +264,11 @@ public class T_Visualization {
         int nbrOfOperations = 50;
         boolean withSequencePrecondition = true; //operations are in parallel if false
 
-        final ISopNode sop = new SopNode();
+        final SopNode sop = new SopNodeEmpty();
 
         //First operation
         final OperationData firstOp = mSP.insertOperation();
-        final ISopNode firstOpNode = new SopNodeOperation(firstOp);
+        final SopNode firstOpNode = new SopNodeOperation(firstOp);
         sop.addNodeToSequenceSet(firstOpNode);
 
         //Include nbrOfOperations nbr of operations.
@@ -283,7 +283,7 @@ public class T_Visualization {
 //                llAND.add(llOR);
 //                opData.setSequenceCondition(llAND);
 //            }
-//            final ISopNode opDataNode = new SopNodeOperation(opData);
+//            final SopNode opDataNode = new SopNodeOperation(opData);
 //            sop.addNodeToSequenceSet(opDataNode);
 //        }
 
@@ -317,7 +317,7 @@ public class T_Visualization {
         setIds.add(2117);
         setIds.add(2118);
         setIds.add(2119);
-        ISopNode allOpSet = getOperations(setIds);
+        SopNode allOpSet = getOperations(setIds);
         mVisualization.addOset(allOpSet);
 
         //Operations to view
@@ -336,13 +336,13 @@ public class T_Visualization {
         subsetIds.add(2117);
         subsetIds.add(2118);
         subsetIds.add(2119);
-        ISopNode subOpSet = getOperations(subsetIds);
+        SopNode subOpSet = getOperations(subsetIds);
         assertTrue(mVisualization.addOsubset(subOpSet));
 
         //Operations that have to finish, all operations have to finish :)
         //Operations that have to finish
         Set<Integer> finishSetIds = new HashSet<Integer>();
-        ISopNode finishSet = getOperations(finishSetIds);
+        SopNode finishSet = getOperations(finishSetIds);
         assertTrue(mVisualization.addToOfinish(finishSet));
         //-----------------------------------------------------------------------
 
@@ -373,30 +373,30 @@ public class T_Visualization {
 
     /**
      * To get all operations that are children to the {@link TreeNode} parameter.<br/>
-     * The operations are given as child nodes to a {@link ISopNode}.<br/>
+     * The operations are given as child nodes to a {@link SopNode}.<br/>
      * @param iTree preferably the operation root
-     * @return operations as in {@link ISopNode}
+     * @return operations as in {@link SopNode}
      */
-    public static ISopNode getOperationsInModel(TreeNode iTree) {
-        final ISopNode returnNode = new SopNode();
+    public static SopNode getOperationsInModel(TreeNode iTree) {
+        final SopNode returnNode = new SopNodeEmpty();
         for (int i = 0; i < iTree.getChildCount(); ++i) {
             final OperationData opData = (OperationData) iTree.getChildAt(i).getNodeData();
 
-            final ISopNode opDataNode = new SopNodeOperation(opData);
+            final SopNode opDataNode = new SopNodeOperation(opData);
             returnNode.addNodeToSequenceSet(opDataNode);
         }
         return returnNode;
     }
 
     /**
-     * Get operations in {@link ISopNode}.<br/>
+     * Get operations in {@link SopNode}.<br/>
      * @param iSet ids of operations
-     * @return operations as in {@link ISopNode}
+     * @return operations as in {@link SopNode}
      */
-    public static ISopNode getOperations(Set<Integer> iSet) {
-        ISopNode returnSop = new SopNode();
-        ISopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
-        for (ISopNode node : sop.getFirstNodesInSequencesAsSet()) {
+    public static SopNode getOperations(Set<Integer> iSet) {
+        SopNode returnSop = new SopNodeEmpty();
+        SopNode sop = getOperationsInModel(mSP.getModel().getOperationRoot());
+        for (SopNode node : sop.getFirstNodesInSequencesAsSet()) {
             if (node instanceof SopNodeOperation) {
                 OperationData opData = node.getOperation();
                 if (iSet.contains(opData.getId())) {

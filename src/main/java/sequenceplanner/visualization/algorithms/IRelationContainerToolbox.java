@@ -1,6 +1,6 @@
 package sequenceplanner.visualization.algorithms;
 
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.data.OperationData;
 
 /**
@@ -13,5 +13,5 @@ public interface IRelationContainerToolbox {
 
     Integer getRelation(OperationData iOpData1, OperationData iOpData2, IRelationContainer iRC);
 
-    ISopNode getSopNode(OperationData iOpData, ISopNode iRoot);
+    SopNode getSopNode(OperationData iOpData, SopNode iRoot);
 }

@@ -46,7 +46,7 @@ import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.util.mxRectangle;
 import java.util.Set;
-import sequenceplanner.model.SOP.ISopNode;
+import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -505,9 +505,9 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         final ISopNodeToolbox snToolbox = new SopNodeToolboxSetOfOperations();
 
         //Loop node set and remove all instances of node to remove---------------
-        final Set<ISopNode> sopNodeSet = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(true), true);
+        final Set<SopNode> sopNodeSet = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(true), true);
 
-        for (final ISopNode node : sopNodeSet) {
+        for (final SopNode node : sopNodeSet) {
             if (node instanceof SopNodeOperation) {
                 final OperationData opData = node.getOperation();
                 final int opDataId = opData.getId();
@@ -519,8 +519,8 @@ public class OperationView extends AbstractView implements AsyncModelListener {
                     OperationViewController.save(this);
 
                     //Has to go through nodes again since method call to "save" recalculated the sop structure.
-                    final Set<ISopNode> sopNodeSetLocal = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), true);
-                    for (final ISopNode nodeLocal : sopNodeSetLocal) {
+                    final Set<SopNode> sopNodeSetLocal = snToolbox.getNodes(mViewData.mSopNodeForGraphPlus.getRootSopNode(false), true);
+                    for (final SopNode nodeLocal : sopNodeSetLocal) {
                         if (nodeLocal instanceof SopNodeOperation) {
                             final OperationData opDataLocal = nodeLocal.getOperation();
                             final int opDataIdLocal = opDataLocal.getId();
@@ -563,7 +563,7 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         return true;
     }
 
-    public void drawGraph(final ISopNode iSopNode) {
+    public void drawGraph(final SopNode iSopNode) {
         new SopNodeToolboxSetOfOperations().drawNode(iSopNode, getGraph());
         OperationViewController.save(this);
     }

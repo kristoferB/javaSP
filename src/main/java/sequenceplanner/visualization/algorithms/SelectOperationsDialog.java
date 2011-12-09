@@ -24,8 +24,8 @@ import javax.swing.JScrollPane;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.model.Model;
-import sequenceplanner.model.SOP.ISopNode;
 import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeEmpty;
 import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
@@ -178,9 +178,9 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
     public void actionPerformed(ActionEvent e) {
         if (generateButton == e.getSource()) {
 
-            final ISopNode allOperationsNode = new SopNode();
-            final ISopNode hasToFinishNode = new SopNode();
-            final ISopNode operationsToViewNode = new SopNode();
+            final SopNode allOperationsNode = new SopNodeEmpty();
+            final SopNode hasToFinishNode = new SopNodeEmpty();
+            final SopNode operationsToViewNode = new SopNodeEmpty();
 
             //Operations
             final Iterator<TreeNode> listIterator = mOperationList.iterator();
@@ -189,7 +189,7 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
                 final int operationIndex = mOperationList.indexOf(tnData);
                 final OperationData opData = (OperationData) tnData.getNodeData();
 
-                final ISopNode opNode = new SopNodeOperation(opData);
+                final SopNode opNode = new SopNodeOperation(opData);
                 if (mOpSelectionTable[operationIndex][0].isSelected()) {
                     allOperationsNode.addNodeToSequenceSet(opNode);
                     if (mOpSelectionTable[operationIndex][1].isSelected()) {
@@ -292,8 +292,8 @@ public class SelectOperationsDialog extends JFrame implements ActionListener, IA
     public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
         mStopButton.setEnabled(false);
 
-        if (iList.get(0) instanceof ISopNode) {
-            final ISopNode sopNode = (ISopNode) iList.get(0);
+        if (iList.get(0) instanceof SopNode) {
+            final SopNode sopNode = (SopNode) iList.get(0);
 
             newMessageFromAlgorithm("...drawing...", null);
 
