@@ -92,8 +92,6 @@ public class ConditionStatement extends ConditionElement {
 
 
 
-
-
     private boolean isOperatorAction(Operator o){
         if (o.equals(Operator.Assign)
                 || o.equals(Operator.Inc)
@@ -147,79 +145,7 @@ public class ConditionStatement extends ConditionElement {
     
 
 
-    public boolean evaluate(String variableValue){
-        //if (variableValue.equals(MULTIPLE_VALUES)) return true; // multipleValue location
-        try{
-            int intVar = Integer.parseInt(variableValue);
-            int intValue = Integer.parseInt(value);
-            return evaluate(intVar,this.op,intValue);
 
-        } catch(NumberFormatException e){
-            return evaluate(variableValue, this.op, this.value);
-        }
-    }
-
-    public String getNewVariableValue(String currentVariableValue){
-        if (!this.isAction) return currentVariableValue;
-        boolean isInt = false;
-        int intValue = 0;
-        try{
-             intValue = Integer.parseInt(currentVariableValue);
-            isInt = true;
-        } catch(NumberFormatException e){
-            isInt = false;
-        }
-        switch(this.getOperator()){
-            case Assign:
-                return this.value;
-            case Inc:
-                if (isInt){
-                    int result = intValue++;
-                    return Integer.toString(result);
-                }
-                break;
-            case Dec:
-                if (isInt){
-                    int result = intValue--;
-                    return Integer.toString(result);
-                }
-                break;
-
-            // do not support pointAt yet
-        }
-        return currentVariableValue;
-
-    }
-
-    public static boolean evaluate(int value1, Operator o, int value2){
-        // Equal, NotEqual, Greater, Less, GreaterEq, LessEq, Assign, Inc, Dec, PointAt
-        switch(o){
-            case Equal:
-                return value1 == value2;
-            case NotEqual:
-                return value1 != value2;
-            case Greater:
-                return value1 > value2;
-            case Less:
-                return value1 < value2;
-            case GreaterEq:
-                return value1 >= value2;
-            case LessEq:
-                return value1 <= value2;
-        }
-        return false;
-    }
-
-    public static boolean evaluate(String value1, Operator o, String value2){
-        // Equal, NotEqual, Greater, Less, GreaterEq, LessEq, Assign, Inc, Dec, PointAt
-        switch(o){
-            case Equal:
-                return value1.equals(value2);
-            case NotEqual:
-                return !value1.equals(value2);
-        }
-        return false;
-    }
 
     @Override
     public String toString(){
