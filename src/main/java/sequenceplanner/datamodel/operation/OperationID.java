@@ -1,7 +1,6 @@
 package sequenceplanner.datamodel.operation;
 
 import java.util.UUID;
-import sequenceplanner.datamodel.DataModel;
 
 /**
  * Each operation has a unique identity represented by this interface. 

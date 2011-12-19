@@ -567,4 +567,18 @@ public class OperationView extends AbstractView implements AsyncModelListener {
         new SopNodeToolboxSetOfOperations().drawNode(iSopNode, getGraph());
         OperationViewController.save(this);
     }
+    
+    
+    // To be used for what views should generate preconnditions
+    private boolean spec = true;
+    public boolean isViewSpec(){
+        return spec;
+    }
+    public void setViewAsSpec(){
+        spec = true;
+    }
+    public void setViewNotSpec(){
+        spec = false;
+    }
+    
 }
