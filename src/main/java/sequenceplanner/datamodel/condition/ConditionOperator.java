@@ -76,4 +76,9 @@ public class ConditionOperator {
         nextElement = null;
         prevElement = null;
     }
+    
+    @Override
+    public String toString(){
+        return this.operatotType.toString();
+    }
 }
