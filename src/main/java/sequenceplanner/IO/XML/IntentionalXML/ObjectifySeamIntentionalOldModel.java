@@ -3,6 +3,7 @@ package sequenceplanner.IO.XML.IntentionalXML;
 import java.util.HashSet;
 import java.util.Set;
 import org.w3c.dom.Element;
+import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.TreeNode;
@@ -27,7 +28,7 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
     }
         
     @Override
-    public boolean addModelToElement(Object model, Element e){
+    protected boolean createElements(Model model, Element e){
         throw new UnsupportedOperationException("Not supported yet.");
     }
    
@@ -39,7 +40,7 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
         
         Set<String> blocks = getBlocks(e);
         addBlockVariable(blocks,m);
-        m.seams.add(new Seam(e.getAttribute("id"),blocks));
+        m.seams.add(new Seam(e.getAttribute("id"),blocks, this.createCompleteCondition(e, m)));
         return true; 
     }
     
@@ -56,14 +57,33 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
 
     private void addBlockVariable(Set<String> blocks, Model m) {
         for (String block : blocks){
-            ResourceVariableData var = new ResourceVariableData(block, m.newId());
-            var.setType(ResourceVariableData.BINARY);
-            var.setInitialValue(0);
-            var.setMax(1);
-            var.setMin(0);
-            TreeNode variable = new TreeNode(var);
-            m.insertChild(m.getResourceRoot(), variable);
+            if (!blockExists(block,m)){
+                ResourceVariableData var = new ResourceVariableData(block, m.newId());
+                var.setType(ResourceVariableData.BINARY);
+                var.setInitialValue(0);
+                var.setMax(1);
+                var.setMin(0);
+                TreeNode variable = new TreeNode(var);
+                m.insertChild(m.getResourceRoot(), variable);
+            }
         }
+    }
+
+    private boolean blockExists(String blockName, Model m) {
+        for (TreeNode n : m.getAllVariables()){            
+                if (n.getNodeData().getName().equals(blockName))
+                    return true;            
+        }
+        return false;
+    }
+    
+    private ConditionExpression createCompleteCondition(Element e, Model m){
+        for (Element child : getChildren(e)){
+            if (child.getTagName().equals("completecondition")){
+                return ObjectifyIntentionalExpressions.INSTANCE.createExpression(child, m);
+            }
+        }
+        return new ConditionExpression();
     }
     
 }

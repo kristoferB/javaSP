@@ -29,7 +29,9 @@ public class OperationData extends Data {
     public boolean hasToFinish = false;
     public String seam = "";
     public String resource = "";
-    
+    public String startTime ="";
+    public String stopTime ="";
+    public String timecost ="";
     
     
     public OperationData(String name, int id) {

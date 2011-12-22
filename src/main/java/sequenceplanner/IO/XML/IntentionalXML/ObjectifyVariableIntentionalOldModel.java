@@ -30,7 +30,7 @@ public class ObjectifyVariableIntentionalOldModel extends AbstractObjectifyInten
         
     
     @Override
-    public boolean addModelToElement(Object model, Element e){
+    protected boolean createElements(Model model, Element e){
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

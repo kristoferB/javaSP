@@ -30,8 +30,9 @@ public class ObjectifyResourceIntentionalOldModel extends AbstractObjectifyInten
         super(rootTag,elementTag);
     }
         
+    
     @Override
-    public boolean addModelToElement(Object model, Element e){
+    protected boolean createElements(Model model, Element e){
         throw new UnsupportedOperationException("Not supported yet.");
     }
    

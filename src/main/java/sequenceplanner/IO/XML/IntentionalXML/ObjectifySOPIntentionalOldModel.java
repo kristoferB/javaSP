@@ -44,16 +44,10 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
         
     
     @Override
-    public boolean addModelToElement(Object model, Element e){
-        if (!(model instanceof Model)) return false;
-        if (!e.getTagName().equals(rootTag)) return false;
-        e.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        e.setAttribute("xsi:noNamespaceSchemaLocation", "SeamAssembly.xsd");
-        
-        
+    protected boolean createElements(Model model, Element e){
         Element element = e.getOwnerDocument().createElement(elementTag);
         e.appendChild(element);
-        return addSOPstoElement(element, (Model)model);
+        return addSOPstoElement(element, model);
     }
 
     
@@ -155,6 +149,7 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
     }
     
     private boolean addSOPstoElement(Element eRoot, Model m) {
+        if (m.sops.isEmpty()) return false;
         for (SopNode sop : m.sops){
            if (sop != null){
                 Element eSop = eRoot.getOwnerDocument().createElement(objectTag);

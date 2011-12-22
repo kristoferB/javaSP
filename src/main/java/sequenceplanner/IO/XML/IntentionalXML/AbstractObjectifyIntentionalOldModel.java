@@ -75,7 +75,16 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
     
     
     @Override
-    public abstract boolean addModelToElement(Object model, Element e);
+    public boolean addModelToElement(Object model, Element e){
+        if (!(this.model.isInstance(model))) return false;
+        if (!e.getTagName().equals(rootTag)) return false;
+        if (!e.hasAttribute("xmlns:xsi"))
+            e.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        if (!e.hasAttribute("xsi:noNamespaceSchemaLocation"))
+            e.setAttribute("xsi:noNamespaceSchemaLocation", "SeamAssembly.xsd");
+        
+        return createElements((Model)model,e);
+    }
 
     @Override
     public boolean addElementToModel(Element e, Object model) {
@@ -97,6 +106,7 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
         
     protected abstract boolean addElement(Element e, Model m);
 
+    protected abstract boolean createElements(Model model, Element e);
 
     protected List<Element> getChildren(Element e){
         List<Element> set = new LinkedList<Element>();
