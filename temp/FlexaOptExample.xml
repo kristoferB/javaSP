@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <variables>
+    <variable id="v1" startvalue="0"/>
+    <variable id="v2" startvalue="0" />
+    <variable id="v3" startvalue="0" />
+    <variable id="v4" startvalue="0" />
+    <variable id="v5" startvalue="0" />
+    <variable id="v6" startvalue="0" />
+    <variable id="v7" startvalue="0" />
+    <variable id="v8" startvalue="0" />
+    <variable id="v9" startvalue="0" />
+  </variables>
+  <seams>
+    <!-- I have only added guid here -->
+    <seam id="guid" name="hub,locH">
+      <blockref block="hub" />
+      <blockref block="locH" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v1" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    <seam id="hub,fH">
+      <blockref block="hub" />
+      <blockref block="fH" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v2" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+
+    <seam id="vane,locV">
+      <blockref block="vane" />
+      <blockref block="locV" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v3" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    <seam id="vane,fV">
+      <blockref block="vane" />
+      <blockref block="fV" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v4" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+
+    <seam id="shroud,locS">
+      <blockref block="shroud" />
+      <blockref block="locS" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v5" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    <seam id="shroud,fS">
+      <blockref block="shroud" />
+      <blockref block="fS" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v6" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+
+    <seam id="hub,vane">
+      <blockref block="hub" />
+      <blockref block="vane" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v7" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    
+    <seam id="vane,shroud">
+      <blockref block="vane" />
+      <blockref block="shroud" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v8" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    
+    <seam id="weld">
+      <blockref block="hub" />
+      <blockref block="vane" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v9" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+
+  </seams>
+  <blocks>
+    <block id="guid" name="Hub" />
+    <block id="vane" name="Vane" />
+    <block id="shroud" name="Shroud" />
+    <block id="locH" name="Locating Schema Hub" />
+    <block id="locV" name="Locating Schema Vane" />
+    <block id="locS" name="Locating Schema Shroud" />
+    <block id="fH" name="Milling feature on Hub" />
+    <block id="fV" name="Milling feature on Vane" />
+    <block id="fS" name="Milling feature on Shroud" />
+  </blocks>
+  <resources>
+    <resource id="op1" name="Operator1" type="Operator" />
+    <resource id="m1" name="Milling machine 1" type="Milling" />
+    <resource id="m2" name="Milling machine 2" type="Milling" />
+    <resource id="w1" name="Welding cell 1" type="Welding"  />
+  </resources>
+  <operations>
+    <operation id="fixateHub" type="Fixate" resource="op1" seam="hub,locH">
+      <timecost value="4" unit="minutes" />
+      <precondition>
+        <Eq> 
+          <!-- 
+            This guard together with block allocation is used only to allow
+            one operation to complete a seam (i.e. alternative operations).
+            The variable v1 is a flag related to seam <hub,locH>. 
+            This can be added by SP based on the seam attribute but this is
+            probably more flexible. SP only uses the seam attribute for block 
+            allocation.          
+          -->
+          <variableref id="v1"  />
+          <int value="0" />
+        </Eq>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v1" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+ 
+    <operation id="MillHubM1" type="Milling" resource="m1" seam="hub,fH">
+      <timecost value="32" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <!--
+                I'm not sure about this. This is the precedence relation that
+                the fixate seam <hub,locH> must be complete before this op.
+                But this will be the same expression as in the complete seam
+                condition above. So maybe we should have:
+                <After> <Seam id="<hub,locH>" /> </ After>
+                (And for operation <Opertion id="" /> )
+                We can have <Before>, <After> and <During>
+                But for this milestone it is probably easier for me as below.
+              -->
+              <variableref id="v1"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v2"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+    <!-- This is the alternative op for milling in M2 generated by the workbench -->
+    <!-- I have different processing times in the two operations to spice up the 
+         example, but that may be hard for the workbench to generate for this MS.
+         Then we can skip that. -->
+    <operation id="MillHubM2" type="Milling" resource="m2" seam="hub,fH">
+      <timecost value="30" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v1"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v2"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+
+    <operation id="fixateVane" type="Fixate" resource="op1" seam="vane,locV">
+      <timecost value="4" unit="minutes" />
+      <precondition>
+        <Eq> 
+          <variableref id="v3"  />
+          <int value="0" />
+        </Eq>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v3" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+ 
+    <operation id="MillVaneM1" type="Milling" resource="m1" seam="vane,fV">
+      <timecost value="12" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v3"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v4"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v4" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+    <operation id="MillVaneM2" type="Milling" resource="m2" seam="vane,fV">
+      <timecost value="10" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v3"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v4"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v4" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+
+    <operation id="fixateShroud" type="Fixate" resource="op1" seam="shroud,locS">
+      <timecost value="4" unit="minutes" />
+      <precondition>
+        <Eq> 
+          <variableref id="v5"  />
+          <int value="0" />
+        </Eq>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v5" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+ 
+    <operation id="MillShroudM1" type="Milling" resource="m1" seam="shroud,fS">
+      <timecost value="42" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v5"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v6"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v6" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+    <operation id="MillShroudM2" type="Milling" resource="m2" seam="shroud,fS">
+      <timecost value="40" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v5"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v6"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v6" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+
+    <operation id="fixateHubVane" type="Fixate" resource="op1" seam="hub,vane">
+      <timecost value="4" unit="minutes" />
+      <precondition>
+        <And>
+            <!-- Preconditions that the parts needs tp be milled before weld -->
+            <Eq> 
+              <variableref id="v2"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v4"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v7"  />
+              <int value="0" />
+            </Eq>
+        </And>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v7" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+ 
+    <operation id="fixateVaneShroud" type="Fixate" resource="op1" seam="vane,shroud">
+      <timecost value="4" unit="minutes" />
+      <precondition>
+        <And>
+            <Eq> 
+              <variableref id="v4"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v6"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v8"  />
+              <int value="0" />
+            </Eq>
+        </And>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v8" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation> 
+ 
+    <operation id="Weld" type="Welding" resource="w1" seam="weld">
+      <timecost value="20" unit="minutes" />
+      <precondition>
+        <AND>
+            <Eq> 
+              <variableref id="v7"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v8"  />
+              <int value="1" />
+            </Eq>
+            <Eq> 
+              <variableref id="v9"  />
+              <int value="0" />
+            </Eq>
+        </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v9" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+
+
+
+  </operations>
+
+</assembly>

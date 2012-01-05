@@ -8,7 +8,7 @@ public class ConditionOperator {
 
     public enum Type {
 
-        AND("&"), OR("|"), SEMIKOLON(";");
+        AND("&&"), OR("||"), SEMIKOLON(";");
         private final String opSign;
 
         Type(String sign) {

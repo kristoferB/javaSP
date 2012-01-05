@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import sequenceplanner.IO.optimizer.Optimizer;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
 import sequenceplanner.model.Model;
@@ -35,10 +36,17 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
         this.fileToSave = fileToSave;
         
         // Algorithms:
-        createVisualizationForAllOperations();
+        // removed since the allocation generation is not working correct 
+        //createVisualizationForAllOperations();
+        
+        runOptimizer();
         
         
-        
+    }
+    
+    private void runOptimizer(){
+        Optimizer.optimizeOperations(model);
+        saveFile();
     }
     
     private void createVisualizationForAllOperations(){
@@ -107,15 +115,19 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
             model.sops.add(sopNode);          
         }
         
-        // save
-        sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML save=
-                new sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML(fileToSave,model);
+        saveFile();
         
     }
 
     @Override
     public void newMessageFromAlgorithm(String iMessage, IAlgorithm iFromAlgorithm) {
         //
+    }
+    
+    private void saveFile(){
+        // save
+        sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML save=
+                new sequenceplanner.IO.XML.IntentionalXML.SaveIntentionalXML(fileToSave,model);
     }
 
 

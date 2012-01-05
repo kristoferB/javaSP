@@ -70,9 +70,15 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
             else if (child.getTagName().equals("postaction"))
                 appendCondition(child,od,m,ConditionType.POST,false,true);
             
-            else if (child.getTagName().equals("timecost"))
-                od.timecost = child.getAttribute("value");
-             }
+            else if (child.getTagName().equals("timecost")){
+                int cost;
+                try{
+                    cost = Integer.parseInt(child.getAttribute("value"));
+                } catch (NumberFormatException ex){
+                    cost = -1;
+                }
+                od.timecost = cost;
+            }}
             // find more content here
         
         return true;

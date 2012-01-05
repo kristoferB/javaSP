@@ -11,38 +11,31 @@ import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
-import sequenceplanner.model.data.ViewData;
 
 /**
  * This class should prbably be moved to a general place, but for now 
- * it is specific for when parsing interntional XML
+ * it is specific for when parsing intentional XML
  * 
  * @author kbe
  */
-public class CreateBooking {
+public enum CreateBooking {
+    INSTANCE;    
 
-   
-
-
-    
-
-    private CreateBooking() {}
-    
-    public static void createBookingForSeams(Model model){
+    public void createBookingForSeams(Model model){
         for (SopNode sop : model.sops){
             createSeamBooking(sop,model);
             break;
         }
     }
     
-    public static void createBookingForResources(Model model){
+    public void createBookingForResources(Model model){
         for (SopNode sop : model.sops){
             createResourceBooking(sop,model);
             break;
         }
     }
         
-    private static void createResourceBooking(SopNode sop,Model model) {
+    private void createResourceBooking(SopNode sop,Model model) {
         if (sop == null) return;
         
         if (sop.getOperation() != null && !sop.getOperation().resource.isEmpty() 
@@ -57,7 +50,7 @@ public class CreateBooking {
         createResourceBooking(sop.getSuccessorNode(),model);        
     }
     
-    private static boolean childrenHaveSameResource(SopNode sop, String resource) {
+    private boolean childrenHaveSameResource(SopNode sop, String resource) {
         ArrayDeque<SopNode> stack = new ArrayDeque();
         for (SopNode n : sop.getFirstNodesInSequencesAsSet())
             stack.push(n);
@@ -74,8 +67,8 @@ public class CreateBooking {
         }
         return true;
     }
-
-    private static void createSeamBooking(SopNode sop,Model model) {
+    
+    private void createSeamBooking(SopNode sop,Model model) {
         // For now, seams should not be on children
         if (sop == null) return;
         for (SopNode n : sop.getFirstNodesInSequencesAsSet()){
@@ -96,7 +89,7 @@ public class CreateBooking {
     
     // Refactor following methods
 
-    private static void addBookingConditions(String varName, OperationData op,Model model) {
+    private void addBookingConditions(String varName, OperationData op,Model model) {
         int id = getVariableId(varName,model);
         Condition pre = new Condition();
         Condition post = new Condition();
@@ -114,51 +107,14 @@ public class CreateBooking {
         
     }
     
-    private static void addBookingPreCondition(String varName, OperationData op,Model model){
-        int id = getVariableId(varName,model);
-        Condition pre = new Condition();
-        ConditionStatement preGuard = new ConditionStatement("id" + id, ConditionStatement.Operator.Equal,"0");
-        ConditionStatement preAction = new ConditionStatement("id" + id, ConditionStatement.Operator.Assign,"1");
-        
-        pre.getGuard().appendElement(ConditionOperator.Type.AND, preGuard);
-        pre.getAction().appendElement(ConditionOperator.Type.SEMIKOLON, preAction);
-        
-        ConditionData cd = new ConditionData("Booking");
-        op.addCondition(cd, ConditionType.PRE, pre);
-    }
     
-    private static void addBookingPostCondition(String varName, OperationData op,Model model){
-        int id = getVariableId(varName,model);
-        Condition post = new Condition();
-        ConditionStatement postGuard = new ConditionStatement("id" + id, ConditionStatement.Operator.Equal,"1");
-        ConditionStatement postAction = new ConditionStatement("id" + id, ConditionStatement.Operator.Assign,"0");
-        
-        post.getGuard().appendElement(ConditionOperator.Type.AND, postGuard);
-        post.getAction().appendElement(ConditionOperator.Type.SEMIKOLON, postAction);
-        
-        ConditionData cd = new ConditionData("Booking");
-        op.addCondition(cd, ConditionType.POST, post);
-    }
-    
-    private static int getVariableId(String name, Model model){
+    private int getVariableId(String name, Model model){
         for (TreeNode n : model.getAllVariables()){
             if (n.getNodeData().getName().equals(name)){
                 return n.getNodeData().getId();
             }
         }
         return -1;
-    }
-    
-    // Not a good implementation. Must think this trough!
-    private static boolean sequenceHasSameResource(SopNode n, String resource) {
-        return false;
-//        if (n.getSuccessorNode() == null) return false;
-//        SopNode next = n.getSuccessorNode();
-//               
-//        while (next != null){
-//                    
-//        }
-//        return true;
     }
     
 }

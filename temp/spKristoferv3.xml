@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <variables>
+    <variable id="v1" />
+    <variable id="v2" />
+  </variables>
+  <seams>
+    <seam id="s1">
+      <blockref block="b1" />
+      <blockref block="b2" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v1" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+    <seam id="s2">
+      <blockref block="b2" />
+      <blockref block="b3" />
+      <completecondition>
+          <And>
+              <Eq>
+                <variableref id="v2" />
+                <int value="1" />
+              </Eq>
+          </And>
+      </completecondition>
+    </seam>
+  </seams>
+  <blocks>
+    <block id="b1" name="Tank" />
+    <block id="b2" name="Body">
+      <capacity name="mass" value="20000.0" unit="kilogram" var="v1" />
+    </block>
+    <block id="b3" name="Turret">
+      <capacity name="mass" value="400.0" unit="kilogram" var="v2" />
+    </block>
+  </blocks>
+  <resources>
+    <resource id="r1" name="Gantry" type="Crane" />
+    <resource id="r2" name="Stationary GlueGun" type="GlueGun" />
+    <resource id="r3" name="Mobile GlueGun" type="GlueGun" />
+  </resources>
+  <operations>
+    <operation id="o1" type="GlueBlocks" resource="r3" seam="s1">
+      <timecost value="400.0" unit="second" />
+      <precondition>
+        <Eq>
+          <variableref id="v1"  />
+          <int value="0" />
+        </Eq>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v1" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o2" type="MoveToBlock" resource="r1" seam="s2">
+      <timecost value="400.0" unit="second" />
+      <precondition>
+          <AND>
+            <Eq>
+              <variableref id="v1"  />
+              <int value="1" />
+            </Eq>
+            <Eq>
+              <variableref id="v2"  />
+              <int value="0" />
+            </Eq>
+          </AND>
+      </precondition>
+      <postaction>
+        <Assign>
+          <variableref id="v2" />
+          <int value="1" />
+        </Assign>
+      </postaction>
+    </operation>
+    <operation id="o3" type="LiftBlock" resource="r1" seam="s2">
+        <timecost value="400.0" unit="second" />
+        <precondition>
+            <Eq>
+              <variableref id="v2"  />
+              <int value="0" />
+            </Eq>
+      </precondition>
+        <postaction>
+            <Assign>
+                <variableref id="v2" />
+                <int value="1" />
+            </Assign>
+        </postaction>
+    </operation>
+  </operations>
+
+</assembly>

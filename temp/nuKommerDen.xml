@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <specs/>
+  <operations>
+    <operation id="Weld">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="fixateAll">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillShroudM2">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillShroudM1">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="fixateShroud">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillVaneM2">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillVaneM1">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="fixateVane">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillHubM2">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="MillHubM1">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+    <operation id="fixateHub">
+      <schedule>
+        <starttime value=""/>
+        <stoptime value=""/>
+      </schedule>
+    </operation>
+  </operations>
+</assembly>

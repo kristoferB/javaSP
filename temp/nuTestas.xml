@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+  <operations>
+    <operation id="o3">
+      <schedule>
+        <starttime value=""/>
+        <stoptime/>
+      </schedule>
+    </operation>
+    <operation id="o2">
+      <schedule>
+        <starttime value=""/>
+        <stoptime/>
+      </schedule>
+    </operation>
+    <operation id="o1">
+      <schedule>
+        <starttime value=""/>
+        <stoptime/>
+      </schedule>
+    </operation>
+  </operations>
+  <specs>
+    <spec>
+      <sequence>
+        <opref id="o1"/>
+        <opref id="o2"/>
+        <opref id="o3"/>
+      </sequence>
+    </spec>
+  </specs>
+</assembly>

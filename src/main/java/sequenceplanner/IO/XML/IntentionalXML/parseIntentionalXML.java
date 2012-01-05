@@ -35,8 +35,8 @@ public class ParseIntentionalXML {
            }
         }                
         
-        CreateBooking.createBookingForSeams(model);
-        CreateBooking.createBookingForResources(model);
+        CreateBooking.INSTANCE.createBookingForSeams(model);
+        CreateBooking.INSTANCE.createBookingForResources(model);
         model.sops.clear();
         
         oldModel = model;    

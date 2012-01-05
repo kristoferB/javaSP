@@ -31,7 +31,7 @@ public class OperationData extends Data {
     public String resource = "";
     public String startTime ="";
     public String stopTime ="";
-    public String timecost ="";
+    public int timecost = -1;
     
     
     public OperationData(String name, int id) {
@@ -100,8 +100,7 @@ public class OperationData extends Data {
             return;
         }
         
-        cond.appendCondition(c);
-        
+        cond.appendCondition(c);       
         
     }
 }

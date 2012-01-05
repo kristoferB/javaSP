@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
+
+  <operations>
+    <operation id="fixateHub">
+         <schedule>
+              <starttime value="4" />
+              <stoptime value="8" />
+         </schedule>
+    </operation>
+ 
+    <!-- This operation is not executed i.e. start and stop = -1 -->
+    <operation id="MillHubM1">
+        <schedule>
+              <starttime value="-1" />
+              <stoptime value="-1" />
+         </schedule>
+    </operation>
+
+    <operation id="MillHubM2">
+        <schedule>
+              <starttime value="8" />
+              <stoptime value="38" />
+         </schedule>
+    </operation>
+
+
+    <operation id="fixateVane">
+        <schedule>
+              <starttime value="34" />
+              <stoptime value="38" />
+         </schedule>
+    </operation>
+ 
+    <operation id="MillVaneM1">
+        <schedule>
+              <starttime value="-1" />
+              <stoptime value="-1" />
+         </schedule>
+    </operation>
+
+    <operation id="MillVaneM2">
+        <schedule>
+              <starttime value="38" />
+              <stoptime value="48" />
+         </schedule>
+    </operation>
+
+
+    <operation id="fixateShroud">
+        <schedule>
+              <starttime value="0" />
+              <stoptime value="4" />
+         </schedule>
+    </operation>
+ 
+    <operation id="MillShroudM1">
+        <schedule>
+              <starttime value="4" />
+              <stoptime value="46" />
+         </schedule>
+    </operation>
+
+    <operation id="MillShroudM2">
+        <schedule>
+              <starttime value="-1" />
+              <stoptime value="-1" />
+         </schedule>
+    </operation>
+
+
+    <operation id="fixateAll">
+        <schedule>
+              <starttime value="48" />
+              <stoptime value="56" />
+         </schedule>
+    </operation>
+ 
+    <operation id="Weld">
+        <schedule>
+              <starttime value="56" />
+              <stoptime value="76" />
+         </schedule>
+    </operation>
+
+
+
+  </operations>
+
+</assembly>
