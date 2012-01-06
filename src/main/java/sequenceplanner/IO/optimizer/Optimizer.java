@@ -34,6 +34,8 @@ public class Optimizer {
     
     private List<Operation> compute(){
         try{
+            String[] args = {"-c","100"};
+            optis.parse(args);
             optis.computeMinimalCost();
         } catch (Exception e){
             System.out.println("optimizer failes:" + e.getLocalizedMessage());

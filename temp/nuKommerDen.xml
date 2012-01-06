@@ -1,72 +1,78 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SeamAssembly.xsd">
-  <specs/>
   <operations>
     <operation id="Weld">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="54"/>
+        <stoptime value="74"/>
       </schedule>
     </operation>
-    <operation id="fixateAll">
+    <operation id="fixateVaneShroud">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="50"/>
+        <stoptime value="54"/>
+      </schedule>
+    </operation>
+    <operation id="fixateHubVane">
+      <schedule>
+        <starttime value="44"/>
+        <stoptime value="48"/>
       </schedule>
     </operation>
     <operation id="MillShroudM2">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
       </schedule>
     </operation>
     <operation id="MillShroudM1">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="8"/>
+        <stoptime value="50"/>
       </schedule>
     </operation>
     <operation id="fixateShroud">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="4"/>
+        <stoptime value="8"/>
       </schedule>
     </operation>
     <operation id="MillVaneM2">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="34"/>
+        <stoptime value="44"/>
       </schedule>
     </operation>
     <operation id="MillVaneM1">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
       </schedule>
     </operation>
     <operation id="fixateVane">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="8"/>
+        <stoptime value="12"/>
       </schedule>
     </operation>
     <operation id="MillHubM2">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="4"/>
+        <stoptime value="34"/>
       </schedule>
     </operation>
     <operation id="MillHubM1">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
       </schedule>
     </operation>
     <operation id="fixateHub">
       <schedule>
-        <starttime value=""/>
-        <stoptime value=""/>
+        <starttime value="0"/>
+        <stoptime value="4"/>
       </schedule>
     </operation>
   </operations>
+  <specs/>
 </assembly>

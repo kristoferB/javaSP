@@ -34,4 +34,8 @@ public final class Seam {
         return result;
     }
     
+    public ConditionExpression getCompleteCondition(){
+        return completeCondition;
+    }
+    
 }

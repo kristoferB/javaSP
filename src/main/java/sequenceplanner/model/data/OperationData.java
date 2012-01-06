@@ -29,8 +29,8 @@ public class OperationData extends Data {
     public boolean hasToFinish = false;
     public String seam = "";
     public String resource = "";
-    public String startTime ="";
-    public String stopTime ="";
+    public String startTime ="-1";
+    public String stopTime ="-1";
     public int timecost = -1;
     
     

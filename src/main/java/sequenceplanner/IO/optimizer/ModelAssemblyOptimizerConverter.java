@@ -1,11 +1,13 @@
 package sequenceplanner.IO.optimizer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.supremica.external.assemblyOptimizer.*;
 import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
@@ -30,9 +32,12 @@ public enum ModelAssemblyOptimizerConverter {
             }
         }
         
+        //List<OperationData> markedOps = getMarkedOperations(m);
+        String terminationExpression = createTerminationExpression(m);
+        
         for (TreeNode n : m.getAllOperations()){
             if (n.getNodeData() instanceof OperationData){
-                ops.add(convertOperationDataProtoOperation((OperationData)n.getNodeData(),variableList));
+                ops.add(convertOperationDataProtoOperation((OperationData)n.getNodeData(),variableList,terminationExpression));
             }
         }
         
@@ -41,12 +46,16 @@ public enum ModelAssemblyOptimizerConverter {
     
     public List<AssemblyStructureProtos.Resource> convertModelToProtoResource(Model m){
         List<AssemblyStructureProtos.Resource> resources = new ArrayList<AssemblyStructureProtos.Resource>();
-        
+        HashSet<String> resourcesToAdd = new HashSet<String>();
         for (TreeNode n : m.getAllOperations()){
             if (n.getNodeData() instanceof OperationData){
                 OperationData od = (OperationData) n.getNodeData();
-                resources.add(MessageFactory.createResource(od.resource, "1"));
+                resourcesToAdd.add(od.resource);
             }
+        }
+        
+        for (String r : resourcesToAdd){
+            resources.add(MessageFactory.createResource(r, "1"));
         }
         
         return resources;
@@ -81,17 +90,19 @@ public enum ModelAssemblyOptimizerConverter {
     }
 
     private AssemblyStructureProtos.Operation convertOperationDataProtoOperation(OperationData od, 
-                                                                                List<AssemblyStructureProtos.Variable> variableList) {
+                                                                                List<AssemblyStructureProtos.Variable> variableList,
+                                                                                String terminationExpression) {
         return MessageFactory.createOperation(
                 od.getName(),
-                this.convertPreGuard(od),
-                this.convertPreAction(od),
-                this.convertPostActions(od),
+                this.convertGuard(ConditionType.PRE,od),
+                this.convertActions(ConditionType.PRE,od),
+                this.convertActions(ConditionType.POST,od),
                 this.convertResources(od),
                 od.timecost,
                 isThisOperationMarked(od),
                 new ArrayList<String>(),
-                variableList);
+                variableList,
+                terminationExpression);
         
     }
     
@@ -109,19 +120,33 @@ public enum ModelAssemblyOptimizerConverter {
      * 
      */
     
-    private String convertPreGuard(OperationData od){
+    private String convertGuard(ConditionType type,OperationData od){
         List<ConditionExpression> guards = getGuards(ConditionType.PRE,od);
-        for
-        return "";
+        String result ="";
+        for (ConditionExpression ce : guards)
+            result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, ce);     
+        
+        result = ExpressionToJavaConverter.INSTANCE.appendStringExpression(result, od.resource + ".isAvailable()");
+        return result;
     }
     
-    private List<String> convertPreAction(OperationData od){
-        return new ArrayList<String>();
+    private List<String> convertActions(ConditionType type,OperationData od){
+        List<ConditionExpression> actions = getActions(type,od);
+        List<String> result = new ArrayList<String>();
+        for (ConditionExpression ce : actions)
+            result.addAll(ExpressionToJavaConverter.INSTANCE.convertActionExpressions(ce));
+        
+        if (type.equals(ConditionType.PRE))
+            result.add(od.resource + ".allocate()");
+        if (type.equals(ConditionType.POST)){
+            result.add(od.resource + ".deallocate()");
+            result.add("setFinished()");
+        }
+        
+        
+        return result;
     }
-    
-    private List<String> convertPostActions(OperationData od){
-        return new ArrayList<String>();
-    }
+
     
     private List<String> convertResources(OperationData od){
         List<String> res = new ArrayList<String>();
@@ -129,9 +154,7 @@ public enum ModelAssemblyOptimizerConverter {
         return res;
     }
 
-    private boolean isThisOperationMarked(OperationData od) {
-        return true;
-    }
+
 
     private List<ConditionExpression> getGuards(ConditionType type, OperationData od) {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
@@ -149,6 +172,42 @@ public enum ModelAssemblyOptimizerConverter {
             result.add(map.get(type).getAction());          
         }
         return result;
+    }
+
+    private List<OperationData> getMarkedOperations(Model m) {
+        List<OperationData> ops = new ArrayList<OperationData>();
+        for (TreeNode n : m.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData)
+                ops.add((OperationData)n.getNodeData());
+        }
+        List<OperationData> result = new ArrayList<OperationData>();
+        for (int i = 0 ; i<ops.size()-1;i++){
+            boolean addIt = true;
+            for (int j = i+1 ; j<ops.size();j++){
+                if (ops.get(i).seam.equals(ops.get(j).seam)){
+                    addIt = false;
+                    break;
+                }
+            }
+            if (addIt) result.add(ops.get(i));
+        }
+        
+        return result;
+    }
+
+    private String createTerminationExpression(Model m){
+        String result = "";
+        for (Seam s : m.seams){
+            result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, s.getCompleteCondition());
+        }
+                
+        return result;
+    }
+    
+    private boolean isThisOperationMarked(OperationData od) {
+  
+        if (od.getName().equals("Weld")) return true;
+        else return false;
     }
     
   

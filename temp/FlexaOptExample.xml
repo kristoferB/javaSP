@@ -17,24 +17,24 @@
       <blockref block="hub" />
       <blockref block="locH" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v1" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
     <seam id="hub,fH">
       <blockref block="hub" />
       <blockref block="fH" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v2" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
 
@@ -42,24 +42,24 @@
       <blockref block="vane" />
       <blockref block="locV" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v3" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
     <seam id="vane,fV">
       <blockref block="vane" />
       <blockref block="fV" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v4" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
 
@@ -67,24 +67,24 @@
       <blockref block="shroud" />
       <blockref block="locS" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v5" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
     <seam id="shroud,fS">
       <blockref block="shroud" />
       <blockref block="fS" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v6" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
 
@@ -92,12 +92,12 @@
       <blockref block="hub" />
       <blockref block="vane" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v7" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
     
@@ -105,12 +105,12 @@
       <blockref block="vane" />
       <blockref block="shroud" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v8" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
     
@@ -118,12 +118,12 @@
       <blockref block="hub" />
       <blockref block="vane" />
       <completecondition>
-          <And>
+          <AND>
               <Eq>
                 <variableref id="v9" />
                 <int value="1" />
               </Eq>
-          </And>
+          </AND>
       </completecondition>
     </seam>
 
@@ -354,7 +354,7 @@
     <operation id="fixateHubVane" type="Fixate" resource="op1" seam="hub,vane">
       <timecost value="4" unit="minutes" />
       <precondition>
-        <And>
+        <AND>
             <!-- Preconditions that the parts needs tp be milled before weld -->
             <Eq> 
               <variableref id="v2"  />
@@ -368,7 +368,7 @@
               <variableref id="v7"  />
               <int value="0" />
             </Eq>
-        </And>
+        </AND>
       </precondition>
       <postaction>
         <Assign>
@@ -381,7 +381,7 @@
     <operation id="fixateVaneShroud" type="Fixate" resource="op1" seam="vane,shroud">
       <timecost value="4" unit="minutes" />
       <precondition>
-        <And>
+        <AND>
             <Eq> 
               <variableref id="v4"  />
               <int value="1" />
@@ -394,7 +394,7 @@
               <variableref id="v8"  />
               <int value="0" />
             </Eq>
-        </And>
+        </AND>
       </precondition>
       <postaction>
         <Assign>

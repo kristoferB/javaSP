@@ -22,10 +22,18 @@ public enum CreateBooking {
     INSTANCE;    
 
     public void createBookingForSeams(Model model){
-        for (SopNode sop : model.sops){
-            createSeamBooking(sop,model);
-            break;
+        // Obeserve, no hierarchy is handled!!!
+        for (TreeNode n : model.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData){
+                createSeamBooking((OperationData)n.getNodeData(),model);
+            }
         }
+        
+        
+//        for (SopNode sop : model.sops){
+//            createSeamBooking(sop,model);
+//            break;
+//        }
     }
     
     public void createBookingForResources(Model model){
@@ -86,6 +94,17 @@ public enum CreateBooking {
         }
         createSeamBooking(sop.getSuccessorNode(),model);
     }
+    
+    private void createSeamBooking(OperationData od,Model model) {
+        for (Seam seam : model.seams){
+            if (seam.getName().equals(od.seam)){
+                for (String s : seam.getBlocks()){
+                    addBookingConditions(s,od,model);
+                }
+            }
+        }     
+    }
+    
     
     // Refactor following methods
 

@@ -24,10 +24,11 @@ public enum ObjectifyIntentionalExpressions {
         ConditionExpression expr = new ConditionExpression();
 
         ConditionOperator.Type operator = ConditionOperator.Type.AND;
-        if (e.getTagName().equals("OR")) operator = ConditionOperator.Type.OR;
+        if (e.getTagName().equals("OR") || e.getTagName().equals("Or")) operator = ConditionOperator.Type.OR;
         
         for (Element child : getChildren(e)){
-            if (child.getTagName().equals("AND") || child.getTagName().equals("OR")){
+            if (child.getTagName().equals("AND") || child.getTagName().equals("OR") ||
+                child.getTagName().equals("And") || child.getTagName().equals("Or")    ){
                 expr.appendElement(operator, createExpression(child,m));
             } else{
                 ConditionStatement.Operator op = ConditionStatement.Operator.Equal;
