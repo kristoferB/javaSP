@@ -53,17 +53,23 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>2.4.1</version>
-			<scope>compile</scope>
-		</dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>2.4.1</version>
+                <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>net.sf.jopt-simple</groupId>
-			<artifactId>jopt-simple</artifactId>
-			<version>4.3</version>
-		</dependency>
+        <dependency>
+                <groupId>net.sf.jopt-simple</groupId>
+                <artifactId>jopt-simple</artifactId>
+                <version>4.3</version>
+        </dependency>
+        
+        <dependency>
+              <groupId>sun.jdk</groupId>
+              <artifactId>tools</artifactId>
+              <version>1.6.0</version>
+        </dependency>
         
 	<!-- Test -->
         <dependency>
