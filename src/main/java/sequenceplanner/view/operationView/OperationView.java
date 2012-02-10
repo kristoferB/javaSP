@@ -582,7 +582,7 @@ public class OperationView extends AbstractView implements IView, AsyncModelList
             if (previousCell != null && previousCell.isGroup()) {
                 LinkedList<Cell> cells = graph.getPreviousOperations(previousCell);
 
-                if (previousCell.isParallel()) {
+                if (previousCell.isParallel() || previousCell.isArbitrary()) {
                     for (Iterator<Cell> it = cells.iterator(); it.hasNext();) {
                         Cell cg = it.next();
                         d.addAnd(cg.getUniqueId(), 2);
