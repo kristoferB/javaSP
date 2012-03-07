@@ -118,7 +118,7 @@ public class XMLDOMParser {
         Map<String,Set<ObjectifyXML>> rT = tagMap.get(root.getTagName());
         if (rT == null) return false;         
             
-        Set<ObjectifyXML> sO = rT.get(e.getTagName());
+        Set<ObjectifyXML> sO = rT.get(e.getTagName().toLowerCase());
         if (sO == null) return false;
         
         for (ObjectifyXML o : sO){

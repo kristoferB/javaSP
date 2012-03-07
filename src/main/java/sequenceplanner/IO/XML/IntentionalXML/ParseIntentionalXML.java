@@ -17,13 +17,14 @@ public class ParseIntentionalXML {
     private final ObjectifySOPIntentionalOldModel sop = new ObjectifySOPIntentionalOldModel();
     private final ObjectifyResourceIntentionalOldModel res = new ObjectifyResourceIntentionalOldModel();
     private final ObjectifySeamIntentionalOldModel seam = new ObjectifySeamIntentionalOldModel();
+    private final ObjectifySeamWorkIntentionalOldModel seamWork = new ObjectifySeamWorkIntentionalOldModel();
     private final Model oldModel;
 
 
     public ParseIntentionalXML(String xmlPath, Set<Object> models){
         //parse for old Model:
         Set<ObjectifyXML> s = new HashSet<ObjectifyXML>(); 
-        s.add(op); s.add(var);s.add(sop);s.add(res);s.add(seam);
+        s.add(op); s.add(var);s.add(sop);s.add(res);s.add(seam);s.add(seamWork);
         XMLDOMParser xmlp = new  XMLDOMParser(s,models); 
         Set<Object> filledModels = xmlp.loadModelFromFile(xmlPath) ;      
        

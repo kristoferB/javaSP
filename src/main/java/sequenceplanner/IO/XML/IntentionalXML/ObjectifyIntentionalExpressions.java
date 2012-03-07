@@ -24,20 +24,19 @@ public enum ObjectifyIntentionalExpressions {
         ConditionExpression expr = new ConditionExpression();
 
         ConditionOperator.Type operator = ConditionOperator.Type.AND;
-        if (e.getTagName().equals("OR") || e.getTagName().equals("Or")) operator = ConditionOperator.Type.OR;
+        if (e.getTagName().toLowerCase().equals("or")) operator = ConditionOperator.Type.OR;
         
         for (Element child : getChildren(e)){
-            if (child.getTagName().equals("AND") || child.getTagName().equals("OR") ||
-                child.getTagName().equals("And") || child.getTagName().equals("Or")    ){
+            if (child.getTagName().toLowerCase().equals("and") || child.getTagName().toLowerCase().equals("or")){
                 expr.appendElement(operator, createExpression(child,m));
             } else{
                 ConditionStatement.Operator op = ConditionStatement.Operator.Equal;
-                if (child.getTagName().equals("Le")) op = ConditionStatement.Operator.LessEq;
-                else if (child.getTagName().equals("Lt")) op = ConditionStatement.Operator.Less;
-                else if (child.getTagName().equals("Ge")) op = ConditionStatement.Operator.GreaterEq;
-                else if (child.getTagName().equals("Gt")) op = ConditionStatement.Operator.Greater;    
-                else if (child.getTagName().equals("Ne")) op = ConditionStatement.Operator.NotEqual;
-                else if (child.getTagName().equals("Assign")){
+                if (child.getTagName().toLowerCase().equals("le")) op = ConditionStatement.Operator.LessEq;
+                else if (child.getTagName().toLowerCase().equals("lt")) op = ConditionStatement.Operator.Less;
+                else if (child.getTagName().toLowerCase().equals("ge")) op = ConditionStatement.Operator.GreaterEq;
+                else if (child.getTagName().toLowerCase().equals("gt")) op = ConditionStatement.Operator.Greater;    
+                else if (child.getTagName().toLowerCase().equals("ne")) op = ConditionStatement.Operator.NotEqual;
+                else if (child.getTagName().toLowerCase().equals("assign")){
                     op = ConditionStatement.Operator.Assign;
                     operator = ConditionOperator.Type.SEMIKOLON;
                 }
@@ -60,16 +59,23 @@ public enum ObjectifyIntentionalExpressions {
     }
     
     private String getStatment(Element e, Model m){
-        if (e.getTagName().equals("variableref")){
-            return getVarId(e.getAttribute("id"),m);
+        if (e.getTagName().toLowerCase().equals("variableref")){
+            return getVarId(getTarget(e),m);
         }
-        if (e.getTagName().equals("int")){
+        if (e.getTagName().toLowerCase().equals("intlit")){ 
+            if (e.getTextContent().isEmpty()) return "1";
+            else return e.getTextContent();
+        }
+        if (e.getTagName().toLowerCase().equals("true")){ // hack
+            return "1";
+        }
+        if (e.getTagName().toLowerCase().equals("int")){
             return e.getAttribute("value");
         }
-        if (e.getTagName().equals("double")){
+        if (e.getTagName().toLowerCase().equals("double")){
             return e.getAttribute("value");
         }
-        if (e.getTagName().equals("Plus")){
+        if (e.getTagName().toLowerCase().equals("Plus")){
             String plusString = "";
             for (Element p : getChildren(e)){
                 if (!plusString.equals("")) plusString += "+";
@@ -77,7 +83,7 @@ public enum ObjectifyIntentionalExpressions {
             }           
             return plusString;
         }
-        if (e.getTagName().equals("Minus")){
+        if (e.getTagName().toLowerCase().equals("Minus")){
             String minusString = "";
             for (Element p : getChildren(e)){
                 if (!minusString.equals("")) minusString += "-";
@@ -117,6 +123,17 @@ public enum ObjectifyIntentionalExpressions {
         }
         
         return set;
+    }
+    
+        private String getTarget(Element e){
+        for (Element child : getChildren(e)){
+            if (child.getTagName().toLowerCase().equals("target")){
+                for (Element name : getChildren(child)){
+                    return name.getTagName();                 
+                }
+            }
+        }
+        return "";
     }
     
 }

@@ -19,7 +19,7 @@ import sequenceplanner.model.data.ResourceVariableData;
 public class ObjectifyVariableIntentionalOldModel extends AbstractObjectifyIntentionalOldModel {
 
     private static final String elementTag = "variables";
-    private static final String rootTag = "assembly";
+    private static final String rootTag = "ProcessPlanForExport";
     private static final String objectTag = "variable";
     private static final int maxForInt = 1000000;
     
@@ -36,10 +36,9 @@ public class ObjectifyVariableIntentionalOldModel extends AbstractObjectifyInten
 
     @Override
     protected boolean addElement(Element e, Model m){
-        if (!e.getTagName().equals(objectTag)) return false;
-        if (e.getAttribute("id").equals("")) return false;
-        
-        String id = e.getAttribute("id");
+        if (!e.getTagName().toLowerCase().equals(objectTag.toLowerCase())) return false;
+        String id = getName(e); if (id.isEmpty()) return false;
+    
         String value = e.getAttribute("value");
         int init = 0;
         int min  = 0;
@@ -57,13 +56,15 @@ public class ObjectifyVariableIntentionalOldModel extends AbstractObjectifyInten
             }
         }
                   
-        ResourceVariableData var = new ResourceVariableData(e.getAttribute("id"), m.newId());
+        ResourceVariableData var = new ResourceVariableData(id, m.newId());
         var.setType(Type);
         var.setInitialValue(init);
         var.setMax(max);
         var.setMin(min);
         TreeNode variable = new TreeNode(var);
         m.insertChild(m.getResourceRoot(), variable);
+        
+        TagNameMapper.INSTANCE.addTageNameType(id, objectTag.toLowerCase());
         return true;          
     }
     

@@ -92,14 +92,20 @@ public enum ModelAssemblyOptimizerConverter {
     private AssemblyStructureProtos.Operation convertOperationDataProtoOperation(OperationData od, 
                                                                                 List<AssemblyStructureProtos.Variable> variableList,
                                                                                 String terminationExpression) {
+        String preGuard = this.convertGuard(ConditionType.PRE,od);
+        List<String> preAction = this.convertActions(ConditionType.PRE,od);
+        List<String> postAction = this.convertActions(ConditionType.POST,od);
+        
+        appendProductLocking(preGuard,preAction, postAction);
+        
         return MessageFactory.createOperation(
                 od.getName(),
-                this.convertGuard(ConditionType.PRE,od),
-                this.convertActions(ConditionType.PRE,od),
-                this.convertActions(ConditionType.POST,od),
+                preGuard,
+                preAction,
+                postAction,
                 this.convertResources(od),
                 od.timecost,
-                isThisOperationMarked(od),
+                false,  // this is if an operation is marked. But we should only use expression
                 new ArrayList<String>(),
                 variableList,
                 terminationExpression);
@@ -121,7 +127,7 @@ public enum ModelAssemblyOptimizerConverter {
      */
     
     private String convertGuard(ConditionType type,OperationData od){
-        List<ConditionExpression> guards = getGuards(ConditionType.PRE,od);
+        List<ConditionExpression> guards = getGuards(type,od);
         String result ="";
         for (ConditionExpression ce : guards)
             result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, ce);     
@@ -160,7 +166,8 @@ public enum ModelAssemblyOptimizerConverter {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
         List<ConditionExpression> result = new ArrayList<ConditionExpression>();
         for (Map<ConditionType, Condition> map : conds.values()){
-            result.add(map.get(type).getGuard());          
+            if (map.containsKey(type))
+                result.add(map.get(type).getGuard());          
         }
         return result;
     }
@@ -169,7 +176,8 @@ public enum ModelAssemblyOptimizerConverter {
         Map<ConditionData, Map<ConditionType, Condition>> conds = od.getConditions();
         List<ConditionExpression> result = new ArrayList<ConditionExpression>();
         for (Map<ConditionType, Condition> map : conds.values()){
-            result.add(map.get(type).getAction());          
+            if (map.containsKey(type))
+                result.add(map.get(type).getAction());          
         }
         return result;
     }
@@ -208,6 +216,10 @@ public enum ModelAssemblyOptimizerConverter {
   
         if (od.getName().equals("Weld")) return true;
         else return false;
+    }
+
+    private void appendProductLocking(String preGuard, List<String> preAction, List<String> postAction) {
+        
     }
     
   

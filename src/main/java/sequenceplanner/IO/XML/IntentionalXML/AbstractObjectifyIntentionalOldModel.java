@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import sequenceplanner.IO.XML.ObjectifyXML;
 import sequenceplanner.datamodel.condition.Condition;
@@ -58,7 +59,7 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
     @Override
     public boolean validateRootTag(Element e){
         if (!e.getTagName().equals(rootTag)) return false;
-        if (!e.getAttribute("xsi:noNamespaceSchemaLocation").equals(xsi)) return false;
+        //if (!e.getAttribute("xsi:noNamespaceSchemaLocation").equals(xsi)) return false;
         
         return true;
     }
@@ -78,10 +79,10 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
     public boolean addModelToElement(Object model, Element e){
         if (!(this.model.isInstance(model))) return false;
         if (!e.getTagName().equals(rootTag)) return false;
-        if (!e.hasAttribute("xmlns:xsi"))
-            e.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        if (!e.hasAttribute("xsi:noNamespaceSchemaLocation"))
-            e.setAttribute("xsi:noNamespaceSchemaLocation", "SeamAssembly.xsd");
+//        if (!e.hasAttribute("xmlns:xsi"))
+//            e.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+//        if (!e.hasAttribute("xsi:noNamespaceSchemaLocation"))
+//            e.setAttribute("xsi:noNamespaceSchemaLocation", "SeamAssembly.xsd");
         
         return createElements((Model)model,e);
     }
@@ -90,7 +91,7 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
     public boolean addElementToModel(Element e, Object model) {
         if (!(this.model.isInstance(model))) return false;    
         if (e == null) return false;
-        if (!(e.getTagName().equals(elementTag))) return false;
+        if (!(e.getTagName().toLowerCase().equals(elementTag.toLowerCase()))) return false;
                        
         return addElements(e,(Model) model);
     }
@@ -118,6 +119,29 @@ public abstract class AbstractObjectifyIntentionalOldModel implements ObjectifyX
         }
         
         return set;
+    }
+    
+    protected String getName(Element e){
+        for (Element child : getChildren(e)){
+            if (child.getTagName().toLowerCase().equals("names")){
+                for (Element name : getChildren(child)){
+                    if (name.getTagName().toLowerCase().equals("name"))
+                        return name.getTextContent();                   
+                }
+            }
+        }
+        return "";
+    }
+    
+    protected String getTarget(Element e){
+        for (Element child : getChildren(e)){
+            if (child.getTagName().toLowerCase().equals("target")){
+                for (Element name : getChildren(child)){
+                    return name.getTagName();                 
+                }
+            }
+        }
+        return "";
     }
     
 

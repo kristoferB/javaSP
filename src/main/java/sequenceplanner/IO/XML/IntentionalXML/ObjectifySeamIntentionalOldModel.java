@@ -19,7 +19,7 @@ import sequenceplanner.model.data.ResourceVariableData;
 public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntentionalOldModel {
 
     private static final String elementTag = "seams";
-    private static final String rootTag = "assembly";
+    private static final String rootTag = "ProcessPlanForExport";
     private static final String objectTag = "seam";
     
 
@@ -35,21 +35,27 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
     
     @Override
     protected boolean addElement(Element e, Model m) {
-        if (!e.getTagName().equals(objectTag)) return false;
-        if (!e.hasAttribute("id")) return false;
+        if (!e.getTagName().toLowerCase().equals(objectTag.toLowerCase())) return false; 
+        String id = getName(e); if (id.isEmpty()) return false;
         
         Set<String> blocks = getBlocks(e);
         addBlockVariable(blocks,m);
-        m.seams.add(new Seam(e.getAttribute("id"),blocks, this.createCompleteCondition(e, m)));
+        m.seams.add(new Seam(getName(e),blocks, this.createCompleteCondition(e, m)));
         return true; 
     }
     
     private Set<String> getBlocks(Element e){
         Set<String> blocks = new HashSet<String>();
         for (Element child : getChildren(e)){
-            if (child.getTagName().equals("blockref")){
-                if (!child.getAttribute("block").isEmpty())
-                    blocks.add(child.getAttribute("block"));
+            if (child.getTagName().toLowerCase().equals("blockrefs")){
+                for (Element bref : getChildren(child)){
+                    if (bref.getTagName().toLowerCase().equals("blockref")){
+                        String target = getTarget(bref);
+                        if (!target.isEmpty()){
+                            blocks.add(target);
+                        }
+                    }
+                }                             
             }
         }
         return blocks;
@@ -65,6 +71,7 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
                 var.setMin(0);
                 TreeNode variable = new TreeNode(var);
                 m.insertChild(m.getResourceRoot(), variable);
+                TagNameMapper.INSTANCE.addTageNameType(block, "block");
             }
         }
     }
@@ -79,7 +86,7 @@ public class ObjectifySeamIntentionalOldModel extends AbstractObjectifyIntention
     
     private ConditionExpression createCompleteCondition(Element e, Model m){
         for (Element child : getChildren(e)){
-            if (child.getTagName().equals("completecondition")){
+            if (child.getTagName().toLowerCase().equals("completecondition")){
                 return ObjectifyIntentionalExpressions.INSTANCE.createExpression(child, m);
             }
         }

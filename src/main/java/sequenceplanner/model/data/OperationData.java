@@ -32,6 +32,7 @@ public class OperationData extends Data {
     public String startTime ="-1";
     public String stopTime ="-1";
     public int timecost = -1;
+    public String guid= "";
     
     
     public OperationData(String name, int id) {
