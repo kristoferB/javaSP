@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<assembly>
+  <specs/>
+  <operations>
+    <operation name="MillingMachine2_i6">
+      <id idisa="f1279e1b-fff4-449c-b1ab-8552076504bd"/>
+      <schedule>
+        <starttime value="0"/>
+        <stoptime value="1"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine1_i5">
+      <id idisa="f1279e1b-fff4-449c-b1ab-8552076504bd"/>
+      <schedule>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine2_i4">
+      <id idisa="58f7af52-185c-45ee-b383-3b2a4c2fec63"/>
+      <schedule>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine1_i3">
+      <id idisa="58f7af52-185c-45ee-b383-3b2a4c2fec63"/>
+      <schedule>
+        <starttime value="1"/>
+        <stoptime value="2"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine2_i2">
+      <id idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
+      <schedule>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine1_i1">
+      <id idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
+      <schedule>
+        <starttime value="0"/>
+        <stoptime value="1"/>
+      </schedule>
+    </operation>
+    <operation name="WeldingCell1_i0">
+      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+      <schedule>
+        <starttime value="2"/>
+        <stoptime value="3"/>
+      </schedule>
+    </operation>
+  </operations>
+</assembly>

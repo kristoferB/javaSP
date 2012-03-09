@@ -121,17 +121,23 @@ public class ObjectifyOperationsIntentionalOldModel extends AbstractObjectifyInt
     }
 
     private void convertOpToElement(OperationData data, Element eOp) {
-        eOp.setAttribute("id", data.getName());
+        eOp.setAttribute("name", data.getName());
+        
+        Element id = eOp.getOwnerDocument().createElement("id");
+        eOp.appendChild(id);
+        id.setAttribute("idisa", data.guid);
+        
         Element schedule = eOp.getOwnerDocument().createElement("schedule");
         eOp.appendChild(schedule);
         
-        Element starttime = schedule.getOwnerDocument().createElement("starttime");
-        schedule.appendChild(starttime);
-        starttime.setAttribute("value", data.startTime);
         
-        Element stoptime = schedule.getOwnerDocument().createElement("stoptime");
-        schedule.appendChild(stoptime);
-        stoptime.setAttribute("value", data.stopTime);
+            Element starttime = schedule.getOwnerDocument().createElement("starttime");
+            schedule.appendChild(starttime);
+            starttime.setAttribute("value", data.startTime);
+        
+            Element stoptime = schedule.getOwnerDocument().createElement("stoptime");
+            schedule.appendChild(stoptime);
+            stoptime.setAttribute("value", data.stopTime);
         
     }
 

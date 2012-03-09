@@ -1,9 +1,6 @@
 package sequenceplanner.IO.optimizer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.supremica.external.assemblyOptimizer.*;
 import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
@@ -14,6 +11,7 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceVariableData;
+import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization.Type;
 
 /**
  *
@@ -32,8 +30,15 @@ public enum ModelAssemblyOptimizerConverter {
             }
         }
         
+        for (TreeNode n : m.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData){
+                variableList.add(convertOperationDataProtoVariable((OperationData)n.getNodeData()));
+            }
+        }
+        
         //List<OperationData> markedOps = getMarkedOperations(m);
         String terminationExpression = createTerminationExpression(m);
+        sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.initializeLocker(createSeamBlockMap(m));
         
         for (TreeNode n : m.getAllOperations()){
             if (n.getNodeData() instanceof OperationData){
@@ -88,21 +93,23 @@ public enum ModelAssemblyOptimizerConverter {
                 AssemblyStructureProtos.VariableType.INT32, 
                 Integer.toString(vd.getInitialValue()));
     }
+    
+    private AssemblyStructureProtos.Variable convertOperationDataProtoVariable(OperationData od){
+        return MessageFactory.createVariable(
+                Type.OPERATION_VARIABLE_PREFIX.toString()+od.getId(), 
+                AssemblyStructureProtos.VariableType.INT32, 
+                "0");
+    }
 
     private AssemblyStructureProtos.Operation convertOperationDataProtoOperation(OperationData od, 
                                                                                 List<AssemblyStructureProtos.Variable> variableList,
                                                                                 String terminationExpression) {
-        String preGuard = this.convertGuard(ConditionType.PRE,od);
-        List<String> preAction = this.convertActions(ConditionType.PRE,od);
-        List<String> postAction = this.convertActions(ConditionType.POST,od);
-        
-        appendProductLocking(preGuard,preAction, postAction);
-        
+      
         return MessageFactory.createOperation(
                 od.getName(),
-                preGuard,
-                preAction,
-                postAction,
+                this.convertGuard(ConditionType.PRE,od),
+                this.convertActions(ConditionType.PRE,od),
+                this.convertActions(ConditionType.POST,od),
                 this.convertResources(od),
                 od.timecost,
                 false,  // this is if an operation is marked. But we should only use expression
@@ -133,6 +140,9 @@ public enum ModelAssemblyOptimizerConverter {
             result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, ce);     
         
         result = ExpressionToJavaConverter.INSTANCE.appendStringExpression(result, od.resource + ".isAvailable()");
+        result = ExpressionToJavaConverter.INSTANCE.appendStringExpression
+                (result, "sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.isSeamAvailible(\""+od.seam+"\")");
+     
         return result;
     }
     
@@ -142,10 +152,14 @@ public enum ModelAssemblyOptimizerConverter {
         for (ConditionExpression ce : actions)
             result.addAll(ExpressionToJavaConverter.INSTANCE.convertActionExpressions(ce));
         
-        if (type.equals(ConditionType.PRE))
+        if (type.equals(ConditionType.PRE)){
             result.add(od.resource + ".allocate()");
-        if (type.equals(ConditionType.POST)){
+            result.add("sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.lockSeam(\""+od.seam+"\",\""+od.getName()+"\")");
+            result.add(Type.OPERATION_VARIABLE_PREFIX.toString()+od.getId()+ " = 1 ");
+        } if (type.equals(ConditionType.POST)){
             result.add(od.resource + ".deallocate()");
+            result.add("sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.unLockSeam(\""+od.seam+"\",\""+od.getName()+"\")");
+            result.add(Type.OPERATION_VARIABLE_PREFIX.toString()+od.getId()+" = 2 ");
             result.add("setFinished()");
         }
         
@@ -217,9 +231,14 @@ public enum ModelAssemblyOptimizerConverter {
         if (od.getName().equals("Weld")) return true;
         else return false;
     }
-
-    private void appendProductLocking(String preGuard, List<String> preAction, List<String> postAction) {
+    
+    private Map<String,Set<String>> createSeamBlockMap(Model m){
+        Map<String,Set<String>> result = new HashMap<String,Set<String>>();
+        for (Seam s : m.seams){
+            result.put(s.getName(), s.getBlocks());
+        }
         
+        return result;
     }
     
   

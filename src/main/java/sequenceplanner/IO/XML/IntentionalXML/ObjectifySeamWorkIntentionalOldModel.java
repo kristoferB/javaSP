@@ -40,6 +40,7 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
     private static final String objectTag = "preplanalt";
     
     private final ConditionData condDataType = new ConditionData("DWB"); 
+    private String seam="";
 
     public ObjectifySeamWorkIntentionalOldModel() {
         super(rootTag,elementTag);
@@ -54,6 +55,15 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
     
     @Override
     protected boolean addElement(Element e, Model m){
+        if (e.getTagName().toLowerCase().equals("seam")){
+            for (Element child : getChildren(e)){
+                if (child.getTagName().toLowerCase().equals("seamref")){
+                    seam = getTarget(child);
+                    break;
+                }
+            }
+        }
+        
         if (!e.getTagName().toLowerCase().equals(objectTag.toLowerCase())) return false;
         SopNode sop = createSOP(e, m);
         //System.out.println(sop.toString());
@@ -102,6 +112,7 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
         OperationData od = new OperationData(name,m.newId());
       
         parseOperationContent(e,od,m); 
+        od.seam = seam;
         m.createModelOperationNode(od); 
         return od;
     }
