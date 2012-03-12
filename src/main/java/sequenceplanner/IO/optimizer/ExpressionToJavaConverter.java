@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import sequenceplanner.datamodel.condition.ConditionElement;
 import sequenceplanner.datamodel.condition.ConditionExpression;
+import sequenceplanner.datamodel.condition.parser.ConditionToJavaStringParser;
 
 /**
  *
@@ -14,7 +15,7 @@ public enum ExpressionToJavaConverter {
     INSTANCE;
     
     public String convertConditionElement(ConditionElement expr){
-        return expr.toString(); // hopefully this work :)!
+        return ConditionToJavaStringParser.INSTANCE.ConvertCondition(expr);
     }
     
     public String appendExpression(String javaExpression, ConditionExpression expr){

@@ -221,14 +221,14 @@ public class ConditionExpression extends ConditionElement implements Iterable<Co
         if (this.expressionRoot == null) return "";
         
         String result = "";
-        if (this.expressionRoot.hasNextElement())
+        if (this.expressionRoot.hasNextElement() && !this.expressionRoot.getNextOperator().isOperationType(ConditionOperator.Type.SEMIKOLON))
             result = "(";                        
         
         for (ConditionElement e : this) {
             if (!e.toString().isEmpty()){
                 if (e.hasPreviousElement()){
                     result += e.getPreviousOperator().toString()+e;
-                    if (!e.hasNextElement())
+                    if (!e.hasNextElement() && !e.getPreviousOperator().isOperationType(ConditionOperator.Type.SEMIKOLON))
                         result += ")";
                 }else
                     result += e;                

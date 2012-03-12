@@ -110,7 +110,6 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 //-------------------------------------------------------------------
 
 
-
                 //Add transition to start execute operation--------------------------
                 ega = new SEGA(Type.EVENT_PREFIX.toString() + id + Type.EVENT_UP.toString());
                 ega.andGuard(varName + "==0");
@@ -128,6 +127,9 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
                 ega.addAction(varName + "=2");
                 mmEfa.addStandardSelfLoopTransition(ega);
                 //-------------------------------------------------------------------
+                
+                
+                // A 
             }
         }
 

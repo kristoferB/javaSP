@@ -11,6 +11,7 @@ import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
+import sequenceplanner.model.data.ResourceVariableData;
 
 /**
  * This class should prbably be moved to a general place, but for now 
@@ -37,10 +38,30 @@ public enum CreateBooking {
     }
     
     public void createBookingForResources(Model model){
+         if (model.sops == null || model.sops.isEmpty()){
+            //Test to only tun one operation at the time
+                ResourceVariableData var = new ResourceVariableData("aLocker", model.newId());
+                var.setType(ResourceVariableData.BINARY);
+                var.setInitialValue(0);
+                var.setMax(1);
+                var.setMin(0);
+                TreeNode variable = new TreeNode(var);
+                model.insertChild(model.getResourceRoot(), variable); 
+             
+            for (TreeNode n :model.getAllOperations()){  
+                if (n.getNodeData() instanceof OperationData){
+                    OperationData od = (OperationData)n.getNodeData();
+                    addBookingConditions("aLocker",od,model);
+                    // addBookingConditions(od.resource,od,model);
+                }
+            }
+        }
+         
         for (SopNode sop : model.sops){
             createResourceBooking(sop,model);
             break;
         }
+       
     }
         
     private void createResourceBooking(SopNode sop,Model model) {

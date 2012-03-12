@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import net.infonode.docking.View;
+import sequenceplanner.IO.XML.IntentionalXML.CreateBooking;
 import sequenceplanner.IO.txt.ReadFromProcessSimulateTextFile;
 import sequenceplanner.visualization.algorithms.SelectOperationsDialog;
 
@@ -473,6 +474,8 @@ public class GUIController {
         
         
         // Fixa bättre hantering av modellen i parsern. Skall kunna skicka in den.
+        CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
+        CreateBooking.INSTANCE.createBookingForResources(parser.getModel());
         this.mGuiModel.setModel(parser.getModel());
               
     }

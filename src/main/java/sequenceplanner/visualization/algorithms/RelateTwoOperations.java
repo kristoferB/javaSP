@@ -58,7 +58,8 @@ public class RelateTwoOperations implements IRelateTwoOperations {
             return ALTERNATIVE;
         } else if (compareToSetQuartet(setIF, setIF, setIF, setIF)) {
 //            System.out.println(mOperation1.mOpNode.getName() + relationIntegerToString(6, " ", " ") + mOperation2.mOpNode.getName());
-            return ARBITRARY_ORDER;
+  //          return ARBITRARY_ORDER;  // temp test of visualization
+              return PARALLEL;
         } else if (compareToSetQuartet(setE, setE, setI, setF)) {
 //            System.out.println(mOperation1.mOpNode.getName() + relationIntegerToString(7, " ", " ") + mOperation2.mOpNode.getName());
             return HIERARCHY_12;

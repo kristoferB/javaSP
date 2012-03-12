@@ -192,11 +192,11 @@ public class ObjectifySOPIntentionalOldModel extends AbstractObjectifyIntentiona
             insert.appendChild(newElement);
         }                
         
-        if (!sop.sequenceSetIsEmpty() && sop.getFirstNodesInSequencesAsSet().size() > 1){
-            Element parra = newElement.getOwnerDocument().createElement("sequence");  
-            newElement.appendChild(parra);
-            newElement = parra;  
-        }
+//        if (!sop.sequenceSetIsEmpty() && sop.getFirstNodesInSequencesAsSet().size() > 1){
+//            Element parra = newElement.getOwnerDocument().createElement("sequence");  
+//            newElement.appendChild(parra);
+//            newElement = parra;  
+//        }
         
         for (SopNode n : sop.getFirstNodesInSequencesAsSet()){
             convertSopToElement(n,newElement);

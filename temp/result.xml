@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <assembly>
-  <specs/>
   <operations>
     <operation name="MillingMachine2_i6">
+      <id idisa="f1279e1b-fff4-449c-b1ab-8552076504bd"/>
+      <schedule>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
+      </schedule>
+    </operation>
+    <operation name="MillingMachine1_i5">
       <id idisa="f1279e1b-fff4-449c-b1ab-8552076504bd"/>
       <schedule>
         <starttime value="0"/>
         <stoptime value="1"/>
       </schedule>
     </operation>
-    <operation name="MillingMachine1_i5">
-      <id idisa="f1279e1b-fff4-449c-b1ab-8552076504bd"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
     <operation name="MillingMachine2_i4">
       <id idisa="58f7af52-185c-45ee-b383-3b2a4c2fec63"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="0"/>
+        <stoptime value="1"/>
       </schedule>
     </operation>
     <operation name="MillingMachine1_i3">
       <id idisa="58f7af52-185c-45ee-b383-3b2a4c2fec63"/>
       <schedule>
-        <starttime value="1"/>
-        <stoptime value="2"/>
+        <starttime value="-1"/>
+        <stoptime value="-1"/>
       </schedule>
     </operation>
     <operation name="MillingMachine2_i2">
@@ -40,8 +39,8 @@
     <operation name="MillingMachine1_i1">
       <id idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
       <schedule>
-        <starttime value="0"/>
-        <stoptime value="1"/>
+        <starttime value="1"/>
+        <stoptime value="2"/>
       </schedule>
     </operation>
     <operation name="WeldingCell1_i0">
@@ -52,4 +51,25 @@
       </schedule>
     </operation>
   </operations>
+  <specs>
+    <spec>
+      <sequence>
+        <parallel>
+          <alternative>
+            <opref id="MillingMachine2_i2"/>
+            <opref id="MillingMachine1_i1"/>
+          </alternative>
+          <alternative>
+            <opref id="MillingMachine1_i5"/>
+            <opref id="MillingMachine2_i6"/>
+          </alternative>
+          <alternative>
+            <opref id="MillingMachine1_i3"/>
+            <opref id="MillingMachine2_i4"/>
+          </alternative>
+        </parallel>
+        <opref id="WeldingCell1_i0"/>
+      </sequence>
+    </spec>
+  </specs>
 </assembly>

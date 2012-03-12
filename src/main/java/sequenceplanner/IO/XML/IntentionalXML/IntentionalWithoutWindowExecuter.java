@@ -41,12 +41,17 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
         
         runOptimizer();
         
+        CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
+        CreateBooking.INSTANCE.createBookingForResources(parser.getModel());
+        
+        createVisualizationForAllOperations();
+        
+        saveFile();
         
     }
     
     private void runOptimizer(){
-        Optimizer.optimizeOperations(model);
-        saveFile();
+        Optimizer.optimizeOperations(model);     
     }
     
     private void createVisualizationForAllOperations(){

@@ -108,11 +108,14 @@ public class GetComplParallelOps {
             if (!n.isVar && !n.hasInteracter()) {
                 ids.add(n.ID);
             } else if (!n.isVar && n.onlyVarInteracters()) {
+                boolean p = true;
                 for (Node var : n.getVars()){
-                    if (var.hasOnlyInteractor(n)){
-                        ids.add(n.ID);
-                    }
+                    if (!var.hasOnlyInteractor(n)){
+                        p = false;
+                        break;
+                    }                                        
                 }
+                if (p) ids.add(n.ID);
             }
         }
         
@@ -161,6 +164,9 @@ public class GetComplParallelOps {
             return true;
         }
         
+        public String toString(){
+            return ID +"," + ((isVar) ? "v":"o");
+        }
         
     }
     
