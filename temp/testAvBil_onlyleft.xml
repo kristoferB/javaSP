@@ -1,0 +1,1012 @@
+<ProcessPlanForExport>
+	<variables>
+		<Variable>
+			<names>
+				<Name>ABulk1_compl</Name>
+			</names>
+		</Variable>
+		<Variable>
+			<names>
+				<Name>ABulk2_compl</Name>
+			</names>
+		</Variable>
+		<Variable>
+			<names>
+				<Name>ABulk3_compl</Name>
+			</names>
+		</Variable>
+		<Variable>
+			<names>
+				<Name>AHubL1_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>AHubL2_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>AHubL3_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>AHubL4_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>AUppArmLeft_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>ALowerArmLeft_compl</Name>
+			</names>
+		</Variable>
+                <Variable>
+			<names>
+				<Name>AFrontShockLeft_compl</Name>
+			</names>
+		</Variable>
+                               
+	</variables>
+	<seams>
+		<Seam>
+			<names>
+				<Name>ABulk1</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<ABulk1_compl />
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85418_3 />
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85418_2/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85418_4/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+		<Seam>
+			<names>
+				<Name>ABulk2</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<ABulk2_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85418_2/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85438_1/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b102159/>
+					</target>
+				</BlockRef>                               
+			</blockrefs>
+		</Seam>
+		<Seam>
+			<names>
+				<Name>ABulk3</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<ABulk3_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85418_1/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85438_1/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                <Seam>
+			<names>
+				<Name>AHubL1</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AHubL1_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b86412/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85408_1_left/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85422_8/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<bz682/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                <Seam>
+			<names>
+				<Name>AHubL2</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AHubL2_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b86425_1/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85408/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85422_3/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                <Seam>
+			<names>
+				<Name>AHubL3</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AHubL3_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85408_1_left/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85408/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                
+                <Seam>
+			<names>
+				<Name>AHubL4</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AHubL4_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b105612/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85408/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b96704/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b94510/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b105613/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                
+                 <Seam>
+			<names>
+				<Name>AUppArmLeft</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AUppArmLeft_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85400_1/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b86425_1/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85418_2/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                
+                <Seam>
+			<names>
+				<Name>ALowerArmLeft</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<ALowerArmLeft_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85400_2/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b86425_2/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85418_2/>
+					</target>
+				</BlockRef>
+                                <BlockRef>
+					<target>
+						<b85408/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                
+                <Seam>
+			<names>
+				<Name>AFrontShockLeft</Name>
+			</names>
+			<completecondition>
+				<Eq>
+					<VariableRef>
+						<target>
+							<AFrontShockLeft_compl/>
+						</target>
+					</VariableRef>
+					<IntLit/>
+				</Eq>
+			</completecondition>
+			<blockrefs>
+				<BlockRef>
+					<target>
+						<b85418_1/>
+					</target>
+				</BlockRef>
+				<BlockRef>
+					<target>
+						<b85400_2/>
+					</target>
+				</BlockRef>
+			</blockrefs>
+		</Seam>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+	</seams>
+
+	<SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<ABulk1/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>ABulk1_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>20</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<ABulk1_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>
+				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+	<SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<ABulk2/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>ABulk2_O1</Name>
+				</names>
+				<actuals>
+					<MillSeam idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
+				</actuals>
+				<duration>
+					<IntLit>10</IntLit>
+				</duration>
+                                <preconditions>
+                                    <AND>
+					<Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ABulk1_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                    </AND>
+				</preconditions>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<ABulk2_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>
+				 
+			</Assemble>
+
+		</PreplanAlt>
+	</SeamWork>
+	<SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<ABulk3/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>ABulk3_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>18</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<ABulk3_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>
+				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AHubL1/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AHubL1_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>10</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AHubL1_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>
+				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AHubL2/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AHubL2_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>15</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AHubL2_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>
+				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AHubL3/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AHubL3_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>15</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AHubL3_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AHubL4/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AHubL4_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>34</IntLit>
+				</duration>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AHubL4_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AUppArmLeft/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AUppArmLeft_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>47</IntLit>
+				</duration>
+                                <preconditions>
+                                    <AND>
+					<Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ABulk2_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ABulk3_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <AHubL2_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                    </AND>
+				</preconditions>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AUppArmLeft_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<ALowerArmLeft/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>ALowerArmLeft_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>35</IntLit>
+				</duration>
+                                <preconditions>
+                                    <AND>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <AHubL4_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                    </AND>
+				</preconditions>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<ALowerArmLeft_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        
+        <SeamWork>
+		<seam>
+			<SeamRef>
+				<target>
+					<AFrontShockLeft/>
+				</target>
+			</SeamRef>
+		</seam>
+		<PreplanAlt>
+			<Assemble>
+				<names>
+					<Name>AFrontShockLeft_O1</Name>
+				</names>
+				<actuals>
+					<Assemble idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
+				</actuals>
+				<duration>
+					<IntLit>35</IntLit>
+				</duration>
+                                <preconditions>
+                                    <AND>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ALowerArmLeft_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <AUppArmLeft_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ABulk3_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                        <Eq>
+                                            <VariableRef>
+                                                <target>
+                                                        <ABulk2_compl/>
+                                                </target>
+                                            </VariableRef>
+                                            <IntLit>1</IntLit>
+                                        </Eq>
+                                    </AND>
+				</preconditions>
+				<postEffects>
+					<Assign>
+						<VariableRef>
+							<target>
+								<AFrontShockLeft_compl/>
+							</target>
+						</VariableRef>
+						<True/>
+					</Assign>
+				</postEffects>
+				<allocation>
+					<Operator1/>
+				</allocation>
+				<isOperation>
+					<IntLit/>
+				</isOperation>				 
+			</Assemble>
+		</PreplanAlt>
+	</SeamWork>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+</ProcessPlanForExport>
+
+return id5==1&&id17==1&&id9==1&&id23==1&&id16==1&&id20==1&&
+id24==1&&id14==1&&id22==1&&id8==1&&id7==1&&id21==1&&id4==1&&
+id11==1&&id12==1&&id13==1&&id18==1&&id10==1&&id23==1&&id6==1&&id15==1&&id19==1;
+
+
+id44==0
+id43==0
+id42==0
+id41==0
+id48==0
+id47==0
+id46==0
+id45==0
+id40==0
+id38==0
+id39==0
+id53==0
+id52==0
+id55==0
+id54==0
+id57==0
+id56==0
+id59==0
+id58==0
+id6==1
+id5==1
+id4==1
+id9==1
+id8==1
+id51==0
+id7==1
+id50==0
+id49==0
+id26==0
+id25==0
+id24==0
+id23==1
+id22==1
+id21==1
+id20==1
+id18==1
+id19==1
+id16==1
+id17==1
+id35==0
+id34==0
+id37==0
+id36==0
+id31==0
+id30==0
+id33==0
+id32==0
+id106==0
+id104==0
+id105==2
+id102==0
+id103==0
+id100==0
+id101==2
+id27==0
+id28==0
+id29==0
+id80==0
+id81==2
+id82==0
+id83==2
+id84==0
+id85==2
+id86==0
+id87==2
+id88==0
+id89==2
+id10==1
+id11==1
+id12==1
+id13==1
+id14==1
+id15==1
+id90==0
+id91==2
+id94==0
+id95==2
+id92==0
+id93==2
+id98==0
+id99==2
+id96==0
+id97==2
+id60==0
+id61==0
+id62==0
+id67==2
+id68==0
+id69==2
+id63==2
+id64==0
+id65==2
+id66==0
+id72==0
+id73==2
+id70==0
+id71==2
+id78==0
+id79==2
+id76==0
+id77==2
+id74==0
+id75==2
+

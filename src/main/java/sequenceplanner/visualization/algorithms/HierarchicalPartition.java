@@ -72,11 +72,11 @@ public class HierarchicalPartition {
                 // Det vi utnyttjar är att alla op kan beskrivas som parallella...
                 
                 subset.removeAll(hasNoParentWithChildrenMap.get(parentOp)); //Remove all children that have parentOp as parent
-                //if (!hasStrictHierarchicalRelation(parentOp, childOp, subset, iRC)) {
-                //    hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
-                //} else {
+                if (!hasStrictHierarchicalRelation(parentOp, childOp, subset, iRC)) {
+                    hasNoParentWithChildrenMap.get(parentOp).remove(childOp);
+                } else {
                     updateHierarchicalRelation(parentOp, root, childOp, iRC);
-                //}
+                }
             }
         }
         //-----------------------------------------------------------------------

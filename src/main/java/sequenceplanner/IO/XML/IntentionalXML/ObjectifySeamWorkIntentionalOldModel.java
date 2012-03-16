@@ -131,11 +131,15 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
                 appendCondition(child,od,m,ConditionType.POST,false,true);
             
             else if (child.getTagName().toLowerCase().equals("duration")){
-                int cost;
-                // fix this!!
-                //if (child.getElementsByTagName("IntLit"))
+                int cost = -1;
                 try{
-                    cost = 1; // parser
+                    for (Element intLit : getChildren(child)){
+                        if (intLit.getTagName().toLowerCase().equals("intlit")){
+                            if (intLit.getTextContent().isEmpty()) cost = 1;
+                            else cost = Integer.parseInt(intLit.getTextContent());
+                            break;
+                        }
+                    }                   
                 } catch (NumberFormatException ex){
                     cost = -1;
                 }

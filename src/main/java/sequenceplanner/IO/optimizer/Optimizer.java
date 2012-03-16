@@ -33,8 +33,8 @@ public class Optimizer {
     }
     
     private List<Operation> compute(){
-        try{
-            String[] args = {"-c","100"};
+        try{        
+            String[] args = {"-c","5000"};
             optis.parse(args);
             optis.computeMinimalCost();
         } catch (Exception e){
