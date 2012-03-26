@@ -85,13 +85,18 @@ public class SequencePlanner {
         //Is there a second argument?
         if (args.length < 2) return false;
         
-        if (!args[0].equals("intentionalNoWindow")) return false;
-        
-        if (args.length != 3) return false;
-        
-        sequenceplanner.IO.XML.IntentionalXML.IntentionalWithoutWindowExecuter exec =
-                new sequenceplanner.IO.XML.IntentionalXML.IntentionalWithoutWindowExecuter(args[1],args[2]);
-        
+        if (!args[0].toLowerCase().equals("intentionalnowindow")){
+            if (!args[0].toLowerCase().equals("isnw")) return false;
+        }
+        if (args.length == 3 || args.length == 4 ){
+            boolean includeSOP = false;
+            if (args.length == 4 && args[3].toLowerCase().equals("-sop")) includeSOP = true;
+            
+            sequenceplanner.IO.XML.IntentionalXML.IntentionalWithoutWindowExecuter exec =
+                new sequenceplanner.IO.XML.IntentionalXML.
+                    IntentionalWithoutWindowExecuter(args[1],args[2], includeSOP);
+            
+        } else return false;
         
         return true;
     }

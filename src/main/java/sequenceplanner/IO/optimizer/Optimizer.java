@@ -8,6 +8,8 @@ import org.supremica.external.assemblyOptimizer.AssemblyStructureProtos.Operatio
 import org.supremica.external.assemblyOptimizer.AssemblyStructureProtos.Resource;
 import org.supremica.external.assemblyOptimizer.AssemblyStructureProtos.Variable;
 import org.supremica.external.assemblyOptimizer.GenericOperation;
+import org.supremica.external.assemblyOptimizer.RelationIdentifier;
+import org.supremica.external.assemblyOptimizer.TheBuilder;
 
 /**
  *
@@ -28,19 +30,27 @@ public class Optimizer {
         return m;
     }   
     
+    org.supremica.external.assemblyOptimizer.TheBuilder builder;
     private Optimizer(List<Operation> ops, List<Resource> res ){ 
         optis = new AssemblyOptimizer(ops,res);
+        builder = new TheBuilder(ops,res);
     }
     
     private List<Operation> compute(){
-        try{        
-            String[] args = {"-c","5000"};
-            optis.parse(args);
-            optis.computeMinimalCost();
-        } catch (Exception e){
-            System.out.println("optimizer failes:" + e.getLocalizedMessage());
-        }
-        return optis.getOptimizedOperationList();
+        System.out.println("Start compiling");
+        RelationIdentifier ri = new RelationIdentifier(builder);
+        System.out.println("Start optimizing and relation building");
+        ri.createRelationMap();
+        return ri.getOptimizedOperationList();
+//        try{        
+//            System.out.println("Starting planner");
+//            String[] args = {"-c","500"};
+//            optis.parse(args);
+//            optis.computeMinimalCost();
+//        } catch (Exception e){
+//            System.out.println("optimizer failes:" + e.getLocalizedMessage());
+//        }
+//        return optis.getOptimizedOperationList();
     }
     
 

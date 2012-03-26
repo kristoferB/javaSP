@@ -1,7 +1,12 @@
 package sequenceplanner.IO.XML;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -19,6 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import sequenceplanner.model.Model;
 
@@ -88,9 +94,26 @@ public class XMLDOMParser {
     
     
     private Document parse(String path) throws SAXException, IOException, ParserConfigurationException {        
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(path));  
+        String input = readFile(path);
+        input = input.replaceAll("Verbose\\?references\\?in\\?XML", "Verbose");
+        
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(input)));
+        //return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(path));  
     }
-    
+ 
+    // Temp fix Intentional
+    private static String readFile(String path) throws IOException {
+        FileInputStream stream = new FileInputStream(new File(path));
+        try {
+            FileChannel fc = stream.getChannel();
+            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            /* Instead of using default, pass in a decoder. */
+            return Charset.defaultCharset().decode(bb).toString();
+        }
+        finally {
+            stream.close();
+        }
+    }
  
     private Set<Object> populateModels(Document d){ 
         Element root = d.getDocumentElement();

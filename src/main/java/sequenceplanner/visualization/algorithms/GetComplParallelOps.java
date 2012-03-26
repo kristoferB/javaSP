@@ -75,7 +75,7 @@ public class GetComplParallelOps {
     
     private Set<String> getIdsInExpression(ConditionExpression expr){
         Set<String> ids = new HashSet<String>();
-        if (expr.isEmpty()) return ids;
+        if (expr == null || expr.isEmpty() || expr.getExpressionRoot() == null) return ids;
         
         ArrayDeque<ConditionElement> stack = new ArrayDeque();
         stack.push(expr.getExpressionRoot());
@@ -93,7 +93,7 @@ public class GetComplParallelOps {
                 while (mVariable.find())
                     ids.add(mVariable.group());
                 
-            } else if (element.isExpression()){
+            } else if (element.isExpression() && ((ConditionExpression)element).getExpressionRoot() != null){
                 stack.push(((ConditionExpression)element).getExpressionRoot());
             }
             if (element.hasNextElement()) stack.push(element.getNextElement());

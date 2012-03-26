@@ -28,7 +28,7 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
     Model model;
     String fileToSave;
 
-    public IntentionalWithoutWindowExecuter(String fileToLoad, String fileToSave) {
+    public IntentionalWithoutWindowExecuter(String fileToLoad, String fileToSave, boolean createSOP) {
         sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML parser =
                 new sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML(fileToLoad,null);
                 
@@ -41,10 +41,12 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
         
         runOptimizer();
         
-        //CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
-        //CreateBooking.INSTANCE.createBookingForResources(parser.getModel());       
-        //createVisualizationForAllOperations();
-        
+        if (createSOP){
+            CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
+            CreateBooking.INSTANCE.createBookingForResources(parser.getModel(),true);       
+            createVisualizationForAllOperations();
+        }
+            
         saveFile();
         
     }

@@ -197,6 +197,7 @@ public class SupremicaInteractionForVisualization implements ISupremicaInteracti
 
     @Override
     public boolean saveSupervisorAsWmodFile(String iFilePath) {
-        return mmModule.saveToWMODFile(iFilePath);
+        return true;
+        //return mmModule.saveToWMODFile(iFilePath);
     }
 }

@@ -37,7 +37,7 @@ public enum CreateBooking {
 //        }
     }
     
-    public void createBookingForResources(Model model){
+    public void createBookingForResources(Model model, boolean restrictedMode){
          if (model.sops == null || model.sops.isEmpty()){
             //Test to only tun one operation at the time
                 ResourceVariableData var = new ResourceVariableData("aLocker", model.newId());
@@ -51,8 +51,10 @@ public enum CreateBooking {
             for (TreeNode n :model.getAllOperations()){  
                 if (n.getNodeData() instanceof OperationData){
                     OperationData od = (OperationData)n.getNodeData();
-                    addBookingConditions("aLocker",od,model);
-                    // addBookingConditions(od.resource,od,model);
+                    if (restrictedMode)
+                        addBookingConditions("aLocker",od,model);
+                    else
+                        addBookingConditions(od.resource,od,model);
                 }
             }
         }

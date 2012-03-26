@@ -27,12 +27,12 @@ public class InputArguments {
                 return;
             }
 
-            final String command = mInputArguments[i];
+            final String command = mInputArguments[i].toLowerCase();
             final String input = mInputArguments[i + 1];
             Matcher matcher;
 
             //To Read from file at start up--------------------------------------
-            matcher = Pattern.compile("fromPS").matcher(command);
+            matcher = Pattern.compile("fromps").matcher(command);
             if (matcher.find()) {
                 System.out.println("fromPS");
                 final String path = input;
@@ -41,7 +41,7 @@ public class InputArguments {
             }
 
             //Lift non-blocking problem + visualization DARPA--------------------
-            matcher = Pattern.compile("weightDARPA").matcher(command);
+            matcher = Pattern.compile("weightdarpa").matcher(command);
             if (matcher.find()) {
                 System.out.println("weightDARPA");
                 final String path = input;

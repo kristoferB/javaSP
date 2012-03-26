@@ -119,7 +119,8 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
     
     
     
-    private boolean parseOperationContent(Element e, OperationData od, Model m) {        
+    private boolean parseOperationContent(Element e, OperationData od, Model m) { 
+        if (!e.getAttribute("id").isEmpty()) od.guid = e.getAttribute("id");
         for (Element child : getChildren(e)){                                   
             if (child.getTagName().toLowerCase().equals("preconditions"))
                 appendCondition(child,od,m,ConditionType.PRE,true,false);
@@ -151,7 +152,8 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
             else if (child.getTagName().toLowerCase().equals("actuals")){
                 for (Element guid : getChildren(child)){
                     if (guid.hasAttribute("idisa")){
-                        od.guid = guid.getAttribute("idisa");
+                        if (od.guid.isEmpty())
+                            od.guid = guid.getAttribute("idisa");
                         break;
                     }
                 }
@@ -166,14 +168,20 @@ public class ObjectifySeamWorkIntentionalOldModel extends AbstractObjectifyInten
     
     private void addResource(Element e, OperationData od, Model m){
         for (Element child : getChildren(e)){
+            od.resource = child.getTagName();
+            for (TreeNode n : m.getAllVariables()){
+                if (n.getNodeData().getName().equals(child.getTagName())){
+                    return; 
+                }
+            }
+        
             ResourceVariableData var = new ResourceVariableData(child.getTagName(), m.newId());
             var.setType(ResourceVariableData.BINARY);
             var.setInitialValue(0);
             var.setMax(1);
             var.setMin(0);
             TreeNode variable = new TreeNode(var);
-            m.insertChild(m.getResourceRoot(), variable);
-            od.resource = child.getTagName();
+            m.insertChild(m.getResourceRoot(), variable);          
             TagNameMapper.INSTANCE.addTageNameType(child.getTagName(), "resource");
         }       
         

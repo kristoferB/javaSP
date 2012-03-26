@@ -475,7 +475,7 @@ public class GUIController {
         
         // Fixa bättre hantering av modellen i parsern. Skall kunna skicka in den.
         CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
-        CreateBooking.INSTANCE.createBookingForResources(parser.getModel());
+        CreateBooking.INSTANCE.createBookingForResources(parser.getModel(),false);
         this.mGuiModel.setModel(parser.getModel());
               
     }
