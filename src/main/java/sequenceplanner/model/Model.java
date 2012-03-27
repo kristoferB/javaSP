@@ -69,8 +69,16 @@ public class Model extends Observable implements IModel {
     public Set<Seam> seams = new HashSet<Seam>();
     public Set<SopNode> sops = new HashSet<SopNode>();
     
-    public Model() {
+    private Model() {
         init();
+    }
+    
+    private static Model instance = null;
+    
+    public static Model getInstance(){
+        if (instance == null)
+            instance = new Model();        
+        return instance;            
     }
 
     private void init() {

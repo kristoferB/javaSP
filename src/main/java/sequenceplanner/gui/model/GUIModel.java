@@ -34,7 +34,7 @@ public class GUIModel {
      * Constructor. Sets the main project model.
      */
     public GUIModel() {
-        this.model = new Model();
+        this.model = Model.getInstance();
     }
 
     public Model getModel() {

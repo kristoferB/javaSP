@@ -40,6 +40,7 @@ public enum ProductLocker {
     }
        
     public boolean isSeamAvailible(String seam){
+        if (seam.isEmpty()) return true;
         Set<String> blocks = this.seamBlockMap.get(seam);
         for (String block : blocks){
             if (!locker.get(bPos(block)).isEmpty()) 
@@ -49,6 +50,7 @@ public enum ProductLocker {
     }
     
     public boolean lockSeam(String seam, String operationID){
+        if (seam.isEmpty()) return true;
         isCleard = false;
         if (!isSeamAvailible(seam)) return false;
         
@@ -60,6 +62,7 @@ public enum ProductLocker {
     }
     
     public boolean unLockSeam(String seam, String operationID){
+        if (seam.isEmpty()) return true;
         Set<String> blocks = this.seamBlockMap.get(seam);
         PointerPos newPP = null;
         for (String block : blocks){

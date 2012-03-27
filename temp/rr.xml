@@ -1,25 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <assembly>
   <operations>
-    <operation name="AMainBulk_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
     <operation name="AMainBulk_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="309"/>
-        <stoptime value="339"/>
-      </schedule>
-    </operation>
-    <operation name="AFrontPlateBulk_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="251"/>
+        <stoptime value="281"/>
       </schedule>
     </operation>
     <operation name="AFrontPlateBulk_O1">
@@ -29,286 +15,191 @@
         <stoptime value="-1"/>
       </schedule>
     </operation>
-    <operation name="AFrontPlateMain_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="150"/>
-        <stoptime value="170"/>
-      </schedule>
-    </operation>
     <operation name="AFrontPlateMain_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AMainBrace_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="167"/>
+        <stoptime value="187"/>
       </schedule>
     </operation>
     <operation name="AMainBrace_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="118"/>
-        <stoptime value="138"/>
-      </schedule>
-    </operation>
-    <operation name="AMainBar_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="100"/>
-        <stoptime value="115"/>
+        <starttime value="102"/>
+        <stoptime value="122"/>
       </schedule>
     </operation>
     <operation name="AMainBar_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AFrontShockRight_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="0"/>
+        <stoptime value="15"/>
       </schedule>
     </operation>
     <operation name="AFrontShockRight_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="227"/>
-        <stoptime value="262"/>
-      </schedule>
-    </operation>
-    <operation name="ALowerArmRight_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="115"/>
-        <stoptime value="150"/>
+        <starttime value="410"/>
+        <stoptime value="445"/>
       </schedule>
     </operation>
     <operation name="ALowerArmRight_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AUppArmRight_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="328"/>
+        <stoptime value="363"/>
       </schedule>
     </operation>
     <operation name="AUppArmRight_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="180"/>
-        <stoptime value="227"/>
-      </schedule>
-    </operation>
-    <operation name="AHubR4_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="363"/>
+        <stoptime value="410"/>
       </schedule>
     </operation>
     <operation name="AHubR4_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="35"/>
-        <stoptime value="69"/>
-      </schedule>
-    </operation>
-    <operation name="AHubR3_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="68"/>
+        <stoptime value="102"/>
       </schedule>
     </operation>
     <operation name="AHubR3_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="85"/>
-        <stoptime value="100"/>
-      </schedule>
-    </operation>
-    <operation name="AHubR2_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="20"/>
-        <stoptime value="35"/>
+        <starttime value="122"/>
+        <stoptime value="137"/>
       </schedule>
     </operation>
     <operation name="AHubR2_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AHubR1_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="0"/>
-        <stoptime value="10"/>
+        <starttime value="152"/>
+        <stoptime value="167"/>
       </schedule>
     </operation>
     <operation name="AHubR1_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AFrontShockLeft_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="339"/>
-        <stoptime value="374"/>
+        <starttime value="48"/>
+        <stoptime value="58"/>
       </schedule>
     </operation>
     <operation name="AFrontShockLeft_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="ALowerArmLeft_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="35"/>
-        <stoptime value="70"/>
+        <starttime value="480"/>
+        <stoptime value="515"/>
       </schedule>
     </operation>
     <operation name="ALowerArmLeft_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AUppArmLeft_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="445"/>
+        <stoptime value="480"/>
       </schedule>
     </operation>
     <operation name="AUppArmLeft_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="262"/>
-        <stoptime value="309"/>
-      </schedule>
-    </operation>
-    <operation name="AHubL4_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="281"/>
+        <stoptime value="328"/>
       </schedule>
     </operation>
     <operation name="AHubL4_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="0"/>
-        <stoptime value="34"/>
-      </schedule>
-    </operation>
-    <operation name="AHubL3_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="85"/>
-        <stoptime value="100"/>
+        <starttime value="217"/>
+        <stoptime value="251"/>
       </schedule>
     </operation>
     <operation name="AHubL3_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AHubL2_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="70"/>
-        <stoptime value="85"/>
+        <starttime value="137"/>
+        <stoptime value="152"/>
       </schedule>
     </operation>
     <operation name="AHubL2_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="AHubL1_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="10"/>
-        <stoptime value="20"/>
+        <starttime value="33"/>
+        <stoptime value="48"/>
       </schedule>
     </operation>
     <operation name="AHubL1_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="ABulk3_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="58"/>
+        <stoptime value="68"/>
       </schedule>
     </operation>
     <operation name="ABulk3_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="100"/>
-        <stoptime value="118"/>
-      </schedule>
-    </operation>
-    <operation name="ABulk2_O2">
-      <id idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
-      <schedule>
-        <starttime value="170"/>
-        <stoptime value="180"/>
+        <starttime value="15"/>
+        <stoptime value="33"/>
       </schedule>
     </operation>
     <operation name="ABulk2_O1">
       <id idisa="82e929ac-ab6f-4ec9-8917-3f1909f1c7dd"/>
       <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
-      </schedule>
-    </operation>
-    <operation name="ABulk1_O2">
-      <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
-      <schedule>
-        <starttime value="-1"/>
-        <stoptime value="-1"/>
+        <starttime value="207"/>
+        <stoptime value="217"/>
       </schedule>
     </operation>
     <operation name="ABulk1_O1">
       <id idisa="ac15b355-f0e7-490d-9322-9573f712d9b7"/>
       <schedule>
-        <starttime value="150"/>
-        <stoptime value="170"/>
+        <starttime value="187"/>
+        <stoptime value="207"/>
       </schedule>
     </operation>
   </operations>
-  <specs/>
+  <specs>
+    <spec>
+      <parallel>
+        <opref id="AHubR1_O1"/>
+        <opref id="AHubL1_O1"/>
+        <opref id="AHubR3_O1"/>
+        <opref id="AMainBrace_O1"/>
+        <opref id="AMainBar_O1"/>
+        <parallel>
+          <sequence>
+            <opref id="AUppArmRight_O1"/>
+            <opref id="AFrontShockRight_O1"/>
+          </sequence>
+          <parallel>
+            <sequence>
+              <opref id="AUppArmLeft_O1"/>
+              <opref id="AFrontShockLeft_O1"/>
+            </sequence>
+            <parallel>
+              <sequence>
+                <opref id="ABulk1_O1"/>
+                <opref id="ABulk2_O1"/>
+              </sequence>
+              <opref id="ABulk3_O1"/>
+              <opref id="AHubL2_O1"/>
+              <sequence>
+                <opref id="AHubL4_O1"/>
+                <opref id="ALowerArmLeft_O1"/>
+              </sequence>
+            </parallel>
+            <opref id="AHubR2_O1"/>
+            <sequence>
+              <opref id="AHubR4_O1"/>
+              <opref id="ALowerArmRight_O1"/>
+            </sequence>
+          </parallel>
+          <alternative>
+            <opref id="AFrontPlateBulk_O1"/>
+            <opref id="AFrontPlateMain_O1"/>
+          </alternative>
+        </parallel>
+        <opref id="AMainBulk_O1"/>
+        <opref id="AHubL3_O1"/>
+      </parallel>
+    </spec>
+  </specs>
 </assembly>

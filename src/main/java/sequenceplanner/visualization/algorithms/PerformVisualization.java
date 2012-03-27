@@ -1,6 +1,8 @@
 package sequenceplanner.visualization.algorithms;
 
 import java.util.Set;
+import sequenceplanner.IO.optimizer.Optimizer;
+import sequenceplanner.model.Model;
 import sequenceplanner.model.SOP.SopNode;
 import sequenceplanner.model.SOP.algorithms.ISopNodeToolbox;
 import sequenceplanner.model.SOP.algorithms.SopNodeToolboxSetOfOperations;
@@ -75,16 +77,21 @@ public class PerformVisualization implements IPerformVisualization {
 
     @Override
     public RelationContainer identifyRelations() {
-        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath, mConditionsToInclude,this.resources);
-        switch (rfos.run()) {
-            case 0: //Errors have occured
-                return null;
-            case 1: //No supervisor found -> RelationsForOperationSet.ismSupervisorExists() returns false;
-                return null;
-            case 2: //Normal behaviour!
-                break;
-        }
-        return rfos.getmRC();
+        
+        // Add swich here
+        Optimizer.identifyRelations(Model.getInstance(),getmRC());
+        return getmRC();
+        
+//        RelationsForOperationSet rfos = new RelationsForOperationSet(getmRC(),mWmodPath, mConditionsToInclude,this.resources);
+//        switch (rfos.run()) {
+//            case 0: //Errors have occured
+//                return null;
+//            case 1: //No supervisor found -> RelationsForOperationSet.ismSupervisorExists() returns false;
+//                return null;
+//            case 2: //Normal behaviour!
+//                break;
+//        }
+//        return rfos.getmRC();
     }
 
     @Override

@@ -12,6 +12,7 @@ import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceVariableData;
 import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization.Type;
+import sequenceplanner.visualization.algorithms.RelationContainer;
 
 /**
  *
@@ -55,7 +56,8 @@ public enum ModelAssemblyOptimizerConverter {
         for (TreeNode n : m.getAllOperations()){
             if (n.getNodeData() instanceof OperationData){
                 OperationData od = (OperationData) n.getNodeData();
-                resourcesToAdd.add(od.resource);
+                if (!od.resource.isEmpty())
+                    resourcesToAdd.add(od.resource);
             }
         }
         
@@ -87,6 +89,36 @@ public enum ModelAssemblyOptimizerConverter {
     }
     
     
+   public void convertToRelationContainer(RelationIdentifier ri,RelationContainer rc, Model m,List<AssemblyStructureProtos.Operation> ops) {
+        if (ri == null) return;
+        Map<OperationData, Map<OperationData, Integer>> map = new HashMap<OperationData, Map<OperationData, Integer>>();
+        List<OperationData> operations = getAllOperations(m);
+        for (OperationData od : operations){          
+            Map<OperationData, Integer> relMap = new HashMap<OperationData, Integer>();
+            for (OperationData relOp : operations){  
+                relMap.put(relOp, ri.getRelation(od.getName(),relOp.getName()));
+            } 
+            map.put(od, relMap);                                             
+        }
+        rc.setOperationRelationMap(map);
+   }
+        
+
+        
+             
+    
+            
+   private List<OperationData> getAllOperations(Model m){
+       List<OperationData> ops = new ArrayList<OperationData>(m.getAllOperations().size());
+       for (TreeNode n : m.getAllOperations()){
+            if (n.getNodeData() instanceof OperationData){
+                ops.add((OperationData) n.getNodeData());
+            }
+       }
+       return ops;
+   }
+    
+    
     private AssemblyStructureProtos.Variable convertVariableDataProtoVariable(ResourceVariableData vd){
         return MessageFactory.createVariable(
                 "id"+vd.getId(), 
@@ -105,6 +137,7 @@ public enum ModelAssemblyOptimizerConverter {
                                                                                 List<AssemblyStructureProtos.Variable> variableList,
                                                                                 String terminationExpression) {
       
+        
         return MessageFactory.createOperation(
                 od.getName(),
                 this.convertGuard(ConditionType.PRE,od),
@@ -139,7 +172,8 @@ public enum ModelAssemblyOptimizerConverter {
         for (ConditionExpression ce : guards)
             result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, ce);     
         
-        result = ExpressionToJavaConverter.INSTANCE.appendStringExpression(result, od.resource + ".isAvailable()");
+        if (!od.resource.isEmpty())
+            result = ExpressionToJavaConverter.INSTANCE.appendStringExpression(result, od.resource + ".isAvailable()");
         result = ExpressionToJavaConverter.INSTANCE.appendStringExpression
                 (result, "sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.isSeamAvailible(\""+od.seam+"\")");
      
@@ -153,11 +187,13 @@ public enum ModelAssemblyOptimizerConverter {
             result.addAll(ExpressionToJavaConverter.INSTANCE.convertActionExpressions(ce));
         
         if (type.equals(ConditionType.PRE)){
-            result.add(od.resource + ".allocate()");
+            if (!od.resource.isEmpty())
+                result.add(od.resource + ".allocate()");
             result.add("sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.lockSeam(\""+od.seam+"\",\""+od.getName()+"\")");
             result.add(Type.OPERATION_VARIABLE_PREFIX.toString()+od.getId()+ " = 1 ");
         } if (type.equals(ConditionType.POST)){
-            result.add(od.resource + ".deallocate()");
+            if (!od.resource.isEmpty())
+                result.add(od.resource + ".deallocate()");
             result.add("sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.unLockSeam(\""+od.seam+"\",\""+od.getName()+"\")");
             result.add(Type.OPERATION_VARIABLE_PREFIX.toString()+od.getId()+" = 2 ");
             result.add("setFinished()");
@@ -240,6 +276,10 @@ public enum ModelAssemblyOptimizerConverter {
         
         return result;
     }
+
+ 
+    
+    
     
   
 }

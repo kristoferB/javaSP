@@ -29,8 +29,9 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
     String fileToSave;
 
     public IntentionalWithoutWindowExecuter(String fileToLoad, String fileToSave, boolean createSOP) {
+        Set<Object> models =  new HashSet<Object>(); models.add(Model.getInstance());
         sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML parser =
-                new sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML(fileToLoad,null);
+                new sequenceplanner.IO.XML.IntentionalXML.ParseIntentionalXML(fileToLoad,models);
                 
         this.model = parser.getModel();
         this.fileToSave = fileToSave;
@@ -39,13 +40,13 @@ public class IntentionalWithoutWindowExecuter implements IAlgorithmListener{
         // removed since the allocation generation is not working correct 
         //createVisualizationForAllOperations();
         
-        runOptimizer();
+        //runOptimizer();
         
-        if (createSOP){
-            CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
-            CreateBooking.INSTANCE.createBookingForResources(parser.getModel(),true);       
+        //if (createSOP){
+            //CreateBooking.INSTANCE.createBookingForSeams(parser.getModel());
+            //CreateBooking.INSTANCE.createBookingForResources(parser.getModel(),true);       
             createVisualizationForAllOperations();
-        }
+        //}
             
         saveFile();
         

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import sequenceplanner.datamodel.condition.Condition;
+import sequenceplanner.model.Model;
 
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 
@@ -25,13 +26,13 @@ public class OperationData extends Data {
     //Maps the pre and post conditions according to ConditionType, Condition
     private Map<ConditionData, Map<ConditionType, Condition>> mConditionMap;
     
-    // Temp fixes for Interntional. To be fixed in a better way
+    // Temp fixes for Intentional. To be fixed in a better way
     public boolean hasToFinish = false;
     public String seam = "";
     public String resource = "";
     public String startTime ="-1";
     public String stopTime ="-1";
-    public int timecost = -1;
+    public int timecost = 1;
     public String guid= "";
     
     
