@@ -75,7 +75,7 @@ public class SEFA {
 
         //Set event uncontrollable if required
         final Boolean uncontrollable = (Boolean) iTrans.getAttribute(Transition.UNCONTROLLABLE);
-        if (uncontrollable == null | uncontrollable == false) {
+        if (uncontrollable == null | uncontrollable == true) {
             mEfa.addEvent(iTrans.getLabel(), "uncontrollable");
         }
 

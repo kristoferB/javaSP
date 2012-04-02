@@ -25,14 +25,17 @@ public class T_RAS implements IAlgorithmListener {
 
 //    private static final String mFilePath = "C:\\Users\\patrik\\Desktop\\";
     private static final String mFilePath = "Z:\\RAS_assembly\\Excel files for RAS models\\";
-
-//    private static final String mFileName = "FLEXAplusNoBuffers.xls";
-//    private static final String mFileName = "FLEXAplus.xls";
+//    private static final String mFilePath = "Z:\\FLEXA\\HV_language\\RAStoPSOP\\";
 //    private static final String mFileName = "ProductTypesTest.xls";
 //    private static final String mFileName = "Benchmark2_RAS.xls";
     private static final String mFileName = "SimpleExampleRASpaper.xls";
-
-    private static final int mSecondsToRunSynthesisThread = 30;
+//    private static final String mFileName = "TestFixturing.xls";
+//    private static final String mFileName = "RestartExampleKickiPage139Flower.xls";
+//    private static final String mFileName = "ThreeToTwoAssemblyFixturesAsResourceNoBuffers.xls";
+//    private static final String mFileName = "FiveToThreeAssemblyFixturesAsVariableBuffersAsResources.xls";
+//    private static final String mFileName = "RASpaperDeallocationInSuccessorOp.xls";
+//    private static final String mFileName = "SingleProductType.xls";
+    private static final int mSecondsToRunSynthesisThread = 10;
 
     @BeforeClass
     public static void setUpClass() throws Exception {

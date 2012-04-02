@@ -14,7 +14,7 @@ import sequenceplanner.expression.Clause;
 import sequenceplanner.expression.ILiteral;
 
 /**
- * This is were the magic happens!<br/>
+ * This is where the magic happens!<br/>
  * Basic outline: implementation of a translation from operations to EFA models to model Resource Allocation Systems<br/>
  * From an internal data structure({@link Operation}, {@link Resource}, and {@link Variable}) to a {@link ModuleBase} object.<br/>
  * The {@link ModuleBase} object can later on be feed to a {@link AModule} implementaion.<br/>
@@ -118,7 +118,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
             for (final Clause clause : op.mPreOperationDNFClauseList) {
                 final String eventLabel = op.getEventLabel() + "_" + op.mPreOperationDNFClauseList.indexOf(clause);
 
-                final Transition trans = mModuleBase.createTransition(eventLabel, true);
+                final Transition trans = mModuleBase.createControllableTransition(eventLabel);
 
                 //Go to execution/finish state
                 for (final Operation op1 : op.getOperationSet()) {
@@ -134,7 +134,7 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 if (op.getAttribute(Transition.UNCONTROLLABLE) == null) {
                     firstTrans = trans;
                 } else { //Add an extra uncontrollable transition before the real transitions
-                    firstTrans = mModuleBase.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, false);
+                    firstTrans = mModuleBase.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, true);
                     final String action1 = op.getUcVarLabel() + "=" + op.getUcVarLabel() + "+1";
                     firstTrans.andAction(action1);
                     //The "original" transition can occur after the uncontrollable "first"-transition
@@ -163,9 +163,9 @@ public class CreateTransitionsAndVariables extends AAlgorithm {
                 final Map<Resource, List<Integer>> bookUnbookMap = createBookUnbookMap(beforeOpSet, op.getOperationSet());
 
                 //To store resource guards and actions, used in preprocessing step
-                final Transition resourceTrans = mModuleBaseResourceInfo.createTransition(eventLabel, true);
+                final Transition resourceTrans = mModuleBaseResourceInfo.createControllableTransition(eventLabel);
                 if (op.getAttribute(Transition.UNCONTROLLABLE) != null) {
-                    mModuleBaseResourceInfo.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, false);
+                    mModuleBaseResourceInfo.createTransition(Transition.UNCONTROLLABLE + "_" + eventLabel, true);
                 }
 
                 //Book and unbook resources

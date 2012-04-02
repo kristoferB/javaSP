@@ -300,7 +300,7 @@ public abstract class AModule {
             final int sourceState = helpMethodTranslateAutomatonToModuleBase(transProxy.getSource().getName(), stateMap);
             final int targetState = helpMethodTranslateAutomatonToModuleBase(transProxy.getTarget().getName(), stateMap);
 
-            final Transition trans = oModuleBase.createTransition(eventLabel, true);
+            final Transition trans = oModuleBase.createControllableTransition(eventLabel);
             trans.setStartLocation(var, sourceState);
             trans.setFinishLocation(var, targetState);
         }

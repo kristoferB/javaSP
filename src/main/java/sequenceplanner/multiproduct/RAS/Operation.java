@@ -24,6 +24,7 @@ public class Operation implements IVariable {
     public static final String EXTRA_ACTIONS = "extra_actions";
     public static final String EXTRA_GUARDS = "extra_guards";
     public static final String PRODUCT_TYPE = "pt";
+    public static final String UPPER_LIMIT_GIVEN = "up";
     private String mLabel;
     /**
      * By defalut add a cluase without any literals. This simplifies algorithms.
@@ -87,13 +88,17 @@ public class Operation implements IVariable {
     public String getVarUpperBound() {
         if (mResourceConjunction == null) {
             return "1";
+        } else if (mAttributeMap.containsKey(UPPER_LIMIT_GIVEN)) {
+            return (String) mAttributeMap.get(UPPER_LIMIT_GIVEN);
         } else {
             Integer minValue = Integer.MAX_VALUE;
             for (final ILiteral literal : mResourceConjunction.getLiteralList()) {
                 final Resource resource = (Resource) literal.getVariable();
-                final Integer resourceValue = Integer.valueOf(resource.getVarUpperBound());
-                if (resourceValue < minValue) {
-                    minValue = resourceValue;
+                final Integer instancesNeeded = (Integer) literal.getValue();
+                final Integer resourceUpperBound = Integer.valueOf(resource.getVarUpperBound());
+                final Integer upperBound = resourceUpperBound/instancesNeeded;
+                if (upperBound < minValue) {
+                    minValue = upperBound;
                 }
             }
             return Integer.toString(minValue);

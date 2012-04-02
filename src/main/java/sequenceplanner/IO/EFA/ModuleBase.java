@@ -25,10 +25,18 @@ public class ModuleBase {
         return mVariableSet;
     }
 
+    public void addTransition(final Transition iTrans) {
+        mTransitionSet.add(iTrans);
+    }
+
+    public Transition createControllableTransition(final String iLabel) {
+        return createTransition(iLabel, false);
+    }
+
     public Transition createTransition(final String iLabel, final boolean iControllable) {
         final Transition trans = new Transition(iLabel);
         trans.setAttribute(Transition.UNCONTROLLABLE, iControllable);
-        mTransitionSet.add(trans);
+        addTransition(trans);
         return trans;
     }
 
