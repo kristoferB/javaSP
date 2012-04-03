@@ -1,6 +1,7 @@
 package sequenceplanner.IO.EFA;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,6 +101,24 @@ public abstract class AModule {
 
     public void addAutomaton(SEFA sefa) {
         mAvocadesModule.addAutomaton(sefa.getEFA());
+    }
+
+    /**
+     * To read a wmod file from given file path.
+     * @param iFilePath
+     * @return The file as a {@link ModuleSubject} if ok else null.
+     */
+    public static ModuleSubject readFromWMODFile(final String iFilePath) {
+        try {
+            final URI fileUri = new File(iFilePath).toURI();
+            final ModuleSubjectFactory factory = new ModuleSubjectFactory();
+            JAXBModuleMarshaller marshaller = new JAXBModuleMarshaller(factory, CompilerOperatorTable.getInstance());
+            final ModuleSubject ms = (ModuleSubject) marshaller.unmarshal(fileUri);
+            return ms;
+        } catch (Exception t) {
+            t.printStackTrace();
+        }
+        return null;
     }
 
     public boolean saveToWMODFile(final String iFilePath) {
