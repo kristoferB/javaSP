@@ -19,8 +19,9 @@ import static org.junit.Assert.*;
 public class T_RandomSynthesizer implements IAlgorithmListener {
 
     private static final String mFilePath = "C:\\Users\\patrik\\Desktop\\";
-    private static final String mFileName = "test.wmod";
-    private static final int mSecondsToRunSynthesisThread = 4;
+//    private static final String mFileName = "test.wmod";
+    private static final String mFileName = "manyOperations.wmod";
+    private static final int mSecondsToRunSynthesisThread = 60;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -37,8 +38,8 @@ public class T_RandomSynthesizer implements IAlgorithmListener {
 
         final List list = new ArrayList();
         list.add(mFilePath + mFileName);
-        list.add(20);
-        list.add(30);
+        list.add(88);
+        list.add(50);
         synthesizer.init(list);
 
         synthesizer.start();
@@ -52,16 +53,11 @@ public class T_RandomSynthesizer implements IAlgorithmListener {
     @Override
     public void algorithmHasFinished(List<Object> iList, IAlgorithm iFromAlgorithm) {
         if (iFromAlgorithm instanceof RandomSynthesizer) {
-
-            final Set<List<LabeledEvent>> mMarkedStringsSet = (Set<List<LabeledEvent>>) iList.get(0);
-            final String mTimeSpent = (String) iList.get(1);
-
-            System.out.println("The subset of the marked language that was found:");
-            for (final List<LabeledEvent> list : mMarkedStringsSet) {
-                System.out.println(list);
-            }
-
-            System.out.println("Time spent: " + mTimeSpent);
+//            final Set<List<LabeledEvent>> mMarkedStringsSet = (Set<List<LabeledEvent>>) iList.get(0);
+//            System.out.println("The subset of the marked language that was found:");
+//            for (final List<LabeledEvent> list : mMarkedStringsSet) {
+//                System.out.println(list);
+//            }
         }
 
     }

@@ -1,13 +1,11 @@
 package sequenceplanner.IO.EFA;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import org.supremica.automata.Alphabet;
 import org.supremica.automata.AlphabetHelpers;
@@ -22,6 +20,7 @@ import sequenceplanner.algorithm.AAlgorithm;
  * To find a subset of the marked language for a set of interacting plants.<br>
  * The algorithm tests a subset of the possible strings based on randomness.<br>
  * The plants communicate through full synchronus communication.<br>
+ * Assumption: \Sigma_{Sp} \subset \Sigma_P<br>
  * @author patrik
  */
 public class RandomSynthesizer extends AAlgorithm {
@@ -30,18 +29,23 @@ public class RandomSynthesizer extends AAlgorithm {
     String mFilePath;
     Automata mAutomata;
     final Map<Automaton, State> mAutomatonStateMap;
+    Integer mStateHashCode;
+    final Map<Automaton, Map<State, StateEvents>> mAutomatonStatesEventSetMap;
     Alphabet mAllowedEventSet;
     LabeledEvent mEvent;
-    Set<List<LabeledEvent>> mMarkedStringsSet;
+    final Set<List<LabeledEvent>> mMarkedStringsSet;
     List<LabeledEvent> mStringList;
     int mMaxNbrOfIterationsOnEachString;
     int mTotalNbrOfIterationsOnSystem;
+    final Map<Integer, PossibleUcState> mPossibeUcStringsMap;
 
     public RandomSynthesizer(String iThreadName) {
         super(iThreadName);
         mModule = new EmptyModule("Test", "No comments");
         mAutomatonStateMap = new HashMap<Automaton, State>();
+        mAutomatonStatesEventSetMap = new HashMap<Automaton, Map<State, StateEvents>>();
         mMarkedStringsSet = new HashSet<List<LabeledEvent>>();
+        mPossibeUcStringsMap = new HashMap<Integer, PossibleUcState>();
     }
 
     @Override
@@ -53,50 +57,95 @@ public class RandomSynthesizer extends AAlgorithm {
 
     @Override
     public void run() {
-        //Init Automata object
+
+        //Generate DFA from automata object and
+        //build maps to be used during search.-----------------------------------
+        fireNewMessageEvent("Starts with initialization ...");
         mAutomata = AModule.getDFA(AModule.readFromWMODFile(mFilePath));
         if (mAutomata == null) {
             fireNewMessageEvent("Problem with reading file, I will not go on!");
             return;
         }
 
-        //Plantify specifications
+        initAutomatonStatesEventSetMap();
+        fireNewMessageEvent("... Done with initialization!");
+        fireNewMessageEvent("Total time spent: " + getDurationForRunMethod());
+        //-----------------------------------------------------------------------
 
-        //Init automaton state map
-
-        //Do the iterations on the system.
-        for (int i = 0; i < mTotalNbrOfIterationsOnSystem; ++i) {
-//            System.out.println("mTotalNbrOfIterationsOnSystem: " + (mTotalNbrOfIterationsOnSystem - i));
-            buildString();
+        //No need to go on if initial state is uncontrollable
+        if (isInitialStateUncontrollalbe()) {
+            fireNewMessageEvent("Initial state is uncontrollable, no supervisor can be found!");
+            fireNewMessageEvent("Total time spent: " + getDurationForRunMethod());
+            return;
         }
 
+        //Do the search/iterations on the system.--------------------------------
+        fireNewMessageEvent("Starts with iterations ...");
+        for (int i = 0; i < mTotalNbrOfIterationsOnSystem; ++i) {
+            if (i % 5 == 0 && !getStatus("Number of iterations left: " + (mTotalNbrOfIterationsOnSystem - i))) {
+                return;
+            }
+            buildString();
+        }
+        fireNewMessageEvent("... Finished with iterations!");
+        fireNewMessageEvent("Number of candidate strings found: " + mMarkedStringsSet.size());
+
+        fireNewMessageEvent("Total time spent: " + getDurationForRunMethod());
+        //-----------------------------------------------------------------------
+
+        //Remove strings that are uncontrollable---------------------------------
+        fireNewMessageEvent("Starts with removing strings passing through uc states ...");
+
+        int nbrOfIterationsLeft = mMarkedStringsSet.size();
+        for (final List<LabeledEvent> list : mMarkedStringsSet) {
+            if (nbrOfIterationsLeft % 5 == 0 && !getStatus("Number of iterations left: " + nbrOfIterationsLeft)) {
+                return;
+            }
+            mStringList = list;
+            examineString();
+            --nbrOfIterationsLeft;
+        }
+        removeUncontrollableStrings();
+
+        fireNewMessageEvent("... Done with removing strings passing through uc states!");
+        fireNewMessageEvent("Number of strings in marked language found: " + mMarkedStringsSet.size());
+        fireNewMessageEvent("Total time spent: " + getDurationForRunMethod());
+        //-----------------------------------------------------------------------
+
+        //Export results
         final List returnList = new ArrayList();
         returnList.add(mMarkedStringsSet);
-        returnList.add(getDurationForRunMethod());
         fireFinishedEvent(returnList);
 
     }
 
-    private void initAutomata() {
+    private void initAutomatonStatesEventSetMap() {
         for (final Automaton a : mAutomata) {
-            mAutomatonStateMap.put(a, a.getInitialState());
+            final Map<State, StateEvents> stateEventSetMap = new HashMap<State, StateEvents>();
+            for (final State s : a.getStateSet()) {
+                final Alphabet enabledEventSet = new Alphabet();
+                for (final Arc arc : s.getOutgoingArcs()) {
+                    enabledEventSet.add(arc.getEvent());
+                }
+                stateEventSetMap.put(s, new StateEvents(enabledEventSet, AlphabetHelpers.minus(a.getAlphabet(), enabledEventSet)));
+            }
+            mAutomatonStatesEventSetMap.put(a, stateEventSetMap);
         }
     }
 
     private void buildString() {
 
-        initAutomata();
+        initAutomatonStateMap();
         mStringList = new ArrayList<LabeledEvent>();
 
         for (int i = 0; i < mMaxNbrOfIterationsOnEachString; ++i) {
-//            System.out.println("mMaxNbrOfIterationsOnEachString: " + (mMaxNbrOfIterationsOnEachString - i));
+//            fireNewMessageEvent("mMaxNbrOfIterationsOnEachString: " + (mMaxNbrOfIterationsOnEachString - i));
 
             if (isCurrentStateMarked()) {
-                mMarkedStringsSet.add(mStringList);
-                fireNewMessageEvent(mMarkedStringsSet.toString());
+                saveAMarkedString();
             }
 
-            calculateAllowedEventSet();
+            calculateAllowedEventSet(false);
             pickOneEvent();
 
             if (mEvent == null) {
@@ -105,51 +154,17 @@ public class RandomSynthesizer extends AAlgorithm {
             }
 
             mStringList.add(mEvent);
-
             updateStates();
         }
     }
 
-    private void calculateAllowedEventSet() {
-        Alphabet globallyEnabledEventSet = new Alphabet();
-        Alphabet globallyForbiddenEventSet = new Alphabet();
-
-        for (final Automaton a : mAutomatonStateMap.keySet()) {
-            final State state = mAutomatonStateMap.get(a);
-
-            final Alphabet enabledEventSet = new Alphabet();
-            for (final Arc arc : state.getOutgoingArcs()) {
-                enabledEventSet.add(arc.getEvent());
-            }
-            globallyEnabledEventSet = AlphabetHelpers.union(globallyEnabledEventSet, enabledEventSet);
-            globallyForbiddenEventSet = AlphabetHelpers.union(globallyForbiddenEventSet, AlphabetHelpers.minus(a.getAlphabet(), enabledEventSet));
+    private void initAutomatonStateMap() {
+        final List<State> stateList = new ArrayList<State>();
+        for (final Automaton a : mAutomata) {
+            mAutomatonStateMap.put(a, a.getInitialState());
+            stateList.add(a.getInitialState());
         }
-
-        mAllowedEventSet = AlphabetHelpers.minus(globallyEnabledEventSet, globallyForbiddenEventSet);
-    }
-
-    private void pickOneEvent() {
-        final List<LabeledEvent> list = new ArrayList<LabeledEvent>(mAllowedEventSet.values());
-
-        Collections.shuffle(list);
-
-        if (!list.isEmpty()) {
-            mEvent = list.get(0);
-            return;
-        }
-        mEvent = null;
-    }
-
-    private void updateStates() {
-        for (final Automaton a : mAutomatonStateMap.keySet()) {
-            final State sourceState = mAutomatonStateMap.get(a);
-
-            final State targetState = sourceState.nextState(mEvent);
-
-            if (targetState != null) {
-                mAutomatonStateMap.put(a, targetState);
-            }
-        }
+        mStateHashCode = stateList.hashCode();
     }
 
     private boolean isCurrentStateMarked() {
@@ -159,5 +174,155 @@ public class RandomSynthesizer extends AAlgorithm {
             }
         }
         return true;
+    }
+
+    private void saveAMarkedString() {
+        mMarkedStringsSet.add(new ArrayList<LabeledEvent>(mStringList));
+    }
+
+    private void calculateAllowedEventSet(final boolean iJustPlants) {
+        Alphabet globallyEnabledEventSet = new Alphabet();
+        Alphabet globallyForbiddenEventSet = new Alphabet();
+
+        for (final Automaton a : mAutomatonStateMap.keySet()) {
+            if (!iJustPlants || a.isPlant()) {
+                final State state = mAutomatonStateMap.get(a);
+                globallyEnabledEventSet = AlphabetHelpers.union(globallyEnabledEventSet, mAutomatonStatesEventSetMap.get(a).get(state).getmAllowedEventSet());
+                globallyForbiddenEventSet = AlphabetHelpers.union(globallyForbiddenEventSet, mAutomatonStatesEventSetMap.get(a).get(state).getmForbiddenEventSet());
+            }
+        }
+
+        mAllowedEventSet = AlphabetHelpers.minus(globallyEnabledEventSet, globallyForbiddenEventSet);
+    }
+
+    private void pickOneEvent() {
+        final List<LabeledEvent> list = new ArrayList<LabeledEvent>(mAllowedEventSet.values());
+        Collections.shuffle(list);
+        if (!list.isEmpty()) {
+            mEvent = list.get(0);
+            return;
+        }
+        mEvent = null;
+    }
+
+    private void updateStates() {
+        final List<State> stateList = new ArrayList<State>();
+        for (final Automaton a : mAutomatonStateMap.keySet()) {
+            final State sourceState = mAutomatonStateMap.get(a);
+            final State targetState = sourceState.nextState(mEvent);
+            if (targetState != null) {
+                mAutomatonStateMap.put(a, targetState);
+                stateList.add(targetState);
+            } else {
+                stateList.add(sourceState);
+            }
+        }
+        mStateHashCode = stateList.hashCode();
+    }
+
+    private void examineString() {
+        initAutomatonStateMap();
+
+        for (final LabeledEvent event : mStringList) {
+            mEvent = event;
+
+            calculateAllowedEventSet(true);
+
+            final Alphabet ucAlphabet = mAllowedEventSet.getUncontrollableAlphabet();
+
+            if (ucAlphabet.size() != 0) {
+                //Is this a new (global) state?
+                if (!mPossibeUcStringsMap.containsKey(mStateHashCode)) {
+                    mPossibeUcStringsMap.put(mStateHashCode, new PossibleUcState(ucAlphabet));
+                }
+                final PossibleUcState stateInfo = mPossibeUcStringsMap.get(mStateHashCode);
+
+                //Has this (uc) event not been paired with a string
+                if (!mEvent.isControllable() && !stateInfo.mEventStringPairMap.get(mEvent)) {
+                    stateInfo.mEventStringPairMap.put(mEvent, true);
+                }
+
+                //Add this string to strings that pass by this possible uc state
+                stateInfo.mStingsPassingThroughThisStateSet.add(mStringList);
+            }
+            updateStates();
+        }
+    }
+
+    /**
+     * Removes strings that pass through states that has at least one outgoing event that is uncontrollable.<br>
+     * This uc event is not within any of the candidate string found.<br>
+     */
+    private void removeUncontrollableStrings() {
+        for (final Integer state : mPossibeUcStringsMap.keySet()) {
+            final PossibleUcState stateInfo = mPossibeUcStringsMap.get(state);
+            if (stateInfo.stateIsUncontrollable()) {
+                mMarkedStringsSet.removeAll(stateInfo.mStingsPassingThroughThisStateSet);
+            }
+        }
+    }
+
+    private boolean isInitialStateUncontrollalbe() {
+        initAutomatonStateMap();
+        calculateAllowedEventSet(true);
+        if (mAllowedEventSet.getUncontrollableAlphabet().size() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * To store allowed and forbidden events for a state.
+     */
+    private class StateEvents {
+
+        final private Alphabet mAllowedEventSet;
+        final private Alphabet mForbiddenEventSet;
+
+        public StateEvents(Alphabet mAllowedEventSet, Alphabet mForbiddenEventSet) {
+            this.mAllowedEventSet = mAllowedEventSet;
+            this.mForbiddenEventSet = mForbiddenEventSet;
+        }
+
+        public Alphabet getmAllowedEventSet() {
+            return mAllowedEventSet;
+        }
+
+        public Alphabet getmForbiddenEventSet() {
+            return mForbiddenEventSet;
+        }
+    }
+
+    private class PossibleUcState {
+
+        final protected Map<LabeledEvent, Boolean> mEventStringPairMap;
+        final Set<List<LabeledEvent>> mStingsPassingThroughThisStateSet;
+
+        public PossibleUcState(final Alphabet iUcAlphabet) {
+            mEventStringPairMap = new HashMap<LabeledEvent, Boolean>();
+            mStingsPassingThroughThisStateSet = new HashSet<List<LabeledEvent>>();
+
+            for (final LabeledEvent event : iUcAlphabet) {
+                mEventStringPairMap.put(event, false);
+            }
+        }
+
+        /**
+         *
+         * @return false if all outgoing uc events are contained in a string else true
+         */
+        public boolean stateIsUncontrollable() {
+            for (final Boolean bool : mEventStringPairMap.values()) {
+                if (!bool) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return mEventStringPairMap.toString();
+        }
     }
 }
