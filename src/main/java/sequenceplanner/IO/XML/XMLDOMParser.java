@@ -118,7 +118,7 @@ public class XMLDOMParser {
     private Set<Object> populateModels(Document d){ 
         Element root = d.getDocumentElement();
         
-        Deque<Element> stack = new ArrayDeque();
+        Deque<Element> stack = new ArrayDeque<Element>();
         for (Element e : getChildren(root)){
             stack.push(e);
         }

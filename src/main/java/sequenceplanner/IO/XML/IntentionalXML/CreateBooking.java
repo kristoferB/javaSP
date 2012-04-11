@@ -82,7 +82,7 @@ public enum CreateBooking {
     }
     
     private boolean childrenHaveSameResource(SopNode sop, String resource) {
-        ArrayDeque<SopNode> stack = new ArrayDeque();
+        ArrayDeque<SopNode> stack = new ArrayDeque<SopNode>();
         for (SopNode n : sop.getFirstNodesInSequencesAsSet())
             stack.push(n);
                

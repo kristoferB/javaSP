@@ -31,7 +31,7 @@ public enum ExpressionToJavaConverter {
     public List<String> convertActionExpressions(ConditionExpression expr){
         List<String> actions = new ArrayList<String>();
         if (expr.isEmpty()) return actions;
-        ArrayDeque<ConditionElement> stack = new ArrayDeque();
+        ArrayDeque<ConditionElement> stack = new ArrayDeque<ConditionElement>();
         stack.push(expr.getExpressionRoot());
         while (!stack.isEmpty()){
             ConditionElement poper = stack.pop();

@@ -11,6 +11,7 @@ import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
 import sequenceplanner.model.data.OperationData;
 import sequenceplanner.model.data.ResourceVariableData;
+import sequenceplanner.visualization.algorithms.IRelateTwoOperations;
 import sequenceplanner.visualization.algorithms.ISupremicaInteractionForVisualization.Type;
 import sequenceplanner.visualization.algorithms.RelationContainer;
 
@@ -100,10 +101,68 @@ public enum ModelAssemblyOptimizerConverter {
             } 
             map.put(od, relMap);                                             
         }
+        //fixMissedRelations(map);
         rc.setOperationRelationMap(map);
    }
-        
 
+   public void convertToRelationContainer(RelationIdentifier3StateOps ri,RelationContainer rc, Model m,List<AssemblyStructureProtos.Operation> ops) {
+        if (ri == null) return;
+        Map<OperationData, Map<OperationData, Integer>> map = new HashMap<OperationData, Map<OperationData, Integer>>();
+        List<OperationData> operations = getAllOperations(m);
+        for (OperationData od : operations){          
+            Map<OperationData, Integer> relMap = new HashMap<OperationData, Integer>();
+            for (OperationData relOp : operations){  
+                relMap.put(relOp, ri.getRelation(od.getName(),relOp.getName()));
+            } 
+            map.put(od, relMap);                                             
+        }
+        //fixMissedRelations(map);
+        rc.setOperationRelationMap(map);
+   }
+   
+   private void fixMissedRelations(Map<OperationData, Map<OperationData, Integer>> map){
+       for (Map.Entry<OperationData, Map<OperationData, Integer>> e : map.entrySet()){
+           for (Map.Entry<OperationData, Integer> g : e.getValue().entrySet()){
+               if (g.getValue().equals(IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_12)){
+                   if (!operationHasAlternative(e.getKey(),map)){
+                       g.setValue(new Integer(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_12));
+                   }
+               } else if (g.getValue().equals(IRelateTwoOperations.SOMETIMES_IN_SEQUENCE_21)){
+                   if (!operationHasAlternative(g.getKey(),map)){
+                       g.setValue(new Integer(IRelateTwoOperations.ALWAYS_IN_SEQUENCE_21));
+                   }
+               }
+           }
+       }
+   }
+   
+   private boolean operationHasAlternative(OperationData od,Map<OperationData, Map<OperationData, Integer>> map){
+       Map<OperationData, Integer> relToOp = map.get(od);
+       for (Map.Entry<OperationData, Integer> e : relToOp.entrySet()){
+           if (!e.getKey().equals(od))
+             if (e.getValue().equals(IRelateTwoOperations.ALTERNATIVE)) return true;
+       }
+       return false;
+   }
+        
+/*
+ * public interface IRelateTwoOperations {
+
+    //Possible relations
+    Integer ALWAYS_IN_SEQUENCE_12 = 0;
+    Integer ALWAYS_IN_SEQUENCE_21 = 1;
+    Integer SOMETIMES_IN_SEQUENCE_12 = 2;
+    Integer SOMETIMES_IN_SEQUENCE_21 = 3;
+    Integer PARALLEL = 4;
+    Integer ALTERNATIVE = 5;
+    Integer ARBITRARY_ORDER = 6;
+    Integer HIERARCHY_12 = 7;
+    Integer HIERARCHY_21 = 8;
+    Integer SOMETIMES_IN_HIERARCHY_12 = 9;
+    Integer SOMETIMES_IN_HIERARCHY_21 = 10;
+    Integer OTHER = 11;
+ * 
+ */
         
              
     

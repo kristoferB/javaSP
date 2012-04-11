@@ -77,7 +77,7 @@ public class GetComplParallelOps {
         Set<String> ids = new HashSet<String>();
         if (expr == null || expr.isEmpty() || expr.getExpressionRoot() == null) return ids;
         
-        ArrayDeque<ConditionElement> stack = new ArrayDeque();
+        ArrayDeque<ConditionElement> stack = new ArrayDeque<ConditionElement>();
         stack.push(expr.getExpressionRoot());
         if (expr.hasNextElement()) stack.push(expr.getNextElement());
         

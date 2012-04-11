@@ -1,3 +1,11 @@
+// start command example:
+// run SP without UI and Intentional input XML format
+// isnw infile outfile
+// isnw temp/car_twoOp.xml temp/r.xml 
+//
+// run SP with UI and Intentional input
+// intentional inputfile
+
 package sequenceplanner;
 
 import java.awt.Rectangle;
