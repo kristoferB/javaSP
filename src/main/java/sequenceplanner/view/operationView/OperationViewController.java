@@ -134,7 +134,7 @@ public class OperationViewController implements Observer{
                 if (node instanceof SopNodeOperation) {
                     cell.setValue(node.getOperation());
                     node.getOperation().addObserver(new CellNameObserver(cell, iOpView.getGraph()));
-                    System.out.println("Name observer added for: " + node.getOperation().getName());
+                    //System.out.println("Name observer added for: " + node.getOperation().getName());
                 }
             }
 

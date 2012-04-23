@@ -79,10 +79,10 @@ public class VisualizationAlgorithm extends AAlgorithm {
         mVisualization.parallelPartition(rc);
         mVisualization.sequenceing(rc);
 
-        System.out.println("\n--------------------------------");
-        System.out.println("After partition");
-        System.out.println(rc.getOsubsetSopNode());
-        System.out.println("--------------------------------");
+//        System.out.println("\n--------------------------------");
+//        System.out.println("After partition");
+//        System.out.println(rc.getOsubsetSopNode());
+//        System.out.println("--------------------------------");
 
         final List<Object> list = new ArrayList<Object>();
         list.add(rc.getOsubsetSopNode());
