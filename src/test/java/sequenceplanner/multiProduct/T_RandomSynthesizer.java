@@ -2,11 +2,9 @@ package sequenceplanner.multiProduct;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.supremica.automata.LabeledEvent;
 import sequenceplanner.IO.EFA.RandomSynthesizer;
 import sequenceplanner.algorithm.IAlgorithm;
 import sequenceplanner.algorithm.IAlgorithmListener;
@@ -20,8 +18,9 @@ public class T_RandomSynthesizer implements IAlgorithmListener {
 
     private static final String mFilePath = "C:\\Users\\patrik\\Desktop\\";
 //    private static final String mFileName = "test.wmod";
-    private static final String mFileName = "manyOperations.wmod";
-    private static final int mSecondsToRunSynthesisThread = 60;
+//    private static final String mFileName = "manyOperations.wmod";
+    private static final String mFileName = "placementTrans.wmod";
+    private static final int mSecondsToRunSynthesisThread = 150;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -38,8 +37,8 @@ public class T_RandomSynthesizer implements IAlgorithmListener {
 
         final List list = new ArrayList();
         list.add(mFilePath + mFileName);
-        list.add(88);
-        list.add(50);
+        list.add(200);
+        list.add(500);
         synthesizer.init(list);
 
         synthesizer.start();

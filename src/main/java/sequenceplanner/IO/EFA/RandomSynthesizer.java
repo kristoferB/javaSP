@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class RandomSynthesizer extends AAlgorithm {
         //Do the search/iterations on the system.--------------------------------
         fireNewMessageEvent("Starts with iterations ...");
         for (int i = 0; i < mTotalNbrOfIterationsOnSystem; ++i) {
-            if (i % 5 == 0 && !getStatus("Number of iterations left: " + (mTotalNbrOfIterationsOnSystem - i))) {
+            if (i % (Math.round(mTotalNbrOfIterationsOnSystem/20)) == 0 && !getStatus("Number of iterations left: " + (mTotalNbrOfIterationsOnSystem - i) + " (nbr of candidate strings: " + mMarkedStringsSet.size() +")")) {
                 return;
             }
             buildString();
@@ -98,7 +99,7 @@ public class RandomSynthesizer extends AAlgorithm {
 
         int nbrOfIterationsLeft = mMarkedStringsSet.size();
         for (final List<LabeledEvent> list : mMarkedStringsSet) {
-            if (nbrOfIterationsLeft % 5 == 0 && !getStatus("Number of iterations left: " + nbrOfIterationsLeft)) {
+            if (nbrOfIterationsLeft % (Math.max(10, Math.round(mMarkedStringsSet.size()/10))) == 0 && !getStatus("Number of iterations left: " + nbrOfIterationsLeft)) {
                 return;
             }
             mStringList = list;

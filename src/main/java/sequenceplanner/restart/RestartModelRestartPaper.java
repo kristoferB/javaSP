@@ -1,4 +1,4 @@
-    package sequenceplanner.restart;
+package sequenceplanner.restart;
 
 /**
  *
@@ -54,9 +54,9 @@ public class RestartModelRestartPaper implements Runnable {
         }
 
         //Set sifting------------------------------------------------------------
-        rms.getmSiftMap().put(RestartModelStructure.PlacementSifting.TO_ONLY_AFFECT_RESOURCES_IN_ERROR_OPERATION, true);
+//        rms.getmSiftMap().put(RestartModelStructure.PlacementSifting.TO_ONLY_AFFECT_RESOURCES_IN_ERROR_OPERATION, true);
 //        rms.getmSiftMap().put(RestartModelStructure.PlacementSifting.TO_ONLY_ENABLE_PLACEMENT_IN_HOME_STATES_FOR_ALL_RESOURCES, true);
-        rms.getmSiftMap().put(RestartModelStructure.PlacementSifting.EXCLUDE_TRANSITION_IF_POWERSETELEMENT_CONTAINS_UNWANTED_OPERATIONS, true);
+//        rms.getmSiftMap().put(RestartModelStructure.PlacementSifting.EXCLUDE_TRANSITION_IF_POWERSETELEMENT_CONTAINS_UNWANTED_OPERATIONS, true);
 
         //Generate wmod file for model-------------------------------------------
         rms.generateWmodFile("placementTrans", "C:\\Users\\patrik\\Desktop\\");
