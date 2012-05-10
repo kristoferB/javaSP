@@ -351,7 +351,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
         for (int i = 1; opViewMap.getViewCount() >= i; i++) {
             View view = opViewMap.getView(i);
-            System.out.println(view);
+            //System.out.println(view);
         }
 
         for (View view : mViewIdMap.keySet()) {
@@ -745,7 +745,7 @@ public class GUIView extends JFrame implements mxEventSource.mxIEventListener {
 
     @Override
     public void invoke(Object arg0, mxEventObject arg1) {
-        System.out.println("GUIView: " + "arg0: " + arg0 + " arg1: " + arg1);
+        //System.out.println("GUIView: " + "arg0: " + arg0 + " arg1: " + arg1);
     }
 
     /**

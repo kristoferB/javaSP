@@ -34,12 +34,12 @@ public class AttributeMouseAdapter extends MouseAdapter {
         this.editor = editor;
         this.condList = condList;
         this.mModel = iModel;
-        System.out.println("AttributeMouseAdapter costructor");
+        //System.out.println("AttributeMouseAdapter costructor");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("AttributeMouseAdapter: mouseReleased");
+        //System.out.println("AttributeMouseAdapter: mouseReleased");
         popup(e);
     }
 
@@ -82,16 +82,16 @@ public class AttributeMouseAdapter extends MouseAdapter {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("DELETE_VALUE")) {
-                System.out.println("DELETE_VALUE");
+                //System.out.println("DELETE_VALUE");
                 //AttrController.delete(cond)& delete panel
                 //condList.deleteCondition(conditionValue);
                 //flytta delete hit..
                 condList.deleteCondition(conditionKey);
             }
             if (command.equals("EDIT_VALUE")) {
-                System.out.println("EDIT_VALUE");
+                //System.out.println("EDIT_VALUE");
                 //AttrController.displayCondInField(Cond)
-                System.out.println("Edit: " + conditionKey);
+                //System.out.println("Edit: " + conditionKey);
 
                 condList.editCondition(conditionKey);
 

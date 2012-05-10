@@ -9,6 +9,7 @@
 
 
     <dependencies>
+        
         <dependency>
             <groupId>org.supremica</groupId>
             <artifactId>supremica-lib</artifactId>
@@ -19,11 +20,13 @@
             <artifactId>supremica-svn</artifactId>
             <version>1.2</version>
         </dependency>
+        
         <dependency>
             <groupId>org.supremica</groupId>
             <artifactId>xlocal</artifactId>
             <version>1.0</version>
         </dependency>
+        
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>

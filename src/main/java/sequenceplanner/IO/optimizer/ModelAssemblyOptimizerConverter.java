@@ -6,6 +6,8 @@ import sequenceplanner.datamodel.condition.Condition;
 import sequenceplanner.datamodel.condition.ConditionExpression;
 import sequenceplanner.datamodel.product.Seam;
 import sequenceplanner.model.Model;
+import sequenceplanner.model.SOP.SopNode;
+import sequenceplanner.model.SOP.SopNodeOperation;
 import sequenceplanner.model.SOP.algorithms.ConditionsFromSopNode.ConditionType;
 import sequenceplanner.model.TreeNode;
 import sequenceplanner.model.data.ConditionData;
@@ -22,7 +24,7 @@ import sequenceplanner.visualization.algorithms.RelationContainer;
 public enum ModelAssemblyOptimizerConverter {
     INSTANCE;
     
-    public List<AssemblyStructureProtos.Operation> convertModelToProtoOperations(Model m){
+    public List<AssemblyStructureProtos.Operation> convertModelToProtoOperations(Model m, RelationContainer rc){
         List<AssemblyStructureProtos.Operation> ops = new ArrayList<AssemblyStructureProtos.Operation>();
         List<AssemblyStructureProtos.Variable> variableList = new ArrayList<AssemblyStructureProtos.Variable>(); 
         
@@ -39,7 +41,7 @@ public enum ModelAssemblyOptimizerConverter {
         }
         
         //List<OperationData> markedOps = getMarkedOperations(m);
-        String terminationExpression = createTerminationExpression(m);
+        String terminationExpression = createTerminationExpression(m, rc);
         sequenceplanner.IO.optimizer.ProductLocker.INSTANCE.initializeLocker(createSeamBlockMap(m));
         
         for (TreeNode n : m.getAllOperations()){
@@ -312,11 +314,21 @@ public enum ModelAssemblyOptimizerConverter {
         return result;
     }
 
-    private String createTerminationExpression(Model m){
+    private String createTerminationExpression(Model m, RelationContainer rc){
         String result = "";
         for (Seam s : m.seams){
             result = ExpressionToJavaConverter.INSTANCE.appendExpression(result, s.getCompleteCondition());
         }
+        
+        if (result.isEmpty() && rc != null){
+            for (SopNode n : rc.getOfinishsetSopNode().getFirstNodesInSequencesAsSet()){
+                if (n instanceof SopNodeOperation && n.getOperation() != null){
+                    String expr = Type.OPERATION_VARIABLE_PREFIX.toString()+n.getOperation().getId()+" == 2 ";
+                    result = ExpressionToJavaConverter.INSTANCE.appendStringExpression(result, expr);
+                }
+            }
+        }
+        
                 
         return result;
     }

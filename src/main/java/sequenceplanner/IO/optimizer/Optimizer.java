@@ -24,7 +24,7 @@ public class Optimizer {
     // Later this can be a factory inlucing more set up of different optimizers and settings.
     public static Model optimizeOperations(Model m){
         
-        List<Operation> ops = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoOperations(m);
+        List<Operation> ops = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoOperations(m, null);
         List<Resource> res = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoResource(m);
         Optimizer optimizer = new Optimizer(ops,res);
         ModelAssemblyOptimizerConverter.INSTANCE.convertProtoOperationsToModel(m,optimizer.computeOptimizer());
@@ -34,14 +34,14 @@ public class Optimizer {
     
     // Will also optimize as above
     public static void identifyRelations(Model m, RelationContainer rc){
-        List<Operation> ops = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoOperations(m);
+        List<Operation> ops = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoOperations(m, rc);
         List<Resource> res = ModelAssemblyOptimizerConverter.INSTANCE.convertModelToProtoResource(m);
         Optimizer optimizer = new Optimizer(ops,res);
-        ModelAssemblyOptimizerConverter.INSTANCE.convertProtoOperationsToModel(m,optimizer.computeRelations());    
-        ModelAssemblyOptimizerConverter.INSTANCE.convertToRelationContainer(optimizer.ri,rc,m,ops);
+//        ModelAssemblyOptimizerConverter.INSTANCE.convertProtoOperationsToModel(m,optimizer.computeRelations());    
+//        ModelAssemblyOptimizerConverter.INSTANCE.convertToRelationContainer(optimizer.ri,rc,m,ops);
         
-//        optimizer.computeRelations3s();
-//        ModelAssemblyOptimizerConverter.INSTANCE.convertToRelationContainer(optimizer.ri3s,rc,m,ops);
+        optimizer.computeRelations3s();
+        ModelAssemblyOptimizerConverter.INSTANCE.convertToRelationContainer(optimizer.ri3s,rc,m,ops);
     }
     
     org.supremica.external.assemblyOptimizer.TheBuilder builder;

@@ -1607,7 +1607,7 @@ public class SPGraph extends mxGraph {
     }
 
     public void insertSequence(LinkedList<Cell> seq, Cell target, int placement, boolean parType) {
-        System.out.println("SPGraph: insertSequence");
+        //System.out.println("SPGraph: insertSequence");
         seq = disconnectSequence(seq);
 
         Object targetParent = null;

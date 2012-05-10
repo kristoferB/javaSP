@@ -52,7 +52,7 @@ public class ConditionListPanel extends JPanel implements IConditionListPanel {
     }
 
     private void updateList() {
-        System.out.println("updateList CLP");
+        //System.out.println("updateList CLP");
         if (conditionList != null) {
             this.removeAll();
             for (ConditionData key : conditionList.keySet()) {
